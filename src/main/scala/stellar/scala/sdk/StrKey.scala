@@ -9,13 +9,23 @@ import scala.annotation.tailrec
 import scala.util.{Failure, Success, Try}
 
 object StrKey {
+
   sealed trait VersionByte {
     val value: Byte
   }
-  case object AccountId extends VersionByte { val value: Byte = (6 << 3).toByte } // G
-  case object Seed extends VersionByte { val value: Byte = (18 << 3).toByte } // S
-  case object PreAuthTx extends VersionByte { val value: Byte = (19 << 3).toByte } // T
-  case object SHA256Hash extends VersionByte { val value: Byte = (23 << 3).toByte } // X
+
+  case object AccountId extends VersionByte {
+    val value: Byte = (6 << 3).toByte // G
+  }
+  case object Seed extends VersionByte {
+    val value: Byte = (18 << 3).toByte // S
+  }
+  case object PreAuthTx extends VersionByte {
+    val value: Byte = (19 << 3).toByte // T
+  }
+  case object SHA256Hash extends VersionByte {
+    val value: Byte = (23 << 3).toByte // X
+  }
 
   def decodeStellarSecretSeed(data: Array[Char]): Array[Byte] = decodeCheck(Seed, data)
 
@@ -30,9 +40,9 @@ object StrKey {
     }
     val decoded = new Base32().decode(bytes)
     val decodedVersionByte = decoded.head
-    val payload = util.Arrays.copyOfRange(decoded, 0, decoded.length-2)
-    val data     = util.Arrays.copyOfRange(payload, 1, payload.length)
-    val checksum = util.Arrays.copyOfRange(decoded, decoded.length-2, decoded.length)
+    val payload = util.Arrays.copyOfRange(decoded, 0, decoded.length - 2)
+    val data = util.Arrays.copyOfRange(payload, 1, payload.length)
+    val checksum = util.Arrays.copyOfRange(decoded, decoded.length - 2, decoded.length)
 
     if (decodedVersionByte != vb.value) {
       throw new FormatException("Version byte is invalid")

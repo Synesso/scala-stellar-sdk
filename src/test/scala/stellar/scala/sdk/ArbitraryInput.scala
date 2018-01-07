@@ -6,6 +6,7 @@ import org.specs2.ScalaCheck
 trait ArbitraryInput extends ScalaCheck {
 
   implicit def arbKeyPair: Arbitrary[KeyPair] = Arbitrary(genKeyPair)
+
   implicit def arbAccount: Arbitrary[Account] = Arbitrary(genAccount)
 
   def genKeyPair: Gen[KeyPair] = Gen.oneOf(Seq(KeyPair.random))
@@ -13,6 +14,8 @@ trait ArbitraryInput extends ScalaCheck {
   def genAccount: Gen[Account] = for {
     kp <- genKeyPair
     seq <- Gen.posNum[Long]
-  } yield Account(kp, seq)
+  } yield {
+    Account(kp, seq)
+  }
 
 }

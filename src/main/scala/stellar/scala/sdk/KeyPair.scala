@@ -31,6 +31,7 @@ case class KeyPair(pk: EdDSAPublicKey, sk: EdDSAPrivateKey) extends PublicKeyOps
   }
 
 }
+
 case class VerifyingKey(pk: EdDSAPublicKey) extends PublicKeyOps
 
 trait PublicKeyOps {
@@ -120,6 +121,7 @@ object KeyPair {
 
   /**
     * Generates a random Stellar keypair.
+    *
     * @return a random Stellar keypair.
     */
   def random: KeyPair = {
