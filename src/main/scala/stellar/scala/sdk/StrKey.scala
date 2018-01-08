@@ -27,6 +27,8 @@ object StrKey {
     val value: Byte = (23 << 3).toByte // X
   }
 
+  def decodeStellarAccountId(data: String): Array[Byte] = decodeCheck(AccountId, data.toCharArray)
+
   def decodeStellarSecretSeed(data: Array[Char]): Array[Byte] = decodeCheck(Seed, data)
 
   def encodeStellarAccountId(data: Array[Byte]): String = String.valueOf(encodeCheck(AccountId, data))

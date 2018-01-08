@@ -5,10 +5,12 @@ import java.util
 
 import net.i2p.crypto.eddsa._
 import net.i2p.crypto.eddsa.spec._
+import org.stellar.sdk.xdr.{PublicKey, PublicKeyType, Uint256}
 
 import scala.util.{Failure, Success, Try}
 
 case class KeyPair(pk: EdDSAPublicKey, sk: EdDSAPrivateKey) extends PublicKeyOps {
+
   /**
     * Returns the human readable secret seed encoded in strkey.
     */
@@ -29,7 +31,6 @@ case class KeyPair(pk: EdDSAPublicKey, sk: EdDSAPrivateKey) extends PublicKeyOps
     case Success(bs) => bs
     case Failure(t) => throw new RuntimeException(t)
   }
-
 }
 
 case class VerifyingKey(pk: EdDSAPublicKey) extends PublicKeyOps
@@ -62,6 +63,19 @@ trait PublicKeyOps {
     case Failure(t) => throw new RuntimeException(t)
   }
 
+  def getXDRPublicKey: PublicKey = {
+    val publicKey = new PublicKey
+    publicKey.setDiscriminant(PublicKeyType.PUBLIC_KEY_TYPE_ED25519)
+    val uint256 = new Uint256
+    uint256.setUint256(pk.getAbyte)
+    publicKey.setEd25519(uint256)
+    publicKey
+  }
+
+  /**
+    * This key pair or verifying key without the private key.
+    */
+  def asVerifyingKey = VerifyingKey(pk)
 }
 
 object KeyPair {
@@ -118,6 +132,14 @@ object KeyPair {
   def fromPublicKey(publicKey: Array[Byte]): VerifyingKey = {
     VerifyingKey(new EdDSAPublicKey(new EdDSAPublicKeySpec(publicKey, ed25519)))
   }
+
+  /**
+    * Creates a new Stellar KeyPair from a strkey encoded Stellar account ID.
+    *
+    * @param accountId The strkey encoded Stellar account ID.
+    * @return { @link KeyPair}
+    */
+  def fromAccountId(accountId: String): VerifyingKey = fromPublicKey(StrKey.decodeStellarAccountId(accountId))
 
   /**
     * Generates a random Stellar keypair.
