@@ -12,3 +12,6 @@ cache:
     - "$HOME/.sbt/boot/"
     - "$HOME/.sbt/launchers/"
     - "$HOME/.coursier"
+
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
