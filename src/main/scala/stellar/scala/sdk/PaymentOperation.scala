@@ -28,3 +28,10 @@ case class PaymentOperation(destinationAccount: PublicKeyOps,
   }
 
 }
+
+object PaymentOperation {
+
+  def apply(source: KeyPair, destination: PublicKeyOps, asset: Asset, amount: Amount): PaymentOperation = {
+    PaymentOperation(destination, asset, amount, Some(source))
+  }
+}
