@@ -10,4 +10,6 @@ trait ByteArrays {
 
   def paddedByteArray(s: String, length: Int): Array[Byte] = paddedByteArray(s.getBytes, length)
 
+  def paddedByteArrayToString(bs: Array[Byte]): String = new String(bs).split("\u0000")(0)
+
 }

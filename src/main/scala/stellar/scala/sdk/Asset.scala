@@ -1,6 +1,6 @@
 package stellar.scala.sdk
 
-import org.stellar.sdk.xdr.AssetType.ASSET_TYPE_NATIVE
+import org.stellar.sdk.xdr.AssetType._
 import org.stellar.sdk.xdr.{AccountID, AssetType, Asset => XDRAsset}
 
 import scala.util.Try
@@ -9,7 +9,7 @@ sealed trait Asset extends ByteArrays {
   def toXDR: XDRAsset
 }
 
-object Asset {
+object Asset extends ByteArrays {
   def createNonNative(code: String, issuer: PublicKeyOps): Try[Asset] = Try {
     if (code.length <= 4) AssetTypeCreditAlphaNum4(code, issuer) else AssetTypeCreditAlphaNum12(code, issuer)
   }
@@ -17,6 +17,14 @@ object Asset {
   def fromXDR(xdr: XDRAsset): Try[Asset] = Try {
     xdr.getDiscriminant match {
       case ASSET_TYPE_NATIVE => AssetTypeNative
+      case ASSET_TYPE_CREDIT_ALPHANUM4 =>
+        val code = paddedByteArrayToString(xdr.getAlphaNum4.getAssetCode)
+        val issuer = KeyPair.fromXDRPublicKey(xdr.getAlphaNum4.getIssuer.getAccountID)
+        AssetTypeCreditAlphaNum4(code, issuer)
+      case ASSET_TYPE_CREDIT_ALPHANUM12 =>
+        val code = paddedByteArrayToString(xdr.getAlphaNum12.getAssetCode)
+        val issuer = KeyPair.fromXDRPublicKey(xdr.getAlphaNum12.getIssuer.getAccountID)
+        AssetTypeCreditAlphaNum12(code, issuer)
       case d => throw new IllegalArgumentException(s"Unrecognised asset discriminant: $d")
     }
   }

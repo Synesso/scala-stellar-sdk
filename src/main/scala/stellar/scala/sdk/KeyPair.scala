@@ -141,6 +141,8 @@ object KeyPair {
     */
   def fromAccountId(accountId: String): VerifyingKey = fromPublicKey(StrKey.decodeStellarAccountId(accountId))
 
+  def fromXDRPublicKey(key: PublicKey) = fromPublicKey(key.getEd25519.getUint256)
+
   /**
     * Generates a random Stellar keypair.
     *
@@ -150,6 +152,5 @@ object KeyPair {
     val pair = new KeyPairGenerator().generateKeyPair()
     KeyPair(pair.getPublic.asInstanceOf[EdDSAPublicKey], pair.getPrivate.asInstanceOf[EdDSAPrivateKey])
   }
-
 
 }

@@ -10,6 +10,21 @@ class AssetSpec extends Specification with ArbitraryInput {
     }
   }
 
+  "non-native asset types" should {
+    "serde correctly" >> prop { code: String =>
+      val issuer = KeyPair.random
+      val asset = Asset.createNonNative(code, issuer).get
+      Asset.fromXDR(asset.toXDR) must beSuccessfulTry[Asset].like {
+        case a: AssetTypeCreditAlphaNum4 if code.length <= 4 =>
+          a.code mustEqual code
+          a.issuer.accountId mustEqual issuer.accountId
+        case a: AssetTypeCreditAlphaNum12 =>
+          a.code mustEqual code
+          a.issuer.accountId mustEqual issuer.accountId
+      }
+    }.setGen(genCode(1, 12))
+  }
+
   "an empty code" should {
     "not allow non-native asset construction" >> {
       val issuer = KeyPair.random
