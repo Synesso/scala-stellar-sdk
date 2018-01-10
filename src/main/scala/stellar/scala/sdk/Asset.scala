@@ -25,7 +25,6 @@ object Asset extends ByteArrays {
         val code = paddedByteArrayToString(xdr.getAlphaNum12.getAssetCode)
         val issuer = KeyPair.fromXDRPublicKey(xdr.getAlphaNum12.getIssuer.getAccountID)
         AssetTypeCreditAlphaNum12(code, issuer)
-      case d => throw new IllegalArgumentException(s"Unrecognised asset discriminant: $d")
     }
   }
 }
