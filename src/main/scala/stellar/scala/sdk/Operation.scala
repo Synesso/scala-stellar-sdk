@@ -4,7 +4,7 @@ import org.stellar.sdk.xdr.Operation.OperationBody
 import org.stellar.sdk.xdr.OperationType._
 import org.stellar.sdk.xdr.{AccountID, Operation => XDROp}
 
-import scala.util.Try
+import scala.util.{Failure, Try}
 
 trait Operation {
   val sourceAccount: Option[KeyPair]
@@ -27,10 +27,11 @@ object Operation {
 
   val ONE = BigDecimal(10).pow(7)
 
-  def fromXDR(op: XDROp): Try[Operation] = Try {
+  def fromXDR(op: XDROp): Try[Operation] = {
     op.getBody.getDiscriminant match {
       case CREATE_ACCOUNT => CreateAccountOperation.from(op.getBody.getCreateAccountOp)
-      case d => throw new IllegalArgumentException(s"Unrecognised operation discriminant: $d")
+      case PAYMENT => PaymentOperation.from(op.getBody.getPaymentOp)
+      case d => Failure(new IllegalArgumentException(s"Unrecognised operation discriminant: $d"))
     }
   }
 }

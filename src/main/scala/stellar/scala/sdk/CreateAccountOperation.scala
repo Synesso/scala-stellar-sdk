@@ -3,6 +3,8 @@ package stellar.scala.sdk
 import org.stellar.sdk.xdr.Operation.OperationBody
 import org.stellar.sdk.xdr._
 
+import scala.util.Try
+
 /**
   * Represents <a href="https://www.stellar.org/developers/learn/concepts/list-of-operations.html#create-account" target="_blank">CreateAccount</a> operation.
   *
@@ -36,9 +38,11 @@ object CreateAccountOperation {
     CreateAccountOperation(destinationAccount, startingBalance, Some(sourceAccount))
   }
 
-  def from(op: CreateAccountOp): CreateAccountOperation = CreateAccountOperation(
-    sourceAccount = None,
-    destinationAccount = KeyPair.fromPublicKey(op.getDestination.getAccountID.getEd25519.getUint256),
-    startingBalance = Amount(op.getStartingBalance.getInt64.longValue)
-  )
+  def from(op: CreateAccountOp): Try[CreateAccountOperation] = Try {
+    CreateAccountOperation(
+      sourceAccount = None,
+      destinationAccount = KeyPair.fromPublicKey(op.getDestination.getAccountID.getEd25519.getUint256),
+      startingBalance = Amount(op.getStartingBalance.getInt64.longValue)
+    )
+  }
 }
