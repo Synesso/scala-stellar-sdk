@@ -31,6 +31,7 @@ object Operation {
     op.getBody.getDiscriminant match {
       case CREATE_ACCOUNT => CreateAccountOperation.from(op.getBody.getCreateAccountOp)
       case PAYMENT => PaymentOperation.from(op.getBody.getPaymentOp)
+      case PATH_PAYMENT => PathPaymentOperation.from(op.getBody.getPathPaymentOp)
       case d => Failure(new IllegalArgumentException(s"Unrecognised operation discriminant: $d"))
     }
   }

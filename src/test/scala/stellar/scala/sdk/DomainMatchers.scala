@@ -6,7 +6,8 @@ import org.specs2.matcher.{AnyMatchers, Matcher, MustExpectations}
 trait DomainMatchers extends AnyMatchers with MustExpectations {
 
   def beEquivalentTo(other: Asset): Matcher[Asset] = beLike[Asset] {
-    case AssetTypeNative => other mustEqual AssetTypeNative
+    case AssetTypeNative =>
+      other mustEqual AssetTypeNative
     case AssetTypeCreditAlphaNum4(code, issuer) =>
       val AssetTypeCreditAlphaNum4(expectedCode, expectedIssuer) = other
       code mustEqual expectedCode
@@ -15,6 +16,15 @@ trait DomainMatchers extends AnyMatchers with MustExpectations {
       val AssetTypeCreditAlphaNum12(expectedCode, expectedIssuer) = other
       code mustEqual expectedCode
       issuer.accountId mustEqual expectedIssuer.accountId
+  }
+
+  def beEquivalentTo(other: Amount): Matcher[Amount] = beLike[Amount] {
+    case NativeAmount(units) =>
+      units mustEqual other.units
+      other.asset mustEqual AssetTypeNative
+    case IssuedAmount(units, asset) =>
+      units mustEqual other.units
+      asset must beEquivalentTo(other.asset)
   }
 
   def beEquivalentTo(other: KeyPair): Matcher[KeyPair] = beLike[KeyPair] {

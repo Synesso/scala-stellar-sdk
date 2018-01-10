@@ -2,7 +2,6 @@ package stellar.scala.sdk
 
 import org.scalacheck.{Arbitrary, Gen}
 import org.specs2.ScalaCheck
-import org.specs2.matcher.{AnyMatchers, Matcher}
 
 import scala.util.Random
 
@@ -36,7 +35,9 @@ trait ArbitraryInput extends ScalaCheck {
   def genAmount: Gen[Amount] = for {
     units <- Gen.posNum[Long]
     asset <- genAsset
-  } yield Amount(units, asset)
+  } yield {
+    Amount(units, asset)
+  }
 
   def genNativeAmount: Gen[NativeAmount] = Gen.posNum[Long].map(NativeAmount.apply)
 
@@ -51,11 +52,22 @@ trait ArbitraryInput extends ScalaCheck {
   def genAsset4: Gen[AssetTypeCreditAlphaNum4] = for {
     code <- genCode(1, 4)
     keyPair <- genKeyPair
-  } yield AssetTypeCreditAlphaNum4(code, keyPair)
+  } yield {
+    AssetTypeCreditAlphaNum4(code, keyPair)
+  }
 
   def genAsset12: Gen[AssetTypeCreditAlphaNum12] = for {
     code <- genCode(5, 12)
     keyPair <- genKeyPair
-  } yield AssetTypeCreditAlphaNum12(code, keyPair)
+  } yield {
+    AssetTypeCreditAlphaNum12(code, keyPair)
+  }
+
+  def genAssetPath: Gen[Seq[Asset]] = (for {
+    qty <- Gen.choose(0, 5)
+    path <- Gen.listOfN(qty, genAsset)
+  } yield {
+    path
+  }).suchThat(as => as.distinct.lengthCompare(as.size) == 0)
 
 }
