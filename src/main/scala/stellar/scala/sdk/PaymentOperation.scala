@@ -1,6 +1,7 @@
 package stellar.scala.sdk
 
 import org.stellar.sdk.xdr.Operation.OperationBody
+import org.stellar.sdk.xdr.OperationType.PAYMENT
 import org.stellar.sdk.xdr._
 
 import scala.util.Try
@@ -16,16 +17,17 @@ case class PaymentOperation(destinationAccount: PublicKeyOps,
                             sourceAccount: Option[KeyPair] = None) extends Operation {
 
   override def toOperationBody: OperationBody = {
-    val op = new CreateAccountOp()
+    val op = new PaymentOp()
     val destination = new AccountID()
     destination.setAccountID(destinationAccount.getXDRPublicKey)
     op.setDestination(destination)
-    val startBal = new Int64()
-    startBal.setInt64(amount.stroops)
-    op.setStartingBalance(startBal)
+    op.setAsset(asset.toXDR)
+    val amnt = new Int64()
+    amnt.setInt64(amount.stroops)
+    op.setAmount(amnt)
     val body = new org.stellar.sdk.xdr.Operation.OperationBody()
-    body.setDiscriminant(OperationType.CREATE_ACCOUNT)
-    body.setCreateAccountOp(op)
+    body.setDiscriminant(PAYMENT)
+    body.setPaymentOp(op)
     body
   }
 
