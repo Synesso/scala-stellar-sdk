@@ -29,9 +29,10 @@ object Operation {
 
   def fromXDR(op: XDROp): Try[Operation] = {
     op.getBody.getDiscriminant match {
+      case CHANGE_TRUST => ChangeTrustOperation.from(op.getBody.getChangeTrustOp)
       case CREATE_ACCOUNT => CreateAccountOperation.from(op.getBody.getCreateAccountOp)
-      case PAYMENT => PaymentOperation.from(op.getBody.getPaymentOp)
       case PATH_PAYMENT => PathPaymentOperation.from(op.getBody.getPathPaymentOp)
+      case PAYMENT => PaymentOperation.from(op.getBody.getPaymentOp)
       case d => Failure(new IllegalArgumentException(s"Unrecognised operation discriminant: $d"))
     }
   }
