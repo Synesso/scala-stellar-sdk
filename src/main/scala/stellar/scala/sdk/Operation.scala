@@ -29,6 +29,7 @@ object Operation {
 
   def fromXDR(op: XDROp): Try[Operation] = {
     op.getBody.getDiscriminant match {
+      case ALLOW_TRUST => AllowTrustOperation.from(op.getBody.getAllowTrustOp)
       case CHANGE_TRUST => ChangeTrustOperation.from(op.getBody.getChangeTrustOp)
       case CREATE_ACCOUNT => CreateAccountOperation.from(op.getBody.getCreateAccountOp)
       case PATH_PAYMENT => PathPaymentOperation.from(op.getBody.getPathPaymentOp)

@@ -38,7 +38,9 @@ case object AssetTypeNative extends Asset {
   }
 }
 
-trait NonNativeAsset extends Asset
+trait NonNativeAsset extends Asset {
+  val code: String
+}
 
 /**
   * Represents all assets with codes 1-4 characters long.
