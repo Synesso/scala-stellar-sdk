@@ -2,6 +2,7 @@ package stellar.scala.sdk
 
 import org.scalacheck.{Arbitrary, Gen}
 import org.specs2.ScalaCheck
+import org.specs2.matcher.{AnyMatchers, Matcher}
 
 import scala.util.Random
 

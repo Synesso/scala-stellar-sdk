@@ -11,3 +11,14 @@ case class PathPaymentOperation(sendMax: Amount,
   override def toOperationBody: OperationBody = ???
 
 }
+
+object PathPaymentOperation {
+  def apply(sourceAccount: KeyPair,
+            sendMax: Amount,
+            destinationAccount: PublicKeyOps,
+            destinationAmount: Amount,
+            path: Seq[Asset]): PathPaymentOperation = {
+
+    PathPaymentOperation(sendMax, destinationAccount, destinationAmount, path, Some(sourceAccount))
+  }
+}

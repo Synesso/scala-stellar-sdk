@@ -3,7 +3,7 @@ package stellar.scala.sdk
 import org.apache.commons.codec.binary.Hex
 import org.specs2.mutable.Specification
 
-class KeyPairSpec extends Specification with ArbitraryInput {
+class KeyPairSpec extends Specification with ArbitraryInput with DomainMatchers {
 
   private val keyPair = KeyPair.fromSecretSeed(
     Hex.decodeHex("1123740522f11bfef6b3671f51e159ccf589ccf8965262dd5f97d1721d383dd4")
@@ -36,13 +36,8 @@ class KeyPairSpec extends Specification with ArbitraryInput {
     "report its account id and secret seed" >> prop { kp: KeyPair =>
       kp.accountId.toCharArray must haveLength(56)
       kp.accountId must startWith("G")
-      KeyPair.fromPublicKey(kp.publicKey) must beLike { case VerifyingKey(pk) =>
-        Hex.encodeHex(pk.getAbyte) mustEqual Hex.encodeHex(kp.pk.getAbyte)
-      }
-      KeyPair.fromSecretSeed(kp.secretSeed) must beLike { case KeyPair(pk, sk) =>
-        Hex.encodeHex(pk.getAbyte) mustEqual Hex.encodeHex(kp.pk.getAbyte)
-        Hex.encodeHex(sk.getAbyte) mustEqual Hex.encodeHex(kp.sk.getAbyte)
-      }
+      KeyPair.fromPublicKey(kp.publicKey) must beEquivalentTo(kp.asVerifyingKey)
+      KeyPair.fromSecretSeed(kp.secretSeed) must beEquivalentTo(kp)
     }
   }
 
