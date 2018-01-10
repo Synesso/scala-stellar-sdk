@@ -12,7 +12,6 @@ import scala.util.Try
   * @see <a href="https://www.stellar.org/developers/learn/concepts/list-of-operations.html" target="_blank">List of Operations</a>
   */
 case class PaymentOperation(destinationAccount: PublicKeyOps,
-                            asset: Asset,
                             amount: Amount,
                             sourceAccount: Option[KeyPair] = None) extends Operation {
 
@@ -21,9 +20,9 @@ case class PaymentOperation(destinationAccount: PublicKeyOps,
     val destination = new AccountID()
     destination.setAccountID(destinationAccount.getXDRPublicKey)
     op.setDestination(destination)
-    op.setAsset(asset.toXDR)
+    op.setAsset(amount.asset.toXDR)
     val amnt = new Int64()
-    amnt.setInt64(amount.stroops)
+    amnt.setInt64(amount.units)
     op.setAmount(amnt)
     val body = new org.stellar.sdk.xdr.Operation.OperationBody()
     body.setDiscriminant(PAYMENT)
@@ -35,8 +34,8 @@ case class PaymentOperation(destinationAccount: PublicKeyOps,
 
 object PaymentOperation {
 
-  def apply(source: KeyPair, destination: PublicKeyOps, asset: Asset, amount: Amount): PaymentOperation = {
-    PaymentOperation(destination, asset, amount, Some(source))
+  def apply(source: KeyPair, destination: PublicKeyOps, amount: Amount): PaymentOperation = {
+    PaymentOperation(destination, amount, Some(source))
   }
 
   def from(op: PaymentOp): Try[PaymentOperation] = for {
@@ -45,8 +44,7 @@ object PaymentOperation {
       PaymentOperation(
         sourceAccount = None,
         destinationAccount = KeyPair.fromPublicKey(op.getDestination.getAccountID.getEd25519.getUint256),
-        asset = asset,
-        amount = Amount(op.getAmount.getInt64.longValue)
+        amount = Amount(op.getAmount.getInt64.longValue, asset)
       )
     }
   } yield paymentOp

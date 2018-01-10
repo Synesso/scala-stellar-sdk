@@ -38,13 +38,14 @@ case object AssetTypeNative extends Asset {
   }
 }
 
+trait NonNativeAsset extends Asset
 
 /**
   * Represents all assets with codes 1-4 characters long.
   *
   * @see <a href="https://www.stellar.org/developers/learn/concepts/assets.html" target="_blank">Assets</a>
   */
-case class AssetTypeCreditAlphaNum4(code: String, issuer: VerifyingKey) extends Asset {
+case class AssetTypeCreditAlphaNum4(code: String, issuer: VerifyingKey) extends NonNativeAsset {
   assert(code.nonEmpty, s"Asset's code '$code' cannot be empty")
   assert(code.length <= 4, s"Asset's code '$code' should have length no greater than 4")
 
@@ -72,7 +73,7 @@ object AssetTypeCreditAlphaNum4 {
   *
   * @see <a href="https://www.stellar.org/developers/learn/concepts/assets.html" target="_blank">Assets</a>
   */
-case class AssetTypeCreditAlphaNum12(code: String, issuer: VerifyingKey) extends Asset {
+case class AssetTypeCreditAlphaNum12(code: String, issuer: VerifyingKey) extends NonNativeAsset {
   assert(code.length >= 5 && code.length <= 12, s"Asset's code '$code' should have length between 5 & 12 inclusive")
 
   override def toXDR: XDRAsset = {

@@ -11,7 +11,7 @@ import scala.util.Try
   * @see <a href="https://www.stellar.org/developers/learn/concepts/list-of-operations.html" target="_blank">List of Operations</a>
   */
 case class CreateAccountOperation(destinationAccount: PublicKeyOps,
-                                  startingBalance: Amount = Amount(0),
+                                  startingBalance: NativeAmount = NativeAmount(0),
                                   sourceAccount: Option[KeyPair] = None) extends Operation {
 
   override def toOperationBody: OperationBody = {
@@ -20,7 +20,7 @@ case class CreateAccountOperation(destinationAccount: PublicKeyOps,
     destination.setAccountID(destinationAccount.getXDRPublicKey)
     op.setDestination(destination)
     val startBal = new Int64()
-    startBal.setInt64(startingBalance.stroops)
+    startBal.setInt64(startingBalance.units)
     op.setStartingBalance(startBal)
     val body = new org.stellar.sdk.xdr.Operation.OperationBody()
     body.setDiscriminant(OperationType.CREATE_ACCOUNT)
@@ -34,7 +34,7 @@ object CreateAccountOperation {
 
   def apply(sourceAccount: KeyPair,
             destinationAccount: PublicKeyOps,
-            startingBalance: Amount): CreateAccountOperation = {
+            startingBalance: NativeAmount): CreateAccountOperation = {
     CreateAccountOperation(destinationAccount, startingBalance, Some(sourceAccount))
   }
 
@@ -42,7 +42,7 @@ object CreateAccountOperation {
     CreateAccountOperation(
       sourceAccount = None,
       destinationAccount = KeyPair.fromPublicKey(op.getDestination.getAccountID.getEd25519.getUint256),
-      startingBalance = Amount(op.getStartingBalance.getInt64.longValue)
+      startingBalance = NativeAmount(op.getStartingBalance.getInt64.longValue)
     )
   }
 }
