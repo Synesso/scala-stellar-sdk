@@ -2,6 +2,7 @@ package stellar.scala.sdk
 
 import org.apache.commons.codec.binary.Hex
 import org.specs2.matcher.{AnyMatchers, Matcher, MustExpectations}
+import org.stellar.sdk.xdr.{Signer, SignerKey}
 
 trait DomainMatchers extends AnyMatchers with MustExpectations {
 
@@ -31,6 +32,12 @@ trait DomainMatchers extends AnyMatchers with MustExpectations {
     case KeyPair(pk, sk) =>
       Hex.encodeHex(pk.getAbyte) mustEqual Hex.encodeHex(other.pk.getAbyte)
       Hex.encodeHex(sk.getAbyte) mustEqual Hex.encodeHex(other.sk.getAbyte)
+  }
+
+  def beEquivalentTo(other: SignerKey): Matcher[SignerKey] = beLike[SignerKey] {
+    case signer: SignerKey =>
+      signer.getDiscriminant mustEqual other.getDiscriminant
+      signer.getEd25519.getUint256.toSeq mustEqual other.getEd25519.getUint256.toSeq
   }
 
   def beEquivalentTo(other: VerifyingKey): Matcher[VerifyingKey] = beLike[VerifyingKey] {

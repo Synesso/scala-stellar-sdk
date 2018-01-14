@@ -5,7 +5,7 @@ import java.util
 
 import net.i2p.crypto.eddsa._
 import net.i2p.crypto.eddsa.spec._
-import org.stellar.sdk.xdr.{PublicKey, PublicKeyType, Uint256}
+import org.stellar.sdk.xdr._
 
 import scala.util.{Failure, Success, Try}
 
@@ -70,6 +70,15 @@ trait PublicKeyOps {
     uint256.setUint256(pk.getAbyte)
     publicKey.setEd25519(uint256)
     publicKey
+  }
+
+  def getXDRSignerKey: SignerKey = {
+    val signerKey = new SignerKey
+    signerKey.setDiscriminant(SignerKeyType.SIGNER_KEY_TYPE_ED25519)
+    val uint256 = new Uint256
+    uint256.setUint256(pk.getAbyte)
+    signerKey.setEd25519(uint256)
+    signerKey
   }
 
   /**

@@ -2,6 +2,7 @@ package stellar.scala.sdk
 
 import org.scalacheck.{Arbitrary, Gen}
 import org.specs2.ScalaCheck
+import org.stellar.sdk.xdr.SignerKey
 
 import scala.util.Random
 
@@ -21,7 +22,11 @@ trait ArbitraryInput extends ScalaCheck {
 
   implicit def arbNonNativeAsset: Arbitrary[NonNativeAsset] = Arbitrary(genNonNativeAsset)
 
+  implicit def arbSetOptionsOperation: Arbitrary[SetOptionsOperation] = Arbitrary(genSetOptionsOperation)
+
   def genKeyPair: Gen[KeyPair] = Gen.oneOf(Seq(KeyPair.random))
+
+  def genSignerKey: Gen[SignerKey] = genKeyPair.map(_.getXDRSignerKey)
 
   def genVerifyingKey: Gen[VerifyingKey] = genKeyPair.map(kp => VerifyingKey(kp.pk))
 
@@ -69,5 +74,25 @@ trait ArbitraryInput extends ScalaCheck {
   } yield {
     path
   }).suchThat(as => as.distinct.lengthCompare(as.size) == 0)
+
+  def genIssuerFlag: Gen[IssuerFlag] =
+    Gen.oneOf(AuthorizationRequiredFlag, AuthorizationRevocableFlag, AuthorizationImmutableFlag)
+
+  def genSetOptionsOperation: Gen[SetOptionsOperation] = for {
+      inflationDestination <- Gen.option(genVerifyingKey)
+      clearFlags <- Gen.option(Gen.nonEmptyContainerOf[Set, IssuerFlag](genIssuerFlag))
+      setFlags <- Gen.option(Gen.nonEmptyContainerOf[Set, IssuerFlag](genIssuerFlag))
+      masterKeyWeight <- Gen.option(Gen.choose(0, 255))
+      lowThreshold <- Gen.option(Gen.choose(0, 255))
+      medThreshold <- Gen.option(Gen.choose(0, 255))
+      highThreshold <- Gen.option(Gen.choose(0, 255))
+      homeDomain <- Gen.option(Gen.identifier)
+      signer <- Gen.option{ for {
+        signer <- genSignerKey
+        weight <- Gen.choose(0, 255)
+      } yield (signer, weight)}
+      sourceAccount <- Gen.option(genKeyPair)
+    } yield SetOptionsOperation(inflationDestination, clearFlags, setFlags, masterKeyWeight, lowThreshold, medThreshold,
+      highThreshold, homeDomain, signer, sourceAccount)
 
 }
