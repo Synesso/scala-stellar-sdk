@@ -23,17 +23,17 @@ case class SetOptionsOperation(inflationDestination: Option[PublicKeyOps] = None
       op.setInflationDest(new AccountID)
       op.getInflationDest.setAccountID(pk.getXDRPublicKey)
     }
-    clearFlags.map(_.map(_.i) + 0).map(_.reduce(_ | _)).map(uInt32).foreach(op.setClearFlags)
-    setFlags.map(_.map(_.i) + 0).map(_.reduce(_ | _)).map(uInt32).foreach(op.setSetFlags)
-    masterKeyWeight.map(uInt32).foreach(op.setMasterWeight)
-    lowThreshold.map(uInt32).foreach(op.setLowThreshold)
-    mediumThreshold.map(uInt32).foreach(op.setMedThreshold)
-    highThreshold.map(uInt32).foreach(op.setHighThreshold)
+    clearFlags.map(_.map(_.i) + 0).map(_.reduce(_ | _)).map(uint32).foreach(op.setClearFlags)
+    setFlags.map(_.map(_.i) + 0).map(_.reduce(_ | _)).map(uint32).foreach(op.setSetFlags)
+    masterKeyWeight.map(uint32).foreach(op.setMasterWeight)
+    lowThreshold.map(uint32).foreach(op.setLowThreshold)
+    mediumThreshold.map(uint32).foreach(op.setMedThreshold)
+    highThreshold.map(uint32).foreach(op.setHighThreshold)
     homeDomain.map(str32).foreach(op.setHomeDomain)
     signer.foreach { case (key, weight) =>
       val s = new Signer
       s.setKey(key)
-      s.setWeight(uInt32(weight))
+      s.setWeight(uint32(weight))
       op.setSigner(s)
     }
 

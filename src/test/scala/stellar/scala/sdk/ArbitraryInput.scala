@@ -24,6 +24,8 @@ trait ArbitraryInput extends ScalaCheck {
 
   implicit def arbSetOptionsOperation: Arbitrary[SetOptionsOperation] = Arbitrary(genSetOptionsOperation)
 
+  implicit def arbPrice: Arbitrary[Price] = Arbitrary(genPrice)
+
   def genKeyPair: Gen[KeyPair] = Gen.oneOf(Seq(KeyPair.random))
 
   def genSignerKey: Gen[SignerKey] = genKeyPair.map(_.getXDRSignerKey)
@@ -94,5 +96,10 @@ trait ArbitraryInput extends ScalaCheck {
       sourceAccount <- Gen.option(genKeyPair)
     } yield SetOptionsOperation(inflationDestination, clearFlags, setFlags, masterKeyWeight, lowThreshold, medThreshold,
       highThreshold, homeDomain, signer, sourceAccount)
+
+  def genPrice: Gen[Price] = for {
+    n <- Gen.posNum[Int]
+    d <- Gen.posNum[Int]
+  } yield Price(n, d)
 
 }

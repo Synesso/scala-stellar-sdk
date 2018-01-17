@@ -2,11 +2,11 @@ package stellar.scala.sdk
 
 import org.stellar.sdk.xdr.Operation.OperationBody
 import org.stellar.sdk.xdr.OperationType._
-import org.stellar.sdk.xdr.{AccountID, String32, Uint32, Operation => XDROp}
+import org.stellar.sdk.xdr.{AccountID, Int32, Int64, String32, Uint32, Operation => XDROp}
 
 import scala.util.{Failure, Try}
 
-trait Operation {
+trait Operation extends XDRPrimitives {
   val sourceAccount: Option[KeyPair]
 
   def toOperationBody: OperationBody
@@ -20,18 +20,6 @@ trait Operation {
     }
     op.setBody(toOperationBody)
     op
-  }
-
-  def uInt32(i: Int) = {
-    val v = new Uint32
-    v.setUint32(i)
-    v
-  }
-
-  def str32(s: String) = {
-    val s32 = new String32
-    s32.setString32(s)
-    s32
   }
 }
 
@@ -47,6 +35,7 @@ object Operation {
       case PATH_PAYMENT => PathPaymentOperation.from(op.getBody.getPathPaymentOp)
       case PAYMENT => PaymentOperation.from(op.getBody.getPaymentOp)
       case SET_OPTIONS => SetOptionsOperation.from(op.getBody.getSetOptionsOp)
+      case MANAGE_OFFER => ManageOfferOperation.from(op.getBody.getManageOfferOp)
       case d => Failure(new IllegalArgumentException(s"Unrecognised operation discriminant: $d"))
     }
   }
