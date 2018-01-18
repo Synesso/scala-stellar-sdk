@@ -37,7 +37,9 @@ object Operation {
       case SET_OPTIONS => SetOptionsOperation.from(op.getBody.getSetOptionsOp)
       case MANAGE_OFFER => ManageOfferOperation.from(op.getBody.getManageOfferOp)
       case CREATE_PASSIVE_OFFER => CreatePassiveOfferOperation.from(op.getBody.getCreatePassiveOfferOp)
-      case d => Failure(new IllegalArgumentException(s"Unrecognised operation discriminant: $d"))
+      case ACCOUNT_MERGE => AccountMergeOperation.from(op.getBody)
+      case INFLATION => ???
+      case MANAGE_DATA => ???
     }
   }
 }
