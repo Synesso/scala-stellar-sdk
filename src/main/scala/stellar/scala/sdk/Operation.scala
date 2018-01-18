@@ -36,6 +36,7 @@ object Operation {
       case PAYMENT => PaymentOperation.from(op.getBody.getPaymentOp)
       case SET_OPTIONS => SetOptionsOperation.from(op.getBody.getSetOptionsOp)
       case MANAGE_OFFER => ManageOfferOperation.from(op.getBody.getManageOfferOp)
+      case CREATE_PASSIVE_OFFER => CreatePassiveOfferOperation.from(op.getBody.getCreatePassiveOfferOp)
       case d => Failure(new IllegalArgumentException(s"Unrecognised operation discriminant: $d"))
     }
   }
