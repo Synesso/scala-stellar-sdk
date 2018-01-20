@@ -7,6 +7,11 @@ import stellar.scala.sdk.{Amount, Asset, KeyPair, PublicKeyOps}
 
 import scala.util.{Failure, Success, Try}
 
+/**
+  * Represents <a href="https://www.stellar.org/developers/learn/concepts/list-of-operations.html#path-payment" target="_blank">PathPayment</a> operation.
+  *
+  * @see <a href="https://www.stellar.org/developers/learn/concepts/list-of-operations.html" target="_blank">List of Operations</a>
+  */
 case class PathPaymentOperation(sendMax: Amount,
                                 destinationAccount: PublicKeyOps,
                                 destinationAmount: Amount,
