@@ -27,10 +27,7 @@ case class KeyPair(pk: EdDSAPublicKey, sk: EdDSAPrivateKey) extends PublicKeyOps
     sig.initSign(sk)
     sig.update(data)
     sig.sign
-  } match {
-    case Success(bs) => bs
-    case Failure(t) => throw new RuntimeException(t)
-  }
+  }.get
 }
 
 case class VerifyingKey(pk: EdDSAPublicKey) extends PublicKeyOps
