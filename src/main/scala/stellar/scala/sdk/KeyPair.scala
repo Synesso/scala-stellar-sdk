@@ -138,10 +138,10 @@ object KeyPair {
   }
 
   /**
-    * Creates a new Stellar KeyPair from a strkey encoded Stellar account ID.
+    * Creates a new Stellar VerifyingKey from a strkey encoded Stellar account ID.
     *
     * @param accountId The strkey encoded Stellar account ID.
-    * @return { @link KeyPair}
+    * @return { @link VerifyingKey}
     */
   def fromAccountId(accountId: String): VerifyingKey = fromPublicKey(StrKey.decodeStellarAccountId(accountId))
 

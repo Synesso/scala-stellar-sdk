@@ -37,11 +37,13 @@ class KeyPairSpec extends Specification with ArbitraryInput with DomainMatchers 
   }
 
   "a key pair" should {
-    "report its account id and secret seed" >> prop { kp: KeyPair =>
+    "report its account id and secret seed and be reconstituted from these" >> prop { kp: KeyPair =>
       kp.accountId.toCharArray must haveLength(56)
       kp.accountId must startWith("G")
       KeyPair.fromPublicKey(kp.publicKey) must beEquivalentTo(kp.asVerifyingKey)
       KeyPair.fromSecretSeed(kp.secretSeed) must beEquivalentTo(kp)
+      KeyPair.fromSecretSeed(kp.secretSeed.mkString) must beEquivalentTo(kp)
+      KeyPair.fromAccountId(kp.accountId) must beEquivalentTo(kp.asVerifyingKey)
     }
   }
 
