@@ -63,7 +63,7 @@ object StrKey {
     data
   }
 
-  def encodeCheck(vb: VersionByte, data: Array[Byte]): Array[Char] = Try {
+  def encodeCheck(vb: VersionByte, data: Array[Byte]): Array[Char] = {
     val os = new ByteArrayOutputStream()
     os.write(vb.value)
     os.write(data)
@@ -79,9 +79,6 @@ object StrKey {
       util.Arrays.fill(bytesEncoded, 0.toByte)
     }
     charsEncoded
-  } match {
-    case Success(cs) => cs
-    case Failure(t) => throw new AssertionError(t)
   }
 
   private def calculateChecksum(bytes: Array[Byte]): Array[Byte] = {
