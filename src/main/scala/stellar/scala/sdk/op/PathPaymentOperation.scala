@@ -3,9 +3,9 @@ package stellar.scala.sdk.op
 import org.stellar.sdk.xdr.Operation.OperationBody
 import org.stellar.sdk.xdr.OperationType.PATH_PAYMENT
 import org.stellar.sdk.xdr._
-import stellar.scala.sdk.{Amount, Asset, KeyPair, PublicKeyOps}
+import stellar.scala.sdk.{Amount, Asset, KeyPair, PublicKeyOps, TrySeq}
 
-import scala.util.{Failure, Success, Try}
+import scala.util.Try
 
 /**
   * Represents <a href="https://www.stellar.org/developers/learn/concepts/list-of-operations.html#path-payment" target="_blank">PathPayment</a> operation.
@@ -40,7 +40,7 @@ case class PathPaymentOperation(sendMax: Amount,
 
 }
 
-object PathPaymentOperation {
+object PathPaymentOperation extends TrySeq {
   def apply(sourceAccount: KeyPair,
             sendMax: Amount,
             destinationAccount: PublicKeyOps,
@@ -64,12 +64,4 @@ object PathPaymentOperation {
       )
     }
   } yield pathPaymentOp
-
-  private def sequence[T](tries: Seq[Try[T]]): Try[Seq[T]] = {
-    tries.foldLeft(Success(Seq.empty[T]): Try[Seq[T]]) {
-      case (Success(acc), Success(t)) => Success(t +: acc)
-      case (Success(_), Failure(t)) => Failure(t)
-      case (failure, _) => failure
-    }.map(_.reverse)
-  }
 }
