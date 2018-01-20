@@ -22,6 +22,12 @@ trait XDRPrimitives {
     i32
   }
 
+  def str64(s: String) = {
+    val s64 = new String64
+    s64.setString64(s)
+    s64
+  }
+
   def int64(l: Long) = {
     val i64 = new Int64
     i64.setInt64(l)
@@ -32,6 +38,12 @@ trait XDRPrimitives {
     val i64 = new Uint64
     i64.setUint64(l)
     i64
+  }
+
+  def dataValue(bs: Array[Byte]): DataValue = {
+    val d = new DataValue
+    d.setDataValue(bs)
+    d
   }
 
 }

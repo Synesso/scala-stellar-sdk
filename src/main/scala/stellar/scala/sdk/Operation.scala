@@ -2,9 +2,9 @@ package stellar.scala.sdk
 
 import org.stellar.sdk.xdr.Operation.OperationBody
 import org.stellar.sdk.xdr.OperationType._
-import org.stellar.sdk.xdr.{AccountID, Int32, Int64, String32, Uint32, Operation => XDROp}
+import org.stellar.sdk.xdr.{AccountID, Operation => XDROp}
 
-import scala.util.{Failure, Try}
+import scala.util.{Success, Try}
 
 trait Operation extends XDRPrimitives {
   val sourceAccount: Option[KeyPair]
@@ -38,8 +38,8 @@ object Operation {
       case MANAGE_OFFER => ManageOfferOperation.from(op.getBody.getManageOfferOp)
       case CREATE_PASSIVE_OFFER => CreatePassiveOfferOperation.from(op.getBody.getCreatePassiveOfferOp)
       case ACCOUNT_MERGE => AccountMergeOperation.from(op.getBody)
-      case INFLATION => ???
-      case MANAGE_DATA => ???
+      case INFLATION => Success(InflationOperation)
+      case MANAGE_DATA => ManageDataOperation.from(op.getBody.getManageDataOp)
     }
   }
 }
