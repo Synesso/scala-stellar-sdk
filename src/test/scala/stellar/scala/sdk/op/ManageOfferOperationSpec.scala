@@ -1,8 +1,9 @@
-package stellar.scala.sdk
+package stellar.scala.sdk.op
 
 import org.scalacheck.Gen
 import org.specs2.mutable.Specification
 import org.stellar.sdk.xdr.ManageOfferOp
+import stellar.scala.sdk._
 
 class ManageOfferOperationSpec extends Specification with ArbitraryInput with DomainMatchers {
 

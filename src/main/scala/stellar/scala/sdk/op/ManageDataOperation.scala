@@ -1,8 +1,9 @@
-package stellar.scala.sdk
+package stellar.scala.sdk.op
 
 import org.stellar.sdk.xdr.ManageDataOp
 import org.stellar.sdk.xdr.Operation.OperationBody
 import org.stellar.sdk.xdr.OperationType.MANAGE_DATA
+import stellar.scala.sdk.KeyPair
 
 import scala.util.Try
 

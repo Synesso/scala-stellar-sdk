@@ -3,6 +3,7 @@ package stellar.scala.sdk
 import org.scalacheck.{Arbitrary, Gen}
 import org.specs2.ScalaCheck
 import org.stellar.sdk.xdr.SignerKey
+import stellar.scala.sdk.op._
 
 import scala.util.Random
 
@@ -94,7 +95,7 @@ trait ArbitraryInput extends ScalaCheck {
         weight <- Gen.choose(0, 255)
       } yield (signer, weight)}
       sourceAccount <- Gen.option(genKeyPair)
-    } yield SetOptionsOperation(inflationDestination, clearFlags, setFlags, masterKeyWeight, lowThreshold, medThreshold,
+    } yield op.SetOptionsOperation(inflationDestination, clearFlags, setFlags, masterKeyWeight, lowThreshold, medThreshold,
       highThreshold, homeDomain, signer, sourceAccount)
 
   def genPrice: Gen[Price] = for {

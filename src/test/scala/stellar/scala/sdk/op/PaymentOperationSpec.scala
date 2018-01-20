@@ -1,6 +1,7 @@
-package stellar.scala.sdk
+package stellar.scala.sdk.op
 
 import org.specs2.mutable.Specification
+import stellar.scala.sdk._
 
 class PaymentOperationSpec extends Specification with ArbitraryInput with DomainMatchers {
 

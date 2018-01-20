@@ -1,7 +1,9 @@
-package stellar.scala.sdk
+package stellar.scala.sdk.op
+
 import org.stellar.sdk.xdr.AccountID
 import org.stellar.sdk.xdr.Operation.OperationBody
 import org.stellar.sdk.xdr.OperationType.ACCOUNT_MERGE
+import stellar.scala.sdk.{KeyPair, PublicKeyOps}
 
 import scala.util.Try
 

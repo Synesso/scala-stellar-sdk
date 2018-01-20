@@ -1,7 +1,8 @@
-package stellar.scala.sdk
+package stellar.scala.sdk.op
 
 import org.scalacheck.Gen
 import org.specs2.mutable.Specification
+import stellar.scala.sdk.{ArbitraryInput, DomainMatchers, KeyPair}
 
 class ManageDataOperationSpec extends Specification with ArbitraryInput with DomainMatchers {
 

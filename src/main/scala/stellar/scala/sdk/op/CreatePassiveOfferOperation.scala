@@ -1,8 +1,9 @@
-package stellar.scala.sdk
+package stellar.scala.sdk.op
 
 import org.stellar.sdk.xdr.CreatePassiveOfferOp
 import org.stellar.sdk.xdr.Operation.OperationBody
 import org.stellar.sdk.xdr.OperationType.CREATE_PASSIVE_OFFER
+import stellar.scala.sdk._
 
 import scala.util.Try
 

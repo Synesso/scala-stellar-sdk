@@ -1,8 +1,9 @@
-package stellar.scala.sdk
+package stellar.scala.sdk.op
 
 import org.stellar.sdk.xdr.Operation.OperationBody
 import org.stellar.sdk.xdr.OperationType.PATH_PAYMENT
 import org.stellar.sdk.xdr._
+import stellar.scala.sdk.{Amount, Asset, KeyPair, PublicKeyOps}
 
 import scala.util.{Failure, Success, Try}
 

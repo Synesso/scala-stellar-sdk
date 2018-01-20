@@ -1,7 +1,8 @@
-package stellar.scala.sdk
+package stellar.scala.sdk.op
 
 import org.specs2.mutable.Specification
 import org.stellar.sdk.xdr.{AccountID, AllowTrustOp, AssetType}
+import stellar.scala.sdk._
 
 class AllowTrustOperationSpec extends Specification with ArbitraryInput with DomainMatchers {
 

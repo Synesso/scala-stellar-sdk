@@ -1,8 +1,9 @@
-package stellar.scala.sdk
+package stellar.scala.sdk.op
 
 import org.stellar.sdk.xdr.Operation.OperationBody
 import org.stellar.sdk.xdr.OperationType.CHANGE_TRUST
 import org.stellar.sdk.xdr.{ChangeTrustOp, Int64}
+import stellar.scala.sdk._
 
 import scala.util.Try
 

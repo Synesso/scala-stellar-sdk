@@ -1,8 +1,9 @@
-package stellar.scala.sdk
+package stellar.scala.sdk.op
 
 import org.stellar.sdk.xdr.Operation.OperationBody
 import org.stellar.sdk.xdr.OperationType._
 import org.stellar.sdk.xdr.{AccountID, Operation => XDROp}
+import stellar.scala.sdk._
 
 import scala.util.{Success, Try}
 

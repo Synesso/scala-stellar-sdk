@@ -1,9 +1,10 @@
-package stellar.scala.sdk
+package stellar.scala.sdk.op
 
 import org.stellar.sdk.xdr.AssetType._
 import org.stellar.sdk.xdr.Operation.OperationBody
 import org.stellar.sdk.xdr.OperationType._
 import org.stellar.sdk.xdr.{AccountID, AllowTrustOp}
+import stellar.scala.sdk._
 
 import scala.util.Try
 
