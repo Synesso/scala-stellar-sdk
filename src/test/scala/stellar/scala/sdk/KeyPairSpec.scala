@@ -30,6 +30,10 @@ class KeyPairSpec extends Specification with ArbitraryInput with DomainMatchers 
       val data = "今日は世界"
       keyPair.verify(data.getBytes, Hex.decodeHex(sig)) must beFalse
     }
+
+    "verify false for random rubbish" >> prop { msg: String =>
+      keyPair.verify(msg.getBytes, msg.getBytes) must beFalse
+    }
   }
 
   "a key pair" should {

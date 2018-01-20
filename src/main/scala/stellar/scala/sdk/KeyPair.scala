@@ -57,11 +57,9 @@ trait PublicKeyOps {
     sig.initVerify(pk)
     sig.update(data)
     sig.verify(signature)
-  } match {
-    case Success(b) => b
-    case Failure(_: SignatureException) => false
-    case Failure(t) => throw new RuntimeException(t)
-  }
+  }.recover {
+    case _: SignatureException => false
+  }.get
 
   def getXDRPublicKey: PublicKey = {
     val publicKey = new PublicKey
