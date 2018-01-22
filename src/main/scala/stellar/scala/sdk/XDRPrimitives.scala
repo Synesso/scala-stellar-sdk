@@ -58,4 +58,10 @@ trait XDRPrimitives {
     a
   }
 
+  def hash(bs: Array[Byte]): Hash = {
+    val h = new Hash
+    h.setHash(bs)
+    h
+  }
+
 }
