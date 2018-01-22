@@ -1,5 +1,7 @@
 package stellar.scala.sdk
 
+import java.time.Instant
+
 import org.scalacheck.{Arbitrary, Gen}
 import org.specs2.ScalaCheck
 import org.stellar.sdk.xdr.SignerKey
@@ -28,6 +30,8 @@ trait ArbitraryInput extends ScalaCheck {
   implicit def arbPrice: Arbitrary[Price] = Arbitrary(genPrice)
 
   implicit def arbOperation: Arbitrary[Operation] = Arbitrary(genOperation)
+
+  implicit def arbInstant: Arbitrary[Instant] = Arbitrary(genInstant)
 
   def genKeyPair: Gen[KeyPair] = Gen.oneOf(Seq(KeyPair.random))
 
@@ -191,5 +195,7 @@ trait ArbitraryInput extends ScalaCheck {
     n <- Gen.posNum[Int]
     d <- Gen.posNum[Int]
   } yield Price(n, d)
+
+  def genInstant: Gen[Instant] = Gen.posNum[Long].map(Instant.ofEpochMilli)
 
 }
