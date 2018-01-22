@@ -27,6 +27,8 @@ trait ArbitraryInput extends ScalaCheck {
 
   implicit def arbPrice: Arbitrary[Price] = Arbitrary(genPrice)
 
+  implicit def arbOperation: Arbitrary[Operation] = Arbitrary(genOperation)
+
   def genKeyPair: Gen[KeyPair] = Gen.oneOf(Seq(KeyPair.random))
 
   def genSignerKey: Gen[SignerKey] = genKeyPair.map(_.getXDRSignerKey)
@@ -81,6 +83,87 @@ trait ArbitraryInput extends ScalaCheck {
   def genIssuerFlag: Gen[IssuerFlag] =
     Gen.oneOf(AuthorizationRequiredFlag, AuthorizationRevocableFlag, AuthorizationImmutableFlag)
 
+  def genAccountMergeOperation: Gen[AccountMergeOperation] = for {
+    destination <- genVerifyingKey
+    source <- Gen.option(genKeyPair)
+  } yield AccountMergeOperation(destination, source)
+
+  def genAllowTrustOperation = for {
+    trustor <- genVerifyingKey
+    assetCode <- Gen.identifier.map(_.take(12))
+    authorise <- Gen.oneOf(true, false)
+    source <- Gen.option(genKeyPair)
+  } yield AllowTrustOperation(trustor, assetCode, authorise, source)
+
+  def genChangeTrustOperation = for {
+    limit <- genAmount
+    source <- Gen.option(genKeyPair)
+  } yield ChangeTrustOperation(limit, source)
+
+  def genCreateAccountOperation = for {
+    destination <- genVerifyingKey
+    startingBalance <- genNativeAmount
+    source <- Gen.option(genKeyPair)
+  } yield CreateAccountOperation(destination, startingBalance, source)
+
+  def genCreatePassiveOfferOperation = for {
+    selling <- genAmount
+    buying <- genAsset
+    price <- genPrice
+    source <- Gen.option(genKeyPair)
+  } yield CreatePassiveOfferOperation(selling, buying, price, source)
+
+  def genInflationOperation = Gen.oneOf(Seq(InflationOperation))
+
+  def genDeleteDataOperation = for {
+    name <- Gen.identifier
+    source <- Gen.option(genKeyPair)
+  } yield DeleteDataOperation(name, source)
+
+  def genWriteDataOperation = for {
+    name <- Gen.identifier
+    value <- Gen.nonEmptyListOf(Gen.posNum[Byte]).map(_.toArray)
+    source <- Gen.option(genKeyPair)
+  } yield WriteDataOperation(name, value, source)
+
+  def genManageDataOperation = Gen.oneOf(genDeleteDataOperation, genWriteDataOperation)
+
+  def genCreateOfferOperation = for {
+    selling <- genAmount
+    buying <- genAsset
+    price <- genPrice
+    source <- Gen.option(genKeyPair)
+  } yield CreateOfferOperation(selling, buying, price, source)
+
+  def genDeleteOfferOperation = for {
+    id <- Gen.posNum[Long]
+    source <- Gen.option(genKeyPair)
+  } yield DeleteOfferOperation(id, source)
+
+  def genUpdateOfferOperation = for {
+    id <- Gen.posNum[Long]
+    selling <- genAmount
+    buying <- genAsset
+    price <- genPrice
+    source <- Gen.option(genKeyPair)
+  } yield UpdateOfferOperation(id, selling, buying, price, source)
+
+  def genManageOfferOperation = Gen.oneOf(genCreateOfferOperation, genDeleteOfferOperation, genUpdateOfferOperation)
+
+  def genPathPaymentOperation = for {
+    sendMax <- genAmount
+    destAccount <- genVerifyingKey
+    destAmount <- genAmount
+    path <- Gen.listOf(genAsset)
+    source <- Gen.option(genKeyPair)
+  } yield PathPaymentOperation(sendMax, destAccount, destAmount, path, source)
+
+  def genPaymentOperation = for {
+    destAccount <- genVerifyingKey
+    amount <- genAmount
+    source <- Gen.option(genKeyPair)
+  } yield PaymentOperation(destAccount, amount, source)
+
   def genSetOptionsOperation: Gen[SetOptionsOperation] = for {
       inflationDestination <- Gen.option(genVerifyingKey)
       clearFlags <- Gen.option(Gen.nonEmptyContainerOf[Set, IssuerFlag](genIssuerFlag))
@@ -97,6 +180,12 @@ trait ArbitraryInput extends ScalaCheck {
       sourceAccount <- Gen.option(genKeyPair)
     } yield op.SetOptionsOperation(inflationDestination, clearFlags, setFlags, masterKeyWeight, lowThreshold, medThreshold,
       highThreshold, homeDomain, signer, sourceAccount)
+
+  def genOperation: Gen[Operation] = {
+    Gen.oneOf(genAccountMergeOperation, genAllowTrustOperation, genChangeTrustOperation, genCreateAccountOperation,
+      genCreatePassiveOfferOperation, genInflationOperation, genManageDataOperation, genManageOfferOperation,
+      genPathPaymentOperation, genPaymentOperation, genSetOptionsOperation)
+  }
 
   def genPrice: Gen[Price] = for {
     n <- Gen.posNum[Int]

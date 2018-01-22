@@ -9,7 +9,7 @@ import stellar.scala.sdk._
 import scala.util.Try
 
 case class AllowTrustOperation(trustor: VerifyingKey,
-                               assetCode: String,
+                               assetCode: String, // todo - this should be an `Asset` (and trustor is the issuer?)
                                authorize: Boolean,
                                sourceAccount: Option[KeyPair] = None) extends Operation with ByteArrays {
 
