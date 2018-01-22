@@ -33,6 +33,8 @@ trait ArbitraryInput extends ScalaCheck {
 
   implicit def arbInstant: Arbitrary[Instant] = Arbitrary(genInstant)
 
+  implicit def arbTimeBounds: Arbitrary[TimeBounds] = Arbitrary(genTimeBounds)
+
   def genKeyPair: Gen[KeyPair] = Gen.oneOf(Seq(KeyPair.random))
 
   def genSignerKey: Gen[SignerKey] = genKeyPair.map(_.getXDRSignerKey)
@@ -197,5 +199,10 @@ trait ArbitraryInput extends ScalaCheck {
   } yield Price(n, d)
 
   def genInstant: Gen[Instant] = Gen.posNum[Long].map(Instant.ofEpochMilli)
+
+  def genTimeBounds: Gen[TimeBounds] = Gen.listOfN(2, genInstant)
+    .suchThat{ case List(a, b) => a != b }
+    .map(_.sortBy(_.toEpochMilli))
+    .map{ case List(a, b) => TimeBounds(a, b) }
 
 }
