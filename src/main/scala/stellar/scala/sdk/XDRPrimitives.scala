@@ -46,4 +46,16 @@ trait XDRPrimitives {
     d
   }
 
+  def seqNum(n: Long): SequenceNumber = {
+    val sn = new SequenceNumber
+    sn.setSequenceNumber(uint64(n))
+    sn
+  }
+
+  def accountId(kp: KeyPair): AccountID = {
+    val a = new AccountID
+    a.setAccountID(kp.getXDRPublicKey)
+    a
+  }
+
 }
