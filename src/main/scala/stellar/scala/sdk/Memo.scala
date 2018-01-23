@@ -8,7 +8,7 @@ import org.stellar.sdk.xdr.{MemoType, Memo => XDRMemo}
 import scala.util.Try
 
 sealed trait Memo {
-  def toXDR: XDRMemo = ???
+  def toXDR: XDRMemo
 }
 
 case object NoMemo extends Memo {
