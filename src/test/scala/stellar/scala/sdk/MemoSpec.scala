@@ -30,6 +30,23 @@ class MemoSpec extends Specification with ArbitraryInput with ByteArrays {
     }
   }
 
+  "a id memo" should {
+    "not be constructable with zero" >> {
+      MemoId(0) must throwAn[AssertionError]
+    }
+
+    "not be constructable with negative number" >> prop { id: Long =>
+      MemoId(id) must throwAn[AssertionError]
+    }.setGen(Gen.negNum[Long])
+
+    "serialise to xdr" >> prop { id: Long =>
+      val memo = MemoId(id)
+      val xdr = memo.toXDR
+      xdr.getDiscriminant mustEqual MEMO_ID
+      xdr.getId.getUint64 mustEqual id
+    }.setGen(Gen.posNum[Long])
+  }
+
   "a memo hash" should {
     "not be constructable with > 32 bytes" >> {
       MemoHash((1 to 33).map(_.toByte).toArray) must throwAn[AssertionError]

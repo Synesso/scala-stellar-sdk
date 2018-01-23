@@ -31,7 +31,15 @@ case class MemoText(text: String) extends Memo {
   }
 }
 
-case class MemoId(id: Long) extends Memo
+case class MemoId(id: Long) extends Memo with XDRPrimitives {
+  assert(id > 0, s"Id must be positive (not $id)")
+  override def toXDR: XDRMemo = {
+    val m = new XDRMemo
+    m.setDiscriminant(MEMO_ID)
+    m.setId(uint64(id))
+    m
+  }
+}
 
 trait MemoWithHash extends Memo with ByteArrays with XDRPrimitives {
   val Length = 32
