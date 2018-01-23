@@ -1,8 +1,9 @@
 package stellar.scala.sdk
 
+import java.nio.charset.StandardCharsets.UTF_8
+
 import org.stellar.sdk.xdr.MemoType._
 import org.stellar.sdk.xdr.{MemoType, Memo => XDRMemo}
-import stellar.scala.sdk.MemoHash.hexToBytes
 
 import scala.util.Try
 
@@ -18,7 +19,17 @@ case object NoMemo extends Memo {
   }
 }
 
-case class MemoText(text: String) extends Memo
+case class MemoText(text: String) extends Memo {
+  val Length = 28
+  val bytes = text.getBytes(UTF_8)
+  assert(bytes.length <= Length, s"Text exceeded limit (${bytes.length}/$Length bytes)")
+  override def toXDR: XDRMemo = {
+    val m = new XDRMemo
+    m.setDiscriminant(MEMO_TEXT)
+    m.setText(text)
+    m
+  }
+}
 
 case class MemoId(id: Long) extends Memo
 
@@ -37,7 +48,7 @@ trait MemoWithHash extends Memo with ByteArrays with XDRPrimitives {
 }
 
 case class MemoHash(bs: Array[Byte]) extends MemoWithHash {
-  assert(bs.length <= Length, s"Hash exceeded limit ($Length bytes)")
+  assert(bs.length <= Length, s"Hash exceeded limit (${bytes.length}/$Length bytes)")
   override def toXDR: XDRMemo = toXDR(MEMO_HASH)
 }
 
@@ -46,7 +57,7 @@ object MemoHash extends ByteArrays {
 }
 
 case class MemoReturnHash(bs: Array[Byte]) extends MemoWithHash {
-  assert(bs.length <= Length, s"Hash exceeded limit ($Length bytes)")
+  assert(bs.length <= Length, s"Hash exceeded limit (${bytes.length}/$Length bytes)")
   override def toXDR: XDRMemo = toXDR(MEMO_RETURN)
 }
 

@@ -1,5 +1,6 @@
 package stellar.scala.sdk
 
+import org.scalacheck.Arbitrary._
 import org.scalacheck.Gen
 import org.specs2.mutable.Specification
 import org.stellar.sdk.xdr.MemoType._
@@ -9,6 +10,23 @@ class MemoSpec extends Specification with ArbitraryInput with ByteArrays {
   "memo none" should {
     "serialise to xdr" >> {
       NoMemo.toXDR.getDiscriminant mustEqual MEMO_NONE
+    }
+  }
+
+  "a text memo" should {
+    "not be constructable with > 28 bytes" >> prop { s: String =>
+      MemoText(s) must throwAn[AssertionError]
+    }.setGen(arbString.arbitrary.suchThat(_.getBytes("UTF-8").length > 28))
+
+    "serialise to xdr" >> prop { s: String =>
+      val text = s.foldLeft("") { case (acc, next) =>
+          val append = s"$acc$next"
+          if (append.getBytes("UTF-8").length < 28) append else acc
+      }.mkString
+      val memo = MemoText(text)
+      val xdr = memo.toXDR
+      xdr.getDiscriminant mustEqual MEMO_TEXT
+      xdr.getText mustEqual text
     }
   }
 
