@@ -1,7 +1,10 @@
 package stellar.scala.sdk
 
-import org.stellar.sdk.xdr.MemoType.MEMO_HASH
+import org.stellar.sdk.xdr.MemoType._
 import org.stellar.sdk.xdr.{MemoType, Memo => XDRMemo}
+import stellar.scala.sdk.MemoHash.hexToBytes
+
+import scala.util.Try
 
 sealed trait Memo {
   def toXDR: XDRMemo = ???
@@ -13,18 +16,34 @@ case class MemoText(text: String) extends Memo
 
 case class MemoId(id: Long) extends Memo
 
-case class MemoHash(bs: Array[Byte]) extends Memo with ByteArrays with XDRPrimitives {
-  private val Length = 32
-  assert(bs.length <= Length, s"Hash exceeded limit ($Length bytes)")
-  val bytes = paddedByteArray(bs, 32)
-  def hex: String = bytes.map("%02X".format(_)).mkString
-  def hexTrim: String = bs.map("%02X".format(_)).mkString
-  override def toXDR: XDRMemo = {
+trait MemoWithHash extends Memo with ByteArrays with XDRPrimitives {
+  val Length = 32
+  val bs: Array[Byte]
+  val bytes = paddedByteArray(bs, Length)
+  def hex: String = bytesToHex(bytes)
+  def hexTrim: String = bytesToHex(bs)
+  private[sdk] def toXDR(discriminant: MemoType): XDRMemo = {
     val m = new XDRMemo
-    m.setDiscriminant(MEMO_HASH)
+    m.setDiscriminant(discriminant)
     m.setHash(hash(bytes))
     m
   }
 }
 
-case class MemoReturnHash(hash: Array[Byte]) extends Memo
+case class MemoHash(bs: Array[Byte]) extends MemoWithHash {
+  assert(bs.length <= Length, s"Hash exceeded limit ($Length bytes)")
+  override def toXDR: XDRMemo = toXDR(MEMO_HASH)
+}
+
+object MemoHash extends ByteArrays {
+  def from(hex: String): Try[MemoHash] = Try(MemoHash(hexToBytes(hex)))
+}
+
+case class MemoReturnHash(bs: Array[Byte]) extends MemoWithHash {
+  assert(bs.length <= Length, s"Hash exceeded limit ($Length bytes)")
+  override def toXDR: XDRMemo = toXDR(MEMO_RETURN)
+}
+
+object MemoReturnHash extends ByteArrays {
+  def from(hex: String) = Try(MemoReturnHash(hexToBytes(hex)))
+}
