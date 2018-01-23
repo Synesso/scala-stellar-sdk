@@ -10,7 +10,13 @@ sealed trait Memo {
   def toXDR: XDRMemo = ???
 }
 
-case object NoMemo extends Memo
+case object NoMemo extends Memo {
+  override def toXDR: XDRMemo = {
+    val m = new XDRMemo
+    m.setDiscriminant(MEMO_NONE)
+    m
+  }
+}
 
 case class MemoText(text: String) extends Memo
 

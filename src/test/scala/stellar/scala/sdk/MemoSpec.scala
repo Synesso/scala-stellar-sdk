@@ -6,6 +6,12 @@ import org.stellar.sdk.xdr.MemoType._
 
 class MemoSpec extends Specification with ArbitraryInput with ByteArrays {
 
+  "memo none" should {
+    "serialise to xdr" >> {
+      NoMemo.toXDR.getDiscriminant mustEqual MEMO_NONE
+    }
+  }
+
   "a memo hash" should {
     "not be constructable with > 32 bytes" >> {
       MemoHash((1 to 33).map(_.toByte).toArray) must throwAn[AssertionError]
