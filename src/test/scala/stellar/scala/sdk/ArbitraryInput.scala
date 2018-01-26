@@ -4,12 +4,14 @@ import java.time.Instant
 
 import org.scalacheck.{Arbitrary, Gen}
 import org.specs2.ScalaCheck
-import org.stellar.sdk.xdr.SignerKey
+import org.stellar.sdk.xdr.{DecoratedSignature, Signature, SignerKey}
 import stellar.scala.sdk.op._
 
 import scala.util.Random
 
 trait ArbitraryInput extends ScalaCheck {
+
+  implicit val network: Network = TestNetwork // todo - UnitTestNetwork
 
   implicit def arbKeyPair: Arbitrary[KeyPair] = Arbitrary(genKeyPair)
 
@@ -34,6 +36,12 @@ trait ArbitraryInput extends ScalaCheck {
   implicit def arbInstant: Arbitrary[Instant] = Arbitrary(genInstant)
 
   implicit def arbTimeBounds: Arbitrary[TimeBounds] = Arbitrary(genTimeBounds)
+
+  implicit def arbMemo = Arbitrary(genMemo)
+
+  implicit def arbTransaction = Arbitrary(genTransaction)
+
+  implicit def arbSignature = Arbitrary(genSignature)
 
   def genKeyPair: Gen[KeyPair] = Gen.oneOf(Seq(KeyPair.random))
 
@@ -143,8 +151,11 @@ trait ArbitraryInput extends ScalaCheck {
 
   def genDeleteOfferOperation = for {
     id <- Gen.posNum[Long]
+    selling <- genAsset
+    buying <- genAsset
+    price <- genPrice
     source <- Gen.option(genKeyPair)
-  } yield DeleteOfferOperation(id, source)
+  } yield DeleteOfferOperation(id, selling, buying, price, source)
 
   def genUpdateOfferOperation = for {
     id <- Gen.posNum[Long]
@@ -204,5 +215,44 @@ trait ArbitraryInput extends ScalaCheck {
     .suchThat{ case List(a, b) => a != b }
     .map(_.sortBy(_.toEpochMilli))
     .map{ case List(a, b) => TimeBounds(a, b) }
+
+  def genMemoNone: Gen[Memo] = Gen.oneOf(Seq(NoMemo))
+
+  def genMemoText: Gen[MemoText] = Gen.identifier.map(_.take(28)).map(MemoText.apply)
+
+  def genMemoId: Gen[MemoId] = Gen.posNum[Long].map(MemoId.apply)
+
+  def genMemoHash: Gen[MemoHash] = for {
+    bs <- Gen.nonEmptyContainerOf[Array, Byte](Arbitrary.arbByte.arbitrary)
+  } yield MemoHash(bs.take(32))
+
+  def genMemoReturnHash: Gen[MemoReturnHash] = for {
+    bs <- Gen.nonEmptyContainerOf[Array, Byte](Arbitrary.arbByte.arbitrary)
+  } yield MemoReturnHash(bs.take(32))
+
+  def genMemo: Gen[Memo] = Gen.oneOf(genMemoNone, genMemoText, genMemoId, genMemoHash, genMemoReturnHash)
+
+  def genTransaction: Gen[Transaction] = for {
+    source <- genAccount
+    memo <- genMemo
+    operations <- Gen.nonEmptyListOf(genOperation)
+    timeBounds <- Gen.option(genTimeBounds)
+  } yield Transaction(source, memo, operations, timeBounds)
+
+  def genSignature: Gen[Signature] =
+    Gen.nonEmptyContainerOf[Array, Byte](Arbitrary.arbByte.arbitrary).map { bs: Array[Byte] =>
+    val s = new Signature
+    s.setSignature(bs)
+    s
+  }
+
+
+
+
+  //  def genDecoratedSignature: Gen[DecoratedSignature] = {
+//    val ds = new DecoratedSignature
+//    ds.setSignature()
+//    ds
+//  }
 
 }

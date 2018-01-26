@@ -1,5 +1,6 @@
 package stellar.scala.sdk
 
+import java.io.ByteArrayOutputStream
 import java.security.{MessageDigest, SignatureException}
 import java.util
 
@@ -7,7 +8,7 @@ import net.i2p.crypto.eddsa._
 import net.i2p.crypto.eddsa.spec._
 import org.stellar.sdk.xdr._
 
-import scala.util.{Failure, Success, Try}
+import scala.util.Try
 
 case class KeyPair(pk: EdDSAPublicKey, sk: EdDSAPrivateKey) extends PublicKeyOps {
 
@@ -22,12 +23,31 @@ case class KeyPair(pk: EdDSAPublicKey, sk: EdDSAPrivateKey) extends PublicKeyOps
     * @param data The data to sign.
     * @return signed bytes.
     */
-  def sign(data: Array[Byte]): Array[Byte] = Try {
+  def sign(data: Array[Byte]): Try[Array[Byte]] = Try {
     val sig = new EdDSAEngine(MessageDigest.getInstance("SHA-512"))
     sig.initSign(sk)
     sig.update(data)
     sig.sign
-  }.get
+  }
+
+  /**
+    * Sign the provided data with the private key.
+    *
+    * @param data The data to sign.
+    * @return signed data in XDR format
+    */
+  def signToXDR(data: Array[Byte]): Try[DecoratedSignature] = for {
+    hint <- signatureHint
+    signedData <- sign(data)
+  } yield {
+    val signature = new org.stellar.sdk.xdr.Signature
+    signature.setSignature(signedData)
+    val xdr = new DecoratedSignature
+    xdr.setHint(hint)
+    xdr.setSignature(signature)
+    xdr
+  }
+
 }
 
 case class VerifyingKey(pk: EdDSAPublicKey) extends PublicKeyOps
@@ -80,6 +100,21 @@ trait PublicKeyOps {
     * This key pair or verifying key without the private key.
     */
   def asVerifyingKey = VerifyingKey(pk)
+
+
+  /**
+    * XDR entity derived from this public key for use in signatures
+    */
+  val signatureHint: Try[SignatureHint] = Try {
+    val pkStream = new ByteArrayOutputStream
+    val os = new XdrDataOutputStream(pkStream)
+    PublicKey.encode(os, getXDRPublicKey)
+    val pkBytes = pkStream.toByteArray
+    val hintBytes = util.Arrays.copyOfRange(pkBytes, pkBytes.length - 4, pkBytes.length)
+    val hint = new SignatureHint
+    hint.setSignatureHint(hintBytes)
+    hint
+  }
 }
 
 object KeyPair {

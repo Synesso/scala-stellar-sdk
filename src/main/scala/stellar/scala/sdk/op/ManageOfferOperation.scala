@@ -16,6 +16,7 @@ case class CreateOfferOperation(selling: Amount, buying: Asset, price: Price,
 
   override def toOperationBody: OperationBody = {
     val op = new ManageOfferOp
+    op.setOfferID(uint64(0))
     op.setSelling(selling.asset.toXDR)
     op.setBuying(buying.toXDR)
     op.setAmount(int64(selling.units))
@@ -29,12 +30,16 @@ case class CreateOfferOperation(selling: Amount, buying: Asset, price: Price,
 }
 
 case class DeleteOfferOperation(override val offerId: Long,
+                                selling: Asset, buying: Asset, price: Price,
                                 sourceAccount: Option[KeyPair] = None) extends ManageOfferOperation {
 
   override def toOperationBody: OperationBody = {
     val op = new ManageOfferOp
     op.setOfferID(uint64(offerId))
     op.setAmount(int64(0))
+    op.setSelling(selling.toXDR)
+    op.setBuying(buying.toXDR)
+    op.setPrice(price.toXDR)
     val body = new OperationBody
     body.setDiscriminant(MANAGE_OFFER)
     body.setManageOfferOp(op)
@@ -60,35 +65,20 @@ case class UpdateOfferOperation(override val offerId: Long,
 }
 
 object ManageOfferOperation {
-  def from(op: ManageOfferOp): Try[ManageOfferOperation] = {
-    val offerId = Option(op.getOfferID).map(_.getUint64.longValue)
-
-    val offerDetails = for {
-      selling <- Option(op.getSelling)
-      buying <- Option(op.getBuying)
-      amount <- Option(op.getAmount).map(_.getInt64.longValue)
-      price <- Option(op.getPrice).map(p => Price(
-        n = p.getN.getInt32.intValue,
-        d = p.getD.getInt32.intValue
-      ))
-    } yield {
-      (selling, buying, amount, price)
-    }
-
-    (offerId, offerDetails) match {
-      case (Some(id), None) => Success(DeleteOfferOperation(id))
-
-      case (None, Some((selling, buying, amount, price))) => for {
-        sell <- Asset.fromXDR(selling)
-        buy <- Asset.fromXDR(buying)
-      } yield CreateOfferOperation(Amount(amount, sell), buy, price)
-
-      case (Some(id), Some((selling, buying, amount, price))) => for {
-        sell <- Asset.fromXDR(selling)
-        buy <- Asset.fromXDR(buying)
-      } yield UpdateOfferOperation(id, Amount(amount, sell), buy, price)
-
-      case _ => Failure(new IllegalArgumentException(s"ManageOfferOp did not define a valid operation: $op"))
+  def from(op: ManageOfferOp): Try[ManageOfferOperation] = for {
+    selling <- Asset.fromXDR(op.getSelling)
+    buying <- Asset.fromXDR(op.getBuying)
+  } yield {
+    val offerId = op.getOfferID.getUint64.longValue
+    val amount = op.getAmount.getInt64.longValue
+    val price = Price(
+      n = op.getPrice.getN.getInt32.intValue,
+      d = op.getPrice.getD.getInt32.intValue
+    )
+    (offerId, amount) match {
+      case (0, _) => CreateOfferOperation(Amount(amount, selling), buying, price)
+      case (_, 0) => DeleteOfferOperation(offerId, selling, buying, price)
+      case _      => UpdateOfferOperation(offerId, Amount(amount, selling), buying, price)
     }
   }
 }

@@ -19,6 +19,7 @@ class ManageOfferOperationSpec extends Specification with ArbitraryInput with Do
             co.buying must beEquivalentTo(buying)
             co.price mustEqual price
             co.sourceAccount must beNone
+            co.offerId mustEqual 0
         }
     }
   }
@@ -42,13 +43,16 @@ class ManageOfferOperationSpec extends Specification with ArbitraryInput with Do
 
   "delete offer operation" should {
     "serde via xdr" >> prop {
-      (source: KeyPair, offerId: Long) =>
-        val input = DeleteOfferOperation(offerId, Some(source))
+      (source: KeyPair, offerId: Long, selling: Asset, buying: Asset, price: Price) =>
+        val input = DeleteOfferOperation(offerId, selling, buying, price, Some(source))
         val triedOperation = Operation.fromXDR(input.toXDR)
         if (triedOperation.isFailure) throw triedOperation.failed.get
         triedOperation must beSuccessfulTry.like {
           case doo: DeleteOfferOperation =>
             doo.offerId mustEqual offerId
+            doo.selling must beEquivalentTo(selling)
+            doo.buying must beEquivalentTo(buying)
+            doo.price mustEqual price
             doo.sourceAccount must beNone
         }
     }.setGen2(Gen.posNum[Long])
