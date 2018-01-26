@@ -2,7 +2,7 @@ package stellar.scala.sdk
 
 import java.nio.charset.StandardCharsets.UTF_8
 
-sealed trait Network extends ByteArrays {
+trait Network extends ByteArrays {
   val passphrase: String
   lazy val networkId: Array[Byte] = sha256(passphrase.getBytes(UTF_8)).get
 }
