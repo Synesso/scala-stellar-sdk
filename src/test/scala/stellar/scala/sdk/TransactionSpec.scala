@@ -7,7 +7,7 @@ import org.stellar.sdk.xdr
 import org.stellar.sdk.xdr.TransactionEnvelope
 import stellar.scala.sdk.op.Operation
 
-import scala.util.Success
+import scala.util.{Success, Try}
 
 class TransactionSpec extends Specification with ArbitraryInput with DomainMatchers {
 
@@ -37,7 +37,6 @@ class TransactionSpec extends Specification with ArbitraryInput with DomainMatch
       xdr.getFee.getUint32 mustEqual txn.fee
       xdr.getSeqNum.getSequenceNumber.getUint64 mustEqual txn.source.sequenceNumber
       xdr.getSourceAccount.getAccountID must beEquivalentTo(txn.source.keyPair.getXDRPublicKey)
-      // xdr.getOperations.map(Operation.fromXDR).head mustEqual Success(txn.operations.last) // todo --- wip
       xdr.getMemo must beEquivalentTo(txn.memo.toXDR)
       Option(xdr.getTimeBounds) must beLike {
         case None => txn.timeBounds must beNone
@@ -46,6 +45,12 @@ class TransactionSpec extends Specification with ArbitraryInput with DomainMatch
             case TimeBounds(start, end) =>
               tb1.getMinTime.getUint64 mustEqual start.toEpochMilli
               tb1.getMaxTime.getUint64 mustEqual end.toEpochMilli
+          }
+      }
+      forall(txn.operations.reverse.zip(xdr.getOperations.map(Operation.fromXDR))) {
+        case (expected: Operation, actualTry: Try[Operation]) =>
+          actualTry must beSuccessfulTry[Operation].like { case actual =>
+              actual must beEquivalentTo(expected)
           }
       }
     }

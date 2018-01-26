@@ -3,7 +3,7 @@ package stellar.scala.sdk
 import org.apache.commons.codec.binary.Hex
 import org.specs2.matcher.{AnyMatchers, Matcher, MustExpectations}
 import org.stellar.sdk.xdr.{Hash, PublicKey, SignerKey, Uint64, Memo => XDRMemo, Operation => XDROperation}
-import stellar.scala.sdk.op.Operation
+import stellar.scala.sdk.op.{AccountMergeOperation, AllowTrustOperation, Operation}
 
 trait DomainMatchers extends AnyMatchers with MustExpectations {
 
@@ -75,6 +75,24 @@ trait DomainMatchers extends AnyMatchers with MustExpectations {
 
   def beEquivalentTo(other: XDROperation): Matcher[XDROperation] = beLike[XDROperation] {
     case op => Operation.fromXDR(op) mustEqual Operation.fromXDR(other)
+  }
+
+  def beEquivalentTo(other: AccountMergeOperation): Matcher[AccountMergeOperation] = beLike[AccountMergeOperation] {
+    case op =>
+      op.destination.accountId mustEqual other.destination.accountId
+  }
+
+  def beEquivalentTo(other: AllowTrustOperation): Matcher[AllowTrustOperation] = beLike[AllowTrustOperation] {
+    case op =>
+      op.trustor.accountId mustEqual other.trustor.accountId
+      op.assetCode mustEqual other.assetCode
+      op.authorize mustEqual other.authorize
+  }
+
+  // todo - implement other operations
+  def beEquivalentTo(other: Operation): Matcher[Operation] = beLike[Operation] {
+    case op =>
+      op mustEqual op
   }
 
 }
