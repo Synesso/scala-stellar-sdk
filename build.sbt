@@ -29,5 +29,5 @@ scalacOptions ++= Seq(
 
 fork := true
 
-coverageMinimum := 90
+coverageMinimum := 95
 coverageFailOnMinimum := true
