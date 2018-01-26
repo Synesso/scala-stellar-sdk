@@ -2,7 +2,7 @@ package stellar.scala.sdk
 
 import org.scalacheck.Gen
 import org.specs2.mutable.Specification
-import org.stellar.sdk.xdr.Signature
+import org.stellar.sdk.xdr.{Signature, TransactionEnvelope}
 import stellar.scala.sdk.op.Operation
 
 class TransactionSpec extends Specification with ArbitraryInput {
@@ -21,9 +21,8 @@ class TransactionSpec extends Specification with ArbitraryInput {
   }
 
   "a signed transaction" should {
-    "serialise to xdr" >> prop { (t: Transaction, s: Signature) =>
-      pending
-//      t.Signed(Seq(s))
+    "serialise to xdr" >> prop { (t: Transaction, signer: KeyPair) =>
+      t.sign(signer).map(_.toEnvelopeXDR) must beSuccessfulTry[TransactionEnvelope]
     }
   }
 

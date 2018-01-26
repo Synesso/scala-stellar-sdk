@@ -43,13 +43,13 @@ case class Transaction(source: Account,
     val txn = new XDRTransaction
     val ext = new TransactionExt
     ext.setDiscriminant(0)
+    txn.setExt(ext)
     txn.setFee(uint32(fee))
     txn.setSeqNum(seqNum(source.sequenceNumber))
     txn.setSourceAccount(accountId(source.keyPair))
     txn.setOperations(operations.reverse.toArray.map(_.toXDR))
     txn.setMemo(memo.toXDR)
     timeBounds.map(_.toXDR).foreach(txn.setTimeBounds)
-    txn.setExt(ext)
     txn
   }
 

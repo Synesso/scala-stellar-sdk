@@ -2,7 +2,7 @@ package stellar.scala.sdk
 
 import org.apache.commons.codec.binary.Hex
 import org.specs2.matcher.{AnyMatchers, Matcher, MustExpectations}
-import org.stellar.sdk.xdr.{Signer, SignerKey}
+import org.stellar.sdk.xdr.{Hash, SignerKey, Uint64, Memo => XDRMemo}
 
 trait DomainMatchers extends AnyMatchers with MustExpectations {
 
@@ -43,5 +43,26 @@ trait DomainMatchers extends AnyMatchers with MustExpectations {
   def beEquivalentTo(other: VerifyingKey): Matcher[VerifyingKey] = beLike[VerifyingKey] {
     case VerifyingKey(pk) =>
       Hex.encodeHex(pk.getAbyte) mustEqual Hex.encodeHex(other.pk.getAbyte)
+  }
+
+  def beEquivalentTo(other: Hash): Matcher[Hash] = beLike[Hash] {
+    case hash =>
+      if (other == null) hash must beNull
+      else hash.getHash.toSeq mustEqual other.getHash.toSeq
+  }
+
+  def beEquivalentTo(other: Uint64): Matcher[Uint64] = beLike[Uint64] {
+    case id =>
+      if (other == null) id must beNull
+      else other.getUint64 mustEqual id.getUint64
+  }
+
+  def beEquivalentTo(other: XDRMemo): Matcher[XDRMemo] = beLike[XDRMemo] {
+    case memo =>
+      memo.getDiscriminant mustEqual other.getDiscriminant
+      memo.getHash must beEquivalentTo(other.getHash)
+      memo.getId must beEquivalentTo(other.getId)
+      memo.getRetHash must beEquivalentTo(other.getRetHash)
+      memo.getText mustEqual other.getText
   }
 }

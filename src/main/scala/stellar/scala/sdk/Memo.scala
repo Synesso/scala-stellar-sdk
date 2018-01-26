@@ -47,17 +47,16 @@ trait MemoWithHash extends Memo with ByteArrays with XDRPrimitives {
   val bytes = paddedByteArray(bs, Length)
   def hex: String = bytesToHex(bytes)
   def hexTrim: String = bytesToHex(bs)
-  private[sdk] def toXDR(discriminant: MemoType): XDRMemo = {
-    val m = new XDRMemo
-    m.setDiscriminant(discriminant)
-    m.setHash(hash(bytes))
-    m
-  }
 }
 
 case class MemoHash(bs: Array[Byte]) extends MemoWithHash {
   assert(bs.length <= Length, s"Hash exceeded limit (${bytes.length}/$Length bytes)")
-  override def toXDR: XDRMemo = toXDR(MEMO_HASH)
+  override def toXDR: XDRMemo = {
+    val m = new XDRMemo
+    m.setDiscriminant(MEMO_HASH)
+    m.setHash(hash(bytes))
+    m
+  }
 }
 
 object MemoHash extends ByteArrays {
@@ -66,7 +65,12 @@ object MemoHash extends ByteArrays {
 
 case class MemoReturnHash(bs: Array[Byte]) extends MemoWithHash {
   assert(bs.length <= Length, s"Hash exceeded limit (${bytes.length}/$Length bytes)")
-  override def toXDR: XDRMemo = toXDR(MEMO_RETURN)
+  override def toXDR: XDRMemo = {
+    val m = new XDRMemo
+    m.setDiscriminant(MEMO_RETURN)
+    m.setRetHash(hash(bytes))
+    m
+  }
 }
 
 object MemoReturnHash extends ByteArrays {

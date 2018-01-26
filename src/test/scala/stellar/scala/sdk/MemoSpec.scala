@@ -1,11 +1,15 @@
 package stellar.scala.sdk
 
+import java.io.{ByteArrayInputStream, ByteArrayOutputStream}
+
 import org.scalacheck.Arbitrary._
 import org.scalacheck.Gen
+import org.specs2.matcher.Matcher
 import org.specs2.mutable.Specification
 import org.stellar.sdk.xdr.MemoType._
+import org.stellar.sdk.xdr.{XdrDataInputStream, XdrDataOutputStream, Memo => XDRMemo}
 
-class MemoSpec extends Specification with ArbitraryInput with ByteArrays {
+class MemoSpec extends Specification with ArbitraryInput with ByteArrays with DomainMatchers {
 
   "memo none" should {
     "serialise to xdr" >> {
@@ -108,7 +112,7 @@ class MemoSpec extends Specification with ArbitraryInput with ByteArrays {
       val memo = MemoReturnHash(bs.take(32))
       val xdr = memo.toXDR
       xdr.getDiscriminant mustEqual MEMO_RETURN
-      xdr.getHash.getHash.toSeq mustEqual paddedByteArray(bs.take(32), 32).toSeq
+      xdr.getRetHash.getHash.toSeq mustEqual paddedByteArray(bs.take(32), 32).toSeq
     }
 
     "be created from a hash" >> prop { bs: Array[Byte] =>
@@ -119,6 +123,21 @@ class MemoSpec extends Specification with ArbitraryInput with ByteArrays {
       MemoReturnHash.from(s"${hex}Z") must beFailedTry[MemoReturnHash]
       (MemoReturnHash.from(bs.map("%02X".format(_)).mkString) must beFailedTry[MemoReturnHash]).unless(bs.length <= 32)
     }
+  }
+
+  "every kind of memo" should {
+    "be en/decoded to xdr stream" >> prop { memo: Memo =>
+      memo must beEncodable
+    }
+  }
+
+  private def beEncodable: Matcher[Memo] = { memo: Memo =>
+    val xdrMemo = memo.toXDR
+    val baos = new ByteArrayOutputStream()
+    val os = new XdrDataOutputStream(baos)
+    XDRMemo.encode(os, xdrMemo)
+    val is = new XdrDataInputStream(new ByteArrayInputStream(baos.toByteArray))
+    XDRMemo.decode(is) must beEquivalentTo(xdrMemo)
   }
 
 }
