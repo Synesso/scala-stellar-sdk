@@ -10,8 +10,7 @@ import scala.util.Try
 
 case class AllowTrustOperation(trustor: VerifyingKey,
                                assetCode: String, // todo - this should be an `Asset` (and trustor is the issuer?)
-                               authorize: Boolean,
-                               sourceAccount: Option[KeyPair] = None) extends Operation with ByteArrays {
+                               authorize: Boolean) extends Operation with ByteArrays {
 
   override def toOperationBody: OperationBody = {
     val op = new AllowTrustOp()
@@ -45,11 +44,4 @@ object AllowTrustOperation {
       authorize = op.getAuthorize
     )
   }
-
-  def apply(sourceAccount: KeyPair,
-            trustor: VerifyingKey,
-            assetCode: String,
-            authorize: Boolean): AllowTrustOperation =
-    AllowTrustOperation(trustor, assetCode, authorize, Some(sourceAccount))
-
 }

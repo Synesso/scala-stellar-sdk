@@ -5,7 +5,7 @@ import org.specs2.matcher.Matcher
 import org.specs2.mutable.Specification
 import org.stellar.sdk.xdr
 import org.stellar.sdk.xdr.TransactionEnvelope
-import stellar.scala.sdk.op.Operation
+import stellar.scala.sdk.op.{CreateAccountOperation, Operation}
 
 import scala.util.{Success, Try}
 
@@ -32,6 +32,24 @@ class TransactionSpec extends Specification with ArbitraryInput with DomainMatch
       }
       actual must beEquivalentTo(expected)
     }.setGen2(Gen.nonEmptyListOf(genKeyPair))
+
+    "express signed transaction envelope as base64" >> {
+      pending
+      // specific example lifted from java sdk
+      val source = KeyPair.fromSecretSeed("SCH27VUZZ6UAKB67BDNF6FA42YMBMQCBKXWGMFD5TZ6S5ZZCZFLRXKHS")
+      val dest = KeyPair.fromAccountId("GDW6AUTBXTOC7FIKUO5BOO3OGLK4SF7ZPOBLMQHMZDI45J2Z6VXRB5NR")
+      val seqNum = 2908908335136768L
+
+      val account = Account(source, seqNum)
+      val txn = Transaction(
+        source = account,
+        operations = Seq(CreateAccountOperation(dest, NativeAmount(2000)))
+      ).sign(source)
+
+      txn.flatMap(_.toEnvelopeXDRBase64) must beSuccessfulTry("AAAAAF7FIiDToW1fOYUFBC0dmyufJbFTOa2GQESGz+S2h5ViAAAAZAAKVaMAAAABAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAA7eBSYbzcL5UKo7oXO24y1ckX+XuCtkDsyNHOp1n1bxAAAAAEqBfIAAAAAAAAAAABtoeVYgAAAEDLki9Oi700N60Lo8gUmEFHbKvYG4QSqXiLIt9T0ru2O5BphVl")
+      txn.map(_.transaction.source) must beSuccessfulTry[Account].like{ case accn => accn must beEquivalentTo(account)}
+      txn.map(_.transaction.fee) must beSuccessfulTry(100)
+    }
   }
 
   "signing a transaction" should {
@@ -72,5 +90,4 @@ class TransactionSpec extends Specification with ArbitraryInput with DomainMatch
       }
     }
   }
-
 }

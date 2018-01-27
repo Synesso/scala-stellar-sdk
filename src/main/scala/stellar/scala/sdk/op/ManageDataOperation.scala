@@ -19,9 +19,9 @@ sealed trait ManageDataOperation extends Operation {
   }
 }
 
-case class DeleteDataOperation(name: String, sourceAccount: Option[KeyPair] = None) extends ManageDataOperation
+case class DeleteDataOperation(name: String) extends ManageDataOperation
 
-case class WriteDataOperation(name: String, value: Array[Byte], sourceAccount: Option[KeyPair] = None) extends ManageDataOperation {
+case class WriteDataOperation(name: String, value: Array[Byte]) extends ManageDataOperation {
   override def toOperationBody: OperationBody = {
     val body = super.toOperationBody
     body.getManageDataOp.setDataValue(dataValue(value))

@@ -2,6 +2,8 @@ package stellar.scala.sdk
 
 import java.security.MessageDigest
 
+import org.apache.commons.codec.binary.Base64
+
 import scala.util.Try
 
 trait ByteArrays {
@@ -21,6 +23,8 @@ trait ByteArrays {
     md.update(bs)
     md.digest
   }
+
+  def base64(bs: Array[Byte]): String = Base64.encodeBase64String(bs)
 
   def bytesToHex(bs: Array[Byte]): String = bs.map("%02X".format(_)).mkString
 

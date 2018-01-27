@@ -13,8 +13,7 @@ import scala.util.Try
   * @see <a href="https://www.stellar.org/developers/learn/concepts/list-of-operations.html" target="_blank">List of Operations</a>
   */
 case class PaymentOperation(destinationAccount: PublicKeyOps,
-                            amount: Amount,
-                            sourceAccount: Option[KeyPair] = None) extends Operation {
+                            amount: Amount) extends Operation {
 
   override def toOperationBody: OperationBody = {
     val op = new PaymentOp()
@@ -34,16 +33,10 @@ case class PaymentOperation(destinationAccount: PublicKeyOps,
 }
 
 object PaymentOperation {
-
-  def apply(source: KeyPair, destination: PublicKeyOps, amount: Amount): PaymentOperation = {
-    PaymentOperation(destination, amount, Some(source))
-  }
-
   def from(op: PaymentOp): Try[PaymentOperation] = for {
     asset <- Asset.fromXDR(op.getAsset)
     paymentOp <- Try {
       PaymentOperation(
-        sourceAccount = None,
         destinationAccount = KeyPair.fromPublicKey(op.getDestination.getAccountID.getEd25519.getUint256),
         amount = Amount(op.getAmount.getInt64.longValue, asset)
       )

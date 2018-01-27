@@ -8,54 +8,27 @@ import stellar.scala.sdk._
 class ManageOfferOperationSpec extends Specification with ArbitraryInput with DomainMatchers {
 
   "create offer operation" should {
-    "serde via xdr" >> prop {
-      (source: KeyPair, selling: Amount, buying: Asset, price: Price) =>
-        val input = CreateOfferOperation(selling, buying, price, Some(source))
-        val triedOperation = Operation.fromXDR(input.toXDR)
-        if (triedOperation.isFailure) throw triedOperation.failed.get
-        triedOperation must beSuccessfulTry.like {
-          case co: CreateOfferOperation =>
-            co.selling must beEquivalentTo(selling)
-            co.buying must beEquivalentTo(buying)
-            co.price mustEqual price
-            co.sourceAccount must beNone
-            co.offerId mustEqual 0
-        }
+    "serde via xdr" >> prop { (actual: CreateOfferOperation, source: KeyPair) =>
+      Operation.fromXDR(actual.toXDR(source)) must beSuccessfulTry.like {
+        case expected: CreateOfferOperation => expected must beEquivalentTo(actual)
+      }
     }
   }
 
   "update offer operation" should {
-    "serde via xdr" >> prop {
-      (source: KeyPair, offerId: Long, selling: Amount, buying: Asset, price: Price) =>
-        val input = UpdateOfferOperation(offerId, selling, buying, price, Some(source))
-        val triedOperation = Operation.fromXDR(input.toXDR)
-        if (triedOperation.isFailure) throw triedOperation.failed.get
-        triedOperation must beSuccessfulTry.like {
-          case uoo: UpdateOfferOperation =>
-            uoo.offerId mustEqual offerId
-            uoo.selling must beEquivalentTo(selling)
-            uoo.buying must beEquivalentTo(buying)
-            uoo.price mustEqual price
-            uoo.sourceAccount must beNone
-        }
-    }.setGen2(Gen.posNum[Long])
+    "serde via xdr" >> prop { (actual: UpdateOfferOperation, source: KeyPair) =>
+      Operation.fromXDR(actual.toXDR(source)) must beSuccessfulTry.like {
+        case expected: UpdateOfferOperation => expected must beEquivalentTo(actual)
+      }
+    }
   }
 
   "delete offer operation" should {
-    "serde via xdr" >> prop {
-      (source: KeyPair, offerId: Long, selling: Asset, buying: Asset, price: Price) =>
-        val input = DeleteOfferOperation(offerId, selling, buying, price, Some(source))
-        val triedOperation = Operation.fromXDR(input.toXDR)
-        if (triedOperation.isFailure) throw triedOperation.failed.get
-        triedOperation must beSuccessfulTry.like {
-          case doo: DeleteOfferOperation =>
-            doo.offerId mustEqual offerId
-            doo.selling must beEquivalentTo(selling)
-            doo.buying must beEquivalentTo(buying)
-            doo.price mustEqual price
-            doo.sourceAccount must beNone
-        }
-    }.setGen2(Gen.posNum[Long])
+    "serde via xdr" >> prop { (actual: DeleteOfferOperation, source: KeyPair) =>
+      Operation.fromXDR(actual.toXDR(source)) must beSuccessfulTry.like {
+        case expected: DeleteOfferOperation => expected must beEquivalentTo(actual)
+      }
+    }
   }
 
   "manage offer op with no id and no details" should {

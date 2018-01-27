@@ -4,7 +4,7 @@ import java.time.Instant
 
 import org.scalacheck.{Arbitrary, Gen}
 import org.specs2.ScalaCheck
-import org.stellar.sdk.xdr.{DecoratedSignature, Signature, SignerKey}
+import org.stellar.sdk.xdr.{Signature, SignerKey}
 import stellar.scala.sdk.op._
 
 import scala.util.Random
@@ -26,6 +26,30 @@ trait ArbitraryInput extends ScalaCheck {
   implicit def arbAsset: Arbitrary[Asset] = Arbitrary(genAsset)
 
   implicit def arbNonNativeAsset: Arbitrary[NonNativeAsset] = Arbitrary(genNonNativeAsset)
+
+  implicit def arbAccountMergeOperation: Arbitrary[AccountMergeOperation] = Arbitrary(genAccountMergeOperation)
+  
+  implicit def arbAllowTrustOperation: Arbitrary[AllowTrustOperation] = Arbitrary(genAllowTrustOperation)
+  
+  implicit def arbChangeTrustOperation: Arbitrary[ChangeTrustOperation] = Arbitrary(genChangeTrustOperation)
+  
+  implicit def arbCreateAccountOperation: Arbitrary[CreateAccountOperation] = Arbitrary(genCreateAccountOperation)
+  
+  implicit def arbCreatePassiveOfferOperation: Arbitrary[CreatePassiveOfferOperation] = Arbitrary(genCreatePassiveOfferOperation)
+  
+  implicit def arbWriteDataOperation: Arbitrary[WriteDataOperation] = Arbitrary(genWriteDataOperation)
+  
+  implicit def arbDeleteDataOperation: Arbitrary[DeleteDataOperation] = Arbitrary(genDeleteDataOperation)
+  
+  implicit def arbCreateOfferOperation: Arbitrary[CreateOfferOperation] = Arbitrary(genCreateOfferOperation)
+  
+  implicit def arbDeleteOfferOperation: Arbitrary[DeleteOfferOperation] = Arbitrary(genDeleteOfferOperation)
+  
+  implicit def arbUpdateOfferOperation: Arbitrary[UpdateOfferOperation] = Arbitrary(genUpdateOfferOperation)
+  
+  implicit def arbPathPaymentOperation: Arbitrary[PathPaymentOperation] = Arbitrary(genPathPaymentOperation)
+
+  implicit def arbPaymentOperation: Arbitrary[PaymentOperation] = Arbitrary(genPaymentOperation)
 
   implicit def arbSetOptionsOperation: Arbitrary[SetOptionsOperation] = Arbitrary(genSetOptionsOperation)
 
@@ -99,46 +123,39 @@ trait ArbitraryInput extends ScalaCheck {
 
   def genAccountMergeOperation: Gen[AccountMergeOperation] = for {
     destination <- genVerifyingKey
-    source <- Gen.option(genKeyPair)
-  } yield AccountMergeOperation(destination, source)
+  } yield AccountMergeOperation(destination)
 
   def genAllowTrustOperation = for {
     trustor <- genVerifyingKey
     assetCode <- Gen.identifier.map(_.take(12))
     authorise <- Gen.oneOf(true, false)
-    source <- Gen.option(genKeyPair)
-  } yield AllowTrustOperation(trustor, assetCode, authorise, source)
+  } yield AllowTrustOperation(trustor, assetCode, authorise)
 
   def genChangeTrustOperation = for {
     limit <- genAmount
-    source <- Gen.option(genKeyPair)
-  } yield ChangeTrustOperation(limit, source)
+  } yield ChangeTrustOperation(limit)
 
   def genCreateAccountOperation = for {
     destination <- genVerifyingKey
     startingBalance <- genNativeAmount
-    source <- Gen.option(genKeyPair)
-  } yield CreateAccountOperation(destination, startingBalance, source)
+  } yield CreateAccountOperation(destination, startingBalance)
 
   def genCreatePassiveOfferOperation = for {
     selling <- genAmount
     buying <- genAsset
     price <- genPrice
-    source <- Gen.option(genKeyPair)
-  } yield CreatePassiveOfferOperation(selling, buying, price, source)
+  } yield CreatePassiveOfferOperation(selling, buying, price)
 
   def genInflationOperation = Gen.oneOf(Seq(InflationOperation))
 
   def genDeleteDataOperation = for {
     name <- Gen.identifier
-    source <- Gen.option(genKeyPair)
-  } yield DeleteDataOperation(name, source)
+  } yield DeleteDataOperation(name)
 
   def genWriteDataOperation = for {
     name <- Gen.identifier
     value <- Gen.nonEmptyListOf(Gen.posNum[Byte]).map(_.toArray)
-    source <- Gen.option(genKeyPair)
-  } yield WriteDataOperation(name, value, source)
+  } yield WriteDataOperation(name, value)
 
   def genManageDataOperation = Gen.oneOf(genDeleteDataOperation, genWriteDataOperation)
 
@@ -146,24 +163,21 @@ trait ArbitraryInput extends ScalaCheck {
     selling <- genAmount
     buying <- genAsset
     price <- genPrice
-    source <- Gen.option(genKeyPair)
-  } yield CreateOfferOperation(selling, buying, price, source)
+  } yield CreateOfferOperation(selling, buying, price)
 
   def genDeleteOfferOperation = for {
     id <- Gen.posNum[Long]
     selling <- genAsset
     buying <- genAsset
     price <- genPrice
-    source <- Gen.option(genKeyPair)
-  } yield DeleteOfferOperation(id, selling, buying, price, source)
+  } yield DeleteOfferOperation(id, selling, buying, price)
 
   def genUpdateOfferOperation = for {
     id <- Gen.posNum[Long]
     selling <- genAmount
     buying <- genAsset
     price <- genPrice
-    source <- Gen.option(genKeyPair)
-  } yield UpdateOfferOperation(id, selling, buying, price, source)
+  } yield UpdateOfferOperation(id, selling, buying, price)
 
   def genManageOfferOperation = Gen.oneOf(genCreateOfferOperation, genDeleteOfferOperation, genUpdateOfferOperation)
 
@@ -172,14 +186,12 @@ trait ArbitraryInput extends ScalaCheck {
     destAccount <- genVerifyingKey
     destAmount <- genAmount
     path <- Gen.listOf(genAsset)
-    source <- Gen.option(genKeyPair)
-  } yield PathPaymentOperation(sendMax, destAccount, destAmount, path, source)
+  } yield PathPaymentOperation(sendMax, destAccount, destAmount, path)
 
   def genPaymentOperation = for {
     destAccount <- genVerifyingKey
     amount <- genAmount
-    source <- Gen.option(genKeyPair)
-  } yield PaymentOperation(destAccount, amount, source)
+  } yield PaymentOperation(destAccount, amount)
 
   def genSetOptionsOperation: Gen[SetOptionsOperation] = for {
       inflationDestination <- Gen.option(genVerifyingKey)
@@ -194,9 +206,8 @@ trait ArbitraryInput extends ScalaCheck {
         signer <- genSignerKey
         weight <- Gen.choose(0, 255)
       } yield (signer, weight)}
-      sourceAccount <- Gen.option(genKeyPair)
     } yield op.SetOptionsOperation(inflationDestination, clearFlags, setFlags, masterKeyWeight, lowThreshold, medThreshold,
-      highThreshold, homeDomain, signer, sourceAccount)
+      highThreshold, homeDomain, signer)
 
   def genOperation: Gen[Operation] = {
     Gen.oneOf(genAccountMergeOperation, genAllowTrustOperation, genChangeTrustOperation, genCreateAccountOperation,

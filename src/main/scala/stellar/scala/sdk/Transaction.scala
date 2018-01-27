@@ -11,7 +11,7 @@ import stellar.scala.sdk.resp.SubmitTransactionResponse
 import scala.util.Try
 
 case class Transaction(source: Account,
-                       memo: Memo,
+                       memo: Memo = NoMemo,
                        operations: Seq[Operation] = Nil,
                        timeBounds: Option[TimeBounds] = None)(implicit val network: Network)
   extends ByteArrays with XDRPrimitives with TrySeq {
@@ -47,14 +47,15 @@ case class Transaction(source: Account,
     txn.setFee(uint32(fee))
     txn.setSeqNum(seqNum(source.sequenceNumber))
     txn.setSourceAccount(accountId(source.keyPair))
-    txn.setOperations(operations.toArray.map(_.toXDR))
+    txn.setOperations(operations.toArray.map(_.toXDR(source.keyPair)))
     txn.setMemo(memo.toXDR)
     timeBounds.map(_.toXDR).foreach(txn.setTimeBounds)
     txn
   }
 }
 
-case class SignedTransaction(transaction: Transaction, signatures: Seq[DecoratedSignature], hash: Array[Byte]) {
+case class SignedTransaction(transaction: Transaction, signatures: Seq[DecoratedSignature], hash: Array[Byte])
+  extends ByteArrays {
 
   def submit(network: Network): SubmitTransactionResponse = ???
 
@@ -67,6 +68,13 @@ case class SignedTransaction(transaction: Transaction, signatures: Seq[Decorated
     xdr.setTx(transaction.toXDR)
     xdr.setSignatures(signatures.toArray)
     xdr
+  }
+
+  def toEnvelopeXDRBase64: Try[String] = Try {
+    val baos = new ByteArrayOutputStream
+    val os = new XdrDataOutputStream(baos)
+    TransactionEnvelope.encode(os, toEnvelopeXDR)
+    base64(baos.toByteArray)
   }
 }
 

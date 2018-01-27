@@ -15,8 +15,7 @@ import scala.util.Try
 case class PathPaymentOperation(sendMax: Amount,
                                 destinationAccount: PublicKeyOps,
                                 destinationAmount: Amount,
-                                path: Seq[Asset],
-                                sourceAccount: Option[KeyPair] = None) extends Operation {
+                                path: Seq[Asset]) extends Operation {
 
   override def toOperationBody: OperationBody = {
     val op = new PathPaymentOp
@@ -41,14 +40,6 @@ case class PathPaymentOperation(sendMax: Amount,
 }
 
 object PathPaymentOperation extends TrySeq {
-  def apply(sourceAccount: KeyPair,
-            sendMax: Amount,
-            destinationAccount: PublicKeyOps,
-            destinationAmount: Amount,
-            path: Seq[Asset]): PathPaymentOperation = {
-
-    PathPaymentOperation(sendMax, destinationAccount, destinationAmount, path, Some(sourceAccount))
-  }
 
   def from(op: PathPaymentOp): Try[PathPaymentOperation] = for {
     sendAsset <- Asset.fromXDR(op.getSendAsset)
@@ -59,8 +50,7 @@ object PathPaymentOperation extends TrySeq {
         sendMax = Amount(op.getSendMax.getInt64.longValue, sendAsset),
         destinationAccount = KeyPair.fromPublicKey(op.getDestination.getAccountID.getEd25519.getUint256),
         destinationAmount = Amount(op.getDestAmount.getInt64.longValue(), destAsset),
-        path = path,
-        sourceAccount = Option.empty[KeyPair]
+        path = path
       )
     }
   } yield pathPaymentOp

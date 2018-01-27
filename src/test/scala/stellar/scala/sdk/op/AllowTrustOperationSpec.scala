@@ -7,14 +7,9 @@ import stellar.scala.sdk._
 class AllowTrustOperationSpec extends Specification with ArbitraryInput with DomainMatchers {
 
   "allow trust operation" should {
-    "serde via xdr" >> prop { (source: KeyPair, trustor: VerifyingKey, asset: NonNativeAsset, authorize: Boolean) =>
-      val input = AllowTrustOperation(source, trustor, asset.code, authorize)
-      Operation.fromXDR(input.toXDR) must beSuccessfulTry.like {
-        case ato: AllowTrustOperation =>
-          ato.trustor must beEquivalentTo(trustor)
-          ato.authorize mustEqual authorize
-          ato.assetCode mustEqual asset.code
-          ato.sourceAccount must beNone
+    "serde via xdr" >> prop { (actual: AllowTrustOperation, source: KeyPair) =>
+      Operation.fromXDR(actual.toXDR(source)) must beSuccessfulTry.like {
+        case expected: AllowTrustOperation => expected must beEquivalentTo(actual)
       }
     }
 

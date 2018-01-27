@@ -12,8 +12,7 @@ import scala.util.Try
   * @see <a href="https://www.stellar.org/developers/learn/concepts/list-of-operations.html" target="_blank">List of Operations</a>
   */
 case class CreateAccountOperation(destinationAccount: PublicKeyOps,
-                                  startingBalance: NativeAmount = NativeAmount(0),
-                                  sourceAccount: Option[KeyPair] = None) extends Operation {
+                                  startingBalance: NativeAmount = NativeAmount(0)) extends Operation {
 
   override def toOperationBody: OperationBody = {
     val op = new CreateAccountOp()
@@ -33,15 +32,8 @@ case class CreateAccountOperation(destinationAccount: PublicKeyOps,
 
 object CreateAccountOperation {
 
-  def apply(sourceAccount: KeyPair,
-            destinationAccount: PublicKeyOps,
-            startingBalance: NativeAmount): CreateAccountOperation = {
-    CreateAccountOperation(destinationAccount, startingBalance, Some(sourceAccount))
-  }
-
   def from(op: CreateAccountOp): Try[CreateAccountOperation] = Try {
     CreateAccountOperation(
-      sourceAccount = None,
       destinationAccount = KeyPair.fromPublicKey(op.getDestination.getAccountID.getEd25519.getUint256),
       startingBalance = NativeAmount(op.getStartingBalance.getInt64.longValue)
     )

@@ -7,7 +7,7 @@ import stellar.scala.sdk.{KeyPair, PublicKeyOps}
 
 import scala.util.Try
 
-case class AccountMergeOperation(destination: PublicKeyOps, sourceAccount: Option[KeyPair] = None) extends Operation {
+case class AccountMergeOperation(destination: PublicKeyOps) extends Operation {
   override def toOperationBody: OperationBody = {
     val body = new OperationBody
     val id = new AccountID

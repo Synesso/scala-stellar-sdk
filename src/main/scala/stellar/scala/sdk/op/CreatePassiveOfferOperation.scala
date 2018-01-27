@@ -7,8 +7,7 @@ import stellar.scala.sdk._
 
 import scala.util.Try
 
-case class CreatePassiveOfferOperation(selling: Amount, buying: Asset, price: Price,
-                                       sourceAccount: Option[KeyPair] = None) extends Operation {
+case class CreatePassiveOfferOperation(selling: Amount, buying: Asset, price: Price) extends Operation {
 
   override def toOperationBody: OperationBody = {
     val op = new CreatePassiveOfferOp
