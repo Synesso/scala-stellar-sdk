@@ -23,6 +23,15 @@ class TransactionSpec extends Specification with ArbitraryInput with DomainMatch
       val actual = ops.foldLeft(Transaction(source, NoMemo)) { case (txn, op) => txn add op }
       actual must beEquivalentTo(expected)
     }
+
+    "allow signing of the transaction one signature at a time" >> prop { (transaction: Transaction, signers: Seq[KeyPair]) =>
+      val expected = transaction.sign(signers.head, signers.tail: _*).get
+      val actual: SignedTransaction = signers match {
+        case Seq(only) => transaction.sign(only).get
+        case h +: t => t.foldLeft(transaction.sign(h).get) { case (txn, kp) => txn.sign(kp).get}
+      }
+      actual must beEquivalentTo(expected)
+    }.setGen2(Gen.nonEmptyListOf(genKeyPair))
   }
 
   "signing a transaction" should {

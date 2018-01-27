@@ -21,10 +21,10 @@ case class Transaction(source: Account,
 
   def add(op: Operation): Transaction = this.copy(operations = operations :+ op)
 
-  def sign(key: KeyPair, otherKeys: KeyPair*): Try[Signed] = for {
+  def sign(key: KeyPair, otherKeys: KeyPair*): Try[SignedTransaction] = for {
     h <- hash
     sigs <- sequence((key +: otherKeys).map(_.signToXDR(h)))
-  } yield Transaction.this.Signed(sigs, h)
+  } yield SignedTransaction(this, sigs, h)
 
   def fee: Int = BaseFee * operations.size
 
@@ -52,18 +52,21 @@ case class Transaction(source: Account,
     timeBounds.map(_.toXDR).foreach(txn.setTimeBounds)
     txn
   }
+}
 
-  case class Signed(signatures: Seq[DecoratedSignature], hash: Array[Byte]) {
-    def submit(network: Network): SubmitTransactionResponse = ???
+case class SignedTransaction(transaction: Transaction, signatures: Seq[DecoratedSignature], hash: Array[Byte]) {
 
-    def sign(key: KeyPair): Try[Signed] = key.signToXDR(hash).map(sig => this.copy(sig +: signatures))
+  def submit(network: Network): SubmitTransactionResponse = ???
 
-    def toEnvelopeXDR: TransactionEnvelope = {
-      val xdr = new TransactionEnvelope
-      xdr.setTx(Transaction.this.toXDR)
-      xdr.setSignatures(signatures.toArray)
-      xdr
-    }
+  def sign(key: KeyPair): Try[SignedTransaction] = key.signToXDR(hash).map(sig =>
+    this.copy(signatures = sig +: signatures)
+  )
+
+  def toEnvelopeXDR: TransactionEnvelope = {
+    val xdr = new TransactionEnvelope
+    xdr.setTx(transaction.toXDR)
+    xdr.setSignatures(signatures.toArray)
+    xdr
   }
 }
 

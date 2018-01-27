@@ -2,7 +2,7 @@ package stellar.scala.sdk
 
 import org.apache.commons.codec.binary.Hex
 import org.specs2.matcher.{AnyMatchers, Matcher, MustExpectations, OptionMatchers, SequenceMatchersCreation}
-import org.stellar.sdk.xdr.{Hash, PublicKey, SignerKey, Uint64, Memo => XDRMemo, Operation => XDROperation}
+import org.stellar.sdk.xdr.{DecoratedSignature, Hash, PublicKey, SignerKey, Uint64, Memo => XDRMemo, Operation => XDROperation}
 import stellar.scala.sdk.op._
 
 trait DomainMatchers extends AnyMatchers with MustExpectations with SequenceMatchersCreation with OptionMatchers {
@@ -207,6 +207,17 @@ trait DomainMatchers extends AnyMatchers with MustExpectations with SequenceMatc
       forall(txn.operations.zip(other.operations)) {
         case (txnOp: Operation, otherOp: Operation) =>
           txnOp must beEquivalentTo(otherOp)
+      }
+  }
+
+  def beEquivalentTo(other: SignedTransaction): Matcher[SignedTransaction] = beLike {
+    case stxn =>
+      stxn.transaction must beEquivalentTo(other.transaction)
+      stxn.hash.toSeq mustEqual other.hash.toSeq
+      forall(stxn.signatures.zip(other.signatures)) {
+        case (stxnSig: DecoratedSignature, otherSig: DecoratedSignature) =>
+          stxnSig.getHint.getSignatureHint.toSeq mustEqual otherSig.getHint.getSignatureHint.toSeq
+          stxnSig.getSignature.getSignature.toSeq mustEqual otherSig.getSignature.getSignature.toSeq
       }
   }
 
