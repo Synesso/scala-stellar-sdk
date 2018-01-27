@@ -17,6 +17,14 @@ class TransactionSpec extends Specification with ArbitraryInput with DomainMatch
     }.setGen2(Gen.nonEmptyListOf(genOperation))
   }
 
+  "a transaction" should {
+    "allow adding of operations one at a time" >> prop { (source: Account, ops: Seq[Operation]) =>
+      val expected = Transaction(source, NoMemo, ops)
+      val actual = ops.foldLeft(Transaction(source, NoMemo)) { case (txn, op) => txn add op }
+      actual must beEquivalentTo(expected)
+    }
+  }
+
   "signing a transaction" should {
     "add a signature to that transaction" >> prop { (source: Account, op: Operation, signers: Seq[KeyPair]) =>
       val signatures = Transaction(source, NoMemo, Seq(op)).sign(signers.head, signers.tail: _*).get.signatures
@@ -47,7 +55,7 @@ class TransactionSpec extends Specification with ArbitraryInput with DomainMatch
               tb1.getMaxTime.getUint64 mustEqual end.toEpochMilli
           }
       }
-      forall(txn.operations.reverse.zip(xdr.getOperations.map(Operation.fromXDR))) {
+      forall(txn.operations.zip(xdr.getOperations.map(Operation.fromXDR))) {
         case (expected: Operation, actualTry: Try[Operation]) =>
           actualTry must beSuccessfulTry[Operation].like { case actual =>
               actual must beEquivalentTo(expected)

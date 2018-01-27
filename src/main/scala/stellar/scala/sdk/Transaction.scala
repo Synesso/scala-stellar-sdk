@@ -19,7 +19,7 @@ case class Transaction(source: Account,
   private val BaseFee = 100
   private val EnvelopeTypeTx = ByteBuffer.allocate(4).putInt(EnvelopeType.ENVELOPE_TYPE_TX.getValue).array
 
-  def add(op: Operation): Transaction = this.copy(operations = op +: operations)
+  def add(op: Operation): Transaction = this.copy(operations = operations :+ op)
 
   def sign(key: KeyPair, otherKeys: KeyPair*): Try[Signed] = for {
     h <- hash
@@ -47,7 +47,7 @@ case class Transaction(source: Account,
     txn.setFee(uint32(fee))
     txn.setSeqNum(seqNum(source.sequenceNumber))
     txn.setSourceAccount(accountId(source.keyPair))
-    txn.setOperations(operations.reverse.toArray.map(_.toXDR))
+    txn.setOperations(operations.toArray.map(_.toXDR))
     txn.setMemo(memo.toXDR)
     timeBounds.map(_.toXDR).foreach(txn.setTimeBounds)
     txn

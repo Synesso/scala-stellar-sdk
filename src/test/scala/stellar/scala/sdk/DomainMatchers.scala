@@ -193,4 +193,21 @@ trait DomainMatchers extends AnyMatchers with MustExpectations with SequenceMatc
     case op: SetOptionsOperation => other.asInstanceOf[SetOptionsOperation] must beEquivalentTo(op)
   }
 
+  def beEquivalentTo(other: Account): Matcher[Account] = beLike {
+    case acc =>
+      acc.keyPair must beEquivalentTo(other.keyPair)
+      acc.sequenceNumber mustEqual other.sequenceNumber
+  }
+
+  def beEquivalentTo(other: Transaction): Matcher[Transaction] = beLike {
+    case txn =>
+      txn.source must beEquivalentTo(other.source)
+      txn.memo mustEqual other.memo
+      txn.timeBounds mustEqual other.timeBounds
+      forall(txn.operations.zip(other.operations)) {
+        case (txnOp: Operation, otherOp: Operation) =>
+          txnOp must beEquivalentTo(otherOp)
+      }
+  }
+
 }
