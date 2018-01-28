@@ -1,6 +1,6 @@
 
 // format: off
-name := "scala-stellar-sdk"
+name := "scala-stellar-sdk" /// todo - rename
 
 organization := "stellar.scala.sdk"
 
@@ -12,6 +12,7 @@ enablePlugins(GitVersioning)
 
 libraryDependencies ++= List(
   "commons-codec" % "commons-codec" % "1.11",
+  "net.i2p.crypto" % "eddsa" % "4.0.0",
   "org.specs2" %% "specs2-core" % "4.0.0" % "test",
   "org.specs2" %% "specs2-scalacheck" % "4.0.0" % "test"
 )
