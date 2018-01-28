@@ -4,8 +4,6 @@ name := "scala-stellar-sdk"
 
 organization := "stellar.scala.sdk"
 
-version := sys.env.getOrElse("TRAVIS_BRANCH", "dev")
-
 scalaVersion := "2.12.4"
 
 crossScalaVersions := Seq("2.11.12", "2.12.4")
