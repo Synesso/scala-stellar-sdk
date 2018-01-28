@@ -10,11 +10,11 @@ import scala.util.{Success, Try}
 trait Operation extends XDRPrimitives {
   def toOperationBody: OperationBody
 
-  def toXDR(sourceAccount: KeyPair): XDROp = {
+  def toXDR: XDROp = {
     val op = new org.stellar.sdk.xdr.Operation()
-    val src = new AccountID()
-    src.setAccountID(sourceAccount.getXDRPublicKey)
-    op.setSourceAccount(src)
+//    val src = new AccountID()
+//    src.setAccountID(sourceAccount.getXDRPublicKey)
+//    op.setSourceAccount(src)
     op.setBody(toOperationBody)
     op
   }

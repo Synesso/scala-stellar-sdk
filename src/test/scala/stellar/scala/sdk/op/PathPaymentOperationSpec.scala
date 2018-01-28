@@ -6,8 +6,8 @@ import stellar.scala.sdk._
 class PathPaymentOperationSpec extends Specification with ArbitraryInput with DomainMatchers {
 
   "path payment operation" should {
-    "serde via xdr" >> prop { (actual: PathPaymentOperation, source: KeyPair) =>
-      Operation.fromXDR(actual.toXDR(source)) must beSuccessfulTry.like {
+    "serde via xdr" >> prop { actual: PathPaymentOperation =>
+      Operation.fromXDR(actual.toXDR) must beSuccessfulTry.like {
         case expected: PathPaymentOperation => expected must beEquivalentTo(actual)
       }
     }

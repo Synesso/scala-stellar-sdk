@@ -47,7 +47,7 @@ case class Transaction(source: Account,
     txn.setFee(uint32(fee))
     txn.setSeqNum(seqNum(source.sequenceNumber))
     txn.setSourceAccount(accountId(source.keyPair))
-    txn.setOperations(operations.toArray.map(_.toXDR(source.keyPair)))
+    txn.setOperations(operations.toArray.map(_.toXDR))
     txn.setMemo(memo.toXDR)
     timeBounds.map(_.toXDR).foreach(txn.setTimeBounds)
     txn

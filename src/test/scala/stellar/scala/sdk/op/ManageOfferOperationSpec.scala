@@ -8,24 +8,24 @@ import stellar.scala.sdk._
 class ManageOfferOperationSpec extends Specification with ArbitraryInput with DomainMatchers {
 
   "create offer operation" should {
-    "serde via xdr" >> prop { (actual: CreateOfferOperation, source: KeyPair) =>
-      Operation.fromXDR(actual.toXDR(source)) must beSuccessfulTry.like {
+    "serde via xdr" >> prop { actual: CreateOfferOperation =>
+      Operation.fromXDR(actual.toXDR) must beSuccessfulTry.like {
         case expected: CreateOfferOperation => expected must beEquivalentTo(actual)
       }
     }
   }
 
   "update offer operation" should {
-    "serde via xdr" >> prop { (actual: UpdateOfferOperation, source: KeyPair) =>
-      Operation.fromXDR(actual.toXDR(source)) must beSuccessfulTry.like {
+    "serde via xdr" >> prop { actual: UpdateOfferOperation =>
+      Operation.fromXDR(actual.toXDR) must beSuccessfulTry.like {
         case expected: UpdateOfferOperation => expected must beEquivalentTo(actual)
       }
     }
   }
 
   "delete offer operation" should {
-    "serde via xdr" >> prop { (actual: DeleteOfferOperation, source: KeyPair) =>
-      Operation.fromXDR(actual.toXDR(source)) must beSuccessfulTry.like {
+    "serde via xdr" >> prop { actual: DeleteOfferOperation =>
+      Operation.fromXDR(actual.toXDR) must beSuccessfulTry.like {
         case expected: DeleteOfferOperation => expected must beEquivalentTo(actual)
       }
     }

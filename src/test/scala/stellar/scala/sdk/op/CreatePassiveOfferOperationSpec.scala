@@ -6,8 +6,8 @@ import stellar.scala.sdk._
 class CreatePassiveOfferOperationSpec extends Specification with ArbitraryInput with DomainMatchers {
 
   "create passive offer operation" should {
-    "serde via xdr" >> prop { (actual: CreatePassiveOfferOperation, source: KeyPair) =>
-      Operation.fromXDR(actual.toXDR(source)) must beSuccessfulTry.like {
+    "serde via xdr" >> prop { actual: CreatePassiveOfferOperation =>
+      Operation.fromXDR(actual.toXDR) must beSuccessfulTry.like {
         case expected: CreatePassiveOfferOperation => expected must beEquivalentTo(actual)
       }
     }
