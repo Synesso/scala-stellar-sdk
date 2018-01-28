@@ -5,7 +5,8 @@
 
 # Stellar SDK for Scala
 
-A Scala SDK for the [Stellar network](https://www.stellar.org/). It is a work in progress.
+A Scala SDK for the [Stellar network](https://www.stellar.org/). It is a work in progress with a target of being fully functional
+by March 15, 2018. Contributions are welcome.
 
 ## Progress
 
@@ -31,7 +32,7 @@ A Scala developer would choose this SDK over the Java SDK because:
 * No builder patterns, just case classes
 * Explicit type hierarchies instead of meaningful primitives
 * Test coverage: Generative testing using scalacheck with the goal of 100% coverage
-* Perform network operations on the terminal through the scala console
+* Perform network operations on the terminal through the scala REPL
 
 ## Installation
 
