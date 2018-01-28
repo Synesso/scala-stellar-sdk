@@ -3,13 +3,22 @@
 
 [![Download](https://api.bintray.com/packages/synesso/mvn/scala-stellar-sdk/images/download.svg)](https://bintray.com/synesso/mvn/scala-stellar-sdk/_latestVersion)
 
-A Scala SDK for the Stellar network. It is a work in progress.
+# Stellar SDK for Scala
+
+A Scala SDK for the [Stellar network](https://www.stellar.org/). It is a work in progress.
+
+## Progress
 
 [✓] Operations
+
 [✓] Transactions
+
 [🚀] Requests
+
 [ ] Responses
+
 [ ] Effects
+
 [ ] Federation
 
 ## Benefits
@@ -20,9 +29,9 @@ A Scala developer would choose this SDK over the Java SDK because:
 * `Try`s, not exceptions
 * `Future`s for all network operations
 * No builder patterns, just case classes
-* Explicit type hierarchies instead of generic classes with meaningful primitives
+* Explicit type hierarchies instead of meaningful primitives
+* Test coverage: Generative testing using scalacheck with the goal of 100% coverage
 * Perform network operations on the terminal through the scala console
-* Test coverage: Generative test with scalacheck with a goal of 100% coverage
 
 ## Installation
 
