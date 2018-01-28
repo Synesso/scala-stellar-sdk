@@ -38,7 +38,7 @@ A Scala developer would choose this SDK over the Java SDK because:
 In your `build.sbt`
 
 ```
-resolvers += "synesso" at "https://dl.bintray.com/synesso/mvn"
+resolvers += "scala-stellar-sdk-repo" at "https://dl.bintray.com/synesso/mvn"
 
 libraryDependencies +=  "stellar.scala.sdk" %% "scala-stellar-sdk" % "0.0.1.3"
 ```
