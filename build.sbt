@@ -10,6 +10,8 @@ scalaVersion := "2.12.4"
 
 crossScalaVersions := Seq("2.11.12", "2.12.4")
 
+enablePlugins(GitVersioning)
+
 libraryDependencies ++= List(
   "commons-codec" % "commons-codec" % "1.11",
   "org.specs2" %% "specs2-core" % "4.0.0" % "test",
