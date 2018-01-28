@@ -18,6 +18,6 @@ after_success:
 
 deploy:
   provider: script
-  script: sbt bintrayChangeCredentials publish
+  script: sbt -Dbintray.user=$BINTRAY_USER -Dbintray.pass=$BINTRAY_PASS publish
   on:
     tags: true
