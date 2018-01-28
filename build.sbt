@@ -1,6 +1,6 @@
 
 // format: off
-name := "scala-stellar-sdk" /// todo - rename
+name := "scala-stellar-sdk"
 
 organization := "stellar.scala.sdk"
 
