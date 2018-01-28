@@ -18,6 +18,6 @@ after_success:
 
 deploy:
   provider: script
-  script: sbt clean publish
+  script: sbt bintrayChangeCredentials publish
   on:
     tags: true
