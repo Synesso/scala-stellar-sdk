@@ -1,5 +1,5 @@
 package stellar.scala.sdk.resp
 
-class SubmitTransactionResponse {
+case class SubmitTransactionResponse() {
 
 }

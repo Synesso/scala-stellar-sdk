@@ -59,8 +59,8 @@ case class Transaction(source: Account,
 case class SignedTransaction(transaction: Transaction, signatures: Seq[DecoratedSignature], hash: Array[Byte])
   extends ByteArrays {
 
-  def submit(network: Network): Future[SubmitTransactionResponse] = {
-    ???
+  def submit: Future[SubmitTransactionResponse] = {
+    transaction.network.submit(this)
   }
 
   def sign(key: KeyPair): Try[SignedTransaction] = key.signToXDR(hash).map(sig =>

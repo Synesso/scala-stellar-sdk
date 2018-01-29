@@ -3,12 +3,16 @@ package stellar.scala.sdk.inet
 import java.net.URI
 import java.nio.charset.StandardCharsets.UTF_8
 
-import stellar.scala.sdk.ByteArrays
+import stellar.scala.sdk.resp.SubmitTransactionResponse
+import stellar.scala.sdk.{ByteArrays, SignedTransaction}
+
+import scala.concurrent.Future
 
 trait Network extends ByteArrays {
   val passphrase: String
   lazy val networkId: Array[Byte] = sha256(passphrase.getBytes(UTF_8)).get
   val server: Server
+  def submit(txn: SignedTransaction): Future[SubmitTransactionResponse] = server.post(txn)
 }
 
 case object PublicNetwork extends Network {
