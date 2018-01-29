@@ -13,6 +13,7 @@ enablePlugins(GitVersioning)
 libraryDependencies ++= List(
   "commons-codec" % "commons-codec" % "1.11",
   "net.i2p.crypto" % "eddsa" % "4.0.0",
+  "org.scalaj" %% "scalaj-http" % "2.3.0", // todo - customise. See GH issue #2
   "org.specs2" %% "specs2-core" % "4.0.0" % "test",
   "org.specs2" %% "specs2-scalacheck" % "4.0.0" % "test"
 )

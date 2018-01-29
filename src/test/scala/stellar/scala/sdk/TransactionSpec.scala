@@ -41,7 +41,7 @@ class TransactionSpec extends Specification with ArbitraryInput with DomainMatch
       val txn = Transaction(
         source = account,
         operations = Seq(CreateAccountOperation(dest, Amount.lumens(2000)))
-      )(TestNetwork).sign(source)
+      ).sign(source)
 
       txn.flatMap(_.toEnvelopeXDRBase64) must beSuccessfulTry("AAAAAF7FIiDToW1fOYUFBC0dmyufJbFTOa2GQESGz+S2h5ViAAAAZAAKVaMAAAABAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAA7eBSYbzcL5UKo7oXO24y1ckX+XuCtkDsyNHOp1n1bxAAAAAEqBfIAAAAAAAAAAABtoeVYgAAAEDLki9Oi700N60Lo8gUmEFHbKvYG4QSqXiLIt9T0ru2O5BphVl/jR9tYtHAD+UeDYhgXNgwUxqTEu1WukvEyYcD")
       txn.map(_.transaction.source) must beSuccessfulTry[Account].like{ case accn => accn must beEquivalentTo(account)}

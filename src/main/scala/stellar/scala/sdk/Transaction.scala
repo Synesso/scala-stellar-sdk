@@ -5,9 +5,11 @@ import java.nio.ByteBuffer
 
 import org.stellar.sdk.xdr.Transaction.TransactionExt
 import org.stellar.sdk.xdr.{DecoratedSignature, EnvelopeType, TransactionEnvelope, XdrDataOutputStream, Transaction => XDRTransaction}
+import stellar.scala.sdk.net.Network
 import stellar.scala.sdk.op.Operation
 import stellar.scala.sdk.resp.SubmitTransactionResponse
 
+import scala.concurrent.Future
 import scala.util.Try
 
 case class Transaction(source: Account,
@@ -57,7 +59,9 @@ case class Transaction(source: Account,
 case class SignedTransaction(transaction: Transaction, signatures: Seq[DecoratedSignature], hash: Array[Byte])
   extends ByteArrays {
 
-  def submit(network: Network): SubmitTransactionResponse = ???
+  def submit(network: Network): Future[SubmitTransactionResponse] = {
+    ???
+  }
 
   def sign(key: KeyPair): Try[SignedTransaction] = key.signToXDR(hash).map(sig =>
     this.copy(signatures = sig +: signatures)

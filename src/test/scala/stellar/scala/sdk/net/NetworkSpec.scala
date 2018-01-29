@@ -1,4 +1,4 @@
-package stellar.scala.sdk
+package stellar.scala.sdk.net
 
 import org.specs2.mutable.Specification
 

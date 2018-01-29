@@ -5,13 +5,14 @@ import java.time.Instant
 import org.scalacheck.{Arbitrary, Gen}
 import org.specs2.ScalaCheck
 import org.stellar.sdk.xdr.{Signature, SignerKey}
+import stellar.scala.sdk.net.{Network, TestNetwork}
 import stellar.scala.sdk.op._
 
 import scala.util.Random
 
 trait ArbitraryInput extends ScalaCheck {
 
-  implicit val network: Network = SpecNetwork
+  implicit val network: Network = TestNetwork
 
   implicit def arbKeyPair: Arbitrary[KeyPair] = Arbitrary(genKeyPair)
 
