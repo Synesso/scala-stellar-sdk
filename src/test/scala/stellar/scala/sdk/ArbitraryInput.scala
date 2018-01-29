@@ -5,7 +5,7 @@ import java.time.Instant
 import org.scalacheck.{Arbitrary, Gen}
 import org.specs2.ScalaCheck
 import org.stellar.sdk.xdr.{Signature, SignerKey}
-import stellar.scala.sdk.net.{Network, TestNetwork}
+import stellar.scala.sdk.inet.{Network, TestNetwork}
 import stellar.scala.sdk.op._
 
 import scala.util.Random

@@ -5,7 +5,7 @@ import java.nio.ByteBuffer
 
 import org.stellar.sdk.xdr.Transaction.TransactionExt
 import org.stellar.sdk.xdr.{DecoratedSignature, EnvelopeType, TransactionEnvelope, XdrDataOutputStream, Transaction => XDRTransaction}
-import stellar.scala.sdk.net.Network
+import stellar.scala.sdk.inet.Network
 import stellar.scala.sdk.op.Operation
 import stellar.scala.sdk.resp.SubmitTransactionResponse
 
