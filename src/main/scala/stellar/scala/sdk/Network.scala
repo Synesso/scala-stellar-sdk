@@ -1,12 +1,14 @@
-package stellar.scala.sdk.inet
+package stellar.scala.sdk
 
 import java.net.URI
 import java.nio.charset.StandardCharsets.UTF_8
 
-import stellar.scala.sdk.resp.SubmitTransactionResponse
-import stellar.scala.sdk.{ByteArrays, SignedTransaction}
+import stellar.scala.sdk.inet.Server
+import stellar.scala.sdk.resp.{FundTestAccountResponse, SubmitTransactionResponse}
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
+import scalaj.http.Http
 
 trait Network extends ByteArrays {
   val passphrase: String
@@ -23,4 +25,12 @@ case object PublicNetwork extends Network {
 case object TestNetwork extends Network {
   override val passphrase = "Test SDF Network ; September 2015"
   override val server = Server(URI.create("https://horizon-testnet.stellar.org"))
+
+  def fund(pk: PublicKeyOps)(): Future[FundTestAccountResponse] = Future {
+    val response = Http(s"${server.uri.toString}/friendbot")
+      .timeout(connTimeoutMs = 1000, readTimeoutMs = 30000)
+      .param("addr", pk.accountId).asString
+    assert(response.code == 200, s"HTTP Response code ${response.code}")
+    FundTestAccountResponse(response.body).get
+  }
 }

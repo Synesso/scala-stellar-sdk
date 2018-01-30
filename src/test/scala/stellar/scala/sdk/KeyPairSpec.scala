@@ -46,5 +46,4 @@ class KeyPairSpec extends Specification with ArbitraryInput with DomainMatchers 
       KeyPair.fromAccountId(kp.accountId) must beEquivalentTo(kp.asVerifyingKey)
     }
   }
-
 }
