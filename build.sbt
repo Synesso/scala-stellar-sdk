@@ -40,3 +40,4 @@ licenses += ("Apache-2.0", url("https://opensource.org/licenses/Apache-2.0"))
 bintrayRepository := "mvn"
 
 bintrayPackageLabels := Seq("scala", "stellar")
+

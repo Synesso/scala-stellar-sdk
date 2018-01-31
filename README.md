@@ -46,6 +46,21 @@ libraryDependencies +=  "stellar.scala.sdk" %% "scala-stellar-sdk" % "0.0.1.3"
 
 ## Examples
 
-###
+All of the following examples use the [Ammonite REPL](http://ammonite.io/). After launching `amm`, fetch and import the
+Stellar SDK for Scala.
 
-_todo_
+```
+interp.repositories() ++= Seq(coursier.MavenRepository("https://dl.bintray.com/synesso/mvn/"))
+
+import $ivy.`stellar.scala.sdk::scala-stellar-sdk:0.0.1.3`
+
+import stellar.sdk._
+```
+
+
+### Creating and funding a test account
+
+```
+val kp = KeyPair.random
+TestNetwork.fund(kp).foreach(println)
+```
