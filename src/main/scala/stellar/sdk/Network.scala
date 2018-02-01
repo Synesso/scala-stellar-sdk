@@ -4,7 +4,7 @@ import java.net.URI
 import java.nio.charset.StandardCharsets.UTF_8
 
 import stellar.sdk.inet.Server
-import stellar.sdk.resp.{FundTestAccountResponse, SubmitTransactionResponse}
+import stellar.sdk.resp.{AccountResp, FundTestAccountResponse, SubmitTransactionResponse}
 
 import scala.concurrent.{ExecutionContext, Future}
 import com.softwaremill.sttp._
@@ -17,8 +17,8 @@ trait Network extends ByteArrays {
   val server: Server
   def submit(txn: SignedTransaction): Future[SubmitTransactionResponse] = server.post(txn)
 
-  def account(pubKey: PublicKeyOps)(implicit ec: ExecutionContext): Future[String] = {
-    server.get[String](s"/accounts/${pubKey.accountId}")
+  def account(pubKey: PublicKeyOps)(implicit ec: ExecutionContext): Future[AccountResp] = {
+    server.get[AccountResp](s"/accounts/${pubKey.accountId}")
   }
 }
 

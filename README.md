@@ -55,15 +55,22 @@ interp.repositories() ++= Seq(coursier.MavenRepository("https://dl.bintray.com/s
 import $ivy.`stellar.scala.sdk::scala-stellar-sdk:0.0.1.5`
 
 import stellar.sdk._
+
+import scala.concurrent.ExecutionContext.Implicits.global
 ```
 
 
 ### Creating and funding a test account
 
+
 ```
-import scala.concurrent.ExecutionContext.Implicits.global
-
 val kp = KeyPair.random
-
 TestNetwork.fund(kp).foreach(println)
+```
+
+Checking the status of an account
+
+```
+val account: Future[AccountResp] = TestNetwork.account(kp)
+account.foreach(println)
 ```

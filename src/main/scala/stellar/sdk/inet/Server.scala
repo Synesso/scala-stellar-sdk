@@ -2,19 +2,22 @@ package stellar.sdk.inet
 
 import java.net.URI
 
-import stellar.sdk.resp.SubmitTransactionResponse
-import stellar.sdk.SignedTransaction
+import stellar.sdk.resp.{AccountRespDeserializer, SubmitTransactionResponse}
+import stellar.sdk.{PublicKeyOps, SignedTransaction}
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
 import com.softwaremill.sttp._
 import com.softwaremill.sttp.akkahttp.AkkaHttpBackend
 import com.softwaremill.sttp.json4s._
+import org.json4s.NoTypeHints
+import org.json4s.native.Serialization
 
 import scala.reflect.ClassTag
 
 case class Server(uri: URI) {
   implicit val backend = AkkaHttpBackend()
+  implicit val formats = Serialization.formats(NoTypeHints) + new AccountRespDeserializer
 
   def post(txn: SignedTransaction): Future[SubmitTransactionResponse] = {
     ???

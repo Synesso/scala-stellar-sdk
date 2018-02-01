@@ -2,7 +2,7 @@ package stellar.sdk
 
 import org.specs2.concurrent.ExecutionEnv
 import org.specs2.mutable.Specification
-import stellar.sdk.resp.FundTestAccountResponse
+import stellar.sdk.resp.{AccountResp, FundTestAccountResponse}
 
 import scala.concurrent.duration._
 
@@ -17,10 +17,15 @@ class NetworkSpec(implicit ee: ExecutionEnv) extends Specification {
 
     "fund a new test account" >> {
       val kp = KeyPair.random
-      TestNetwork.fund(kp) must beLike[FundTestAccountResponse] {
-        case FundTestAccountResponse(a, b) =>
-          // todo - check test network for confirmation of funding
-          ok
+      val fundedAccount = for {
+        fundTestAccountResponse <- TestNetwork.fund(kp)
+        accDetails <- TestNetwork.account(kp)
+      } yield accDetails
+
+      fundedAccount must beLike[AccountResp] {
+        case AccountResp(id, _, _, _, _, _, List(lumens), _) =>
+          id mustEqual kp.accountId
+          lumens mustEqual Amount.lumens(10000)
       }.awaitFor(30.seconds)
     }
   }

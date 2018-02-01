@@ -3,7 +3,6 @@ package stellar.sdk.op
 import org.stellar.sdk.xdr.Operation.OperationBody
 import org.stellar.sdk.xdr.OperationType.SET_OPTIONS
 import org.stellar.sdk.xdr._
-import stellar.sdk._
 import stellar.sdk.{KeyPair, PublicKeyOps}
 
 import scala.util.Try
