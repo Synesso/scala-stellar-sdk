@@ -13,8 +13,9 @@ enablePlugins(GitVersioning)
 libraryDependencies ++= List(
   "commons-codec" % "commons-codec" % "1.11",
   "net.i2p.crypto" % "eddsa" % "4.0.0",
-  "org.json4s" %% "json4s-native" % "3.5.3",
-  "org.scalaj" %% "scalaj-http" % "2.3.0", // todo - customise. See GH issue #2
+  "com.softwaremill.sttp" %% "akka-http-backend" % "1.1.5",
+  "com.softwaremill.sttp" %% "core" % "1.1.5",
+  "com.softwaremill.sttp" %% "json4s" % "1.1.5",
   "org.specs2" %% "specs2-core" % "4.0.0" % "test",
   "org.specs2" %% "specs2-scalacheck" % "4.0.0" % "test"
 )

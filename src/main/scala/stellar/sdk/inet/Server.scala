@@ -5,21 +5,29 @@ import java.net.URI
 import stellar.sdk.resp.SubmitTransactionResponse
 import stellar.sdk.SignedTransaction
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
-import scalaj.http.Http
+import com.softwaremill.sttp._
+import com.softwaremill.sttp.akkahttp.AkkaHttpBackend
+import com.softwaremill.sttp.json4s._
+
+import scala.reflect.ClassTag
 
 case class Server(uri: URI) {
+  implicit val backend = AkkaHttpBackend()
+
   def post(txn: SignedTransaction): Future[SubmitTransactionResponse] = {
-    for {
-      tx <- Future.fromTry(txn.toEnvelopeXDRBase64)
-      req = Http(uri.toString).postForm(Seq("tx" -> tx.mkString))
-      response = req.asString
-      _ = println(s"raw response = $response")
-    } yield SubmitTransactionResponse()
+    ???
   }
 
+  def get[T: ClassTag](path: String, params: Map[String, String] = Map.empty)(implicit ec: ExecutionContext, m: Manifest[T]): Future[T] = {
+    for {
+      resp <- sttp.get(uri"$uri/$path?$params").response(asJson[T]).send()
+    } yield resp.body match {
+      case Right(r) => r
+      case Left(s) => throw new RuntimeException(s"Unrecognised reponse: $s")
+    }
+  }
 }
 
 object Server {
