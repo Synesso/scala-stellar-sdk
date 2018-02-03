@@ -89,4 +89,10 @@ class AssetSpec extends Specification with ArbitraryInput {
       AssetTypeCreditAlphaNum12(code, issuer) must throwAn[AssertionError]
     }.setGen(genCode(13, 1000))
   }
+
+  "creating an amount with a non-native asset" should {
+    "use the specified asset" >> prop { (bal: Long, asset: NonNativeAsset) =>
+      Amount(bal, asset).asset mustEqual asset
+    }
+  }
 }

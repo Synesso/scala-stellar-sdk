@@ -30,18 +30,31 @@ class AccountRespDeserializer extends CustomSerializer[AccountResp](format => ({
     val JArray(jsBalances) = o \ "balances"
     val balances = jsBalances.map {
       case balObj: JObject =>
-        val units = (balObj \ "balance").extract[String].toDouble
-        // todo - asset type
-      Amount.lumens(units)
+        val units = Amount.toBaseUnits((balObj \ "balance").extract[String].toDouble).get
+        (balObj \ "asset_type").extract[String] match {
+          case "credit_alphanum4" =>
+            Amount(units, AssetTypeCreditAlphaNum4(
+              code = (balObj \ "asset_code").extract[String],
+              issuer = KeyPair.fromAccountId((balObj \ "asset_issuer").extract[String])
+            ))
+          case "credit_alphanum12" =>
+            Amount(units, AssetTypeCreditAlphaNum12(
+              code = (balObj \ "asset_code").extract[String],
+              issuer = KeyPair.fromAccountId((balObj \ "asset_issuer").extract[String])
+            ))
+          case "native" => NativeAmount(units)
+          case t => throw new RuntimeException(s"Unrecognised asset type: $t")
+        }
+      case _ => throw new RuntimeException(s"Expected js object at 'balances'")
     }
     val JArray(jsSigners) = o \ "signers"
     val signers = jsSigners.map {
       case signerObj: JObject =>
         val publicKey = KeyPair.fromAccountId((signerObj \ "public_key").extract[String])
         val weight = (signerObj \ "weight").extract[Int]
-        // todo - key is just duplicate of publicKey?
         // todo - type
-      Signer(publicKey, weight)
+        Signer(publicKey, weight)
+      case _ => throw new RuntimeException(s"Expected js object at 'signers'")
     }
     // todo - data
 

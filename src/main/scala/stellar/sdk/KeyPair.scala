@@ -50,7 +50,18 @@ case class KeyPair(pk: EdDSAPublicKey, sk: EdDSAPrivateKey) extends PublicKeyOps
 
 }
 
-case class VerifyingKey(pk: EdDSAPublicKey) extends PublicKeyOps
+case class VerifyingKey(pk: EdDSAPublicKey) extends PublicKeyOps {
+
+  override def hashCode(): Int = accountId.hashCode()
+
+  override def equals(obj: scala.Any): Boolean = obj match {
+    case pubKey: PublicKeyOps => pubKey.accountId == accountId
+    case _ => false
+  }
+
+  override def toString: String = s"VerifyingKey($accountId)"
+
+}
 
 trait PublicKeyOps {
   val pk: EdDSAPublicKey

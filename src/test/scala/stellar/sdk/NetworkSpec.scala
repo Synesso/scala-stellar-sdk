@@ -25,7 +25,7 @@ class NetworkSpec(implicit ee: ExecutionEnv) extends Specification {
       fundedAccount must beLike[AccountResp] {
         case AccountResp(id, _, _, _, _, _, List(lumens), _) =>
           id mustEqual kp.accountId
-          lumens mustEqual Amount.lumens(10000)
+          lumens mustEqual Amount.lumens(10000).get
       }.awaitFor(30.seconds)
     }
   }

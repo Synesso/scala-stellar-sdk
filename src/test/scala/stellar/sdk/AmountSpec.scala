@@ -16,4 +16,16 @@ class AmountSpec extends Specification with ArbitraryInput {
       Amount(units, nonNativeAsset) mustEqual IssuedAmount(units, nonNativeAsset)
     }.setGen1(Gen.posNum[Long])
   }
+
+  "converting a number to base units" should {
+    "round correctly" >> prop { l: Double =>
+      val moreThan7DecimalPlaces = (l.toString.length - l.toString.indexOf('.')) > 8
+      if (moreThan7DecimalPlaces) {
+        Amount.toBaseUnits(l) must beAFailedTry[Long]
+      } else {
+        val expected = l.toString.takeWhile(_ != '.') + (l.toString + "0000000").dropWhile(_ != '.').slice(1, 8)
+        Amount.toBaseUnits(l) must beASuccessfulTry[Long].like { case a => a.toString mustEqual expected }
+      }
+    }.setGen(Gen.posNum[Double])
+  }
 }

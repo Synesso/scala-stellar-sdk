@@ -28,7 +28,7 @@ case class Server(uri: URI) {
       resp <- sttp.get(uri"$uri/$path?$params").response(asJson[T]).send()
     } yield resp.body match {
       case Right(r) => r
-      case Left(s) => throw new RuntimeException(s"Unrecognised reponse: $s")
+      case Left(s) => throw new RuntimeException(s"Unrecognised response: $s")
     }
   }
 }

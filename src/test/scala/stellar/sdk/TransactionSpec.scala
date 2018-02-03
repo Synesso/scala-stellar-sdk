@@ -42,7 +42,7 @@ class TransactionSpec extends Specification with ArbitraryInput with DomainMatch
       val account = Account(source, seqNum)
       val txn = sdk.Transaction(
         source = account,
-        operations = Seq(CreateAccountOperation(dest, Amount.lumens(2000)))
+        operations = Seq(CreateAccountOperation(dest, NativeAmount(20000000000L)))
       ).sign(source)
 
       txn.flatMap(_.toEnvelopeXDRBase64) must beSuccessfulTry("AAAAAF7FIiDToW1fOYUFBC0dmyufJbFTOa2GQESGz+S2h5ViAAAAZAAKVaMAAAABAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAA7eBSYbzcL5UKo7oXO24y1ckX+XuCtkDsyNHOp1n1bxAAAAAEqBfIAAAAAAAAAAABtoeVYgAAAEDLki9Oi700N60Lo8gUmEFHbKvYG4QSqXiLIt9T0ru2O5BphVl/jR9tYtHAD+UeDYhgXNgwUxqTEu1WukvEyYcD")
