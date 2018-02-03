@@ -3,13 +3,11 @@ package stellar.sdk
 import java.net.URI
 import java.nio.charset.StandardCharsets.UTF_8
 
+import com.softwaremill.sttp.akkahttp.AkkaHttpBackend
 import stellar.sdk.inet.Server
 import stellar.sdk.resp.{AccountResp, FundTestAccountResponse, SubmitTransactionResponse}
 
 import scala.concurrent.{ExecutionContext, Future}
-import com.softwaremill.sttp._
-import com.softwaremill.sttp.akkahttp.AkkaHttpBackend
-import com.softwaremill.sttp.json4s._
 
 trait Network extends ByteArrays {
   val passphrase: String
@@ -17,9 +15,11 @@ trait Network extends ByteArrays {
   val server: Server
   def submit(txn: SignedTransaction): Future[SubmitTransactionResponse] = server.post(txn)
 
-  def account(pubKey: PublicKeyOps)(implicit ec: ExecutionContext): Future[AccountResp] = {
+  def account(pubKey: PublicKeyOps)(implicit ec: ExecutionContext): Future[AccountResp] =
     server.get[AccountResp](s"/accounts/${pubKey.accountId}")
-  }
+
+  def assets()(implicit ec: ExecutionContext): Future[Stream[Asset]] = server.getPages[Asset](s"/assets")
+
 }
 
 case object PublicNetwork extends Network {

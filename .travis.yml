@@ -4,7 +4,7 @@ scala:
   - 2.12.4
 
 script:
-  - sbt coverage test coverageReport
+    - sbt coverage test it:test coverageReport
 
 cache:
   directories:

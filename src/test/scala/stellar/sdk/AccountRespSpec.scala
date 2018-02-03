@@ -113,8 +113,6 @@ class AccountRespSpec extends Specification {
                   |}
                   |""".stripMargin
 
-      println(doc)
-
       parse(doc).extract[AccountResp] must beLike {
         case r: AccountResp =>
           r.id mustEqual "GBU6GMZZ2KTQ33CHNVPAWWEJ22ZHLYGBGO3LIBKNANXUMNEOFROZKO62"
