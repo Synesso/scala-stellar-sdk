@@ -11,16 +11,83 @@ by March 15, 2018. Contributions are welcome.
 ## Progress
 
 [✓] Operations
-
 [✓] Transactions
+[ ] Endpoints
+  [✓] Account details
+  [ ] Assets
+    [🚀] Unfiltered - todo increase batch size in Page
+    [ ] By code
+    [ ] By issuer
+  [ ] Data for account
+  [ ] Effects
+    [ ] Unfiltered stream
+    [ ] By account
+    [ ] By ledger
+    [ ] By operation
+    [ ] By transaction
+  [ ] Ledgers
+  [ ] Ledger details
+  [ ] Offers for account
+  [ ] Operations
+    [ ] Unfiltered stream
+      [ ] Since epoch
+      [ ] From now
+      [ ] Since given time
+    [ ] By account
+      [ ] Since epoch
+      [ ] From now
+      [ ] Since given time
+    [ ] By ledger
+      [ ] Since epoch
+      [ ] From now
+      [ ] Since given time
+    [ ] By transaction
+      [ ] Since epoch
+      [ ] From now
+      [ ] Since given time
+  [ ] Operation details
+  [ ] Orderbook details
+  [ ] Payment paths
+  [ ] Payments
+    [ ] Unfiltered stream
+      [ ] Since epoch
+      [ ] From now
+      [ ] Since given time
+    [ ] By account
+      [ ] Since epoch
+      [ ] From now
+      [ ] Since given time
+    [ ] By ledger
+      [ ] Since epoch
+      [ ] From now
+      [ ] Since given time
+    [ ] By transaction
+      [ ] Since epoch
+      [ ] From now
+      [ ] Since given time
+  [ ] Trade aggregations
+  [ ] Trades
+    [ ] Unfiltered
+    [ ] By orderbook
+  [ ] Transactions
+    [ ] Unfiltered
+      [ ] Since epoch
+      [ ] From now
+      [ ] Since given time
+    [ ] By orderbook
+      [ ] Since epoch
+      [ ] From now
+      [ ] Since given time
+    [ ] By account
+      [ ] Since epoch
+      [ ] From now
+      [ ] Since given time
+    [ ] By ledger
+      [ ] Since epoch
+      [ ] From now
+      [ ] Since given time
+  [ ] Post transaction
 
-[🚀] Requests
-
-[ ] Responses
-
-[ ] Effects
-
-[ ] Federation
 
 ## Benefits
 
