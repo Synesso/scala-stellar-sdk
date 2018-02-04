@@ -52,7 +52,7 @@ import stellar.sdk.resp._
 
 ```
 val kp = KeyPair.random
-TestNetwork.fund(kp) // Future[FundTestAccountResponse]
+TestNetwork.fund(kp) // Future[FundTestAccountResp]
 ```
 
 #### Checking the status of an account
@@ -60,6 +60,13 @@ TestNetwork.fund(kp) // Future[FundTestAccountResponse]
 ```
 TestNetwork.account(kp) // Future[AccountResp]
 ```
+
+#### Fetch data for an account
+
+```
+TestNetwork.accountData(kp, "data_key") // Future[String]
+```
+
 
 ### Assets
 
@@ -77,11 +84,6 @@ TestNetwork.assets(issuer = Some("GAE325UC3T63ROIUFBBRNMWGM7AY2NI5C2YO55IPLRKCF3
 TestNetwork.assets(code = Some("ETH"), issuer = Some("GAE325UC3T63ROIUFBBRNMWGM7AY2NI5C2YO55IPLRKCF3UECXLXKNNZ"))
 ```
 
-#### Fetch data for an account
-
-```
-TestNetwork.accountData(kp, "data_key")
-```
 
 
 ## Progress
