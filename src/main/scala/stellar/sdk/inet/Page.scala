@@ -2,8 +2,8 @@ package stellar.sdk.inet
 
 import org.json4s.JsonAST.{JArray, JObject}
 import org.json4s.native.Serialization
-import org.json4s.{CustomSerializer, DefaultFormats, NoTypeHints}
-import stellar.sdk.resp.{AccountRespDeserializer, AssetResp, AssetRespDeserializer}
+import org.json4s.{CustomSerializer, NoTypeHints}
+import stellar.sdk.resp.AssetRespDeserializer
 /**
   * A page of results
   */

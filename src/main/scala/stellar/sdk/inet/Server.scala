@@ -36,7 +36,7 @@ case class Server(uri: URI) {
 
   def getStream[T: ClassTag](path: String)(implicit ec: ExecutionContext, m: Manifest[T]): Future[Stream[T]] = {
     def next(p: Page[T]): Future[Option[Page[T]]] =
-      (getPageAbsoluteUri(uri"${p.nextLink}"): Future[Page[T]]).map(Some(_)).recover { case e: ResourceMissingException => None }
+      (getPageAbsoluteUri(uri"${p.nextLink}&limit=100"): Future[Page[T]]).map(Some(_)).recover { case e: ResourceMissingException => None }
 
     def stream(ts: Seq[T], maybeNextPage: Future[Option[Page[T]]]): Stream[T] = {
       ts match {
@@ -56,7 +56,7 @@ case class Server(uri: URI) {
   }
 
   def getPage[T: ClassTag](path: String)(implicit ec: ExecutionContext, m: Manifest[T]): Future[Page[T]] =
-    getPageAbsoluteUri(uri"$uri/$path")
+    getPageAbsoluteUri(uri"$uri/$path?limit=100")
 
   private def getPageAbsoluteUri[T: ClassTag](uri: Uri)(implicit ec: ExecutionContext, m: Manifest[T]): Future[Page[T]] = {
     for {

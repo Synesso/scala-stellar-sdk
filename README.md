@@ -77,8 +77,8 @@ TestNetwork.assets // Future[Stream[AssetResp]]
 [ ] Endpoints
   [✓] Account details
   [ ] Assets
-    [🚀] Unfiltered - todo increase batch size in Page
-    [ ] By code
+    [✓] Unfiltered
+    [🚀] By code
     [ ] By issuer
   [ ] Data for account
   [ ] Effects
