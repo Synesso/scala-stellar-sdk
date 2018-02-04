@@ -58,23 +58,25 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent._
 ```
 
+### Accounts
 
-### Creating and funding a test account
-
+#### Creating and funding a test account
 
 ```
 val kp = KeyPair.random
 TestNetwork.fund(kp).foreach(println)
 ```
 
-Checking the status of an account
+#### Checking the status of an account
 
 ```
 val account: Future[AccountResp] = TestNetwork.account(kp)
 account.foreach(println)
 ```
 
-Fetching a stream of all assets
+### Assets
+
+#### Fetching a stream of all assets
 
 ```
 import stellar.sdk.resp._
