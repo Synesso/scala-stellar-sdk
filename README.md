@@ -5,7 +5,7 @@
 
 # Stellar SDK for Scala
 
-A Scala SDK for the [Stellar network](https://www.stellar.org/). It is a work in [progress](#Progress) with a target of being fully functional
+A Scala SDK for the [Stellar network](https://www.stellar.org/). It is a work in [progress](#progress) with a target of being fully functional
 by March 15, 2018. Contributions are welcome.
 
 ## Benefits
