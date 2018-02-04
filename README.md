@@ -65,13 +65,13 @@ import stellar.sdk.resp._
 
 ```
 val kp = KeyPair.random
-val resp: Future[FundTestAccountResponse] = TestNetwork.fund(kp)
+TestNetwork.fund(kp) // Future[FundTestAccountResponse]
 ```
 
 #### Checking the status of an account
 
 ```
-val account: Future[AccountResp] = TestNetwork.account(kp)
+TestNetwork.account(kp) // Future[AccountResp]
 ```
 
 ### Assets
@@ -79,5 +79,5 @@ val account: Future[AccountResp] = TestNetwork.account(kp)
 #### Fetching a stream of all assets
 
 ```
-val assets: Future[Stream[AssetResp]] = TestNetwork.assets
+TestNetwork.assets // Future[Stream[AssetResp]]
 ```
