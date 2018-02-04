@@ -78,8 +78,8 @@ TestNetwork.assets // Future[Stream[AssetResp]]
   [✓] Account details
   [ ] Assets
     [✓] Unfiltered
-    [🚀] By code
-    [ ] By issuer
+    [✓] By code
+    [🚀] By issuer
   [ ] Data for account
   [ ] Effects
     [ ] Unfiltered stream

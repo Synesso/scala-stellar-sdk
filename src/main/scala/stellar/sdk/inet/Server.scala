@@ -26,44 +26,50 @@ case class Server(uri: URI) {
   }
 
   def get[T: ClassTag](path: String, params: Map[String, String] = Map.empty)(implicit ec: ExecutionContext, m: Manifest[T]): Future[T] = {
+    val requestUri = uri"$uri/$path?$params"
     for {
-      resp <- sttp.get(uri"$uri/$path?$params").response(asJson[T]).send()
+      resp <- sttp.get(requestUri).response(asJson[T]).send()
     } yield resp.body match {
       case Right(r) => r
-      case Left(s) => throw ResourceMissingException(s).getOrElse(new RuntimeException(s"Unrecognised response: $s"))
+      case Left(s) => throw ResourceMissingException(requestUri, s).getOrElse(new RuntimeException(s"Unrecognised response: $s"))
     }
   }
 
-  def getStream[T: ClassTag](path: String)(implicit ec: ExecutionContext, m: Manifest[T]): Future[Stream[T]] = {
+  def getStream[T: ClassTag](path: String, params: Map[String, String] = Map.empty)
+                            (implicit ec: ExecutionContext, m: Manifest[T]): Future[Stream[T]] = {
+
     def next(p: Page[T]): Future[Option[Page[T]]] =
-      (getPageAbsoluteUri(uri"${p.nextLink}&limit=100"): Future[Page[T]]).map(Some(_)).recover { case e: ResourceMissingException => None }
+      (getPageAbsoluteUri(uri"${p.nextLink}"): Future[Page[T]]).map(Some(_)).recover { case e: ResourceMissingException => None }
 
     def stream(ts: Seq[T], maybeNextPage: Future[Option[Page[T]]]): Stream[T] = {
       ts match {
         case Nil =>
           Await.result(maybeNextPage, 30.seconds) match {
-            case None =>
-              Stream.empty[T]
-            case Some(nextPage) =>
+            case Some(nextPage) if nextPage.xs.nonEmpty =>
               val maybeNextPage = next(nextPage)
               stream(nextPage.xs, maybeNextPage)
+            case _ =>
+              Stream.empty[T]
           }
         case h +: t =>
           Stream.cons(h, stream(t, maybeNextPage))
       }
     }
-    (getPage(path): Future[Page[T]]).map { p0: Page[T] => stream(p0.xs, next(p0)) }
+    (getPage(path, params): Future[Page[T]]).map { p0: Page[T] => stream(p0.xs, next(p0)) }
   }
 
-  def getPage[T: ClassTag](path: String)(implicit ec: ExecutionContext, m: Manifest[T]): Future[Page[T]] =
-    getPageAbsoluteUri(uri"$uri/$path?limit=100")
+  def getPage[T: ClassTag](path: String, params: Map[String, String])
+                          (implicit ec: ExecutionContext, m: Manifest[T]): Future[Page[T]] = {
+    val absoluteUri = uri"$uri/$path?${params.updated("limit", "100")}"
+    getPageAbsoluteUri(absoluteUri)
+  }
 
   private def getPageAbsoluteUri[T: ClassTag](uri: Uri)(implicit ec: ExecutionContext, m: Manifest[T]): Future[Page[T]] = {
     for {
       resp <- sttp.get(uri).response(asJson[Page[T]]).send()
     } yield resp.body match {
       case Right(r) => r
-      case Left(s) => throw ResourceMissingException(s).getOrElse(new RuntimeException(s"Unrecognised response: $s"))
+      case Left(s) => throw ResourceMissingException(uri, s).getOrElse(new RuntimeException(s"Unrecognised response: $s"))
     }
   }
 }

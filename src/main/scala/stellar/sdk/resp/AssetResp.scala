@@ -4,7 +4,7 @@ import org.json4s.JsonAST.JObject
 import org.json4s.{CustomSerializer, DefaultFormats}
 import stellar.sdk._
 
-case class AssetResp(asset: Asset, amount: Long, numAccounts: Int, authRequired: Boolean, authRevocable: Boolean)
+case class AssetResp(asset: NonNativeAsset, amount: Long, numAccounts: Int, authRequired: Boolean, authRevocable: Boolean)
 
 class AssetRespDeserializer extends CustomSerializer[AssetResp](format => ({
   case o: JObject =>

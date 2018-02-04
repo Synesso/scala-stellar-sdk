@@ -1,5 +1,6 @@
 package stellar.sdk.resp
 
+import com.softwaremill.sttp._
 import org.json4s.JsonAST.JObject
 import org.json4s.{CustomSerializer, DefaultFormats}
 import stellar.sdk.inet.ResourceMissingException
@@ -10,5 +11,5 @@ class ResourceMissingDeserializer extends CustomSerializer[ResourceMissingExcept
     val status = (o \ "status").extract[Int]
     val detail = (o \ "detail").extract[String]
     val instance = (o \ "instance").extract[String]
-    ResourceMissingException(status, detail, instance)
+    ResourceMissingException(uri"file://unknown", status, detail, instance)
 }, PartialFunction.empty))
