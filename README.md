@@ -69,6 +69,14 @@ TestNetwork.account(kp) // Future[AccountResp]
 TestNetwork.assets // Future[Stream[AssetResp]]
 ```
 
+#### Filtering assets by asset code or issuer, or both.
+
+```
+TestNetwork.assets(code = Some("ETH"))
+TestNetwork.assets(issuer = Some("GAE325UC3T63ROIUFBBRNMWGM7AY2NI5C2YO55IPLRKCF3UECXLXKNNZ"))
+TestNetwork.assets(code = Some("ETH"), issuer = Some("GAE325UC3T63ROIUFBBRNMWGM7AY2NI5C2YO55IPLRKCF3UECXLXKNNZ"))
+```
+
 ## Progress
 
 ```
@@ -76,11 +84,11 @@ TestNetwork.assets // Future[Stream[AssetResp]]
 [✓] Transactions
 [ ] Endpoints
   [✓] Account details
-  [ ] Assets
+  [✓] Assets
     [✓] Unfiltered
     [✓] By code
-    [🚀] By issuer
-  [ ] Data for account
+    [✓] By issuer
+  [🚀] Data for account
   [ ] Effects
     [ ] Unfiltered stream
     [ ] By account

@@ -18,8 +18,8 @@ trait Network extends ByteArrays {
   def account(pubKey: PublicKeyOps)(implicit ec: ExecutionContext): Future[AccountResp] =
     server.get[AccountResp](s"/accounts/${pubKey.accountId}")
 
-  def assets(code: Option[String] = None)(implicit ec: ExecutionContext): Future[Stream[AssetResp]] = {
-    val params = Seq(code.map(c => "asset_code" -> c)).flatten.toMap
+  def assets(code: Option[String] = None, issuer: Option[String] = None)(implicit ec: ExecutionContext): Future[Stream[AssetResp]] = {
+    val params = Seq(code.map("asset_code" -> _), issuer.map("asset_issuer" -> _)).flatten.toMap
     server.getStream[AssetResp](s"/assets", params)
   }
 

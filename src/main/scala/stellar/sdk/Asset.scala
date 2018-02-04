@@ -39,6 +39,7 @@ case object AssetTypeNative extends Asset {
 
 trait NonNativeAsset extends Asset {
   val code: String
+  val issuer: VerifyingKey
 }
 
 /**
