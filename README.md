@@ -10,6 +10,7 @@ by March 15, 2018. Contributions are welcome.
 
 ## Progress
 
+```
 [✓] Operations
 [✓] Transactions
 [ ] Endpoints
@@ -87,7 +88,7 @@ by March 15, 2018. Contributions are welcome.
       [ ] From now
       [ ] Since given time
   [ ] Post transaction
-
+```
 
 ## Benefits
 
