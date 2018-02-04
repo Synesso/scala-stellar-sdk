@@ -8,6 +8,8 @@ import scala.concurrent.duration._
 
 class AssetIntegrationSpec(implicit ee: ExecutionEnv) extends Specification with DomainMatchers {
 
+  sequential
+
   "asset endpoint" should {
     "list all assets" >> {
       val oneFifteen = TestNetwork.assets().map(_.take(115))

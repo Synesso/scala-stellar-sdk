@@ -10,6 +10,8 @@ import scala.concurrent.duration._
 
 class AccountIntegrationSpec(implicit ee: ExecutionEnv) extends Specification {
 
+  sequential
+
   "account endpoint" >> {
     "fetch account details" >> {
       TestNetwork.account(accn) must beLike[AccountResp] {
