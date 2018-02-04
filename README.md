@@ -53,10 +53,9 @@ Stellar SDK for Scala.
 interp.repositories() ++= Seq(coursier.MavenRepository("https://dl.bintray.com/synesso/mvn/"))
 
 import $ivy.`stellar.scala.sdk::scala-stellar-sdk:0.0.1.5`
-
 import stellar.sdk._
-
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent._
 ```
 
 
@@ -73,4 +72,12 @@ Checking the status of an account
 ```
 val account: Future[AccountResp] = TestNetwork.account(kp)
 account.foreach(println)
+```
+
+Fetching a stream of all assets
+
+```
+import stellar.sdk.resp._
+val assets: Future[Stream[AssetResp]] = TestNetwork.assets
+assets.foreach(_.take(42).foreach(println))
 ```
