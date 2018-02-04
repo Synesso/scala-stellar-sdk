@@ -19,7 +19,6 @@ class AccountRespDeserializer extends CustomSerializer[AccountResp](format => ({
   case o: JObject =>
   implicit val formats = DefaultFormats
     val id = (o \ "id").extract[String]
-    // todo - account id is just duplicate of id?
     val seq = (o \ "sequence").extract[String].toLong
     val subEntryCount = (o \ "subentry_count").extract[Int]
     val lowThreshold = (o \ "thresholds" \ "low_threshold").extract[Int]

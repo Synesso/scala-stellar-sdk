@@ -8,7 +8,7 @@ import com.softwaremill.sttp.json4s._
 import org.json4s.NoTypeHints
 import org.json4s.native.Serialization
 import stellar.sdk.SignedTransaction
-import stellar.sdk.resp.{AccountRespDeserializer, AssetResp, AssetRespDeserializer, SubmitTransactionResponse}
+import stellar.sdk.resp._
 
 import scala.concurrent.duration._
 import scala.concurrent.{Await, ExecutionContext, Future}
@@ -19,7 +19,7 @@ import scala.util.Try
 case class Server(uri: URI) {
   implicit val backend = AkkaHttpBackend()
   implicit val formats = Serialization.formats(NoTypeHints) + new AccountRespDeserializer +
-    new AssetRespDeserializer + new PageDeserializer[AssetResp]()
+    new AssetRespDeserializer + new PageDeserializer[AssetResp]() + new DataValueRespDeserializer
 
   def post(txn: SignedTransaction): Future[SubmitTransactionResponse] = {
     ???

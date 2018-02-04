@@ -12,4 +12,7 @@ object SessionTestAccount {
     kp
   }
 
+  // todo - replace with accn when we can submit manage data operations
+  val accWithData = KeyPair.fromSecretSeed("SAOWFZ4OYP5VSAZ7ENZJ2DYP75CRWKYCQ67CMYJVHU5VXPNNBBFJVCOO")
+
 }

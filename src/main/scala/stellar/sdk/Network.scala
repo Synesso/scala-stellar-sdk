@@ -5,7 +5,7 @@ import java.nio.charset.StandardCharsets.UTF_8
 
 import com.softwaremill.sttp.akkahttp.AkkaHttpBackend
 import stellar.sdk.inet.Server
-import stellar.sdk.resp.{AccountResp, AssetResp, FundTestAccountResponse, SubmitTransactionResponse}
+import stellar.sdk.resp._
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -17,6 +17,9 @@ trait Network extends ByteArrays {
 
   def account(pubKey: PublicKeyOps)(implicit ec: ExecutionContext): Future[AccountResp] =
     server.get[AccountResp](s"/accounts/${pubKey.accountId}")
+
+  def accountData(pubKey: PublicKeyOps, dataKey: String)(implicit ec: ExecutionContext): Future[String] =
+    server.get[DataValueResp](s"/accounts/${pubKey.accountId}/data/$dataKey").map(_.v).map(base64).map(new String(_))
 
   def assets(code: Option[String] = None, issuer: Option[String] = None)(implicit ec: ExecutionContext): Future[Stream[AssetResp]] = {
     val params = Seq(code.map("asset_code" -> _), issuer.map("asset_issuer" -> _)).flatten.toMap

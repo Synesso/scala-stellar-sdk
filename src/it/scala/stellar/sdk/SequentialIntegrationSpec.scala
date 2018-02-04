@@ -2,13 +2,38 @@ package stellar.sdk
 
 import org.specs2.concurrent.ExecutionEnv
 import org.specs2.mutable.Specification
-import stellar.sdk.resp.AssetResp
+import stellar.sdk.SessionTestAccount.{accWithData, accn}
+import stellar.sdk.inet.ResourceMissingException
+import stellar.sdk.resp.{AccountResp, AssetResp}
 
 import scala.concurrent.duration._
 
-class AssetIntegrationSpec(implicit ee: ExecutionEnv) extends Specification with DomainMatchers {
+class SequentialIntegrationSpec(implicit ee: ExecutionEnv) extends Specification with DomainMatchers {
 
   sequential
+
+  "account endpoint" >> {
+    "fetch account details" >> {
+      TestNetwork.account(accn) must beLike[AccountResp] {
+        case AccountResp(id, _, _, _, _, _, List(lumens), _) =>
+          id mustEqual accn.accountId
+          lumens mustEqual Amount.lumens(10000).get
+          // todo - add check for data when we can submit manage data ops
+      }.awaitFor(30.seconds)
+    }
+
+    "fetch nothing if no account exists" >> {
+      TestNetwork.account(KeyPair.random) must throwA[ResourceMissingException].awaitFor(5.seconds)
+    }
+
+    "return the data for an account" >> {
+      TestNetwork.accountData(accWithData, "life_universe_everything") must beEqualTo("42").awaitFor(5.seconds)
+    }
+
+    "fetch nothing if no data exists for the account" >> {
+      TestNetwork.accountData(accWithData, "brain_size_of_planet") must throwA[ResourceMissingException].awaitFor(5.seconds)
+    }
+  }
 
   "asset endpoint" should {
     "list all assets" >> {
@@ -42,4 +67,7 @@ class AssetIntegrationSpec(implicit ee: ExecutionEnv) extends Specification with
       }.awaitFor(10 seconds)
     }
   }
+
+
+
 }

@@ -77,6 +77,13 @@ TestNetwork.assets(issuer = Some("GAE325UC3T63ROIUFBBRNMWGM7AY2NI5C2YO55IPLRKCF3
 TestNetwork.assets(code = Some("ETH"), issuer = Some("GAE325UC3T63ROIUFBBRNMWGM7AY2NI5C2YO55IPLRKCF3UECXLXKNNZ"))
 ```
 
+#### Fetch data for an account
+
+```
+TestNetwork.accountData(kp, "data_key")
+```
+
+
 ## Progress
 
 ```
@@ -88,8 +95,8 @@ TestNetwork.assets(code = Some("ETH"), issuer = Some("GAE325UC3T63ROIUFBBRNMWGM7
     [✓] Unfiltered
     [✓] By code
     [✓] By issuer
-  [🚀] Data for account
-  [ ] Effects
+  [✓] Data for account
+  [🚀] Effects
     [ ] Unfiltered stream
     [ ] By account
     [ ] By ledger

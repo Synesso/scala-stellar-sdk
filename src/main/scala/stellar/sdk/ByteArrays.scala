@@ -26,6 +26,8 @@ trait ByteArrays {
 
   def base64(bs: Array[Byte]): String = Base64.encodeBase64String(bs)
 
+  def base64(s: String): Array[Byte] = Base64.decodeBase64(s)
+
   def bytesToHex(bs: Array[Byte]): String = bs.map("%02X".format(_)).mkString
 
   def hexToBytes(hex: String): Array[Byte] = hex.sliding(2, 2).toArray.map(Integer.parseInt(_, 16).toByte)
