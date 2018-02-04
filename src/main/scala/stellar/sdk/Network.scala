@@ -5,7 +5,7 @@ import java.nio.charset.StandardCharsets.UTF_8
 
 import com.softwaremill.sttp.akkahttp.AkkaHttpBackend
 import stellar.sdk.inet.Server
-import stellar.sdk.resp.{AccountResp, FundTestAccountResponse, SubmitTransactionResponse}
+import stellar.sdk.resp.{AccountResp, AssetResp, FundTestAccountResponse, SubmitTransactionResponse}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -18,7 +18,7 @@ trait Network extends ByteArrays {
   def account(pubKey: PublicKeyOps)(implicit ec: ExecutionContext): Future[AccountResp] =
     server.get[AccountResp](s"/accounts/${pubKey.accountId}")
 
-  def assets()(implicit ec: ExecutionContext): Future[Stream[Asset]] = server.getPages[Asset](s"/assets")
+  def assets()(implicit ec: ExecutionContext): Future[Stream[AssetResp]] = server.getStream[AssetResp]("/assets")
 
 }
 

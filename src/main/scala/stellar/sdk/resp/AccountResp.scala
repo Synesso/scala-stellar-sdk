@@ -17,7 +17,7 @@ case class AccountResp(id: String,
 
 class AccountRespDeserializer extends CustomSerializer[AccountResp](format => ({
   case o: JObject =>
-    implicit val formats = DefaultFormats
+  implicit val formats = DefaultFormats
     val id = (o \ "id").extract[String]
     // todo - account id is just duplicate of id?
     val seq = (o \ "sequence").extract[String].toLong
