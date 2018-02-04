@@ -69,7 +69,7 @@ TestNetwork.account(kp) // Future[AccountResp]
 TestNetwork.assets // Future[Stream[AssetResp]]
 ```
 
-#### Filtering assets by asset code or issuer, or both.
+#### Filtering assets by code or issuer, or both.
 
 ```
 TestNetwork.assets(code = Some("ETH"))
