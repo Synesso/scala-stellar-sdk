@@ -5,90 +5,8 @@
 
 # Stellar SDK for Scala
 
-A Scala SDK for the [Stellar network](https://www.stellar.org/). It is a work in progress with a target of being fully functional
+A Scala SDK for the [Stellar network](https://www.stellar.org/). It is a work in [progress](#Progress) with a target of being fully functional
 by March 15, 2018. Contributions are welcome.
-
-## Progress
-
-```
-[✓] Operations
-[✓] Transactions
-[ ] Endpoints
-  [✓] Account details
-  [ ] Assets
-    [🚀] Unfiltered - todo increase batch size in Page
-    [ ] By code
-    [ ] By issuer
-  [ ] Data for account
-  [ ] Effects
-    [ ] Unfiltered stream
-    [ ] By account
-    [ ] By ledger
-    [ ] By operation
-    [ ] By transaction
-  [ ] Ledgers
-  [ ] Ledger details
-  [ ] Offers for account
-  [ ] Operations
-    [ ] Unfiltered stream
-      [ ] Since epoch
-      [ ] From now
-      [ ] Since given time
-    [ ] By account
-      [ ] Since epoch
-      [ ] From now
-      [ ] Since given time
-    [ ] By ledger
-      [ ] Since epoch
-      [ ] From now
-      [ ] Since given time
-    [ ] By transaction
-      [ ] Since epoch
-      [ ] From now
-      [ ] Since given time
-  [ ] Operation details
-  [ ] Orderbook details
-  [ ] Payment paths
-  [ ] Payments
-    [ ] Unfiltered stream
-      [ ] Since epoch
-      [ ] From now
-      [ ] Since given time
-    [ ] By account
-      [ ] Since epoch
-      [ ] From now
-      [ ] Since given time
-    [ ] By ledger
-      [ ] Since epoch
-      [ ] From now
-      [ ] Since given time
-    [ ] By transaction
-      [ ] Since epoch
-      [ ] From now
-      [ ] Since given time
-  [ ] Trade aggregations
-  [ ] Trades
-    [ ] Unfiltered
-    [ ] By orderbook
-  [ ] Transactions
-    [ ] Unfiltered
-      [ ] Since epoch
-      [ ] From now
-      [ ] Since given time
-    [ ] By orderbook
-      [ ] Since epoch
-      [ ] From now
-      [ ] Since given time
-    [ ] By account
-      [ ] Since epoch
-      [ ] From now
-      [ ] Since given time
-    [ ] By ledger
-      [ ] Since epoch
-      [ ] From now
-      [ ] Since given time
-  [ ] Post transaction
-```
 
 ## Benefits
 
@@ -97,6 +15,7 @@ A Scala developer would choose this SDK over the Java SDK because:
 * `Option`s, not nulls
 * `Try`s, not exceptions
 * `Future`s for all network operations
+* Encapsulation of paged responses into `Stream`s
 * No builder patterns, just case classes
 * Explicit type hierarchies instead of meaningful primitives
 * Test coverage: Generative testing using scalacheck with the goal of 100% coverage
@@ -148,4 +67,50 @@ TestNetwork.account(kp) // Future[AccountResp]
 
 ```
 TestNetwork.assets // Future[Stream[AssetResp]]
+```
+
+## Progress
+
+```
+[✓] Operations
+[✓] Transactions
+[ ] Endpoints
+  [✓] Account details
+  [ ] Assets
+    [🚀] Unfiltered - todo increase batch size in Page
+    [ ] By code
+    [ ] By issuer
+  [ ] Data for account
+  [ ] Effects
+    [ ] Unfiltered stream
+    [ ] By account
+    [ ] By ledger
+    [ ] By operation
+    [ ] By transaction
+  [ ] Ledgers
+  [ ] Ledger details
+  [ ] Offers for account
+  [ ] Operations
+    [ ] Unfiltered stream
+    [ ] By account
+    [ ] By ledger
+    [ ] By transaction
+  [ ] Operation details
+  [ ] Orderbook details
+  [ ] Payment paths
+  [ ] Payments
+    [ ] Unfiltered stream
+    [ ] By account
+    [ ] By ledger
+    [ ] By transaction
+  [ ] Trade aggregations
+  [ ] Trades
+    [ ] Unfiltered
+    [ ] By orderbook
+  [ ] Transactions
+    [ ] Unfiltered
+    [ ] By orderbook
+    [ ] By account
+    [ ] By ledger
+  [ ] Post transaction
 ```
