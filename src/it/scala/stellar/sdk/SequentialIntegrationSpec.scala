@@ -38,11 +38,7 @@ class SequentialIntegrationSpec(implicit ee: ExecutionEnv) extends Specification
   "asset endpoint" should {
     "list all assets" >> {
       val oneFifteen = TestNetwork.assets().map(_.take(115))
-      oneFifteen.map(_.size) must beEqualTo(115).awaitFor(10 seconds)
-      oneFifteen.map(_.last) must beEqualTo(
-        AssetResp(AssetTypeCreditAlphaNum12("43a047",
-          KeyPair.fromAccountId("GCOGPF7IRVXUCJZAQWXVFQEE4HAOCTDGZI2QZSMKLM5BTTGRLY6GDOJN")),
-          7840000000L,18,authRequired = false, authRevocable = false)
+      oneFifteen.map(_.distinct.size) must beEqualTo(115).awaitFor(10 seconds)
       ).awaitFor(5 seconds)
     }
 
