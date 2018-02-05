@@ -98,8 +98,27 @@ TestNetwork.assets(code = Some("ETH"), issuer = Some("GAE325UC3T63ROIUFBBRNMWGM7
     [✓] By code
     [✓] By issuer
   [✓] Data for account
-  [🚀] Effects
+  [ ] Effects
     [ ] Unfiltered stream
+      [🚀] Account created
+      [ ] Account removed
+      [ ] Account credited
+      [ ] Account debited
+      [ ] Account thresholds updated
+      [ ] Account home domain updated
+      [ ] Account flags updated
+      [ ] Signer created
+      [ ] Signer removed
+      [ ] Signer updated
+      [ ] Trustline created
+      [ ] Trustline removed
+      [ ] Trustline updated
+      [ ] Trustline authorised
+      [ ] Trustline deauthorised
+      [ ] Offer created
+      [ ] Offer removed
+      [ ] Offer updated
+      [ ] Trade
     [ ] By account
     [ ] By ledger
     [ ] By operation
