@@ -9,6 +9,7 @@ sealed trait EffectResp {
 }
 
 case class EffectAccountCreated(id: String, account: PublicKeyOps, startingBalance: NativeAmount) extends EffectResp
+case class EffectAccountCredited(id: String, account: PublicKeyOps, amount: Amount) extends EffectResp
 case class EffectAccountDebited(id: String, account: PublicKeyOps, amount: Amount) extends EffectResp
 
 class EffectRespDeserializer extends CustomSerializer[EffectResp](format => ({
@@ -31,8 +32,8 @@ class EffectRespDeserializer extends CustomSerializer[EffectResp](format => ({
       case "account_created" =>
         val startingBalance = Amount.lumens((o \ "starting_balance").extract[String].toDouble).get
         EffectAccountCreated(id, account, startingBalance)
-      case "account_debited" =>
-        EffectAccountDebited(id, account, amount)
+      case "account_credited" => EffectAccountCredited(id, account, amount)
+      case "account_debited" => EffectAccountDebited(id, account, amount)
       case t => throw new RuntimeException(s"Unrecognised effect type '$t'")
     }
 }, PartialFunction.empty)

@@ -39,6 +39,27 @@ class EffectRespSpec extends Specification with ArbitraryInput {
     }.setGen1(Gen.identifier)
   }
 
+  "a credit account effect document" should {
+    "parse to a credit account effect with native amount" >> prop { (id: String, accn: KeyPair, amount: NativeAmount) =>
+      val json = doc(id, accn, "account_credited",
+        "asset_type" -> "native",
+        "amount" -> amountString(amount))
+      parse(json).extract[EffectResp] mustEqual EffectAccountCredited(id, accn.asVerifyingKey, amount)
+    }.setGen1(Gen.identifier)
+
+    "parse to a credit account effect with non-native amount" >> prop { (id: String, accn: KeyPair, amount: IssuedAmount) =>
+      val json = doc(id, accn, "account_credited",
+        "asset_type" -> (amount.asset match {
+          case _: AssetTypeCreditAlphaNum4 => "credit_alphanum4"
+          case _ => "credit_alphanum12"
+        }),
+        "asset_code" -> amount.asset.code,
+        "asset_issuer" -> amount.asset.issuer.accountId,
+        "amount" -> amountString(amount))
+      parse(json).extract[EffectResp] mustEqual EffectAccountCredited(id, accn.asVerifyingKey, amount)
+    }.setGen1(Gen.identifier)
+  }
+
   def doc(id: String, accn: PublicKeyOps, tpe: String, extra: (String, String)*) =
     s"""
       |{
