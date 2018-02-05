@@ -24,6 +24,8 @@ trait ArbitraryInput extends ScalaCheck {
 
   implicit def arbNativeAmount: Arbitrary[NativeAmount] = Arbitrary(genNativeAmount)
 
+  implicit def arbIssuedAmount: Arbitrary[IssuedAmount] = Arbitrary(genIssuedAmount)
+
   implicit def arbAsset: Arbitrary[Asset] = Arbitrary(genAsset)
 
   implicit def arbNonNativeAsset: Arbitrary[NonNativeAsset] = Arbitrary(genNonNativeAsset)
@@ -89,6 +91,14 @@ trait ArbitraryInput extends ScalaCheck {
   }
 
   def genNativeAmount: Gen[NativeAmount] = Gen.posNum[Long].map(NativeAmount.apply)
+
+  def genIssuedAmount: Gen[IssuedAmount] = for {
+    units <- Gen.posNum[Long]
+    asset <- genNonNativeAsset
+  } yield {
+    IssuedAmount(units, asset)
+  }
+
 
   def genCode(min: Int, max: Int): Gen[String] = Gen.choose(min, max).map(i => Random.alphanumeric.take(i).mkString)
 

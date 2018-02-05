@@ -1,10 +1,10 @@
-package stellar.sdk
+package stellar.sdk.resp
 
-import org.specs2.mutable.Specification
-import stellar.sdk.resp.{AccountResp, AccountRespDeserializer}
-import org.json4s.{DefaultFormats, MappingException, NoTypeHints}
+import org.json4s.NoTypeHints
 import org.json4s.native.JsonMethods._
 import org.json4s.native.Serialization
+import org.specs2.mutable.Specification
+import stellar.sdk._
 
 class AccountRespSpec extends Specification {
 
