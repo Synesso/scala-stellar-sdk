@@ -39,7 +39,6 @@ class SequentialIntegrationSpec(implicit ee: ExecutionEnv) extends Specification
     "list all assets" >> {
       val oneFifteen = TestNetwork.assets().map(_.take(115))
       oneFifteen.map(_.distinct.size) must beEqualTo(115).awaitFor(10 seconds)
-      ).awaitFor(5 seconds)
     }
 
     "filter assets by code" >> {
