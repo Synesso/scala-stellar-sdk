@@ -11,6 +11,7 @@ sealed trait EffectResp {
 case class EffectAccountCreated(id: String, account: PublicKeyOps, startingBalance: NativeAmount) extends EffectResp
 case class EffectAccountCredited(id: String, account: PublicKeyOps, amount: Amount) extends EffectResp
 case class EffectAccountDebited(id: String, account: PublicKeyOps, amount: Amount) extends EffectResp
+case class EffectAccountRemoved(id: String, account: PublicKeyOps) extends EffectResp
 
 class EffectRespDeserializer extends CustomSerializer[EffectResp](format => ({
   case o: JObject =>
@@ -34,6 +35,7 @@ class EffectRespDeserializer extends CustomSerializer[EffectResp](format => ({
         EffectAccountCreated(id, account, startingBalance)
       case "account_credited" => EffectAccountCredited(id, account, amount)
       case "account_debited" => EffectAccountDebited(id, account, amount)
+      case "account_removed" => EffectAccountRemoved(id, account)
       case t => throw new RuntimeException(s"Unrecognised effect type '$t'")
     }
 }, PartialFunction.empty)

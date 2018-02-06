@@ -60,6 +60,13 @@ class EffectRespSpec extends Specification with ArbitraryInput {
     }.setGen1(Gen.identifier)
   }
 
+  "an account removed effect document" should {
+    "parse to an account removed effect" >> prop { (id: String, accn: KeyPair) =>
+      val json = doc(id, accn, "account_removed")
+      parse(json).extract[EffectResp] mustEqual EffectAccountRemoved(id, accn.asVerifyingKey)
+    }.setGen1(Gen.identifier)
+  }
+
   def doc(id: String, accn: PublicKeyOps, tpe: String, extra: (String, String)*) =
     s"""
       |{

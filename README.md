@@ -101,10 +101,10 @@ TestNetwork.assets(code = Some("ETH"), issuer = Some("GAE325UC3T63ROIUFBBRNMWGM7
   [ ] Effects
     [ ] Unfiltered stream
       [✓] Account created
-      [🚀] Account removed
+      [✓] Account removed
       [✓] Account credited
       [✓] Account debited
-      [ ] Account thresholds updated
+      [🚀] Account thresholds updated
       [ ] Account home domain updated
       [ ] Account flags updated
       [ ] Signer created
