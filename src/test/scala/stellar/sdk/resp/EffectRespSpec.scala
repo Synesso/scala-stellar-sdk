@@ -67,7 +67,17 @@ class EffectRespSpec extends Specification with ArbitraryInput {
     }.setGen1(Gen.identifier)
   }
 
-  def doc(id: String, accn: PublicKeyOps, tpe: String, extra: (String, String)*) =
+  "an account thresholds updated effect document" should {
+    "parse to an account thresholds updated effect" >> prop { (id : String, accn: KeyPair, thresholds: Thresholds) =>
+      val json = doc(id, accn, "account_thresholds_updated",
+        "low_threshold" -> thresholds.low,
+        "med_threshold" -> thresholds.med,
+        "high_threshold" -> thresholds.high)
+      parse(json).extract[EffectResp] mustEqual EffectAccountThresholdsUpdated(id, accn.asVerifyingKey, thresholds)
+    }.setGen1(Gen.identifier)
+  }
+
+  def doc(id: String, accn: PublicKeyOps, tpe: String, extra: (String, Any)*) =
     s"""
       |{
       |  "_links": {
@@ -86,7 +96,10 @@ class EffectRespSpec extends Specification with ArbitraryInput {
       |  "account": "${accn.accountId}",
       |  "type": "$tpe",
       |  "type_i": 3,
-      |  ${extra.map{case (k, v) => s""" "$k": "$v" """.trim}.mkString(", ")}
+      |  ${extra.map{
+             case (k, v: Int) => s""""$k": $v""".trim
+             case (k, v) => s""""$k": "$v"""".trim
+          }.mkString(", ")}
       |}
     """.stripMargin
 

@@ -70,6 +70,8 @@ trait ArbitraryInput extends ScalaCheck {
 
   implicit def arbSignature = Arbitrary(genSignature)
 
+  implicit def arbThreshold = Arbitrary(genThresholds)
+
   def genKeyPair: Gen[KeyPair] = Gen.oneOf(Seq(KeyPair.random))
 
   def genSignerKey: Gen[SignerKey] = genKeyPair.map(_.getXDRSignerKey)
@@ -268,13 +270,9 @@ trait ArbitraryInput extends ScalaCheck {
     s
   }
 
-
-
-
-  //  def genDecoratedSignature: Gen[DecoratedSignature] = {
-//    val ds = new DecoratedSignature
-//    ds.setSignature()
-//    ds
-//  }
-
+  def genThresholds: Gen[Thresholds] = for {
+    low <- Gen.choose(0, 255)
+    med <- Gen.choose(0, 255)
+    high <- Gen.choose(0, 255)
+  } yield Thresholds(low, med, high)
 }
