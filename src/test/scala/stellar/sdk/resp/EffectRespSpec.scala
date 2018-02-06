@@ -77,6 +77,14 @@ class EffectRespSpec extends Specification with ArbitraryInput {
     }.setGen1(Gen.identifier)
   }
 
+  "an account home domain updated effect document" should {
+    "parse to an account home domain updated effect" >> prop { (id : String, accn: KeyPair, domain: String) =>
+      val json = doc(id, accn, "account_home_domain_updated",
+        "home_domain" -> domain)
+      parse(json).extract[EffectResp] mustEqual EffectAccountHomeDomainUpdated(id, accn.asVerifyingKey, domain)
+    }.setGen1(Gen.identifier)
+  }
+
   def doc(id: String, accn: PublicKeyOps, tpe: String, extra: (String, Any)*) =
     s"""
       |{

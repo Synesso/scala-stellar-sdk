@@ -13,6 +13,7 @@ case class EffectAccountCredited(id: String, account: PublicKeyOps, amount: Amou
 case class EffectAccountDebited(id: String, account: PublicKeyOps, amount: Amount) extends EffectResp
 case class EffectAccountRemoved(id: String, account: PublicKeyOps) extends EffectResp
 case class EffectAccountThresholdsUpdated(id: String, account: PublicKeyOps, thresholds: Thresholds) extends EffectResp
+case class EffectAccountHomeDomainUpdated(id: String, account: PublicKeyOps, domain: String) extends EffectResp
 
 class EffectRespDeserializer extends CustomSerializer[EffectResp](format => ({
   case o: JObject =>
@@ -45,6 +46,7 @@ class EffectRespDeserializer extends CustomSerializer[EffectResp](format => ({
         )
         EffectAccountThresholdsUpdated(id, account, thresholds)
       }
+      case "account_home_domain_updated" => EffectAccountHomeDomainUpdated(id, account, (o \ "home_domain").extract[String])
       case t => throw new RuntimeException(s"Unrecognised effect type '$t'")
     }
 }, PartialFunction.empty)
