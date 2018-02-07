@@ -18,20 +18,30 @@ case class EffectAccountFlagsUpdated(id: String, account: PublicKeyOps, authRequ
 case class EffectSignerCreated(id: String, weight: Short, publicKey: String) extends EffectResp
 case class EffectSignerUpdated(id: String, weight: Short, publicKey: String) extends EffectResp
 case class EffectSignerRemoved(id: String, publicKey: String) extends EffectResp
+case class EffectTrustLineCreated(id: String, accn: PublicKeyOps, asset: NonNativeAsset, limit: Double) extends EffectResp
+case class EffectTrustLineUpdated(id: String, accn: PublicKeyOps, asset: NonNativeAsset, limit: Double) extends EffectResp
+case class EffectTrustLineRemoved(id: String, accn: PublicKeyOps, asset: NonNativeAsset) extends EffectResp
 
 class EffectRespDeserializer extends CustomSerializer[EffectResp](format => ({
   case o: JObject =>
     implicit val formats = DefaultFormats
     def account = KeyPair.fromAccountId((o \ "account").extract[String])
-    def amount = {
-      val units = Amount.toBaseUnits((o \ "amount").extract[String].toDouble).get
+    def asset = {
       def assetCode = (o \ "asset_code").extract[String]
       def assetIssuer = KeyPair.fromAccountId((o \ "asset_issuer").extract[String])
       (o \ "asset_type").extract[String] match {
-        case "native" => NativeAmount(units)
-        case "credit_alphanum4" => IssuedAmount(units, AssetTypeCreditAlphaNum4(assetCode, assetIssuer))
-        case "credit_alphanum12" => IssuedAmount(units, AssetTypeCreditAlphaNum12(assetCode, assetIssuer))
+        case "native" => AssetTypeNative
+        case "credit_alphanum4" => AssetTypeCreditAlphaNum4(assetCode, assetIssuer)
+        case "credit_alphanum12" => AssetTypeCreditAlphaNum12(assetCode, assetIssuer)
         case t => throw new RuntimeException(s"Unrecognised asset type '$t'")
+      }
+    }
+    def doubleFromString(key: String) = (o \ key).extract[String].toDouble
+    def amount = {
+      val units = Amount.toBaseUnits(doubleFromString("amount")).get
+      asset match {
+        case nna: NonNativeAsset => IssuedAmount(units, nna)
+        case AssetTypeNative => NativeAmount(units)
       }
     }
     def weight = (o \ "weight").extract[Int].toShort
@@ -55,6 +65,9 @@ class EffectRespDeserializer extends CustomSerializer[EffectResp](format => ({
       case "signer_created" => EffectSignerCreated(id, weight, (o \ "public_key").extract[String])
       case "signer_updated" => EffectSignerUpdated(id, weight, (o \ "public_key").extract[String])
       case "signer_removed" => EffectSignerRemoved(id, (o \ "public_key").extract[String])
+      case "trustline_created" => EffectTrustLineCreated(id, account, asset.asInstanceOf[NonNativeAsset], doubleFromString("limit"))
+      case "trustline_updated" => EffectTrustLineUpdated(id, account, asset.asInstanceOf[NonNativeAsset], doubleFromString("limit"))
+      case "trustline_removed" => EffectTrustLineRemoved(id, account, asset.asInstanceOf[NonNativeAsset])
       case t => throw new RuntimeException(s"Unrecognised effect type '$t'")
     }
 }, PartialFunction.empty)

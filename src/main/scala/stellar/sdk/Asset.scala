@@ -40,6 +40,7 @@ case object AssetTypeNative extends Asset {
 trait NonNativeAsset extends Asset {
   val code: String
   val issuer: VerifyingKey
+  val typeString: String
 }
 
 /**
@@ -62,6 +63,8 @@ case class AssetTypeCreditAlphaNum4(code: String, issuer: VerifyingKey) extends 
     xdr.setAlphaNum4(credit)
     xdr
   }
+
+  override val typeString = "credit_alphanum4"
 }
 
 object AssetTypeCreditAlphaNum4 {
@@ -89,6 +92,8 @@ case class AssetTypeCreditAlphaNum12(code: String, issuer: VerifyingKey) extends
     xdr.setAlphaNum12(credit)
     xdr
   }
+
+  override val typeString = "credit_alphanum12"
 }
 
 object AssetTypeCreditAlphaNum12 {
