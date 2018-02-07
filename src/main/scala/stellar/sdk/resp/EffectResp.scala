@@ -14,6 +14,7 @@ case class EffectAccountDebited(id: String, account: PublicKeyOps, amount: Amoun
 case class EffectAccountRemoved(id: String, account: PublicKeyOps) extends EffectResp
 case class EffectAccountThresholdsUpdated(id: String, account: PublicKeyOps, thresholds: Thresholds) extends EffectResp
 case class EffectAccountHomeDomainUpdated(id: String, account: PublicKeyOps, domain: String) extends EffectResp
+case class EffectAccountFlagsUpdated(id: String, account: PublicKeyOps, authRequiredFlag: Boolean) extends EffectResp
 
 class EffectRespDeserializer extends CustomSerializer[EffectResp](format => ({
   case o: JObject =>
@@ -38,15 +39,15 @@ class EffectRespDeserializer extends CustomSerializer[EffectResp](format => ({
       case "account_credited" => EffectAccountCredited(id, account, amount)
       case "account_debited" => EffectAccountDebited(id, account, amount)
       case "account_removed" => EffectAccountRemoved(id, account)
-      case "account_thresholds_updated" => {
+      case "account_thresholds_updated" =>
         val thresholds = Thresholds(
           (o \ "low_threshold").extract[Int],
           (o \ "med_threshold").extract[Int],
           (o \ "high_threshold").extract[Int]
         )
         EffectAccountThresholdsUpdated(id, account, thresholds)
-      }
       case "account_home_domain_updated" => EffectAccountHomeDomainUpdated(id, account, (o \ "home_domain").extract[String])
+      case "account_flags_updated" => EffectAccountFlagsUpdated(id, account, (o \ "auth_required_flag").extract[Boolean])
       case t => throw new RuntimeException(s"Unrecognised effect type '$t'")
     }
 }, PartialFunction.empty)
