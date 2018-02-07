@@ -7,7 +7,7 @@ import org.scalacheck.Gen
 import org.specs2.mutable.Specification
 import stellar.sdk._
 
-class EffectRespSpec extends Specification with ArbitraryInput {
+class AccountEffectRespSpec extends Specification with ArbitraryInput {
 
   implicit val formats = Serialization.formats(NoTypeHints) + new EffectRespDeserializer
 
@@ -122,3 +122,14 @@ class EffectRespSpec extends Specification with ArbitraryInput {
   def amountString(a: Amount): String = f"${a.units / math.pow(10, 7)}%.7f"
 
 }
+
+/*
+  "a signer created effect document" should {
+    "parse to a signer created effect" >> prop { (id : String, weight: Byte, pubKey: String) =>
+      val json = doc(id, accn, "account_flags_updated", "auth_required_flag" -> authRequired)
+      parse(json).extract[EffectResp] mustEqual EffectSignerUpdated(id, weight, pubKey)
+    }.setGen1(Gen.identifier)
+  }
+
+
+ */

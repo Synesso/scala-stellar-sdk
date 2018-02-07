@@ -106,11 +106,11 @@ TestNetwork.assets(code = Some("ETH"), issuer = Some("GAE325UC3T63ROIUFBBRNMWGM7
       [✓] Account debited
       [✓] Account thresholds updated
       [✓] Account home domain updated
-      [🚀] Account flags updated
-      [ ] Signer created
-      [ ] Signer removed
-      [ ] Signer updated
-      [ ] Trustline created
+      [?] Account flags updated [???](https://stellar.stackexchange.com/questions/429/confusing-effects-after-set-options-transaction)
+      [✓] Signer created
+      [✓] Signer removed
+      [✓] Signer updated
+      [🚀] Trustline created
       [ ] Trustline removed
       [ ] Trustline updated
       [ ] Trustline authorised

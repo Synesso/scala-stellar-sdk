@@ -15,6 +15,9 @@ case class EffectAccountRemoved(id: String, account: PublicKeyOps) extends Effec
 case class EffectAccountThresholdsUpdated(id: String, account: PublicKeyOps, thresholds: Thresholds) extends EffectResp
 case class EffectAccountHomeDomainUpdated(id: String, account: PublicKeyOps, domain: String) extends EffectResp
 case class EffectAccountFlagsUpdated(id: String, account: PublicKeyOps, authRequiredFlag: Boolean) extends EffectResp
+case class EffectSignerCreated(id: String, weight: Short, publicKey: String) extends EffectResp
+case class EffectSignerUpdated(id: String, weight: Short, publicKey: String) extends EffectResp
+case class EffectSignerRemoved(id: String, publicKey: String) extends EffectResp
 
 class EffectRespDeserializer extends CustomSerializer[EffectResp](format => ({
   case o: JObject =>
@@ -31,6 +34,7 @@ class EffectRespDeserializer extends CustomSerializer[EffectResp](format => ({
         case t => throw new RuntimeException(s"Unrecognised asset type '$t'")
       }
     }
+    def weight = (o \ "weight").extract[Int].toShort
     val id = (o \ "id").extract[String]
     (o \ "type").extract[String] match {
       case "account_created" =>
@@ -48,6 +52,9 @@ class EffectRespDeserializer extends CustomSerializer[EffectResp](format => ({
         EffectAccountThresholdsUpdated(id, account, thresholds)
       case "account_home_domain_updated" => EffectAccountHomeDomainUpdated(id, account, (o \ "home_domain").extract[String])
       case "account_flags_updated" => EffectAccountFlagsUpdated(id, account, (o \ "auth_required_flag").extract[Boolean])
+      case "signer_created" => EffectSignerCreated(id, weight, (o \ "public_key").extract[String])
+      case "signer_updated" => EffectSignerUpdated(id, weight, (o \ "public_key").extract[String])
+      case "signer_removed" => EffectSignerRemoved(id, (o \ "public_key").extract[String])
       case t => throw new RuntimeException(s"Unrecognised effect type '$t'")
     }
 }, PartialFunction.empty)
