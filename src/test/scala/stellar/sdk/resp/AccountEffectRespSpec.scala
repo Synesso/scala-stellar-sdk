@@ -82,7 +82,7 @@ class AccountEffectRespSpec extends Specification with ArbitraryInput {
       val json = doc(id, accn, "account_home_domain_updated",
         "home_domain" -> domain)
       parse(json).extract[EffectResp] mustEqual EffectAccountHomeDomainUpdated(id, accn.asVerifyingKey, domain)
-    }.setGen1(Gen.identifier)
+    }.setGen1(Gen.identifier).setGen3(Gen.identifier)
   }
 
   "an account flags updated effect document" should {
