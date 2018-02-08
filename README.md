@@ -113,9 +113,9 @@ TestNetwork.assets(code = Some("ETH"), issuer = Some("GAE325UC3T63ROIUFBBRNMWGM7
       [✓] Trustline created
       [✓] Trustline removed
       [✓] Trustline updated
-      [🚀] Trustline authorised
-      [ ] Trustline deauthorised
-      [ ] Offer created
+      [✓] Trustline authorised
+      [✓] Trustline deauthorised
+      [🚀] Offer created
       [ ] Offer removed
       [ ] Offer updated
       [ ] Trade
