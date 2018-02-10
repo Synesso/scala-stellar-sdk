@@ -116,8 +116,8 @@ TestNetwork.assets(code = Some("ETH"), issuer = Some("GAE325UC3T63ROIUFBBRNMWGM7
       [✓] Trustline authorised
       [✓] Trustline deauthorised
       [ ] Offer created/removed/updated - pending https://github.com/stellar/go/issues/166
-      [🚀] Trade
-    [ ] By account
+      [✓] Trade
+    [🚀] By account
     [ ] By ledger
     [ ] By operation
     [ ] By transaction
