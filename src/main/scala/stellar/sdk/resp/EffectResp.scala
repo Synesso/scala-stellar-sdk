@@ -23,27 +23,28 @@ case class EffectTrustLineUpdated(id: String, accn: PublicKeyOps, asset: NonNati
 case class EffectTrustLineRemoved(id: String, accn: PublicKeyOps, asset: NonNativeAsset) extends EffectResp
 case class EffectTrustLineAuthorized(id: String, trustor: PublicKeyOps, asset: NonNativeAsset) extends EffectResp
 case class EffectTrustLineDeauthorized(id: String, trustor: PublicKeyOps, asset: NonNativeAsset) extends EffectResp
+case class EffectTrade(id: String, offerId: Long, buyer: PublicKeyOps, bought: Amount, seller: PublicKeyOps, sold: Amount) extends EffectResp
 
 class EffectRespDeserializer extends CustomSerializer[EffectResp](format => ({
   case o: JObject =>
     implicit val formats = DefaultFormats
     def account(accountKey: String = "account") = KeyPair.fromAccountId((o \ accountKey).extract[String])
-    def asset(issuerKey: String = "asset_issuer") = {
-      def assetCode = (o \ "asset_code").extract[String]
-      def assetIssuer = KeyPair.fromAccountId((o \ issuerKey).extract[String])
-      (o \ "asset_type").extract[String] match {
-        case "native" => AssetTypeNative
+    def asset(prefix: String = "", issuerKey: String = "asset_issuer") = {
+      def assetCode = (o \ s"${prefix}asset_code").extract[String]
+      def assetIssuer = KeyPair.fromAccountId((o \ s"$prefix$issuerKey").extract[String])
+      (o \ s"${prefix}asset_type").extract[String] match {
+        case "native" => NativeAsset
         case "credit_alphanum4" => AssetTypeCreditAlphaNum4(assetCode, assetIssuer)
         case "credit_alphanum12" => AssetTypeCreditAlphaNum12(assetCode, assetIssuer)
         case t => throw new RuntimeException(s"Unrecognised asset type '$t'")
       }
     }
     def doubleFromString(key: String) = (o \ key).extract[String].toDouble
-    def amount = {
-      val units = Amount.toBaseUnits(doubleFromString("amount")).get
-      asset() match {
+    def amount(prefix: String = "") = {
+      val units = Amount.toBaseUnits(doubleFromString(s"${prefix}amount")).get
+      asset(prefix) match {
         case nna: NonNativeAsset => IssuedAmount(units, nna)
-        case AssetTypeNative => NativeAmount(units)
+        case NativeAsset => NativeAmount(units)
       }
     }
     def weight = (o \ "weight").extract[Int].toShort
@@ -52,8 +53,8 @@ class EffectRespDeserializer extends CustomSerializer[EffectResp](format => ({
       case "account_created" =>
         val startingBalance = Amount.lumens((o \ "starting_balance").extract[String].toDouble).get
         EffectAccountCreated(id, account(), startingBalance)
-      case "account_credited" => EffectAccountCredited(id, account(), amount)
-      case "account_debited" => EffectAccountDebited(id, account(), amount)
+      case "account_credited" => EffectAccountCredited(id, account(), amount())
+      case "account_debited" => EffectAccountDebited(id, account(), amount())
       case "account_removed" => EffectAccountRemoved(id, account())
       case "account_thresholds_updated" =>
         val thresholds = Thresholds(
@@ -70,8 +71,9 @@ class EffectRespDeserializer extends CustomSerializer[EffectResp](format => ({
       case "trustline_created" => EffectTrustLineCreated(id, account(), asset().asInstanceOf[NonNativeAsset], doubleFromString("limit"))
       case "trustline_updated" => EffectTrustLineUpdated(id, account(), asset().asInstanceOf[NonNativeAsset], doubleFromString("limit"))
       case "trustline_removed" => EffectTrustLineRemoved(id, account(), asset().asInstanceOf[NonNativeAsset])
-      case "trustline_authorized" => EffectTrustLineAuthorized(id, account("trustor"), asset("account").asInstanceOf[NonNativeAsset])
-      case "trustline_deauthorized" => EffectTrustLineDeauthorized(id, account("trustor"), asset("account").asInstanceOf[NonNativeAsset])
+      case "trustline_authorized" => EffectTrustLineAuthorized(id, account("trustor"), asset(issuerKey = "account").asInstanceOf[NonNativeAsset])
+      case "trustline_deauthorized" => EffectTrustLineDeauthorized(id, account("trustor"), asset(issuerKey = "account").asInstanceOf[NonNativeAsset])
+      case "trade" => EffectTrade(id, (o \ "offer_id").extract[Long], account(), amount("bought_"), account("seller"), amount("sold_"))
       case t => throw new RuntimeException(s"Unrecognised effect type '$t'")
     }
 }, PartialFunction.empty)

@@ -7,7 +7,7 @@ class AssetSpec extends Specification with ArbitraryInput {
 
   "the native asset type" should {
     "serde correctly" >> {
-      Asset.fromXDR(AssetTypeNative.toXDR) must beSuccessfulTry[Asset](AssetTypeNative)
+      Asset.fromXDR(NativeAsset.toXDR) must beSuccessfulTry[Asset](NativeAsset)
     }
   }
 

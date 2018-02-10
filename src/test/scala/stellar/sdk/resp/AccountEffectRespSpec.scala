@@ -130,6 +130,4 @@ class AccountEffectRespSpec extends Specification with ArbitraryInput {
       parse(json).extract[EffectResp] mustEqual EffectSignerUpdated(id, weight, pubKey)
     }.setGen1(Gen.identifier)
   }
-
-
  */

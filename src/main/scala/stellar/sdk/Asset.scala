@@ -16,7 +16,7 @@ object Asset extends ByteArrays {
 
   def fromXDR(xdr: XDRAsset): Try[Asset] = Try {
     xdr.getDiscriminant match {
-      case ASSET_TYPE_NATIVE => AssetTypeNative
+      case ASSET_TYPE_NATIVE => NativeAsset
       case ASSET_TYPE_CREDIT_ALPHANUM4 =>
         val code = paddedByteArrayToString(xdr.getAlphaNum4.getAssetCode)
         val issuer = KeyPair.fromXDRPublicKey(xdr.getAlphaNum4.getIssuer.getAccountID)
@@ -29,7 +29,7 @@ object Asset extends ByteArrays {
   }
 }
 
-case object AssetTypeNative extends Asset {
+case object NativeAsset extends Asset {
   override val toXDR: XDRAsset = {
     val xdr = new XDRAsset
     xdr.setDiscriminant(ASSET_TYPE_NATIVE)

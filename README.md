@@ -147,4 +147,7 @@ TestNetwork.assets(code = Some("ETH"), issuer = Some("GAE325UC3T63ROIUFBBRNMWGM7
     [ ] By account
     [ ] By ledger
   [ ] Post transaction
+[ ] Streams
+  [ ] Effects
+  [ ] ...
 ```

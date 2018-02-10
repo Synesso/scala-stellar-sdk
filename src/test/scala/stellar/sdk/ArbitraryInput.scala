@@ -106,7 +106,7 @@ trait ArbitraryInput extends ScalaCheck {
 
   def genAsset: Gen[Asset] = Gen.oneOf(genAssetNative, genAsset4, genAsset12)
 
-  def genAssetNative: Gen[Asset] = Gen.oneOf(Seq(AssetTypeNative))
+  def genAssetNative: Gen[Asset] = Gen.oneOf(Seq(NativeAsset))
 
   def genNonNativeAsset: Gen[NonNativeAsset] = Gen.oneOf(genAsset4, genAsset12)
 

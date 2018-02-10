@@ -9,8 +9,8 @@ import stellar.sdk.op._
 trait DomainMatchers extends AnyMatchers with MustExpectations with SequenceMatchersCreation with OptionMatchers {
 
   def beEquivalentTo(other: Asset): Matcher[Asset] = beLike[Asset] {
-    case AssetTypeNative =>
-      other mustEqual AssetTypeNative
+    case NativeAsset =>
+      other mustEqual NativeAsset
     case AssetTypeCreditAlphaNum4(code, issuer) =>
       val AssetTypeCreditAlphaNum4(expectedCode, expectedIssuer) = other
       code mustEqual expectedCode
@@ -24,7 +24,7 @@ trait DomainMatchers extends AnyMatchers with MustExpectations with SequenceMatc
   def beEquivalentTo(other: Amount): Matcher[Amount] = beLike[Amount] {
     case NativeAmount(units) =>
       units mustEqual other.units
-      other.asset mustEqual AssetTypeNative
+      other.asset mustEqual NativeAsset
     case IssuedAmount(units, asset) =>
       units mustEqual other.units
       asset must beEquivalentTo(other.asset)

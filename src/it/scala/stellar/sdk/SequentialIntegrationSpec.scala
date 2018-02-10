@@ -8,7 +8,7 @@ import stellar.sdk.resp.{AccountResp, AssetResp}
 
 import scala.concurrent.duration._
 
-class SequentialIntegrationSpec(implicit ee: ExecutionEnv) extends Specification with DomainMatchers {
+class SequentialIntegrationSpec(implicit ee: ExecutionEnv) extends Specification with DomainMatchersIT {
 
   sequential
 

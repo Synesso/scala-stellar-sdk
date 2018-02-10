@@ -11,7 +11,7 @@ trait Amount {
 }
 
 case class NativeAmount(units: Long) extends Amount {
-  override val asset: Asset = AssetTypeNative
+  override val asset: Asset = NativeAsset
 }
 
 case class IssuedAmount(units: Long, asset: NonNativeAsset) extends Amount
@@ -25,7 +25,7 @@ object Amount {
 
   def apply(units: Long, asset: Asset): Amount = {
     asset match {
-      case AssetTypeNative => NativeAmount(units)
+      case NativeAsset => NativeAmount(units)
       case a: NonNativeAsset => IssuedAmount(units, a)
     }
   }
