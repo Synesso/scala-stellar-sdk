@@ -26,6 +26,10 @@ trait Network extends ByteArrays {
     server.getStream[AssetResp](s"/assets", params)
   }
 
+  def effects()(implicit ec: ExecutionContext): Future[Stream[EffectResp]] = {
+    server.getStream[EffectResp](s"/effects")
+  }
+
 }
 
 case object PublicNetwork extends Network {

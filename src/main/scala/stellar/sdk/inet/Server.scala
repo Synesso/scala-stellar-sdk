@@ -19,7 +19,8 @@ import scala.util.Try
 case class Server(uri: URI) {
   implicit val backend = AkkaHttpBackend()
   implicit val formats = Serialization.formats(NoTypeHints) + new AccountRespDeserializer +
-    new AssetRespDeserializer + new PageDeserializer[AssetResp]() + new DataValueRespDeserializer
+    new AssetRespDeserializer + new PageDeserializer[AssetResp]() + new PageDeserializer[EffectResp]() +
+    new DataValueRespDeserializer
 
   def post(txn: SignedTransaction): Future[SubmitTransactionResponse] = {
     ???

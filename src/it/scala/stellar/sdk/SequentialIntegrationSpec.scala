@@ -63,6 +63,11 @@ class SequentialIntegrationSpec(implicit ee: ExecutionEnv) extends Specification
     }
   }
 
-
+  "effect endpoint" should {
+    "list all effects" >> {
+      val oneFifteen = TestNetwork.effects().map(_.take(115))
+      oneFifteen.map(_.distinct.size) must beEqualTo(115).awaitFor(10.seconds)
+    }
+  }
 
 }
