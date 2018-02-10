@@ -106,7 +106,7 @@ TestNetwork.assets(code = Some("ETH"), issuer = Some("GAE325UC3T63ROIUFBBRNMWGM7
       [✓] Account debited
       [✓] Account thresholds updated
       [✓] Account home domain updated
-      [?] Account flags updated - https://stellar.stackexchange.com/questions/429/confusing-effects-after-set-options-transaction
+      [ ] Account flags updated - pending https://github.com/stellar/go/issues/294
       [✓] Signer created
       [✓] Signer removed
       [✓] Signer updated
@@ -115,10 +115,8 @@ TestNetwork.assets(code = Some("ETH"), issuer = Some("GAE325UC3T63ROIUFBBRNMWGM7
       [✓] Trustline updated
       [✓] Trustline authorised
       [✓] Trustline deauthorised
-      [🚀] Offer created
-      [ ] Offer removed
-      [ ] Offer updated
-      [ ] Trade
+      [ ] Offer created/removed/updated - pending https://github.com/stellar/go/issues/166
+      [🚀] Trade
     [ ] By account
     [ ] By ledger
     [ ] By operation
