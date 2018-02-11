@@ -4,7 +4,7 @@ import org.specs2.concurrent.ExecutionEnv
 import org.specs2.mutable.Specification
 import stellar.sdk.SessionTestAccount.{accWithData, accn}
 import stellar.sdk.inet.ResourceMissingException
-import stellar.sdk.resp.{AccountResp, AssetResp}
+import stellar.sdk.resp.{AccountResp, AssetResp, EffectAccountCreated, EffectResp}
 
 import scala.concurrent.duration._
 
@@ -67,6 +67,16 @@ class SequentialIntegrationSpec(implicit ee: ExecutionEnv) extends Specification
     "list all effects" >> {
       val oneFifteen = TestNetwork.effects().map(_.take(115))
       oneFifteen.map(_.distinct.size) must beEqualTo(115).awaitFor(10.seconds)
+    }
+
+    "filter effects by account" >> {
+      val byAccount = TestNetwork.effects(account = Some(accn)).map(_.take(10).toList)
+      byAccount.map(_.isEmpty) must beFalse.awaitFor(10 seconds)
+      byAccount.map(_.head) must beLike[EffectResp] {
+        case EffectAccountCreated(_, account, startingBalance) =>
+          account.accountId mustEqual accn.accountId
+          startingBalance mustEqual Amount.lumens(10000).get
+      }.awaitFor(10.seconds)
     }
   }
 

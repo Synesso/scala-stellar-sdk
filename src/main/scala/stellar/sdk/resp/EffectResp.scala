@@ -15,12 +15,12 @@ case class EffectAccountRemoved(id: String, account: PublicKeyOps) extends Effec
 case class EffectAccountThresholdsUpdated(id: String, account: PublicKeyOps, thresholds: Thresholds) extends EffectResp
 case class EffectAccountHomeDomainUpdated(id: String, account: PublicKeyOps, domain: String) extends EffectResp
 case class EffectAccountFlagsUpdated(id: String, account: PublicKeyOps, authRequiredFlag: Boolean) extends EffectResp
-case class EffectSignerCreated(id: String, weight: Short, publicKey: String) extends EffectResp
-case class EffectSignerUpdated(id: String, weight: Short, publicKey: String) extends EffectResp
-case class EffectSignerRemoved(id: String, publicKey: String) extends EffectResp
-case class EffectTrustLineCreated(id: String, accn: PublicKeyOps, asset: NonNativeAsset, limit: Double) extends EffectResp
-case class EffectTrustLineUpdated(id: String, accn: PublicKeyOps, asset: NonNativeAsset, limit: Double) extends EffectResp
-case class EffectTrustLineRemoved(id: String, accn: PublicKeyOps, asset: NonNativeAsset) extends EffectResp
+case class EffectSignerCreated(id: String, account: PublicKeyOps, weight: Short, publicKey: String) extends EffectResp
+case class EffectSignerUpdated(id: String, account: PublicKeyOps, weight: Short, publicKey: String) extends EffectResp
+case class EffectSignerRemoved(id: String, account: PublicKeyOps, publicKey: String) extends EffectResp
+case class EffectTrustLineCreated(id: String, account: PublicKeyOps, asset: NonNativeAsset, limit: Double) extends EffectResp
+case class EffectTrustLineUpdated(id: String, account: PublicKeyOps, asset: NonNativeAsset, limit: Double) extends EffectResp
+case class EffectTrustLineRemoved(id: String, account: PublicKeyOps, asset: NonNativeAsset) extends EffectResp
 case class EffectTrustLineAuthorized(id: String, trustor: PublicKeyOps, asset: NonNativeAsset) extends EffectResp
 case class EffectTrustLineDeauthorized(id: String, trustor: PublicKeyOps, asset: NonNativeAsset) extends EffectResp
 case class EffectTrade(id: String, offerId: Long, buyer: PublicKeyOps, bought: Amount, seller: PublicKeyOps, sold: Amount) extends EffectResp
@@ -65,9 +65,9 @@ object EffectRespDeserializer extends CustomSerializer[EffectResp](format => ({
         EffectAccountThresholdsUpdated(id, account(), thresholds)
       case "account_home_domain_updated" => EffectAccountHomeDomainUpdated(id, account(), (o \ "home_domain").extract[String])
       case "account_flags_updated" => EffectAccountFlagsUpdated(id, account(), (o \ "auth_required_flag").extract[Boolean])
-      case "signer_created" => EffectSignerCreated(id, weight, (o \ "public_key").extract[String])
-      case "signer_updated" => EffectSignerUpdated(id, weight, (o \ "public_key").extract[String])
-      case "signer_removed" => EffectSignerRemoved(id, (o \ "public_key").extract[String])
+      case "signer_created" => EffectSignerCreated(id, account(), weight, (o \ "public_key").extract[String])
+      case "signer_updated" => EffectSignerUpdated(id, account(), weight, (o \ "public_key").extract[String])
+      case "signer_removed" => EffectSignerRemoved(id, account(), (o \ "public_key").extract[String])
       case "trustline_created" => EffectTrustLineCreated(id, account(), asset().asInstanceOf[NonNativeAsset], doubleFromString("limit"))
       case "trustline_updated" => EffectTrustLineUpdated(id, account(), asset().asInstanceOf[NonNativeAsset], doubleFromString("limit"))
       case "trustline_removed" => EffectTrustLineRemoved(id, account(), asset().asInstanceOf[NonNativeAsset])
