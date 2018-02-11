@@ -6,7 +6,7 @@ import stellar.sdk._
 
 case class AssetResp(asset: NonNativeAsset, amount: Long, numAccounts: Int, authRequired: Boolean, authRevocable: Boolean)
 
-class AssetRespDeserializer extends CustomSerializer[AssetResp](format => ({
+object AssetRespDeserializer extends CustomSerializer[AssetResp](format => ({
   case o: JObject =>
     implicit val formats = DefaultFormats
     val asset = {

@@ -15,7 +15,7 @@ case class AccountResp(id: String,
                        balances: List[Amount],
                        signers: List[Signer])
 
-class AccountRespDeserializer extends CustomSerializer[AccountResp](format => ({
+object AccountRespDeserializer extends CustomSerializer[AccountResp](format => ({
   case o: JObject =>
   implicit val formats = DefaultFormats
     val id = (o \ "id").extract[String]

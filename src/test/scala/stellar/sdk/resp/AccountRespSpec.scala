@@ -8,7 +8,7 @@ import stellar.sdk._
 
 class AccountRespSpec extends Specification {
 
-  implicit val formats = Serialization.formats(NoTypeHints) + new AccountRespDeserializer
+  implicit val formats = Serialization.formats(NoTypeHints) + AccountRespDeserializer
 
   "a sample account response document" should {
     "parse to an account response" >> {

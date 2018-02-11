@@ -9,7 +9,7 @@ import stellar.sdk._
 
 class TradeEffectRespSpec extends Specification with ArbitraryInput {
 
-    implicit val formats = Serialization.formats(NoTypeHints) + new EffectRespDeserializer
+    implicit val formats = Serialization.formats(NoTypeHints) + EffectRespDeserializer
 
   "a trade effect document" should {
     "parse to a trade effect" >> prop {

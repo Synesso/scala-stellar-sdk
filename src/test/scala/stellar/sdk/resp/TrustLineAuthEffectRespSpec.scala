@@ -9,7 +9,7 @@ import stellar.sdk._
 
 class TrustLineAuthEffectRespSpec extends Specification with ArbitraryInput {
 
-  implicit val formats = Serialization.formats(NoTypeHints) + new EffectRespDeserializer
+  implicit val formats = Serialization.formats(NoTypeHints) + EffectRespDeserializer
 
   "an authorize trustline effect document" should {
     "parse to an authorize trustline effect" >> prop { (id : String, accn: KeyPair, asset: NonNativeAsset) =>

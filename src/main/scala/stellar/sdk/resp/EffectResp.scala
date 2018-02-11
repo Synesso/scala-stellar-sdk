@@ -25,7 +25,7 @@ case class EffectTrustLineAuthorized(id: String, trustor: PublicKeyOps, asset: N
 case class EffectTrustLineDeauthorized(id: String, trustor: PublicKeyOps, asset: NonNativeAsset) extends EffectResp
 case class EffectTrade(id: String, offerId: Long, buyer: PublicKeyOps, bought: Amount, seller: PublicKeyOps, sold: Amount) extends EffectResp
 
-class EffectRespDeserializer extends CustomSerializer[EffectResp](format => ({
+object EffectRespDeserializer extends CustomSerializer[EffectResp](format => ({
   case o: JObject =>
     implicit val formats = DefaultFormats
     def account(accountKey: String = "account") = KeyPair.fromAccountId((o \ accountKey).extract[String])

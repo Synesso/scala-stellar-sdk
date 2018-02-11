@@ -9,7 +9,7 @@ import stellar.sdk._
 
 class SignerEffectRespSpec extends Specification with ArbitraryInput {
 
-  implicit val formats = Serialization.formats(NoTypeHints) + new EffectRespDeserializer
+  implicit val formats = Serialization.formats(NoTypeHints) + EffectRespDeserializer
 
   "a signer created effect document" should {
     "parse to a signer created effect" >> prop { (id : String, weight: Short, pubKey: String) =>

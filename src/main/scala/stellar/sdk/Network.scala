@@ -23,11 +23,11 @@ trait Network extends ByteArrays {
 
   def assets(code: Option[String] = None, issuer: Option[String] = None)(implicit ec: ExecutionContext): Future[Stream[AssetResp]] = {
     val params = Seq(code.map("asset_code" -> _), issuer.map("asset_issuer" -> _)).flatten.toMap
-    server.getStream[AssetResp](s"/assets", params)
+    server.getStream[AssetResp](s"/assets", AssetRespDeserializer, params)
   }
 
   def effects()(implicit ec: ExecutionContext): Future[Stream[EffectResp]] = {
-    server.getStream[EffectResp](s"/effects")
+    server.getStream[EffectResp](s"/effects", EffectRespDeserializer)
   }
 
 }

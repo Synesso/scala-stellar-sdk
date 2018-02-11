@@ -12,7 +12,7 @@ case class ResourceMissingException(uri: Uri, status: Int, detail: String, insta
   extends Exception(s"Uri: $uri - $detail")
 
 object ResourceMissingException {
-  implicit val formats = Serialization.formats(NoTypeHints) + new ResourceMissingDeserializer
+  implicit val formats = Serialization.formats(NoTypeHints) + ResourceMissingDeserializer
 
   def apply(uri: Uri, s: String): Try[ResourceMissingException] = Try {
     parse(s).extract[ResourceMissingException].copy(uri = uri)

@@ -9,7 +9,7 @@ import stellar.sdk._
 
 class AccountEffectRespSpec extends Specification with ArbitraryInput {
 
-  implicit val formats = Serialization.formats(NoTypeHints) + new EffectRespDeserializer
+  implicit val formats = Serialization.formats(NoTypeHints) + EffectRespDeserializer
 
   "a create account effect document" should {
     "parse to a create account effect" >> prop { (id: String, accn: KeyPair, amount: NativeAmount) =>

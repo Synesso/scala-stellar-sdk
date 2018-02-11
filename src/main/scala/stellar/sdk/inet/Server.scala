@@ -5,7 +5,7 @@ import java.net.URI
 import com.softwaremill.sttp._
 import com.softwaremill.sttp.akkahttp.AkkaHttpBackend
 import com.softwaremill.sttp.json4s._
-import org.json4s.NoTypeHints
+import org.json4s.{CustomSerializer, NoTypeHints}
 import org.json4s.native.Serialization
 import stellar.sdk.SignedTransaction
 import stellar.sdk.resp._
@@ -18,9 +18,7 @@ import scala.util.Try
 
 case class Server(uri: URI) {
   implicit val backend = AkkaHttpBackend()
-  implicit val formats = Serialization.formats(NoTypeHints) + new AccountRespDeserializer +
-    new AssetRespDeserializer + new PageDeserializer[AssetResp]() + new PageDeserializer[EffectResp]() +
-    new DataValueRespDeserializer
+  implicit val formats = Serialization.formats(NoTypeHints) + AccountRespDeserializer + DataValueRespDeserializer
 
   def post(txn: SignedTransaction): Future[SubmitTransactionResponse] = {
     ???
@@ -36,8 +34,10 @@ case class Server(uri: URI) {
     }
   }
 
-  def getStream[T: ClassTag](path: String, params: Map[String, String] = Map.empty)
+  def getStream[T: ClassTag](path: String, de: CustomSerializer[T], params: Map[String, String] = Map.empty)
                             (implicit ec: ExecutionContext, m: Manifest[T]): Future[Stream[T]] = {
+
+    implicit val inner = de
 
     def next(p: Page[T]): Future[Option[Page[T]]] =
       (getPageAbsoluteUri(uri"${p.nextLink}"): Future[Page[T]]).map(Some(_)).recover { case e: ResourceMissingException => None }
@@ -60,16 +60,17 @@ case class Server(uri: URI) {
   }
 
   def getPage[T: ClassTag](path: String, params: Map[String, String])
-                          (implicit ec: ExecutionContext, m: Manifest[T]): Future[Page[T]] = {
+                          (implicit ec: ExecutionContext, de: CustomSerializer[T], m: Manifest[T]): Future[Page[T]] = {
     val absoluteUri = uri"$uri/$path?${params.updated("limit", "100")}"
     getPageAbsoluteUri(absoluteUri)
   }
 
-  private def getPageAbsoluteUri[T: ClassTag](uri: Uri)(implicit ec: ExecutionContext, m: Manifest[T]): Future[Page[T]] = {
+  private def getPageAbsoluteUri[T: ClassTag](uri: Uri)(implicit ec: ExecutionContext, de: CustomSerializer[T],
+                                                        m: Manifest[T]): Future[Page[T]] = {
     for {
-      resp <- sttp.get(uri).response(asJson[Page[T]]).send()
+      resp <- sttp.get(uri).response(asString).send()
     } yield resp.body match {
-      case Right(r) => r
+      case Right(r) => Page(r, de)
       case Left(s) => throw ResourceMissingException(uri, s).getOrElse(new RuntimeException(s"Unrecognised response: $s"))
     }
   }
