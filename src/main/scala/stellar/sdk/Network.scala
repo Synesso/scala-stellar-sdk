@@ -31,6 +31,10 @@ trait Network extends ByteArrays {
     server.getStream[EffectResp](s"$urlPrefix/effects", EffectRespDeserializer)
   }
 
+  def ledgers()(implicit ec: ExecutionContext): Future[Stream[LedgerResp]] = {
+    server.getStream[LedgerResp](s"/ledgers", LedgerRespDeserializer)
+  }
+
 }
 
 case object PublicNetwork extends Network {

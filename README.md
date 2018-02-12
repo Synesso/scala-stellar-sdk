@@ -118,10 +118,10 @@ TestNetwork.assets(code = Some("ETH"), issuer = Some("GAE325UC3T63ROIUFBBRNMWGM7
       [ ] Offer created/removed/updated - pending https://github.com/stellar/go/issues/166
       [✓] Trade
     [✓] By account
-    [🚀] By ledger
-    [ ] By operation
-    [ ] By transaction
-  [ ] Ledgers
+    [ ] By ledger - pending all ledgers
+    [ ] By operation - pending all operations
+    [ ] By transaction - pending all transactions
+  [🚀] Ledgers
   [ ] Ledger details
   [ ] Offers for account
   [ ] Operations
@@ -149,5 +149,6 @@ TestNetwork.assets(code = Some("ETH"), issuer = Some("GAE325UC3T63ROIUFBBRNMWGM7
   [ ] Post transaction
 [ ] Streams
   [ ] Effects
+  [ ] Ledgers
   [ ] ...
 ```

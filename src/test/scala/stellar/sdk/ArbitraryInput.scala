@@ -1,12 +1,14 @@
 package stellar.sdk
 
-import java.time.Instant
+import java.time.temporal.ChronoField
+import java.time.{Instant, ZoneId, ZonedDateTime}
 
+import org.apache.commons.codec.binary.Base64
 import org.scalacheck.{Arbitrary, Gen}
 import org.specs2.ScalaCheck
 import org.stellar.sdk.xdr.{Signature, SignerKey}
-import stellar.sdk._
 import stellar.sdk.op._
+import stellar.sdk.resp.LedgerResp
 
 import scala.util.Random
 
@@ -71,6 +73,8 @@ trait ArbitraryInput extends ScalaCheck {
   implicit def arbSignature = Arbitrary(genSignature)
 
   implicit def arbThreshold = Arbitrary(genThresholds)
+
+  implicit def arbLedgerResp = Arbitrary(genLedgerResp)
 
   def genKeyPair: Gen[KeyPair] = Gen.oneOf(Seq(KeyPair.random))
 
@@ -275,4 +279,24 @@ trait ArbitraryInput extends ScalaCheck {
     med <- Gen.choose(0, 255)
     high <- Gen.choose(0, 255)
   } yield Thresholds(low, med, high)
+
+  def genHash = Gen.identifier.map(_.getBytes("UTF-8")).map(Base64.encodeBase64String)
+
+  def genLedgerResp: Gen[LedgerResp] = for {
+    id <- Gen.identifier
+    hash <- genHash
+    previousHash <- genHash
+    sequence <- Gen.posNum[Long]
+    transactionCount <- Gen.posNum[Int]
+    operationCount <- Gen.posNum[Int]
+    closedAt: ZonedDateTime <- genInstant.map(ZonedDateTime.ofInstant(_, ZoneId.of("UTC"))).map(_.`with`(ChronoField.NANO_OF_SECOND, 0))
+    totalCoins <- Gen.posNum[Double].map(round)
+    feePool <- Gen.posNum[Double].map(round)
+    baseFee <- Gen.posNum[Int]
+    baseReserve <- Gen.posNum[Double].map(round)
+    maxTxSetSize <- Gen.posNum[Int]
+  } yield LedgerResp(id, hash, previousHash, sequence, transactionCount, operationCount, closedAt, totalCoins, feePool,
+    baseFee, baseReserve, maxTxSetSize)
+
+  def round(d: Double) = f"$d%.7f".toDouble
 }
