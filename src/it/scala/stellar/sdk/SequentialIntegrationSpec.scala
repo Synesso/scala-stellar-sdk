@@ -80,4 +80,11 @@ class SequentialIntegrationSpec(implicit ee: ExecutionEnv) extends Specification
     }
   }
 
+  "ledger endpoint" should {
+    "list all ledgers" >> {
+      val oneFifteen = TestNetwork.ledgers().map(_.take(115))
+      oneFifteen.map(_.distinct.size) must beEqualTo(115).awaitFor(10.seconds)
+    }
+  }
+
 }

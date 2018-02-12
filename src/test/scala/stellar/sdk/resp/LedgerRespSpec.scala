@@ -45,7 +45,7 @@ class LedgerRespSpec extends Specification with ArbitraryInput {
           |  "id": "${lr.id}",
           |  "paging_token": "47244640256",
           |  "hash": "${lr.hash}",
-          |  "prev_hash": "${lr.previousHash}",
+          |  ${lr.previousHash.map(h => s""""prev_hash": "$h",""").getOrElse("")}
           |  "sequence": ${lr.sequence},
           |  "transaction_count": ${lr.transactionCount},
           |  "operation_count": ${lr.operationCount},

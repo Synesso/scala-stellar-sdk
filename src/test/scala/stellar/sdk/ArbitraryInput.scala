@@ -285,7 +285,7 @@ trait ArbitraryInput extends ScalaCheck {
   def genLedgerResp: Gen[LedgerResp] = for {
     id <- Gen.identifier
     hash <- genHash
-    previousHash <- genHash
+    previousHash <- Gen.option(genHash)
     sequence <- Gen.posNum[Long]
     transactionCount <- Gen.posNum[Int]
     operationCount <- Gen.posNum[Int]

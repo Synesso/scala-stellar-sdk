@@ -5,7 +5,7 @@ import java.time.{Instant, ZonedDateTime}
 import org.json4s.JsonAST.JObject
 import org.json4s.{CustomSerializer, DefaultFormats}
 
-case class LedgerResp(id: String, hash: String, previousHash: String, sequence: Long, transactionCount: Int,
+case class LedgerResp(id: String, hash: String, previousHash: Option[String], sequence: Long, transactionCount: Int,
                       operationCount: Int, closedAt: ZonedDateTime, totalCoins: Double, feePool: Double, baseFee: Int,
                       baseReserve: Double, maxTxSetSize: Int)
 
@@ -16,7 +16,7 @@ object LedgerRespDeserializer extends CustomSerializer[LedgerResp](format => ( {
     LedgerResp(
       id = (o \ "id").extract[String],
       hash = (o \ "hash").extract[String],
-      previousHash = (o \ "prev_hash").extract[String],
+      previousHash = (o \ "prev_hash").extractOpt[String],
       sequence = (o \ "sequence").extract[Long],
       transactionCount = (o \ "transaction_count").extract[Int],
       operationCount = (o \ "operation_count").extract[Int],
