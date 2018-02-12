@@ -70,13 +70,17 @@ class SequentialIntegrationSpec(implicit ee: ExecutionEnv) extends Specification
     }
 
     "filter effects by account" >> {
-      val byAccount = TestNetwork.effects(account = Some(accn)).map(_.take(10).toList)
+      val byAccount = TestNetwork.effects(accn).map(_.take(10).toList)
       byAccount.map(_.isEmpty) must beFalse.awaitFor(10 seconds)
       byAccount.map(_.head) must beLike[EffectResp] {
         case EffectAccountCreated(_, account, startingBalance) =>
           account.accountId mustEqual accn.accountId
           startingBalance mustEqual Amount.lumens(10000).get
       }.awaitFor(10.seconds)
+    }
+
+    "filter effects by ledger" >> {
+      pending
     }
   }
 

@@ -26,14 +26,14 @@ trait Network extends ByteArrays {
     server.getStream[AssetResp](s"/assets", AssetRespDeserializer, params)
   }
 
-  def effects(account: Option[PublicKeyOps] = None)(implicit ec: ExecutionContext): Future[Stream[EffectResp]] = {
-    val urlPrefix = account.map(_.accountId).map(s => s"/accounts/$s").getOrElse("")
-    server.getStream[EffectResp](s"$urlPrefix/effects", EffectRespDeserializer)
-  }
+  def effects()(implicit ec: ExecutionContext): Future[Stream[EffectResp]] =
+    server.getStream[EffectResp]("/effects", EffectRespDeserializer)
 
-  def ledgers()(implicit ec: ExecutionContext): Future[Stream[LedgerResp]] = {
+  def effects(account: PublicKeyOps)(implicit ec: ExecutionContext): Future[Stream[EffectResp]] =
+    server.getStream[EffectResp](s"/accounts/${account.accountId}/effects", EffectRespDeserializer)
+
+  def ledgers()(implicit ec: ExecutionContext): Future[Stream[LedgerResp]] =
     server.getStream[LedgerResp](s"/ledgers", LedgerRespDeserializer)
-  }
 
 }
 
