@@ -29,8 +29,11 @@ trait Network extends ByteArrays {
   def effects()(implicit ec: ExecutionContext): Future[Stream[EffectResp]] =
     server.getStream[EffectResp]("/effects", EffectRespDeserializer)
 
-  def effects(account: PublicKeyOps)(implicit ec: ExecutionContext): Future[Stream[EffectResp]] =
+  def effectsByAccount(account: PublicKeyOps)(implicit ec: ExecutionContext): Future[Stream[EffectResp]] =
     server.getStream[EffectResp](s"/accounts/${account.accountId}/effects", EffectRespDeserializer)
+
+  def effectsByLedger(sequenceId: Long)(implicit ec: ExecutionContext): Future[Stream[EffectResp]] =
+    server.getStream[EffectResp](s"/ledgers/$sequenceId/effects", EffectRespDeserializer)
 
   def ledgers()(implicit ec: ExecutionContext): Future[Stream[LedgerResp]] =
     server.getStream[LedgerResp](s"/ledgers", LedgerRespDeserializer)

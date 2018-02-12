@@ -70,7 +70,7 @@ class SequentialIntegrationSpec(implicit ee: ExecutionEnv) extends Specification
     }
 
     "filter effects by account" >> {
-      val byAccount = TestNetwork.effects(accn).map(_.take(10).toList)
+      val byAccount = TestNetwork.effectsByAccount(accn).map(_.take(10).toList)
       byAccount.map(_.isEmpty) must beFalse.awaitFor(10 seconds)
       byAccount.map(_.head) must beLike[EffectResp] {
         case EffectAccountCreated(_, account, startingBalance) =>
@@ -80,8 +80,14 @@ class SequentialIntegrationSpec(implicit ee: ExecutionEnv) extends Specification
     }
 
     "filter effects by ledger" >> {
-      pending
-    }
+      val byLedger = TestNetwork.effectsByLedger(190).map(_.take(10).toList)
+      byLedger.map(_.isEmpty) must beFalse.awaitFor(10 seconds)
+      byLedger.map(_.head) must beLike[EffectResp] {
+        case EffectAccountCreated(_, account, startingBalance) =>
+          account.accountId mustEqual accn.accountId
+          startingBalance mustEqual Amount.lumens(10000).get
+      }.awaitFor(10.seconds)
+    }.pendingUntilFixed("API currently returns zero effects per ledger")
   }
 
   "ledger endpoint" should {
