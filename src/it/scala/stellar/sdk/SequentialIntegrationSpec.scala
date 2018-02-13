@@ -4,7 +4,7 @@ import org.specs2.concurrent.ExecutionEnv
 import org.specs2.mutable.Specification
 import stellar.sdk.SessionTestAccount.{accWithData, accn}
 import stellar.sdk.inet.ResourceMissingException
-import stellar.sdk.resp.{AccountResp, AssetResp, EffectAccountCreated, EffectResp}
+import stellar.sdk.resp._
 
 import scala.concurrent.duration._
 
@@ -80,14 +80,20 @@ class SequentialIntegrationSpec(implicit ee: ExecutionEnv) extends Specification
     }
 
     "filter effects by ledger" >> {
-      val byLedger = TestNetwork.effectsByLedger(190).map(_.take(10).toList)
-      byLedger.map(_.isEmpty) must beFalse.awaitFor(10 seconds)
-      byLedger.map(_.head) must beLike[EffectResp] {
-        case EffectAccountCreated(_, account, startingBalance) =>
-          account.accountId mustEqual accn.accountId
-          startingBalance mustEqual Amount.lumens(10000).get
-      }.awaitFor(10.seconds)
-    }.pendingUntilFixed("API currently returns zero effects per ledger")
+      val byLedger = PublicNetwork.effectsByLedger(16237465).map(_.toList)
+      byLedger must beEqualTo(Seq(
+        EffectTrade("0069739381144948737-0000000001", 747605, KeyPair.fromAccountId("GD3IYBNQ45LXHFABSX4HLGDL7BQA62SVB5NB5O6XMBCITFZOLWLVS22B"),
+          Amount(5484522, AssetTypeCreditAlphaNum4("XLM", KeyPair.fromAccountId("GBSTRH4QOTWNSVA6E4HFERETX4ZLSR3CIUBLK7AXYII277PFJC4BBYOG"))),
+          KeyPair.fromAccountId("GBBMSYSNV7PC6XAI3JL6F5OWP54TIONGDDTEJ4AQS3YMFUSPDSSSDQVB"),
+          Amount(2445, AssetTypeCreditAlphaNum4("ETH", KeyPair.fromAccountId("GBSTRH4QOTWNSVA6E4HFERETX4ZLSR3CIUBLK7AXYII277PFJC4BBYOG")))),
+
+        EffectTrade("0069739381144948737-0000000002", 747605, KeyPair.fromAccountId("GBBMSYSNV7PC6XAI3JL6F5OWP54TIONGDDTEJ4AQS3YMFUSPDSSSDQVB"),
+          Amount(2445, AssetTypeCreditAlphaNum4("ETH", KeyPair.fromAccountId("GBSTRH4QOTWNSVA6E4HFERETX4ZLSR3CIUBLK7AXYII277PFJC4BBYOG"))),
+          KeyPair.fromAccountId("GD3IYBNQ45LXHFABSX4HLGDL7BQA62SVB5NB5O6XMBCITFZOLWLVS22B"),
+          Amount(5484522, AssetTypeCreditAlphaNum4("XLM", KeyPair.fromAccountId("GBSTRH4QOTWNSVA6E4HFERETX4ZLSR3CIUBLK7AXYII277PFJC4BBYOG")))
+        )
+      )).awaitFor(10.seconds)
+    }
   }
 
   "ledger endpoint" should {
