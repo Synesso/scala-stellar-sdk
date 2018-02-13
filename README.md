@@ -122,8 +122,8 @@ TestNetwork.assets(code = Some("ETH"), issuer = Some("GAE325UC3T63ROIUFBBRNMWGM7
     [ ] By operation - pending all operations
     [ ] By transaction - pending all transactions
   [✓] Ledgers
-  [🚀] Ledger details
-  [ ] Offers for account
+  [✓] Ledger details
+  [🚀] Offers for account
   [ ] Operations
     [ ] Unfiltered stream
     [ ] By account

@@ -38,6 +38,9 @@ trait Network extends ByteArrays {
   def ledgers()(implicit ec: ExecutionContext): Future[Stream[LedgerResp]] =
     server.getStream[LedgerResp](s"/ledgers", LedgerRespDeserializer)
 
+  def ledger(sequenceId: Long)(implicit ex: ExecutionContext): Future[LedgerResp] =
+    server.get[LedgerResp](s"/ledgers/$sequenceId")
+
 }
 
 case object PublicNetwork extends Network {

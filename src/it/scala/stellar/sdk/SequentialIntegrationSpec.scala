@@ -1,5 +1,7 @@
 package stellar.sdk
 
+import java.time.ZonedDateTime
+
 import org.specs2.concurrent.ExecutionEnv
 import org.specs2.mutable.Specification
 import stellar.sdk.SessionTestAccount.{accWithData, accn}
@@ -97,6 +99,15 @@ class SequentialIntegrationSpec(implicit ee: ExecutionEnv) extends Specification
   }
 
   "ledger endpoint" should {
+    "list the details of a given ledger" >> {
+      PublicNetwork.ledger(16237465) must beEqualTo(
+        LedgerResp("d4a8dae64397e23551a5b57e30ae16d6887b6a49fb9263808878fd6dc71f64be",
+          "d4a8dae64397e23551a5b57e30ae16d6887b6a49fb9263808878fd6dc71f64be",
+          Some("ec7d2a4c064a1f10741b93260fc5b625febdf8cc5a06df8a892396ecab4449d0"), 16237465L, 1, 1,
+          ZonedDateTime.parse("2018-02-13T00:33:53Z"), 1.0368912397155042E11, 1415204.6354335, 100, 0.5, 50)
+      ).awaitFor(10.seconds)
+    }
+
     "list all ledgers" >> {
       val oneFifteen = TestNetwork.ledgers().map(_.take(115))
       oneFifteen.map(_.distinct.size) must beEqualTo(115).awaitFor(10.seconds)
