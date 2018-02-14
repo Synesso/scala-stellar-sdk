@@ -2,11 +2,10 @@ package stellar.sdk.op
 
 import org.stellar.sdk.xdr.Operation.OperationBody
 import org.stellar.sdk.xdr.OperationType._
-import org.stellar.sdk.xdr.{ManageOfferOp, Price => XDRPrice}
-import stellar.sdk._
-import stellar.sdk.{Amount, Asset, XDRPrimitives}
+import org.stellar.sdk.xdr.ManageOfferOp
+import stellar.sdk.{Amount, Asset, _}
 
-import scala.util.{Failure, Success, Try}
+import scala.util.Try
 
 sealed trait ManageOfferOperation extends Operation {
   val offerId: Long = 0
@@ -79,14 +78,4 @@ object ManageOfferOperation {
       case _      => UpdateOfferOperation(offerId, Amount(amount, selling), buying, price)
     }
   }
-}
-
-case class Price(n: Int, d: Int) extends XDRPrimitives {
-  def toXDR = {
-    val xdr = new XDRPrice
-    xdr.setN(int32(n))
-    xdr.setD(int32(d))
-    xdr
-  }
-
 }

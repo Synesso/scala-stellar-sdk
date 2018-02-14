@@ -8,7 +8,7 @@ import org.scalacheck.{Arbitrary, Gen}
 import org.specs2.ScalaCheck
 import org.stellar.sdk.xdr.{Signature, SignerKey}
 import stellar.sdk.op._
-import stellar.sdk.resp.LedgerResp
+import stellar.sdk.resp.{LedgerResp, OfferResp}
 
 import scala.util.Random
 
@@ -75,6 +75,8 @@ trait ArbitraryInput extends ScalaCheck {
   implicit def arbThreshold = Arbitrary(genThresholds)
 
   implicit def arbLedgerResp = Arbitrary(genLedgerResp)
+
+  implicit def arbOfferResp = Arbitrary(genOfferResp)
 
   def genKeyPair: Gen[KeyPair] = Gen.oneOf(Seq(KeyPair.random))
 
@@ -297,6 +299,14 @@ trait ArbitraryInput extends ScalaCheck {
     maxTxSetSize <- Gen.posNum[Int]
   } yield LedgerResp(id, hash, previousHash, sequence, transactionCount, operationCount, closedAt, totalCoins, feePool,
     baseFee, baseReserve, maxTxSetSize)
+
+  def genOfferResp: Gen[OfferResp] = for {
+    id <- Gen.posNum[Long]
+    seller <- genVerifyingKey
+    selling <- genAmount
+    buying <- genAsset
+    price <- genPrice
+  } yield OfferResp(id, seller, selling, buying, price)
 
   def round(d: Double) = f"$d%.7f".toDouble
 }
