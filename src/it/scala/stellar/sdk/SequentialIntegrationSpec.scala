@@ -114,4 +114,21 @@ class SequentialIntegrationSpec(implicit ee: ExecutionEnv) extends Specification
     }
   }
 
+  "offer endpoint" should {
+    "list offers by account" >> {
+      TestNetwork.offersByAccount(KeyPair.fromAccountId("GCXYKQF35XWATRB6AWDDV2Y322IFU2ACYYN5M2YB44IBWAIITQ4RYPXK"))
+        .map(_.toSeq) must beEqualTo(Seq(
+        OfferResp(
+          id = 101542,
+          seller = KeyPair.fromAccountId("GCXYKQF35XWATRB6AWDDV2Y322IFU2ACYYN5M2YB44IBWAIITQ4RYPXK"),
+          selling = Amount.lumens(165).get,
+          buying = AssetTypeCreditAlphaNum12(
+            code = "sausage",
+            issuer = KeyPair.fromAccountId("GCXYKQF35XWATRB6AWDDV2Y322IFU2ACYYN5M2YB44IBWAIITQ4RYPXK")),
+          price = Price(303, 100)
+        )
+      )).awaitFor(10.seconds)
+    }
+  }
+
 }

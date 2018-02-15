@@ -6,7 +6,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 
 object SessionTestAccount {
 
-  val accn = {
+  lazy val accn = {
     val kp = KeyPair.random
     Await.result(TestNetwork.fund(kp), 30 seconds)
     kp

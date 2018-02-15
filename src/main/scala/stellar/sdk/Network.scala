@@ -41,6 +41,9 @@ trait Network extends ByteArrays {
   def ledger(sequenceId: Long)(implicit ex: ExecutionContext): Future[LedgerResp] =
     server.get[LedgerResp](s"/ledgers/$sequenceId")
 
+  def offersByAccount(pubKey: PublicKeyOps)(implicit ex: ExecutionContext): Future[Stream[OfferResp]] =
+    server.getStream[OfferResp](s"/accounts/${pubKey.accountId}/offers", OfferRespDeserializer)
+
 }
 
 case object PublicNetwork extends Network {
