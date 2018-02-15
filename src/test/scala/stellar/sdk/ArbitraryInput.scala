@@ -8,7 +8,7 @@ import org.scalacheck.{Arbitrary, Gen}
 import org.specs2.ScalaCheck
 import org.stellar.sdk.xdr.{Signature, SignerKey}
 import stellar.sdk.op._
-import stellar.sdk.resp.{LedgerResp, OfferResp}
+import stellar.sdk.resp.{LedgerResp, OfferResp, OperationCreateAccount}
 
 import scala.util.Random
 
@@ -77,6 +77,8 @@ trait ArbitraryInput extends ScalaCheck {
   implicit def arbLedgerResp = Arbitrary(genLedgerResp)
 
   implicit def arbOfferResp = Arbitrary(genOfferResp)
+
+  implicit def arbOperationCreateAccount = Arbitrary(genOperationCreateAccount)
 
   def genKeyPair: Gen[KeyPair] = Gen.oneOf(Seq(KeyPair.random))
 
@@ -241,6 +243,9 @@ trait ArbitraryInput extends ScalaCheck {
 
   def genInstant: Gen[Instant] = Gen.posNum[Long].map(Instant.ofEpochMilli)
 
+  def genZonedDateTime: Gen[ZonedDateTime] = genInstant.map(ZonedDateTime.ofInstant(_, ZoneId.of("UTC")))
+    .map(_.`with`(ChronoField.NANO_OF_SECOND, 0))
+
   def genTimeBounds: Gen[TimeBounds] = Gen.listOfN(2, genInstant)
     .suchThat{ case List(a, b) => a != b }
     .map(_.sortBy(_.toEpochMilli))
@@ -291,7 +296,7 @@ trait ArbitraryInput extends ScalaCheck {
     sequence <- Gen.posNum[Long]
     transactionCount <- Gen.posNum[Int]
     operationCount <- Gen.posNum[Int]
-    closedAt: ZonedDateTime <- genInstant.map(ZonedDateTime.ofInstant(_, ZoneId.of("UTC"))).map(_.`with`(ChronoField.NANO_OF_SECOND, 0))
+    closedAt: ZonedDateTime <- genZonedDateTime
     totalCoins <- Gen.posNum[Double].map(round)
     feePool <- Gen.posNum[Double].map(round)
     baseFee <- Gen.posNum[Int]
@@ -307,6 +312,15 @@ trait ArbitraryInput extends ScalaCheck {
     buying <- genAsset
     price <- genPrice
   } yield OfferResp(id, seller, selling, buying, price)
+
+  def genOperationCreateAccount: Gen[OperationCreateAccount] = for {
+    id <- Gen.posNum[Long]
+    txnHash <- genHash
+    account <- genVerifyingKey
+    funder <- genVerifyingKey
+    startingBalance <- genNativeAmount
+    createdAt <- genZonedDateTime
+  } yield OperationCreateAccount(id, txnHash, account, funder, startingBalance, createdAt)
 
   def round(d: Double) = f"$d%.7f".toDouble
 }

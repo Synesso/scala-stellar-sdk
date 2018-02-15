@@ -126,6 +126,17 @@ TestNetwork.assets(code = Some("ETH"), issuer = Some("GAE325UC3T63ROIUFBBRNMWGM7
   [✓] Offers for account
   [🚀] Operations
     [🚀] Unfiltered stream
+      [✓] Create account
+      [🚀] Payment
+      [ ] Path Payment
+      [ ] Manage Offer
+      [ ] Create Passive Offer
+      [ ] Set Options
+      [ ] Change Trust
+      [ ] Allow Trust
+      [ ] Account Merge
+      [ ] Inflation
+      [ ] Manage Data
     [ ] By account
     [ ] By ledger
     [ ] By transaction
@@ -150,5 +161,6 @@ TestNetwork.assets(code = Some("ETH"), issuer = Some("GAE325UC3T63ROIUFBBRNMWGM7
 [ ] Streams
   [ ] Effects
   [ ] Ledgers
+  [ ] Operations
   [ ] ...
 ```
