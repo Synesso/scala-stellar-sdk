@@ -318,11 +318,12 @@ trait ArbitraryInput extends ScalaCheck {
   def genOperationCreateAccount: Gen[OperationCreateAccount] = for {
     id <- Gen.posNum[Long]
     txnHash <- genHash
+    source <- genVerifyingKey
     account <- genVerifyingKey
     funder <- genVerifyingKey
     startingBalance <- genNativeAmount
     createdAt <- genZonedDateTime
-  } yield OperationCreateAccount(id, txnHash, funder, createdAt, account, startingBalance)
+  } yield OperationCreateAccount(id, txnHash, source, createdAt, account, funder, startingBalance)
 
   def genOperationPayment: Gen[OperationPayment] = for {
     id <- Gen.posNum[Long]

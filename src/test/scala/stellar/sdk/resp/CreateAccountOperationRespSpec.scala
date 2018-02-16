@@ -36,7 +36,7 @@ class CreateAccountOperationRespSpec extends Specification with ArbitraryInput {
            |  "created_at": "${formatter.format(op.createdAt)}",
            |  "transaction_hash": "${op.txnHash}",
            |  "starting_balance": "${amountString(op.startingBalance)}",
-           |  "funder": "${op.sourceAccount.accountId}",
+           |  "funder": "${op.funder.accountId}",
            |  "account": "${op.account.accountId}"
            |}
          """.stripMargin

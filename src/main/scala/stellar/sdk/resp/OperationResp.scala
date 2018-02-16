@@ -16,7 +16,7 @@ sealed trait OperationResp {
 }
 
 case class OperationCreateAccount(id: Long, txnHash: String, sourceAccount: PublicKeyOps, createdAt: ZonedDateTime,
-                                  account: PublicKeyOps, startingBalance: NativeAmount) extends OperationResp // todo - add funder account ?
+                                  account: PublicKeyOps, funder: PublicKeyOps, startingBalance: NativeAmount) extends OperationResp
 
 case class OperationPayment(id: Long, txnHash: String, sourceAccount: PublicKeyOps, createdAt: ZonedDateTime,
                             amount: Amount, fromAccount: PublicKeyOps, toAccount: PublicKeyOps) extends OperationResp
@@ -63,7 +63,7 @@ object OperationRespDeserializer extends CustomSerializer[OperationResp](format 
     val createdAt = date("created_at")
     (o \ "type").extract[String] match {
       case "create_account" =>
-        OperationCreateAccount(id, txnHash, account("funder"), createdAt, account(), nativeAmount("starting_balance")) // todo - check the accounts. 3 different kinds?
+        OperationCreateAccount(id, txnHash, source, createdAt, account(), account("funder"), nativeAmount("starting_balance"))
       case "payment" =>
         OperationPayment(id, txnHash, source, createdAt, amount, account("from"), account("to"))
 
