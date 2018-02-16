@@ -30,13 +30,13 @@ class CreateAccountOperationRespSpec extends Specification with ArbitraryInput {
            |  },
            |  "id": "${op.id}",
            |  "paging_token": "10157597659137",
-           |  "source_account": "${op.funder.accountId}",
+           |  "source_account": "${op.sourceAccount.accountId}",
            |  "type": "create_account",
            |  "type_i": 0,
            |  "created_at": "${formatter.format(op.createdAt)}",
            |  "transaction_hash": "${op.txnHash}",
            |  "starting_balance": "${amountString(op.startingBalance)}",
-           |  "funder": "${op.funder.accountId}",
+           |  "funder": "${op.sourceAccount.accountId}",
            |  "account": "${op.account.accountId}"
            |}
          """.stripMargin

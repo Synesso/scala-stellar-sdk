@@ -127,8 +127,8 @@ TestNetwork.assets(code = Some("ETH"), issuer = Some("GAE325UC3T63ROIUFBBRNMWGM7
   [🚀] Operations
     [🚀] Unfiltered stream
       [✓] Create account
-      [🚀] Payment
-      [ ] Path Payment
+      [✓] Payment
+      [🚀] Path Payment
       [ ] Manage Offer
       [ ] Create Passive Offer
       [ ] Set Options

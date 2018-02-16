@@ -8,7 +8,7 @@ import org.scalacheck.{Arbitrary, Gen}
 import org.specs2.ScalaCheck
 import org.stellar.sdk.xdr.{Signature, SignerKey}
 import stellar.sdk.op._
-import stellar.sdk.resp.{LedgerResp, OfferResp, OperationCreateAccount}
+import stellar.sdk.resp.{LedgerResp, OfferResp, OperationCreateAccount, OperationPayment}
 
 import scala.util.Random
 
@@ -79,6 +79,8 @@ trait ArbitraryInput extends ScalaCheck {
   implicit def arbOfferResp = Arbitrary(genOfferResp)
 
   implicit def arbOperationCreateAccount = Arbitrary(genOperationCreateAccount)
+
+  implicit def arbOperationPayment = Arbitrary(genOperationPayment)
 
   def genKeyPair: Gen[KeyPair] = Gen.oneOf(Seq(KeyPair.random))
 
@@ -321,6 +323,16 @@ trait ArbitraryInput extends ScalaCheck {
     startingBalance <- genNativeAmount
     createdAt <- genZonedDateTime
   } yield OperationCreateAccount(id, txnHash, account, funder, startingBalance, createdAt)
+
+  def genOperationPayment: Gen[OperationPayment] = for {
+    id <- Gen.posNum[Long]
+    hash <- genHash
+    source <- genVerifyingKey
+    from <- genVerifyingKey
+    to <- genVerifyingKey
+    amount <- genAmount
+    createdAt <- genZonedDateTime
+  } yield OperationPayment(id, hash, source, createdAt, amount, from, to)
 
   def round(d: Double) = f"$d%.7f".toDouble
 }

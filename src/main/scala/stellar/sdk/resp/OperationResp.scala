@@ -11,10 +11,12 @@ import stellar.sdk._
 sealed trait OperationResp {
   val id: Long
   val txnHash: String
+  val sourceAccount: PublicKeyOps
+  val createdAt: ZonedDateTime
 }
 
-case class OperationCreateAccount(id: Long, txnHash: String, account: PublicKeyOps, funder: PublicKeyOps, startingBalance: NativeAmount, createdAt: ZonedDateTime) extends OperationResp
-
+case class OperationCreateAccount(id: Long, txnHash: String, account: PublicKeyOps, sourceAccount: PublicKeyOps, startingBalance: NativeAmount, createdAt: ZonedDateTime) extends OperationResp // todo - add funder account ?
+case class OperationPayment(id: Long, txnHash: String, sourceAccount: PublicKeyOps, createdAt: ZonedDateTime, amount: Amount, fromAccount: PublicKeyOps, toAccount: PublicKeyOps) extends OperationResp
 
 object OperationRespDeserializer extends CustomSerializer[OperationResp](format => ( {
   case o: JObject =>
@@ -22,27 +24,30 @@ object OperationRespDeserializer extends CustomSerializer[OperationResp](format 
     val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'").withZone(ZoneId.of("UTC"))
 
     def account(accountKey: String = "account") = KeyPair.fromAccountId((o \ accountKey).extract[String])
-//
-//    def asset(prefix: String = "", issuerKey: String = "asset_issuer") = {
-//      def assetCode = (o \ s"${prefix}asset_code").extract[String]
-//      def assetIssuer = KeyPair.fromAccountId((o \ s"$prefix$issuerKey").extract[String])
-//      (o \ s"${prefix}asset_type").extract[String] match {
-//        case "native" => NativeAsset
-//        case "credit_alphanum4" => AssetTypeCreditAlphaNum4(assetCode, assetIssuer)
-//        case "credit_alphanum12" => AssetTypeCreditAlphaNum12(assetCode, assetIssuer)
-//        case t => throw new RuntimeException(s"Unrecognised asset type '$t'")
-//      }
-//    }
-//
+
+    def asset = {
+      def assetCode = (o \ s"asset_code").extract[String]
+      def assetIssuer = KeyPair.fromAccountId((o \ "asset_issuer").extract[String])
+      (o \ "asset_type").extract[String] match {
+        case "native" => NativeAsset
+        case "credit_alphanum4" => AssetTypeCreditAlphaNum4(assetCode, assetIssuer)
+        case "credit_alphanum12" => AssetTypeCreditAlphaNum12(assetCode, assetIssuer)
+        case t => throw new RuntimeException(s"Unrecognised asset type '$t'")
+      }
+    }
+
     def doubleFromString(key: String) = (o \ key).extract[String].toDouble
 
-    def amount(key: String = "") = {
-      val units = Amount.toBaseUnits(doubleFromString(key)).get
-//      asset(prefix) match {
-//        case nna: NonNativeAsset => IssuedAmount(units, nna)
-//        case NativeAsset => NativeAmount(units)
-//      }
-      NativeAmount(units)
+    def nativeAmount(key: String) = {
+      NativeAmount(Amount.toBaseUnits(doubleFromString(key)).get)
+    }
+
+    def amount = {
+      val units = Amount.toBaseUnits(doubleFromString("amount")).get
+      asset match {
+        case nna: NonNativeAsset => IssuedAmount(units, nna)
+        case NativeAsset => NativeAmount(units)
+      }
     }
 
     def date(key: String) = ZonedDateTime.from(formatter.parse((o \ key).extract[String]))
@@ -51,9 +56,13 @@ object OperationRespDeserializer extends CustomSerializer[OperationResp](format 
 
     val id = (o \ "id").extract[String].toLong
     val txnHash = (o \ "transaction_hash").extract[String]
+    val source = account("source_account")
+    val createdAt = date("created_at")
     (o \ "type").extract[String] match {
       case "create_account" =>
-        OperationCreateAccount(id, txnHash, account(), account("funder"), amount("starting_balance"), date("created_at"))
+        OperationCreateAccount(id, txnHash, account(), account("funder"), nativeAmount("starting_balance"), createdAt) // todo - check the accounts. 3 different kinds? & reorder createdAt
+      case "payment" =>
+        OperationPayment(id, txnHash, source, createdAt, amount, account("from"), account("to"))
 
 
 //      case "account_created" =>
