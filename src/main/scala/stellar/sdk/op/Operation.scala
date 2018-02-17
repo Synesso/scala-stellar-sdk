@@ -93,10 +93,8 @@ object OperationDeserializer extends CustomSerializer[Operation](format => ( {
     //    def weight = (o \ "weight").extract[Int].toShort
 
     (o \ "type").extract[String] match {
-      case "create_account" =>
-        CreateAccountOperation(account(), nativeAmount("starting_balance")) // account("funder"), )
-      //      case "payment" =>
-      //        OperationPayment(id, txnHash, source, createdAt, amount(), account("from"), account("to"))
+      case "create_account" => CreateAccountOperation(account(), nativeAmount("starting_balance"))
+      case "payment" => PaymentOperation(account("to"), amount())
       //      case "path_payment" =>
       //        val JArray(pathJs) = o \ "path"
       //        val path: List[Asset] = pathJs.map(a => asset(obj = a))
@@ -139,8 +137,7 @@ object OperationDeserializer extends CustomSerializer[Operation](format => ( {
       //      case "trustline_deauthorized" => EffectTrustLineDeauthorized(id, account("trustor"), asset(issuerKey = "account").asInstanceOf[NonNativeAsset])
       //      case "trade" => EffectTrade(id, (o \ "offer_id").extract[Long], account(), amount("bought_"), account("seller"), amount("sold_"))
       case t =>
-        // throw new RuntimeException(s"Unrecognised operation type '$t'")
-        null
+         throw new RuntimeException(s"Unrecognised operation type '$t'")
     }
 }, PartialFunction.empty)
 )
