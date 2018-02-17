@@ -14,7 +14,7 @@ case class Transacted[O <: Operation](id: Long,
                                       operation: O)
 
 
-object TransactedOperationDeserializer extends CustomSerializer[Transacted[_]](format => ( {
+object TransactedOperationDeserializer extends CustomSerializer[Transacted[Operation]](format => ( {
   case o: JObject =>
     implicit val formats = DefaultFormats + OperationDeserializer
     val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'").withZone(ZoneId.of("UTC"))

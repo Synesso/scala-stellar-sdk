@@ -78,8 +78,6 @@ trait ArbitraryInput extends ScalaCheck {
 
   implicit def arbOfferResp = Arbitrary(genOfferResp)
 
-  implicit def arbOperationPathPayment = Arbitrary(genOperationPathPayment)
-
   def genKeyPair: Gen[KeyPair] = Gen.oneOf(Seq(KeyPair.random))
 
   def genSignerKey: Gen[SignerKey] = genKeyPair.map(_.getXDRSignerKey)
@@ -312,19 +310,6 @@ trait ArbitraryInput extends ScalaCheck {
     buying <- genAsset
     price <- genPrice
   } yield OfferResp(id, seller, selling, buying, price)
-
-  def genOperationPathPayment: Gen[OperationPathPayment] = for {
-    id <- Gen.posNum[Long]
-    hash <- genHash
-    source <- genVerifyingKey
-    createdAt <- genZonedDateTime
-    fromAccount <- genVerifyingKey
-    fromMaxAmount <- genAmount
-    toAccount <- genVerifyingKey
-    toAmount <- genAmount
-    pathSize <- Gen.choose(0, 6)
-    path <- Gen.listOfN(pathSize, genAsset)
-  } yield OperationPathPayment(id, hash, source, createdAt, fromMaxAmount, fromAccount, toAmount, toAccount, path)
 
   def genTransacted[O <: Operation](genOp: Gen[O]): Gen[Transacted[O]] = for {
     id <- Gen.posNum[Long]

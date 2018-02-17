@@ -6,7 +6,6 @@ import org.json4s.native.JsonMethods.parse
 import org.scalacheck.Arbitrary
 import org.specs2.mutable.Specification
 import org.stellar.sdk.xdr.ManageOfferOp
-import stellar.sdk.resp.OperationRespDeserializer
 import stellar.sdk.{ArbitraryInput, DomainMatchers}
 
 class ManageOfferOperationSpec extends Specification with ArbitraryInput with DomainMatchers with JsonSnippets {

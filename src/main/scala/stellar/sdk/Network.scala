@@ -5,6 +5,7 @@ import java.nio.charset.StandardCharsets.UTF_8
 
 import com.softwaremill.sttp.akkahttp.AkkaHttpBackend
 import stellar.sdk.inet.Server
+import stellar.sdk.op.{Operation, Transacted, TransactedOperationDeserializer}
 import stellar.sdk.resp._
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -44,8 +45,8 @@ trait Network extends ByteArrays {
   def offersByAccount(pubKey: PublicKeyOps)(implicit ex: ExecutionContext): Future[Stream[OfferResp]] =
     server.getStream[OfferResp](s"/accounts/${pubKey.accountId}/offers", OfferRespDeserializer)
 
-  def foo()(implicit ex: ExecutionContext): Future[Stream[OperationResp]] =
-    server.getStream[OperationResp](s"/operations", OperationRespDeserializer)
+  def foo()(implicit ex: ExecutionContext): Future[Stream[Transacted[Operation]]] =
+    server.getStream[Transacted[Operation]](s"/operations", TransactedOperationDeserializer)
 
 }
 
