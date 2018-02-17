@@ -4,7 +4,7 @@ import java.time.{ZoneId, ZonedDateTime}
 import java.time.format.DateTimeFormatter
 
 import org.json4s.{CustomSerializer, DefaultFormats}
-import org.json4s.JsonAST.{JObject, JValue}
+import org.json4s.JsonAST.{JArray, JObject, JValue}
 import org.stellar.sdk.xdr.Operation.OperationBody
 import org.stellar.sdk.xdr.OperationType._
 import org.stellar.sdk.xdr.{AccountID, Operation => XDROp}
@@ -88,18 +88,17 @@ object OperationDeserializer extends CustomSerializer[Operation](format => ( {
       }
     }
 
-    def date(key: String) = ZonedDateTime.from(formatter.parse((o \ key).extract[String]))
+//    def date(key: String) = ZonedDateTime.from(formatter.parse((o \ key).extract[String]))
     //
     //    def weight = (o \ "weight").extract[Int].toShort
 
     (o \ "type").extract[String] match {
       case "create_account" => CreateAccountOperation(account(), nativeAmount("starting_balance"))
       case "payment" => PaymentOperation(account("to"), amount())
-      //      case "path_payment" =>
-      //        val JArray(pathJs) = o \ "path"
-      //        val path: List[Asset] = pathJs.map(a => asset(obj = a))
-      //        OperationPathPayment(id, txnHash, source, createdAt, amount("source_max", "source_"), account("from"), amount(),
-      //          account("to"), path)
+      case "path_payment" =>
+        val JArray(pathJs) = o \ "path"
+        val path: List[Asset] = pathJs.map(a => asset(obj = a))
+        PathPaymentOperation(amount("source_max", "source_"), account("to"), amount(), path)
       case "manage_offer" =>
         (o \ "offer_id").extract[Long] match {
           case 0L => CreateOfferOperation(
