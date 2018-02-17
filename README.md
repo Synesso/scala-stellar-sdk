@@ -91,7 +91,7 @@ TestNetwork.assets(code = Some("ETH"), issuer = Some("GAE325UC3T63ROIUFBBRNMWGM7
 ```
 [✓] Operations
 [✓] Transactions
-[ ] Endpoints
+[ ] Horizon Endpoints
   [✓] Account details
   [✓] Assets
     [✓] Unfiltered

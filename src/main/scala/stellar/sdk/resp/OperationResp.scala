@@ -7,7 +7,6 @@ import org.json4s.JsonAST.{JArray, JObject, JValue}
 import org.json4s.{CustomSerializer, DefaultFormats}
 import stellar.sdk._
 
-// todo - merge OperationResps with stellar.sdk.op._
 sealed trait OperationResp {
   val id: Long
   val txnHash: String

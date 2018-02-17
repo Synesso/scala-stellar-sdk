@@ -1,16 +1,14 @@
 package stellar.sdk.op
 
-import java.time.{ZoneId, ZonedDateTime}
+import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
-import org.json4s.{CustomSerializer, DefaultFormats}
 import org.json4s.JsonAST.{JArray, JObject, JValue}
+import org.json4s.{CustomSerializer, DefaultFormats}
 import org.stellar.sdk.xdr.Operation.OperationBody
 import org.stellar.sdk.xdr.OperationType._
-import org.stellar.sdk.xdr.{AccountID, Operation => XDROp}
-import stellar.sdk._
-import stellar.sdk.XDRPrimitives
-import stellar.sdk.resp.{OperationCreateAccount, OperationResp}
+import org.stellar.sdk.xdr.{Operation => XDROp}
+import stellar.sdk.{XDRPrimitives, _}
 
 import scala.util.{Success, Try}
 
@@ -102,6 +100,12 @@ object OperationDeserializer extends CustomSerializer[Operation](format => ( {
       case "manage_offer" =>
         (o \ "offer_id").extract[Long] match {
           case 0L => CreateOfferOperation(
+            selling = amount(assetPrefix = "selling_"),
+            buying = asset("buying_"),
+            price = price()
+          )
+          case id => UpdateOfferOperation(
+            id,
             selling = amount(assetPrefix = "selling_"),
             buying = asset("buying_"),
             price = price()
