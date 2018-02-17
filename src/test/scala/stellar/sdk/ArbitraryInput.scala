@@ -350,5 +350,13 @@ trait ArbitraryInput extends ScalaCheck {
     path <- Gen.listOfN(pathSize, genAsset)
   } yield OperationPathPayment(id, hash, source, createdAt, fromMaxAmount, fromAccount, toAmount, toAccount, path)
 
+  def genTransacted[O <: Operation](genOp: Gen[O]): Gen[Transacted[O]] = for {
+    id <- Gen.posNum[Long]
+    hash <- genHash
+    source <- genVerifyingKey
+    createdAt <- genZonedDateTime
+    op <- genOp
+  } yield Transacted(id, hash, source, createdAt, op)
+
   def round(d: Double) = f"$d%.7f".toDouble
 }

@@ -75,16 +75,15 @@ object OperationRespDeserializer extends CustomSerializer[OperationResp](format 
         val path: List[Asset] = pathJs.map(a => asset(obj = a))
         OperationPathPayment(id, txnHash, source, createdAt, amount("source_max", "source_"), account("from"), amount(),
           account("to"), path)
-/*
+      case "manage_offer" =>
         import org.json4s.native.JsonMethods._
         val doc = pretty(render(o))
-        if (!doc.contains("""path":[],""")) {
-          println(doc)
-          throw new RuntimeException()
-        }
+        println(doc)
         null
-*/
-//      case "account_created" =>
+
+
+
+      //      case "account_created" =>
 //        val startingBalance = Amount.lumens((o \ "starting_balance").extract[String].toDouble).get
 //        EffectAccountCreated(id, account(), startingBalance)
 //      case "account_credited" => EffectAccountCredited(id, account(), amount())
