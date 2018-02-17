@@ -3,7 +3,7 @@ package stellar.sdk.resp
 import java.time.{ZoneId, ZonedDateTime}
 import java.time.format.DateTimeFormatter
 
-import org.json4s.JsonAST.JObject
+import org.json4s.JsonAST.{JArray, JObject, JValue}
 import org.json4s.{CustomSerializer, DefaultFormats}
 import stellar.sdk._
 
@@ -21,6 +21,10 @@ case class OperationCreateAccount(id: Long, txnHash: String, sourceAccount: Publ
 case class OperationPayment(id: Long, txnHash: String, sourceAccount: PublicKeyOps, createdAt: ZonedDateTime,
                             amount: Amount, fromAccount: PublicKeyOps, toAccount: PublicKeyOps) extends OperationResp
 
+case class OperationPathPayment(id: Long, txnHash: String, sourceAccount: PublicKeyOps, createdAt: ZonedDateTime,
+                                fromMaxAmount: Amount, fromAccount: PublicKeyOps, toAmount: Amount, toAccount: PublicKeyOps,
+                                path: Seq[Asset]) extends OperationResp
+
 object OperationRespDeserializer extends CustomSerializer[OperationResp](format => ( {
   case o: JObject =>
     implicit val formats = DefaultFormats
@@ -28,10 +32,10 @@ object OperationRespDeserializer extends CustomSerializer[OperationResp](format 
 
     def account(accountKey: String = "account") = KeyPair.fromAccountId((o \ accountKey).extract[String])
 
-    def asset = {
-      def assetCode = (o \ s"asset_code").extract[String]
-      def assetIssuer = KeyPair.fromAccountId((o \ "asset_issuer").extract[String])
-      (o \ "asset_type").extract[String] match {
+    def asset(prefix: String = "", obj: JValue = o) = {
+      def assetCode = (obj \ s"${prefix}asset_code").extract[String]
+      def assetIssuer = KeyPair.fromAccountId((obj \ s"${prefix}asset_issuer").extract[String])
+      (obj \ s"${prefix}asset_type").extract[String] match {
         case "native" => NativeAsset
         case "credit_alphanum4" => AssetTypeCreditAlphaNum4(assetCode, assetIssuer)
         case "credit_alphanum12" => AssetTypeCreditAlphaNum12(assetCode, assetIssuer)
@@ -45,9 +49,9 @@ object OperationRespDeserializer extends CustomSerializer[OperationResp](format 
       NativeAmount(Amount.toBaseUnits(doubleFromString(key)).get)
     }
 
-    def amount = {
-      val units = Amount.toBaseUnits(doubleFromString("amount")).get
-      asset match {
+    def amount(label: String = "amount", assetPrefix: String = "") = {
+      val units = Amount.toBaseUnits(doubleFromString(label)).get
+      asset(assetPrefix) match {
         case nna: NonNativeAsset => IssuedAmount(units, nna)
         case NativeAsset => NativeAmount(units)
       }
@@ -65,9 +69,21 @@ object OperationRespDeserializer extends CustomSerializer[OperationResp](format 
       case "create_account" =>
         OperationCreateAccount(id, txnHash, source, createdAt, account(), account("funder"), nativeAmount("starting_balance"))
       case "payment" =>
-        OperationPayment(id, txnHash, source, createdAt, amount, account("from"), account("to"))
-
-
+        OperationPayment(id, txnHash, source, createdAt, amount(), account("from"), account("to"))
+      case "path_payment" =>
+        val JArray(pathJs) = o \ "path"
+        val path: List[Asset] = pathJs.map(a => asset(obj = a))
+        OperationPathPayment(id, txnHash, source, createdAt, amount("source_max", "source_"), account("from"), amount(),
+          account("to"), path)
+/*
+        import org.json4s.native.JsonMethods._
+        val doc = pretty(render(o))
+        if (!doc.contains("""path":[],""")) {
+          println(doc)
+          throw new RuntimeException()
+        }
+        null
+*/
 //      case "account_created" =>
 //        val startingBalance = Amount.lumens((o \ "starting_balance").extract[String].toDouble).get
 //        EffectAccountCreated(id, account(), startingBalance)
@@ -92,7 +108,9 @@ object OperationRespDeserializer extends CustomSerializer[OperationResp](format 
 //      case "trustline_authorized" => EffectTrustLineAuthorized(id, account("trustor"), asset(issuerKey = "account").asInstanceOf[NonNativeAsset])
 //      case "trustline_deauthorized" => EffectTrustLineDeauthorized(id, account("trustor"), asset(issuerKey = "account").asInstanceOf[NonNativeAsset])
 //      case "trade" => EffectTrade(id, (o \ "offer_id").extract[Long], account(), amount("bought_"), account("seller"), amount("sold_"))
-      case t => throw new RuntimeException(s"Unrecognised operation type '$t'")
+      case t =>
+        // throw new RuntimeException(s"Unrecognised operation type '$t'")
+        null
     }
 }, PartialFunction.empty)
 )
