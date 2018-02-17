@@ -104,16 +104,11 @@ object OperationDeserializer extends CustomSerializer[Operation](format => ( {
             buying = asset("buying_"),
             price = price()
           )
-          case id => UpdateOfferOperation(
-            id,
-            selling = amount(assetPrefix = "selling_"),
-            buying = asset("buying_"),
-            price = price()
-          )
+          case id =>
+            val amnt = (o \ "amount").extract[String].toDouble
+            if (amnt == 0.0) DeleteOfferOperation(id, asset("selling_"), asset("buying_"), price())
+            else UpdateOfferOperation(id, selling = amount(assetPrefix = "selling_"), buying = asset("buying_"), price = price())
         }
-
-
-
 
       //      case "account_created" =>
       //        val startingBalance = Amount.lumens((o \ "starting_balance").extract[String].toDouble).get

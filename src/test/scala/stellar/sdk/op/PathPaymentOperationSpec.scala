@@ -6,7 +6,6 @@ import org.json4s.native.Serialization
 import org.scalacheck.Arbitrary
 import org.specs2.mutable.Specification
 import stellar.sdk._
-import stellar.sdk.resp.OperationResp
 import stellar.sdk.{ArbitraryInput, DomainMatchers}
 
 class PathPaymentOperationSpec extends Specification with ArbitraryInput with DomainMatchers with JsonSnippets {
