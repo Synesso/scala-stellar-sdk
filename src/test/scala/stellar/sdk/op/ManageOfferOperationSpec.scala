@@ -12,7 +12,7 @@ import stellar.sdk.{ArbitraryInput, DomainMatchers}
 class ManageOfferOperationSpec extends Specification with ArbitraryInput with DomainMatchers with JsonSnippets {
 
   implicit val arb: Arbitrary[Transacted[CreateOfferOperation]] = Arbitrary(genTransacted(genCreateOfferOperation))
-  implicit val formats = Serialization.formats(NoTypeHints) + TransactedOperationDeserializer + OperationRespDeserializer
+  implicit val formats = Serialization.formats(NoTypeHints) + TransactedOperationDeserializer + OperationDeserializer
 
   "create offer operation" should {
     "serde via xdr" >> prop { actual: CreateOfferOperation =>

@@ -78,8 +78,6 @@ trait ArbitraryInput extends ScalaCheck {
 
   implicit def arbOfferResp = Arbitrary(genOfferResp)
 
-  implicit def arbOperationCreateAccount = Arbitrary(genOperationCreateAccount)
-
   implicit def arbOperationPayment = Arbitrary(genOperationPayment)
 
   implicit def arbOperationPathPayment = Arbitrary(genOperationPathPayment)
@@ -171,7 +169,7 @@ trait ArbitraryInput extends ScalaCheck {
     price <- genPrice
   } yield CreatePassiveOfferOperation(selling, buying, price)
 
-  def genInflationOperation = Gen.oneOf(Seq(InflationOperation))
+  def genInflationOperation = Gen.oneOf(Seq(InflationOperation()))
 
   def genDeleteDataOperation = for {
     name <- Gen.identifier
@@ -316,16 +314,6 @@ trait ArbitraryInput extends ScalaCheck {
     buying <- genAsset
     price <- genPrice
   } yield OfferResp(id, seller, selling, buying, price)
-
-  def genOperationCreateAccount: Gen[OperationCreateAccount] = for {
-    id <- Gen.posNum[Long]
-    txnHash <- genHash
-    source <- genVerifyingKey
-    account <- genVerifyingKey
-    funder <- genVerifyingKey
-    startingBalance <- genNativeAmount
-    createdAt <- genZonedDateTime
-  } yield OperationCreateAccount(id, txnHash, source, createdAt, account, funder, startingBalance)
 
   def genOperationPayment: Gen[OperationPayment] = for {
     id <- Gen.posNum[Long]

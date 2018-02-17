@@ -11,7 +11,8 @@ sealed trait ManageOfferOperation extends Operation {
   val offerId: Long = 0
 }
 
-case class CreateOfferOperation(selling: Amount, buying: Asset, price: Price) extends ManageOfferOperation {
+case class CreateOfferOperation(selling: Amount, buying: Asset, price: Price,
+                                sourceAccount: Option[PublicKeyOps] = None) extends ManageOfferOperation {
 
   override def toOperationBody: OperationBody = {
     val op = new ManageOfferOp
@@ -29,7 +30,8 @@ case class CreateOfferOperation(selling: Amount, buying: Asset, price: Price) ex
 }
 
 case class DeleteOfferOperation(override val offerId: Long,
-                                selling: Asset, buying: Asset, price: Price) extends ManageOfferOperation {
+                                selling: Asset, buying: Asset, price: Price,
+                                sourceAccount: Option[PublicKeyOps] = None) extends ManageOfferOperation {
 
   override def toOperationBody: OperationBody = {
     val op = new ManageOfferOp
@@ -46,7 +48,8 @@ case class DeleteOfferOperation(override val offerId: Long,
 }
 
 case class UpdateOfferOperation(override val offerId: Long,
-                                selling: Amount, buying: Asset, price: Price) extends ManageOfferOperation {
+                                selling: Amount, buying: Asset, price: Price,
+                                sourceAccount: Option[PublicKeyOps] = None) extends ManageOfferOperation {
   override def toOperationBody: OperationBody = {
     val op = new ManageOfferOp
     op.setOfferID(uint64(offerId))

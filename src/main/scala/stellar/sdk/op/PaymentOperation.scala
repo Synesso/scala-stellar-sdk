@@ -15,7 +15,8 @@ import scala.util.Try
   * @see <a href="https://www.stellar.org/developers/learn/concepts/list-of-operations.html" target="_blank">List of Operations</a>
   */
 case class PaymentOperation(destinationAccount: PublicKeyOps,
-                            amount: Amount) extends Operation {
+                            amount: Amount,
+                            sourceAccount: Option[PublicKeyOps] = None) extends Operation {
 
   override def toOperationBody: OperationBody = {
     val op = new PaymentOp()

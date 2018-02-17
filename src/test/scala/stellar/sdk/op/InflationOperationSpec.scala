@@ -7,7 +7,7 @@ class InflationOperationSpec extends Specification {
 
   "the inflation operation" should {
     "serde via xdr" >> {
-      Operation.fromXDR(InflationOperation.toXDR) must beSuccessfulTry[Operation](InflationOperation)
+      Operation.fromXDR(InflationOperation().toXDR) must beSuccessfulTry[Operation](InflationOperation())
     }
   }
 

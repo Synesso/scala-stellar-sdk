@@ -13,7 +13,7 @@ import scala.util.Try
   *
   * @see <a href="https://www.stellar.org/developers/learn/concepts/list-of-operations.html" target="_blank">List of Operations</a>
   */
-case class ChangeTrustOperation(limit: Amount) extends Operation {
+case class ChangeTrustOperation(limit: Amount, sourceAccount: Option[PublicKeyOps] = None) extends Operation {
   override def toOperationBody: OperationBody = {
     val op = new ChangeTrustOp
     op.setLimit(new Int64)

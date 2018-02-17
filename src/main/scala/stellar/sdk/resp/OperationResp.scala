@@ -15,12 +15,15 @@ sealed trait OperationResp {
   val createdAt: ZonedDateTime
 }
 
+// todo - delete
 case class OperationCreateAccount(id: Long, txnHash: String, sourceAccount: PublicKeyOps, createdAt: ZonedDateTime,
                                   account: PublicKeyOps, funder: PublicKeyOps, startingBalance: NativeAmount) extends OperationResp
 
+// todo - delete
 case class OperationPayment(id: Long, txnHash: String, sourceAccount: PublicKeyOps, createdAt: ZonedDateTime,
                             amount: Amount, fromAccount: PublicKeyOps, toAccount: PublicKeyOps) extends OperationResp
 
+// todo - delete
 case class OperationPathPayment(id: Long, txnHash: String, sourceAccount: PublicKeyOps, createdAt: ZonedDateTime,
                                 fromMaxAmount: Amount, fromAccount: PublicKeyOps, toAmount: Amount, toAccount: PublicKeyOps,
                                 path: Seq[Asset]) extends OperationResp

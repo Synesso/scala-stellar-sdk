@@ -10,11 +10,13 @@ import org.stellar.sdk.xdr.OperationType._
 import org.stellar.sdk.xdr.{AccountID, Operation => XDROp}
 import stellar.sdk._
 import stellar.sdk.XDRPrimitives
-import stellar.sdk.resp.OperationResp
+import stellar.sdk.resp.{OperationCreateAccount, OperationResp}
 
 import scala.util.{Success, Try}
 
 trait Operation extends XDRPrimitives {
+  val sourceAccount: Option[PublicKeyOps]
+
   def toOperationBody: OperationBody
 
   def toXDR: XDROp = {
@@ -42,7 +44,7 @@ object Operation {
       case MANAGE_OFFER => ManageOfferOperation.from(op.getBody.getManageOfferOp)
       case CREATE_PASSIVE_OFFER => CreatePassiveOfferOperation.from(op.getBody.getCreatePassiveOfferOp)
       case ACCOUNT_MERGE => AccountMergeOperation.from(op.getBody)
-      case INFLATION => Success(InflationOperation)
+      case INFLATION => Success(InflationOperation())
       case MANAGE_DATA => ManageDataOperation.from(op.getBody.getManageDataOp)
     }
   }
@@ -91,8 +93,8 @@ object OperationDeserializer extends CustomSerializer[Operation](format => ( {
     //    def weight = (o \ "weight").extract[Int].toShort
 
     (o \ "type").extract[String] match {
-      //      case "create_account" =>
-      //        OperationCreateAccount(id, txnHash, source, createdAt, account(), account("funder"), nativeAmount("starting_balance"))
+      case "create_account" =>
+        CreateAccountOperation(account(), nativeAmount("starting_balance")) // account("funder"), )
       //      case "payment" =>
       //        OperationPayment(id, txnHash, source, createdAt, amount(), account("from"), account("to"))
       //      case "path_payment" =>

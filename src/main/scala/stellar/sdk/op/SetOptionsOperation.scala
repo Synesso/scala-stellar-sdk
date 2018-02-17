@@ -15,7 +15,8 @@ case class SetOptionsOperation(inflationDestination: Option[PublicKeyOps] = None
                                mediumThreshold: Option[Int] = None,
                                highThreshold: Option[Int] = None,
                                homeDomain: Option[String] = None,
-                               signer: Option[(SignerKey, Int)] = None) extends Operation {
+                               signer: Option[(SignerKey, Int)] = None,
+                               sourceAccount: Option[PublicKeyOps] = None) extends Operation {
 
   override def toOperationBody: OperationBody = {
     val op = new SetOptionsOp

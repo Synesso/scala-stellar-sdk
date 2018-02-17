@@ -11,7 +11,8 @@ import scala.util.Try
 
 case class AllowTrustOperation(trustor: VerifyingKey,
                                assetCode: String, // todo - this should be an `Asset` (and trustor is the issuer?)
-                               authorize: Boolean) extends Operation with ByteArrays {
+                               authorize: Boolean,
+                               sourceAccount: Option[PublicKeyOps] = None) extends Operation with ByteArrays {
 
   override def toOperationBody: OperationBody = {
     val op = new AllowTrustOp()

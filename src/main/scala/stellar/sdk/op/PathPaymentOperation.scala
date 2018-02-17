@@ -17,7 +17,8 @@ import scala.util.Try
 case class PathPaymentOperation(sendMax: Amount,
                                 destinationAccount: PublicKeyOps,
                                 destinationAmount: Amount,
-                                path: Seq[sdk.Asset]) extends Operation {
+                                path: Seq[sdk.Asset],
+                                sourceAccount: Option[PublicKeyOps] = None) extends Operation {
 
   override def toOperationBody: OperationBody = {
     val op = new PathPaymentOp

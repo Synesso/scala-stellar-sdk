@@ -3,7 +3,7 @@ package stellar.sdk.op
 import org.stellar.sdk.xdr.ManageDataOp
 import org.stellar.sdk.xdr.Operation.OperationBody
 import org.stellar.sdk.xdr.OperationType.MANAGE_DATA
-import stellar.sdk.KeyPair
+import stellar.sdk.{KeyPair, PublicKeyOps}
 
 import scala.util.Try
 
@@ -19,9 +19,9 @@ sealed trait ManageDataOperation extends Operation {
   }
 }
 
-case class DeleteDataOperation(name: String) extends ManageDataOperation
+case class DeleteDataOperation(name: String, sourceAccount: Option[PublicKeyOps] = None) extends ManageDataOperation
 
-case class WriteDataOperation(name: String, value: Array[Byte]) extends ManageDataOperation {
+case class WriteDataOperation(name: String, value: Array[Byte], sourceAccount: Option[PublicKeyOps] = None) extends ManageDataOperation {
   override def toOperationBody: OperationBody = {
     val body = super.toOperationBody
     body.getManageDataOp.setDataValue(dataValue(value))
