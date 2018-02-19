@@ -19,9 +19,9 @@ trait Operation extends XDRPrimitives {
 
   def toXDR: XDROp = {
     val op = new org.stellar.sdk.xdr.Operation()
-//    val src = new AccountID()
-//    src.setAccountID(sourceAccount.getXDRPublicKey)
-//    op.setSourceAccount(src)
+    //    val src = new AccountID()
+    //    src.setAccountID(sourceAccount.getXDRPublicKey)
+    //    op.setSourceAccount(src)
     op.setBody(toOperationBody)
     op
   }
@@ -58,7 +58,9 @@ object OperationDeserializer extends CustomSerializer[Operation](format => ( {
 
     def asset(prefix: String = "", obj: JValue = o) = {
       def assetCode = (obj \ s"${prefix}asset_code").extract[String]
+
       def assetIssuer = KeyPair.fromAccountId((obj \ s"${prefix}asset_issuer").extract[String])
+
       (obj \ s"${prefix}asset_type").extract[String] match {
         case "native" => NativeAsset
         case "credit_alphanum4" => AssetTypeCreditAlphaNum4(assetCode, assetIssuer)
@@ -86,7 +88,7 @@ object OperationDeserializer extends CustomSerializer[Operation](format => ( {
       }
     }
 
-//    def date(key: String) = ZonedDateTime.from(formatter.parse((o \ key).extract[String]))
+    //    def date(key: String) = ZonedDateTime.from(formatter.parse((o \ key).extract[String]))
     //
     //    def weight = (o \ "weight").extract[Int].toShort
 
@@ -109,6 +111,12 @@ object OperationDeserializer extends CustomSerializer[Operation](format => ( {
             if (amnt == 0.0) DeleteOfferOperation(id, asset("selling_"), asset("buying_"), price())
             else UpdateOfferOperation(id, selling = amount(assetPrefix = "selling_"), buying = asset("buying_"), price = price())
         }
+      case "create_passive_offer" =>
+        CreatePassiveOfferOperation(
+          selling = amount(assetPrefix = "selling_"),
+          buying = asset("buying_"),
+          price = price()
+        )
 
       //      case "account_created" =>
       //        val startingBalance = Amount.lumens((o \ "starting_balance").extract[String].toDouble).get
@@ -135,7 +143,7 @@ object OperationDeserializer extends CustomSerializer[Operation](format => ( {
       //      case "trustline_deauthorized" => EffectTrustLineDeauthorized(id, account("trustor"), asset(issuerKey = "account").asInstanceOf[NonNativeAsset])
       //      case "trade" => EffectTrade(id, (o \ "offer_id").extract[Long], account(), amount("bought_"), account("seller"), amount("sold_"))
       case t =>
-         throw new RuntimeException(s"Unrecognised operation type '$t'")
+        throw new RuntimeException(s"Unrecognised operation type '$t'")
     }
 }, PartialFunction.empty)
 )

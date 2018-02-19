@@ -129,9 +129,9 @@ TestNetwork.assets(code = Some("ETH"), issuer = Some("GAE325UC3T63ROIUFBBRNMWGM7
       [✓] Create account
       [✓] Payment
       [✓] Path Payment
-      [🚀] Manage Offer
-      [ ] Create Passive Offer
-      [ ] Set Options
+      [✓] Manage Offer
+      [✓] Create Passive Offer
+      [🚀] Set Options
       [ ] Change Trust
       [ ] Allow Trust
       [ ] Account Merge
