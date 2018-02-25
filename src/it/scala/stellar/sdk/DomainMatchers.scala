@@ -166,18 +166,11 @@ trait DomainMatchersIT extends AnyMatchers with MustExpectations with SequenceMa
       op.lowThreshold mustEqual other.lowThreshold
       op.masterKeyWeight mustEqual other.masterKeyWeight
       op.mediumThreshold mustEqual other.mediumThreshold
-      op.signer match {
-        case None => other.signer must beNone
-        case Some((sk, i)) => other.signer must beSome[(SignerKey, Int)].like {
-          case ((otherSk, otherI)) =>
-            sk must beEquivalentTo(otherSk)
-            i mustEqual otherI
-        }
-      }
+      op.signer mustEqual other.signer
   }
 
   def beEquivalentTo[T <: Operation](other: T): Matcher[T] = beLike {
-    case InflationOperation => other mustEqual InflationOperation
+    case op: InflationOperation => other mustEqual InflationOperation()
     case op: AccountMergeOperation => other.asInstanceOf[AccountMergeOperation] must beEquivalentTo(op)
     case op: AllowTrustOperation => other.asInstanceOf[AllowTrustOperation] must beEquivalentTo(op)
     case op: ChangeTrustOperation => other.asInstanceOf[ChangeTrustOperation] must beEquivalentTo(op)

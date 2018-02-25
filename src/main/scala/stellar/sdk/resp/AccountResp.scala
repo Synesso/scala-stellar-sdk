@@ -51,8 +51,7 @@ object AccountRespDeserializer extends CustomSerializer[AccountResp](format => (
       case signerObj: JObject =>
         val publicKey = KeyPair.fromAccountId((signerObj \ "public_key").extract[String])
         val weight = (signerObj \ "weight").extract[Int]
-        // todo - type
-        Signer(publicKey, weight)
+        AccountSigner(publicKey, weight)
       case _ => throw new RuntimeException(s"Expected js object at 'signers'")
     }
     // todo - data

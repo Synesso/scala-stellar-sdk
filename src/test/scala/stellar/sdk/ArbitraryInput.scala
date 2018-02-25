@@ -151,7 +151,7 @@ trait ArbitraryInput extends ScalaCheck {
   } yield AllowTrustOperation(trustor, assetCode, authorise)
 
   def genChangeTrustOperation = for {
-    limit <- genAmount
+    limit <- genIssuedAmount
   } yield ChangeTrustOperation(limit)
 
   def genCreateAccountOperation = for {
@@ -222,10 +222,10 @@ trait ArbitraryInput extends ScalaCheck {
       highThreshold <- Gen.option(Gen.choose(0, 255))
       homeDomain <- Gen.option(Gen.identifier)
       signer <- Gen.option{ for {
-        signer <- genSignerKey
+        accn <- genVerifyingKey
         weight <- Gen.choose(0, 255)
-      } yield (signer, weight)}
-    } yield op.SetOptionsOperation(inflationDestination, clearFlags, setFlags, masterKeyWeight, lowThreshold, medThreshold,
+      } yield AccountSigner(accn, weight)}
+    } yield SetOptionsOperation(inflationDestination, clearFlags, setFlags, masterKeyWeight, lowThreshold, medThreshold,
       highThreshold, homeDomain, signer)
 
   def genOperation: Gen[Operation] = {

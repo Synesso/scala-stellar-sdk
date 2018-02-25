@@ -31,5 +31,13 @@ trait JsonSnippets {
         """.stripMargin.trim
   }
 
+  def opt(key: String, value: Option[Any]) = value.map{
+    case v: String => s""""$key":"$v","""
+    case v: Set[_] => s""""$key":[${v.map {
+      case s: String => s""""$s""""
+      case a => a
+    }.mkString(",")}],"""
+    case v => s""""$key":$v,"""
+  }.getOrElse("")
 
 }

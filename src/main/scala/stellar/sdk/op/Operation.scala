@@ -80,6 +80,8 @@ object OperationDeserializer extends CustomSerializer[Operation](format => ( {
       NativeAmount(Amount.toBaseUnits(doubleFromString(key)).get)
     }
 
+    def issuedAmount(label: String) = amount(label).asInstanceOf[IssuedAmount]
+
     def amount(label: String = "amount", assetPrefix: String = "") = {
       val units = Amount.toBaseUnits(doubleFromString(label)).get
       asset(assetPrefix) match {
@@ -87,10 +89,6 @@ object OperationDeserializer extends CustomSerializer[Operation](format => ( {
         case NativeAsset => NativeAmount(units)
       }
     }
-
-    //    def date(key: String) = ZonedDateTime.from(formatter.parse((o \ key).extract[String]))
-    //
-    //    def weight = (o \ "weight").extract[Int].toShort
 
     (o \ "type").extract[String] match {
       case "create_account" => CreateAccountOperation(account(), nativeAmount("starting_balance"))
@@ -117,6 +115,24 @@ object OperationDeserializer extends CustomSerializer[Operation](format => ( {
           buying = asset("buying_"),
           price = price()
         )
+      case "set_options" =>
+        SetOptionsOperation(
+          inflationDestination = (o \ "inflation_dest").extractOpt[String].map(KeyPair.fromAccountId),
+          clearFlags = (o \ "clear_flags").extractOpt[Set[Int]].map(_.flatMap(IssuerFlags.apply)).filter(_.nonEmpty),
+          setFlags = (o \ "set_flags").extractOpt[Set[Int]].map(_.flatMap(IssuerFlags.apply)).filter(_.nonEmpty),
+          masterKeyWeight = (o \ "master_key_weight").extractOpt[Int],
+          lowThreshold = (o \ "low_threshold").extractOpt[Int],
+          mediumThreshold = (o \ "med_threshold").extractOpt[Int],
+          highThreshold = (o \ "high_threshold").extractOpt[Int],
+          homeDomain = (o \ "home_domain").extractOpt[String],
+          signer = for {
+            key <- (o \ "signer_key").extractOpt[String]
+            weight <- (o \ "signer_weight").extractOpt[Int]
+          } yield AccountSigner(KeyPair.fromAccountId(key), weight)
+        )
+      case "change_trust" =>
+        ChangeTrustOperation(issuedAmount("limit"))
+
 
       //      case "account_created" =>
       //        val startingBalance = Amount.lumens((o \ "starting_balance").extract[String].toDouble).get

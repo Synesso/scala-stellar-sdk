@@ -127,7 +127,7 @@ class AccountRespSpec extends Specification {
             Amount(1L, AssetTypeCreditAlphaNum4("BTC", KeyPair.fromAccountId("GDXTJEK4JZNSTNQAWA53RZNS2GIKTDRPEUWDXELFMKU52XNECNVDVXDI"))),
             Amount(3332771622L, AssetTypeCreditAlphaNum4("JPY", KeyPair.fromAccountId("GBVAOIACNSB7OVUXJYC5UE2D4YK2F7A24T7EE5YOMN4CE6GCHUTOUQXM")))
           ))
-          r.signers mustEqual Seq(Signer(KeyPair.fromAccountId("GBU6GMZZ2KTQ33CHNVPAWWEJ22ZHLYGBGO3LIBKNANXUMNEOFROZKO62"), 1))
+          r.signers mustEqual Seq(AccountSigner(KeyPair.fromAccountId("GBU6GMZZ2KTQ33CHNVPAWWEJ22ZHLYGBGO3LIBKNANXUMNEOFROZKO62"), 1))
       }
     }
   }

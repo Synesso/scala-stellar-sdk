@@ -13,7 +13,7 @@ import scala.util.Try
   *
   * @see <a href="https://www.stellar.org/developers/learn/concepts/list-of-operations.html" target="_blank">List of Operations</a>
   */
-case class ChangeTrustOperation(limit: Amount, sourceAccount: Option[PublicKeyOps] = None) extends Operation {
+case class ChangeTrustOperation(limit: IssuedAmount, sourceAccount: Option[PublicKeyOps] = None) extends Operation {
   override def toOperationBody: OperationBody = {
     val op = new ChangeTrustOp
     op.setLimit(new Int64)
@@ -28,6 +28,9 @@ case class ChangeTrustOperation(limit: Amount, sourceAccount: Option[PublicKeyOp
 
 object ChangeTrustOperation {
   def from(op: ChangeTrustOp): Try[ChangeTrustOperation] = {
-    Asset.fromXDR(op.getLine).map(Amount(op.getLimit.getInt64.longValue, _)).map(ChangeTrustOperation(_))
+    Asset.fromXDR(op.getLine).map(Amount(op.getLimit.getInt64.longValue, _)).map{
+      case a: IssuedAmount => ChangeTrustOperation(a)
+      case _: NativeAmount => throw new IllegalArgumentException("Change trust operation with a native limit")
+    }
   }
 }

@@ -170,14 +170,7 @@ trait DomainMatchers extends AnyMatchers with MustExpectations with SequenceMatc
       op.lowThreshold mustEqual other.lowThreshold
       op.masterKeyWeight mustEqual other.masterKeyWeight
       op.mediumThreshold mustEqual other.mediumThreshold
-      op.signer match {
-        case None => other.signer must beNone
-        case Some((sk, i)) => other.signer must beSome[(SignerKey, Int)].like {
-          case ((otherSk, otherI)) =>
-            sk must beEquivalentTo(otherSk)
-            i mustEqual otherI
-        }
-      }
+      op.signer mustEqual other.signer
   }
 
   def beEquivalentTo[T <: Operation](other: T): Matcher[T] = beLike {
