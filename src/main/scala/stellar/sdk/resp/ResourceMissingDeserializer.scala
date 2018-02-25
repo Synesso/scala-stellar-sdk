@@ -10,6 +10,5 @@ object ResourceMissingDeserializer extends CustomSerializer[ResourceMissingExcep
     implicit val formats = DefaultFormats
     val status = (o \ "status").extract[Int]
     val detail = (o \ "detail").extract[String]
-    val instance = (o \ "instance").extract[String]
-    ResourceMissingException(uri"file://unknown", status, detail, instance)
+    ResourceMissingException(uri"file://unknown", status, detail)
 }, PartialFunction.empty))

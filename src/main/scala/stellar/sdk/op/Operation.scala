@@ -69,6 +69,8 @@ object OperationDeserializer extends CustomSerializer[Operation](format => ( {
       }
     }
 
+    def nonNativeAsset = asset().asInstanceOf[NonNativeAsset]
+
     def price(label: String = "price_r"): Price = Price(
       n = (o \ label \ "n").extract[Int],
       d = (o \ label \ "d").extract[Int]
@@ -132,8 +134,9 @@ object OperationDeserializer extends CustomSerializer[Operation](format => ( {
         )
       case "change_trust" =>
         ChangeTrustOperation(issuedAmount("limit"))
-
-
+      case "allow_trust" =>
+        val asset: NonNativeAsset = nonNativeAsset
+        AllowTrustOperation(account("trustor"), asset.code, (o \ "authorize").extract[Boolean])
       //      case "account_created" =>
       //        val startingBalance = Amount.lumens((o \ "starting_balance").extract[String].toDouble).get
       //        EffectAccountCreated(id, account(), startingBalance)

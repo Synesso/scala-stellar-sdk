@@ -297,8 +297,8 @@ trait ArbitraryInput extends ScalaCheck {
     closedAt: ZonedDateTime <- genZonedDateTime
     totalCoins <- Gen.posNum[Double].map(round)
     feePool <- Gen.posNum[Double].map(round)
-    baseFee <- Gen.posNum[Int]
-    baseReserve <- Gen.posNum[Double].map(round)
+    baseFee <- Gen.posNum[Long]
+    baseReserve <- Gen.posNum[Long]
     maxTxSetSize <- Gen.posNum[Int]
   } yield LedgerResp(id, hash, previousHash, sequence, transactionCount, operationCount, closedAt, totalCoins, feePool,
     baseFee, baseReserve, maxTxSetSize)

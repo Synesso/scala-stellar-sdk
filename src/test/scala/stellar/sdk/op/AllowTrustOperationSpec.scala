@@ -1,12 +1,17 @@
 package stellar.sdk.op
 
+import org.json4s.NoTypeHints
 import org.json4s.native.JsonMethods.parse
+import org.json4s.native.Serialization
+import org.scalacheck.Arbitrary
 import org.specs2.mutable.Specification
 import org.stellar.sdk.xdr.{AccountID, AllowTrustOp, AssetType}
-import stellar.sdk._
 import stellar.sdk.{ArbitraryInput, DomainMatchers, KeyPair}
 
-class AllowTrustOperationSpec extends Specification with ArbitraryInput with DomainMatchers {
+class AllowTrustOperationSpec extends Specification with ArbitraryInput with DomainMatchers with JsonSnippets {
+
+  implicit val arb: Arbitrary[Transacted[AllowTrustOperation]] = Arbitrary(genTransacted(genAllowTrustOperation))
+  implicit val formats = Serialization.formats(NoTypeHints) + TransactedOperationDeserializer
 
   "allow trust operation" should {
     "serde via xdr" >> prop { actual: AllowTrustOperation =>
@@ -24,26 +29,7 @@ class AllowTrustOperationSpec extends Specification with ArbitraryInput with Dom
       AllowTrustOperation.from(input) must beFailedTry[AllowTrustOperation]
     }
 
-/*
     "parse from json" >> prop { op: Transacted[AllowTrustOperation] =>
-
-
-    /*
-        "id": "32571670468239361",
-        "paging_token": "32571670468239361",
-        "source_account": "GDZC37RX2NTKXOG4TPSCZVI5PUSSNP2HJJJOIU7RWNAN5ZL2UHAF2HK3",
-        "type": "allow_trust",
-        "type_i": 7,
-        "created_at": "2018-02-25T04:26:46Z",
-        "transaction_hash": "2a47019ba6031d48ced24f3a6e0a6fb31ef97c6f1f8bafae0dfacda347465a84",
-        "asset_type": "credit_alphanum12",
-        "asset_code": "franjipani",
-        "asset_issuer": "GDZC37RX2NTKXOG4TPSCZVI5PUSSNP2HJJJOIU7RWNAN5ZL2UHAF2HK3",
-        "trustee": "GDZC37RX2NTKXOG4TPSCZVI5PUSSNP2HJJJOIU7RWNAN5ZL2UHAF2HK3",
-        "trustor": "GAQUWIRXODT4OE3YE6L4NF3AYSR5ACEHPINM5S3J2F4XKH7FRZD4NDW2",
-        "authorize": true
-
-     */
       val doc =
         s"""
            | {
@@ -57,20 +43,24 @@ class AllowTrustOperationSpec extends Specification with ArbitraryInput with Dom
            |  "id": "${op.id}",
            |  "paging_token": "10157597659137",
            |  "source_account": "${op.sourceAccount.accountId}",
-           |  "type": "payment",
-           |  "type_i": 1,
+           |  "type": "allow_trust",
+           |  "type_i": 7,
            |  "created_at": "${formatter.format(op.createdAt)}",
            |  "transaction_hash": "${op.txnHash}",
-           |  ${amountDocPortion(op.operation.amount)},
-           |  "from": "${op.sourceAccount.accountId}",
-           |  "to": "${op.operation.destinationAccount.accountId}",
+           |  "asset_type": "${if (op.operation.assetCode.length <= 4) "credit_alphanum4" else "credit_alphanum12"}",
+           |  "asset_code": "${op.operation.assetCode}",
+           |  "asset_issuer": "${op.sourceAccount.accountId}"
+           |  "trustor": "${op.operation.trustor.accountId}",
+           |  "trustee": "${op.sourceAccount.accountId}",
+           |  "authorize": ${op.operation.authorize}
            |}
          """.stripMargin
+
+      println(doc)
 
       parse(doc).extract[Transacted[AllowTrustOperation]] mustEqual op
 
     }
-*/
   }
 
 }

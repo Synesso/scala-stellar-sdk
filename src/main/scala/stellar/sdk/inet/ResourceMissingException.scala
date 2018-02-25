@@ -8,7 +8,7 @@ import stellar.sdk.resp.ResourceMissingDeserializer
 
 import scala.util.Try
 
-case class ResourceMissingException(uri: Uri, status: Int, detail: String, instance: String)
+case class ResourceMissingException(uri: Uri, status: Int, detail: String)
   extends Exception(s"Uri: $uri - $detail")
 
 object ResourceMissingException {

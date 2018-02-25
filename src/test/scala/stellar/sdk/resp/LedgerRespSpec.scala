@@ -52,8 +52,8 @@ class LedgerRespSpec extends Specification with ArbitraryInput {
           |  "closed_at": "${formatter.format(lr.closedAt)}",
           |  "total_coins": "${lr.totalCoins}",
           |  "fee_pool": "${lr.feePool}",
-          |  "base_fee": ${lr.baseFee},
-          |  "base_reserve": "${lr.baseReserve}",
+          |  "base_fee_in_stroops": ${lr.baseFee},
+          |  "base_reserve_in_stroops": ${lr.baseReserve},
           |  "max_tx_set_size": ${lr.maxTxSetSize},
           |  "protocol_version": 4
           |}

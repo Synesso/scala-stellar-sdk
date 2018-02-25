@@ -19,7 +19,7 @@ class SequentialIntegrationSpec(implicit ee: ExecutionEnv) extends Specification
       TestNetwork.account(accn) must beLike[AccountResp] {
         case AccountResp(id, _, _, _, _, _, List(lumens), _) =>
           id mustEqual accn.accountId
-          lumens mustEqual Amount.lumens(10000).get
+          lumens mustEqual Amount.lumens(1000).get
           // todo - add check for data when we can submit manage data ops
       }.awaitFor(30.seconds)
     }
@@ -77,7 +77,7 @@ class SequentialIntegrationSpec(implicit ee: ExecutionEnv) extends Specification
       byAccount.map(_.head) must beLike[EffectResp] {
         case EffectAccountCreated(_, account, startingBalance) =>
           account.accountId mustEqual accn.accountId
-          startingBalance mustEqual Amount.lumens(10000).get
+          startingBalance mustEqual Amount.lumens(1000).get
       }.awaitFor(10.seconds)
     }
 
@@ -104,7 +104,7 @@ class SequentialIntegrationSpec(implicit ee: ExecutionEnv) extends Specification
         LedgerResp("d4a8dae64397e23551a5b57e30ae16d6887b6a49fb9263808878fd6dc71f64be",
           "d4a8dae64397e23551a5b57e30ae16d6887b6a49fb9263808878fd6dc71f64be",
           Some("ec7d2a4c064a1f10741b93260fc5b625febdf8cc5a06df8a892396ecab4449d0"), 16237465L, 1, 1,
-          ZonedDateTime.parse("2018-02-13T00:33:53Z"), 1.0368912397155042E11, 1415204.6354335, 100, 0.5, 50)
+          ZonedDateTime.parse("2018-02-13T00:33:53Z"), 1.0368912397155042E11, 1415204.6354335, 100, 5000000, 50)
       ).awaitFor(10.seconds)
     }
 

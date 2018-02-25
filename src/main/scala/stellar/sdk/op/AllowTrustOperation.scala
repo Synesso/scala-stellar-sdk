@@ -10,7 +10,7 @@ import stellar.sdk.{ByteArrays, KeyPair, VerifyingKey}
 import scala.util.Try
 
 case class AllowTrustOperation(trustor: VerifyingKey,
-                               assetCode: String, // todo - this should be an `Asset` (and trustor is the issuer?)
+                               assetCode: String,
                                authorize: Boolean,
                                sourceAccount: Option[PublicKeyOps] = None) extends Operation with ByteArrays {
 
@@ -32,7 +32,6 @@ case class AllowTrustOperation(trustor: VerifyingKey,
     body.setAllowTrustOp(op)
     body
   }
-
 }
 
 object AllowTrustOperation {
