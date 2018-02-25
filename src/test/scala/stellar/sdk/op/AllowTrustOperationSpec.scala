@@ -56,8 +56,6 @@ class AllowTrustOperationSpec extends Specification with ArbitraryInput with Dom
            |}
          """.stripMargin
 
-      println(doc)
-
       parse(doc).extract[Transacted[AllowTrustOperation]] mustEqual op
 
     }
