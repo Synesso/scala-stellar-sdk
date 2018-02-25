@@ -5,13 +5,12 @@ import org.json4s.native.JsonMethods.parse
 import org.json4s.native.Serialization
 import org.scalacheck.Arbitrary
 import org.specs2.mutable.Specification
-import stellar.sdk.{ArbitraryInput, DomainMatchers, KeyPair}
+import stellar.sdk.{ArbitraryInput, DomainMatchers}
 
 class InflationOperationSpec extends Specification with ArbitraryInput with DomainMatchers with JsonSnippets {
 
   implicit val arb: Arbitrary[Transacted[InflationOperation]] = Arbitrary(genTransacted(genInflationOperation))
   implicit val formats = Serialization.formats(NoTypeHints) + TransactedOperationDeserializer
-
 
   "the inflation operation" should {
     "serde via xdr" >> {

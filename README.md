@@ -134,9 +134,9 @@ TestNetwork.assets(code = Some("ETH"), issuer = Some("GAE325UC3T63ROIUFBBRNMWGM7
       [✓] Set Options
       [✓] Allow Trust
       [✓] Change Trust
-      [🚀] Account Merge
-      [ ] Inflation
-      [ ] Manage Data
+      [✓] Account Merge
+      [✓] Inflation
+      [✓] Manage Data
     [ ] By account
     [ ] By ledger
     [ ] By transaction

@@ -21,10 +21,10 @@ sealed trait ManageDataOperation extends Operation {
 
 case class DeleteDataOperation(name: String, sourceAccount: Option[PublicKeyOps] = None) extends ManageDataOperation
 
-case class WriteDataOperation(name: String, value: Array[Byte], sourceAccount: Option[PublicKeyOps] = None) extends ManageDataOperation {
+case class WriteDataOperation(name: String, value: String, sourceAccount: Option[PublicKeyOps] = None) extends ManageDataOperation {
   override def toOperationBody: OperationBody = {
     val body = super.toOperationBody
-    body.getManageDataOp.setDataValue(dataValue(value))
+    body.getManageDataOp.setDataValue(dataValue(value.getBytes("UTF-8")))
     body
   }
 }
@@ -34,7 +34,7 @@ object ManageDataOperation {
   def from(op: ManageDataOp): Try[ManageDataOperation] = Try {
     val name = op.getDataName.getString64
     Option(op.getDataValue) match {
-      case Some(value) => WriteDataOperation(name, value.getDataValue)
+      case Some(value) => WriteDataOperation(name, new String(value.getDataValue, "UTF-8"))
       case _ => DeleteDataOperation(name)
     }
   }

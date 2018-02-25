@@ -3,6 +3,7 @@ package stellar.sdk.op
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
+import org.apache.commons.codec.binary.Base64
 import org.json4s.JsonAST.{JArray, JObject, JValue}
 import org.json4s.{CustomSerializer, DefaultFormats}
 import org.stellar.sdk.xdr.Operation.OperationBody
@@ -141,30 +142,13 @@ object OperationDeserializer extends CustomSerializer[Operation](format => ( {
         AccountMergeOperation(KeyPair.fromAccountId((o \ "into").extract[String]))
       case "inflation" =>
         InflationOperation()
-      //      case "account_created" =>
-      //        val startingBalance = Amount.lumens((o \ "starting_balance").extract[String].toDouble).get
-      //        EffectAccountCreated(id, account(), startingBalance)
-      //      case "account_credited" => EffectAccountCredited(id, account(), amount())
-      //      case "account_debited" => EffectAccountDebited(id, account(), amount())
-      //      case "account_removed" => EffectAccountRemoved(id, account())
-      //      case "account_thresholds_updated" =>
-      //        val thresholds = Thresholds(
-      //          (o \ "low_threshold").extract[Int],
-      //          (o \ "med_threshold").extract[Int],
-      //          (o \ "high_threshold").extract[Int]
-      //        )
-      //        EffectAccountThresholdsUpdated(id, account(), thresholds)
-      //      case "account_home_domain_updated" => EffectAccountHomeDomainUpdated(id, account(), (o \ "home_domain").extract[String])
-      //      case "account_flags_updated" => EffectAccountFlagsUpdated(id, account(), (o \ "auth_required_flag").extract[Boolean])
-      //      case "signer_created" => EffectSignerCreated(id, account(), weight, (o \ "public_key").extract[String])
-      //      case "signer_updated" => EffectSignerUpdated(id, account(), weight, (o \ "public_key").extract[String])
-      //      case "signer_removed" => EffectSignerRemoved(id, account(), (o \ "public_key").extract[String])
-      //      case "trustline_created" => EffectTrustLineCreated(id, account(), asset().asInstanceOf[NonNativeAsset], doubleFromString("limit"))
-      //      case "trustline_updated" => EffectTrustLineUpdated(id, account(), asset().asInstanceOf[NonNativeAsset], doubleFromString("limit"))
-      //      case "trustline_removed" => EffectTrustLineRemoved(id, account(), asset().asInstanceOf[NonNativeAsset])
-      //      case "trustline_authorized" => EffectTrustLineAuthorized(id, account("trustor"), asset(issuerKey = "account").asInstanceOf[NonNativeAsset])
-      //      case "trustline_deauthorized" => EffectTrustLineDeauthorized(id, account("trustor"), asset(issuerKey = "account").asInstanceOf[NonNativeAsset])
-      //      case "trade" => EffectTrade(id, (o \ "offer_id").extract[Long], account(), amount("bought_"), account("seller"), amount("sold_"))
+      case "manage_data" =>
+        val name = (o \ "name").extract[String]
+        val value = (o \ "value").extract[String]
+        value match {
+          case "" => DeleteDataOperation(name)
+          case _ => WriteDataOperation(name, new String(Base64.decodeBase64(value), "UTF-8"))
+        }
       case t =>
         throw new RuntimeException(s"Unrecognised operation type '$t'")
     }

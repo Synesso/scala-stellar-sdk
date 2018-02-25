@@ -173,7 +173,7 @@ trait ArbitraryInput extends ScalaCheck {
 
   def genWriteDataOperation = for {
     name <- Gen.identifier
-    value <- Gen.nonEmptyListOf(Gen.posNum[Byte]).map(_.toArray)
+    value <- Gen.identifier
   } yield WriteDataOperation(name, value)
 
   def genManageDataOperation = Gen.oneOf(genDeleteDataOperation, genWriteDataOperation)
