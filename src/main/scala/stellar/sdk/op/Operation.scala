@@ -137,6 +137,8 @@ object OperationDeserializer extends CustomSerializer[Operation](format => ( {
       case "allow_trust" =>
         val asset: NonNativeAsset = nonNativeAsset
         AllowTrustOperation(account("trustor"), asset.code, (o \ "authorize").extract[Boolean])
+      case "account_merge" =>
+        AccountMergeOperation(KeyPair.fromAccountId((o \ "into").extract[String]))
       //      case "account_created" =>
       //        val startingBalance = Amount.lumens((o \ "starting_balance").extract[String].toDouble).get
       //        EffectAccountCreated(id, account(), startingBalance)
