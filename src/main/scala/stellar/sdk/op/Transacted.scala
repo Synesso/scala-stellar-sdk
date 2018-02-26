@@ -13,13 +13,11 @@ case class Transacted[O <: Operation](id: Long,
                                       createdAt: ZonedDateTime,
                                       operation: O)
 
-
 object TransactedOperationDeserializer extends CustomSerializer[Transacted[Operation]](format => ( {
   case o: JObject =>
     implicit val formats = DefaultFormats + OperationDeserializer
-    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'").withZone(ZoneId.of("UTC"))
     def account(accountKey: String = "account") = KeyPair.fromAccountId((o \ accountKey).extract[String])
-    def date(key: String) = ZonedDateTime.from(formatter.parse((o \ key).extract[String]))
+    def date(key: String) = ZonedDateTime.parse((o \ key).extract[String])
 
     Transacted(
       id = (o \ "id").extract[String].toLong,

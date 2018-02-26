@@ -53,8 +53,6 @@ object OperationDeserializer extends CustomSerializer[Operation](format => ( {
   case o: JObject =>
     implicit val formats = DefaultFormats
 
-    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'").withZone(ZoneId.of("UTC"))
-
     def account(accountKey: String = "account") = KeyPair.fromAccountId((o \ accountKey).extract[String])
 
     def asset(prefix: String = "", obj: JValue = o) = {

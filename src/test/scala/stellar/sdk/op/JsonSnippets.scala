@@ -6,7 +6,7 @@ import java.time.format.DateTimeFormatter
 import stellar.sdk.{Amount, Asset, NonNativeAsset}
 
 trait JsonSnippets {
-  val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'").withZone(ZoneId.of("UTC"))
+  val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")
 
   def amountString(a: Amount): String = f"${a.units / math.pow(10, 7)}%.7f"
 

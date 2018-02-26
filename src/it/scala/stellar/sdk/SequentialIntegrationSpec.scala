@@ -6,6 +6,7 @@ import org.specs2.concurrent.ExecutionEnv
 import org.specs2.mutable.Specification
 import stellar.sdk.SessionTestAccount.{accWithData, accn}
 import stellar.sdk.inet.ResourceMissingException
+import stellar.sdk.op.{CreateOfferOperation, Transacted}
 import stellar.sdk.resp._
 
 import scala.concurrent.duration._
@@ -135,6 +136,19 @@ class SequentialIntegrationSpec(implicit ee: ExecutionEnv) extends Specification
     "list all operations" >> {
       val oneThirty = TestNetwork.operations().map(_.take(130))
       oneThirty.map(_.distinct.size) must beEqualTo(130).awaitFor(10.seconds)
+    }
+    "list operations by account" >> {
+      TestNetwork.operationsByAccount(KeyPair.fromAccountId("GCXYKQF35XWATRB6AWDDV2Y322IFU2ACYYN5M2YB44IBWAIITQ4RYPXK"))
+        .map(_.take(4).last) must beEqualTo(Transacted(
+        id = 31553806168764417L,
+        txnHash = "ec6d2466be15aeb909240ed590f8a0230ee0da5b263e931aefd64eefbaf6ac5f",
+        sourceAccount = KeyPair.fromAccountId("GCXYKQF35XWATRB6AWDDV2Y322IFU2ACYYN5M2YB44IBWAIITQ4RYPXK"),
+        createdAt = ZonedDateTime.parse("2018-02-14T11:06:51Z"),
+        operation = CreateOfferOperation(
+          selling = Amount.lumens(165).get,
+          buying = AssetTypeCreditAlphaNum12("sausage", KeyPair.fromAccountId("GCXYKQF35XWATRB6AWDDV2Y322IFU2ACYYN5M2YB44IBWAIITQ4RYPXK")),
+          price = Price(303, 100)
+      ))).awaitFor(10.seconds)
     }
   }
 

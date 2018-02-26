@@ -241,7 +241,7 @@ trait ArbitraryInput extends ScalaCheck {
 
   def genInstant: Gen[Instant] = Gen.posNum[Long].map(Instant.ofEpochMilli)
 
-  def genZonedDateTime: Gen[ZonedDateTime] = genInstant.map(ZonedDateTime.ofInstant(_, ZoneId.of("UTC")))
+  def genZonedDateTime: Gen[ZonedDateTime] = genInstant.map(ZonedDateTime.ofInstant(_, ZoneId.of("UTC").normalized()))
     .map(_.`with`(ChronoField.NANO_OF_SECOND, 0))
 
   def genTimeBounds: Gen[TimeBounds] = Gen.listOfN(2, genInstant)
