@@ -125,7 +125,7 @@ TestNetwork.assets(code = Some("ETH"), issuer = Some("GAE325UC3T63ROIUFBBRNMWGM7
   [✓] Ledger details
   [✓] Offers for account
   [🚀] Operations
-    [🚀] Unfiltered stream
+    [✓] Unfiltered stream
       [✓] Create account
       [✓] Payment
       [✓] Path Payment
@@ -137,7 +137,7 @@ TestNetwork.assets(code = Some("ETH"), issuer = Some("GAE325UC3T63ROIUFBBRNMWGM7
       [✓] Account Merge
       [✓] Inflation
       [✓] Manage Data
-    [ ] By account
+    [🚀] By account
     [ ] By ledger
     [ ] By transaction
   [ ] Operation details

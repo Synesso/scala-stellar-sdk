@@ -45,7 +45,7 @@ trait Network extends ByteArrays {
   def offersByAccount(pubKey: PublicKeyOps)(implicit ex: ExecutionContext): Future[Stream[OfferResp]] =
     server.getStream[OfferResp](s"/accounts/${pubKey.accountId}/offers", OfferRespDeserializer)
 
-  def foo()(implicit ex: ExecutionContext): Future[Stream[Transacted[Operation]]] =
+  def operations()(implicit ex: ExecutionContext): Future[Stream[Transacted[Operation]]] =
     server.getStream[Transacted[Operation]](s"/operations", TransactedOperationDeserializer)
 
 }

@@ -131,4 +131,11 @@ class SequentialIntegrationSpec(implicit ee: ExecutionEnv) extends Specification
     }
   }
 
+  "operation endpoint" should {
+    "list all operations" >> {
+      val oneThirty = TestNetwork.operations().map(_.take(130))
+      oneThirty.map(_.distinct.size) must beEqualTo(130).awaitFor(10.seconds)
+    }
+  }
+
 }
