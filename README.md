@@ -138,8 +138,8 @@ TestNetwork.assets(code = Some("ETH"), issuer = Some("GAE325UC3T63ROIUFBBRNMWGM7
       [✓] Inflation
       [✓] Manage Data
     [✓] By account
-    [🚀] By ledger
-    [ ] By transaction
+    [✓] By ledger
+    [🚀] By transaction
   [ ] Operation details
   [ ] Orderbook details
   [ ] Payment paths

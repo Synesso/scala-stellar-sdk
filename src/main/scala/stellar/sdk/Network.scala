@@ -51,6 +51,9 @@ trait Network extends ByteArrays {
   def operationsByAccount(pubKey: PublicKeyOps)(implicit ex: ExecutionContext): Future[Stream[Transacted[Operation]]] =
     server.getStream[Transacted[Operation]](s"/accounts/${pubKey.accountId}/operations", TransactedOperationDeserializer)
 
+  def operationsByLedger(ledgerId: Long)(implicit ex: ExecutionContext): Future[Stream[Transacted[Operation]]] =
+    server.getStream[Transacted[Operation]](s"/ledgers/$ledgerId/operations", TransactedOperationDeserializer)
+
 }
 
 case object PublicNetwork extends Network {
