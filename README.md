@@ -91,7 +91,7 @@ TestNetwork.assets(code = Some("ETH"), issuer = Some("GAE325UC3T63ROIUFBBRNMWGM7
 ```
 [✓] Operations
 [✓] Transactions
-[ ] Horizon Endpoints
+[🚀] Horizon Endpoints
   [✓] Account details
   [✓] Assets
     [✓] Unfiltered
@@ -124,7 +124,7 @@ TestNetwork.assets(code = Some("ETH"), issuer = Some("GAE325UC3T63ROIUFBBRNMWGM7
   [✓] Ledgers
   [✓] Ledger details
   [✓] Offers for account
-  [🚀] Operations
+  [✓] Operations
     [✓] Unfiltered stream
       [✓] Create account
       [✓] Payment
@@ -139,8 +139,8 @@ TestNetwork.assets(code = Some("ETH"), issuer = Some("GAE325UC3T63ROIUFBBRNMWGM7
       [✓] Manage Data
     [✓] By account
     [✓] By ledger
-    [🚀] By transaction
-  [ ] Operation details
+    [✓] By transaction
+  [🚀] Operation details
   [ ] Orderbook details
   [ ] Payment paths
   [ ] Payments
