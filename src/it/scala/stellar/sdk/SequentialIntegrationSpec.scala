@@ -150,48 +150,27 @@ class SequentialIntegrationSpec(implicit ee: ExecutionEnv) extends Specification
           price = Price(303, 100)
       ))).awaitFor(10.seconds)
     }
+    val kinPayment = Transacted(
+      id = 70009259709968385L,
+      txnHash = "233ce5d17477706e097f72ae1c46241f4586ad1476d191119d46a93e88b9d3fa",
+      sourceAccount = KeyPair.fromAccountId("GDBWXSZDYO4C3EHYXRLCGU3NP55LUBEQO5K2RWIWWMXWVI57L7VUWSZA"),
+      createdAt = ZonedDateTime.parse("2018-02-16T09:37:30Z"),
+      operation = PaymentOperation(
+        destinationAccount = KeyPair.fromAccountId("GCT4TTKW2HPCMHM6PJHQ33FIIDCVKIJXLXDHMKQEC7DKHPPGLUKCHKY7"),
+        amount = IssuedAmount(28553980000000L,
+          AssetTypeCreditAlphaNum4("KIN", KeyPair.fromAccountId("GBDEVU63Y6NTHJQQZIKVTC23NWLQVP3WJ2RI2OTSJTNYOIGICST6DUXR")))
+      )
+    )
     "list operations by ledger" >> {
-      PublicNetwork.operationsByLedger(16300301).map(_.last) must beEqualTo(Transacted(
-        id = 70009259709968385L,
-        txnHash = "233ce5d17477706e097f72ae1c46241f4586ad1476d191119d46a93e88b9d3fa",
-        sourceAccount = KeyPair.fromAccountId("GDBWXSZDYO4C3EHYXRLCGU3NP55LUBEQO5K2RWIWWMXWVI57L7VUWSZA"),
-        createdAt = ZonedDateTime.parse("2018-02-16T09:37:30Z"),
-        operation = PaymentOperation(
-          destinationAccount = KeyPair.fromAccountId("GCT4TTKW2HPCMHM6PJHQ33FIIDCVKIJXLXDHMKQEC7DKHPPGLUKCHKY7"),
-          amount = IssuedAmount(28553980000000L,
-            AssetTypeCreditAlphaNum4("KIN", KeyPair.fromAccountId("GBDEVU63Y6NTHJQQZIKVTC23NWLQVP3WJ2RI2OTSJTNYOIGICST6DUXR")))
-        )
-      )).awaitFor(10.seconds)
+      PublicNetwork.operationsByLedger(16300301).map(_.last) must beEqualTo(kinPayment).awaitFor(10.seconds)
     }
     "list operations by transaction" >> {
       PublicNetwork.operationsByTransaction("233ce5d17477706e097f72ae1c46241f4586ad1476d191119d46a93e88b9d3fa")
-        .map(_.head) must beEqualTo(Transacted(
-        id = 70009259709968385L,
-        txnHash = "233ce5d17477706e097f72ae1c46241f4586ad1476d191119d46a93e88b9d3fa",
-        sourceAccount = KeyPair.fromAccountId("GDBWXSZDYO4C3EHYXRLCGU3NP55LUBEQO5K2RWIWWMXWVI57L7VUWSZA"),
-        createdAt = ZonedDateTime.parse("2018-02-16T09:37:30Z"),
-        operation = PaymentOperation(
-          destinationAccount = KeyPair.fromAccountId("GCT4TTKW2HPCMHM6PJHQ33FIIDCVKIJXLXDHMKQEC7DKHPPGLUKCHKY7"),
-          amount = IssuedAmount(28553980000000L,
-            AssetTypeCreditAlphaNum4("KIN", KeyPair.fromAccountId("GBDEVU63Y6NTHJQQZIKVTC23NWLQVP3WJ2RI2OTSJTNYOIGICST6DUXR")))
-        )
-      )).awaitFor(10.seconds)
+        .map(_.head) must beEqualTo(kinPayment).awaitFor(10.seconds)
     }
-/*
     "list the details of a given operation" >> {
-      PublicNetwork.operation(70009259709968385L) must beEqualTo(Transacted(
-        id = 70009259709968385L,
-        txnHash = "233ce5d17477706e097f72ae1c46241f4586ad1476d191119d46a93e88b9d3fa",
-        sourceAccount = KeyPair.fromAccountId("GDBWXSZDYO4C3EHYXRLCGU3NP55LUBEQO5K2RWIWWMXWVI57L7VUWSZA"),
-        createdAt = ZonedDateTime.parse("2018-02-16T09:37:30Z"),
-        operation = PaymentOperation(
-          destinationAccount = KeyPair.fromAccountId("GCT4TTKW2HPCMHM6PJHQ33FIIDCVKIJXLXDHMKQEC7DKHPPGLUKCHKY7"),
-          amount = IssuedAmount(28553980000000L,
-            AssetTypeCreditAlphaNum4("KIN", KeyPair.fromAccountId("GBDEVU63Y6NTHJQQZIKVTC23NWLQVP3WJ2RI2OTSJTNYOIGICST6DUXR")))
-        )
-      )).awaitFor(10.seconds)
+      PublicNetwork.operation(70009259709968385L) must beEqualTo(kinPayment).awaitFor(10.seconds)
     }
-*/
   }
 
 }
