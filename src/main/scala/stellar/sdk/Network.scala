@@ -4,6 +4,8 @@ import java.net.URI
 import java.nio.charset.StandardCharsets.UTF_8
 
 import com.softwaremill.sttp.akkahttp.AkkaHttpBackend
+import org.json4s.{DefaultFormats, NoTypeHints}
+import org.json4s.native.Serialization
 import stellar.sdk.inet.Server
 import stellar.sdk.op.{Operation, Transacted, TransactedOperationDeserializer}
 import stellar.sdk.resp._
@@ -44,6 +46,9 @@ trait Network extends ByteArrays {
 
   def offersByAccount(pubKey: PublicKeyOps)(implicit ex: ExecutionContext): Future[Stream[OfferResp]] =
     server.getStream[OfferResp](s"/accounts/${pubKey.accountId}/offers", OfferRespDeserializer)
+
+  def operation(operationId: Long)(implicit ex: ExecutionContext): Future[Transacted[Operation]] =
+    server.get[Transacted[Operation]](s"/operations/$operationId")
 
   def operations()(implicit ex: ExecutionContext): Future[Stream[Transacted[Operation]]] =
     server.getStream[Transacted[Operation]](s"/operations", TransactedOperationDeserializer)

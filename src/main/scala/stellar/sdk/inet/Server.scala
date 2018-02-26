@@ -5,9 +5,10 @@ import java.net.URI
 import com.softwaremill.sttp._
 import com.softwaremill.sttp.akkahttp.AkkaHttpBackend
 import com.softwaremill.sttp.json4s._
-import org.json4s.{CustomSerializer, NoTypeHints}
+import org.json4s.{CustomSerializer, NoTypeHints, Serializer}
 import org.json4s.native.Serialization
 import stellar.sdk.SignedTransaction
+import stellar.sdk.op.TransactedOperationDeserializer
 import stellar.sdk.resp._
 
 import scala.concurrent.duration._
@@ -19,7 +20,7 @@ import scala.util.Try
 case class Server(uri: URI) {
   implicit val backend = AkkaHttpBackend()
   implicit val formats = Serialization.formats(NoTypeHints) + AccountRespDeserializer + DataValueRespDeserializer +
-    LedgerRespDeserializer
+    LedgerRespDeserializer + TransactedOperationDeserializer
 
   def post(txn: SignedTransaction): Future[SubmitTransactionResponse] = {
     ???
