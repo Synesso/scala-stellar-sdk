@@ -9,6 +9,7 @@ import stellar.sdk.inet.ResourceMissingException
 import stellar.sdk.op.{CreateOfferOperation, PaymentOperation, Transacted}
 import stellar.sdk.resp._
 
+import scala.concurrent.Await
 import scala.concurrent.duration._
 
 class SequentialIntegrationSpec(implicit ee: ExecutionEnv) extends Specification with DomainMatchersIT {
@@ -170,6 +171,20 @@ class SequentialIntegrationSpec(implicit ee: ExecutionEnv) extends Specification
     }
     "list the details of a given operation" >> {
       PublicNetwork.operation(70009259709968385L) must beEqualTo(kinPayment).awaitFor(10.seconds)
+    }
+  }
+
+  "orderbook endpoint" should {
+    "fetch current orders" >> {
+      // todo - replace with a static test network assertion
+      val mobi = AssetTypeCreditAlphaNum4("MOBI", KeyPair.fromAccountId("GA6HCMBLTZS5VYYBCATRBRZ3BZJMAFUDKYYF6AH6MVCMGWMRDNSWJPIH"))
+      Await.result(PublicNetwork.orderBook(
+        selling = NativeAsset,
+        buying = mobi
+      ), 10.seconds) must beLike { case ob: OrderBook =>
+          ob.selling mustEqual NativeAsset
+          ob.buying mustEqual mobi
+      }
     }
   }
 

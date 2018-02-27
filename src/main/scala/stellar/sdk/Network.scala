@@ -62,6 +62,21 @@ trait Network extends ByteArrays {
   def operationsByTransaction(txnHash: String)(implicit ex: ExecutionContext): Future[Stream[Transacted[Operation]]] =
     server.getStream[Transacted[Operation]](s"/transactions/$txnHash/operations", TransactedOperationDeserializer)
 
+  def orderBook(selling: Asset, buying: Asset, limit: Int = 20)(implicit ex: ExecutionContext): Future[OrderBook] = {
+    def assetParams(prefix: String, asset: Asset): Map[String, Any] = {
+      asset match {
+        case NativeAsset => Map(s"${prefix}_asset_type" -> "native")
+        case nna: NonNativeAsset => Map(
+          s"${prefix}_asset_type" -> nna.typeString,
+          s"${prefix}_asset_code" -> nna.code,
+          s"${prefix}_asset_issuer" -> nna.issuer.accountId
+        )
+      }
+    }
+    val params = assetParams("selling", selling) ++ assetParams("buying", buying).updated("limit", limit)
+    server.get[OrderBook]("/order_book", params)
+  }
+
 }
 
 case object PublicNetwork extends Network {
