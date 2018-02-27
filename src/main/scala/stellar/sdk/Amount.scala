@@ -23,6 +23,8 @@ object Amount {
     (BigDecimal(d) * BigDecimal(math.pow(10, decimalPlaces)).round(new MathContext(0, RoundingMode.DOWN))).toLongExact
   }
 
+  def toDisplayUnits(l: Long): String = f"${l / math.pow(10, decimalPlaces)}%.7f"
+
   def apply(units: Long, asset: Asset): Amount = {
     asset match {
       case NativeAsset => NativeAmount(units)

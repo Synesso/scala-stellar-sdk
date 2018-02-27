@@ -78,6 +78,8 @@ trait ArbitraryInput extends ScalaCheck {
 
   implicit def arbOfferResp = Arbitrary(genOfferResp)
 
+  implicit def arbOrderBook = Arbitrary(genOrderBook)
+
   def genKeyPair: Gen[KeyPair] = Gen.oneOf(Seq(KeyPair.random))
 
   def genSignerKey: Gen[SignerKey] = genKeyPair.map(_.getXDRSignerKey)
@@ -318,6 +320,20 @@ trait ArbitraryInput extends ScalaCheck {
     createdAt <- genZonedDateTime
     op <- genOp
   } yield Transacted(id, hash, source, createdAt, op)
+
+  def genOrder = for {
+    price <- genPrice
+    qty <- Gen.posNum[Long]
+  } yield Order(price, qty)
+
+  def genOrderBook = for {
+    selling <- genAsset
+    buying <- if (selling == NativeAsset) genNonNativeAsset else genAsset
+    qtyBids <- Gen.choose(0, 20)
+    qtyAsks <- Gen.choose(0, 20)
+    bids <- Gen.listOfN(qtyBids, genOrder)
+    asks <- Gen.listOfN(qtyAsks, genOrder)
+  } yield OrderBook(selling, buying, bids, asks)
 
   def round(d: Double) = f"$d%.7f".toDouble
 }

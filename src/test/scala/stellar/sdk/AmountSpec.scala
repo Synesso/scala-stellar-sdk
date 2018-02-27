@@ -9,6 +9,10 @@ class AmountSpec extends Specification with ArbitraryInput {
     "present human value as base unit * 10^-7" >> prop { amount: Amount =>
       amount.toHumanValue mustEqual amount.units / math.pow(10, 7)
     }
+
+    "convert base unit to display unit" >> prop { l: Long =>
+      Amount.toDisplayUnits(l).toDouble mustEqual (l / math.pow(10, 7))
+    }.setGen(Gen.posNum[Long])
   }
 
   "a number of units and a non-native asset" should {

@@ -10,4 +10,6 @@ case class Price(n: Int, d: Int) extends XDRPrimitives {
     xdr
   }
 
+  def asDecimalString = f"${n * 1.0 / d * 1.0}%.7f"
+
 }
