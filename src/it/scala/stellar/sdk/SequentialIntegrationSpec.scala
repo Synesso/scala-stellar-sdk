@@ -188,4 +188,25 @@ class SequentialIntegrationSpec(implicit ee: ExecutionEnv) extends Specification
     }
   }
 
+  "payments endpoint" should {
+    "fetch payments in pages" >> {
+      TestNetwork.payments().map(_.take(130).last) must beEqualTo(
+        Transacted(
+          id = 91946659876865L,
+          txnHash = "dd667058cb84fef012a102e5c6be22c532534f0182076d7eabced3e606b22d7d",
+          sourceAccount = KeyPair.fromAccountId("GBK4EP3WICCDJQ3MSYUNRV3PNVQQZAESFGV4DALFENUFAGOY4J7QQNGW"),
+          createdAt = ZonedDateTime.parse("2017-03-21T16:06:42Z"),
+          operation = PaymentOperation(
+            destinationAccount = KeyPair.fromAccountId("GD7E76FQQDNM5GXQX3SMEN5FIZKVHD2KYRYN2UPDQIDKHSXV4QUN7ZT3"),
+            amount = IssuedAmount(
+              units = 10000L,
+              asset = AssetTypeCreditAlphaNum4(
+                "USD",
+                KeyPair.fromAccountId("GBK4EP3WICCDJQ3MSYUNRV3PNVQQZAESFGV4DALFENUFAGOY4J7QQNGW")
+              )),
+            sourceAccount = None))
+      ).awaitFor(10.seconds)
+    }
+  }
+
 }

@@ -16,7 +16,7 @@ import scala.util.Try
   */
 case class PaymentOperation(destinationAccount: PublicKeyOps,
                             amount: Amount,
-                            sourceAccount: Option[PublicKeyOps] = None) extends Operation {
+                            sourceAccount: Option[PublicKeyOps] = None) extends PayOperation {
 
   override def toOperationBody: OperationBody = {
     val op = new PaymentOp()

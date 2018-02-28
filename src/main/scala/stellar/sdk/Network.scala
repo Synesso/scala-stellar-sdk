@@ -7,7 +7,7 @@ import com.softwaremill.sttp.akkahttp.AkkaHttpBackend
 import org.json4s.{DefaultFormats, NoTypeHints}
 import org.json4s.native.Serialization
 import stellar.sdk.inet.Server
-import stellar.sdk.op.{Operation, Transacted, TransactedOperationDeserializer}
+import stellar.sdk.op.{Operation, PayOperation, Transacted, TransactedOperationDeserializer}
 import stellar.sdk.resp._
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -76,6 +76,11 @@ trait Network extends ByteArrays {
     val params = assetParams("selling", selling) ++ assetParams("buying", buying).updated("limit", limit)
     server.get[OrderBook]("/order_book", params)
   }
+
+  def payments()(implicit ex: ExecutionContext): Future[Stream[Transacted[PayOperation]]] =
+    server.getStream[Transacted[Operation]](s"/payments", TransactedOperationDeserializer)
+      .map(_.map(_.asInstanceOf[Transacted[PayOperation]]))
+
 
 }
 

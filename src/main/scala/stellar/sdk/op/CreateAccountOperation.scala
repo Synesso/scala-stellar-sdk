@@ -14,7 +14,7 @@ import scala.util.Try
   */
 case class CreateAccountOperation(destinationAccount: PublicKeyOps,
                                   startingBalance: NativeAmount = NativeAmount(0), // todo - zero? try to not have a default
-                                  sourceAccount: Option[PublicKeyOps] = None) extends Operation {
+                                  sourceAccount: Option[PublicKeyOps] = None) extends PayOperation {
 
   override def toOperationBody: OperationBody = {
     val op = new CreateAccountOp()

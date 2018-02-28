@@ -153,3 +153,8 @@ object OperationDeserializer extends CustomSerializer[Operation](format => ( {
 }, PartialFunction.empty)
 )
 
+/**
+  * Marker trait for any operation that involves a payment (`PaymentOperation`, `CreateAccountOperation`)
+  */
+trait PayOperation extends Operation
+
