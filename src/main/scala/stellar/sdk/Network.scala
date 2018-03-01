@@ -89,6 +89,10 @@ trait Network extends ByteArrays {
     server.getStream[Transacted[Operation]](s"/ledgers/$ledgerId/payments", TransactedOperationDeserializer)
       .map(_.map(_.asInstanceOf[Transacted[PayOperation]]))
 
+  def paymentsByTransaction(txnHash: String)(implicit ex: ExecutionContext): Future[Stream[Transacted[PayOperation]]] =
+    server.getStream[Transacted[Operation]](s"/transactions/$txnHash/payments", TransactedOperationDeserializer)
+      .map(_.map(_.asInstanceOf[Transacted[PayOperation]]))
+
 }
 
 case object PublicNetwork extends Network {
