@@ -80,6 +80,8 @@ trait ArbitraryInput extends ScalaCheck {
 
   implicit def arbOrderBook = Arbitrary(genOrderBook)
 
+  implicit def arbTrade = Arbitrary(genTrade)
+
   def genKeyPair: Gen[KeyPair] = Gen.oneOf(Seq(KeyPair.random))
 
   def genSignerKey: Gen[SignerKey] = genKeyPair.map(_.getXDRSignerKey)
@@ -108,7 +110,6 @@ trait ArbitraryInput extends ScalaCheck {
   } yield {
     IssuedAmount(units, asset)
   }
-
 
   def genCode(min: Int, max: Int): Gen[String] = Gen.choose(min, max).map(i => Random.alphanumeric.take(i).mkString)
 
@@ -321,12 +322,12 @@ trait ArbitraryInput extends ScalaCheck {
     op <- genOp
   } yield Transacted(id, hash, source, createdAt, op)
 
-  def genOrder = for {
+  def genOrder: Gen[Order] = for {
     price <- genPrice
     qty <- Gen.posNum[Long]
   } yield Order(price, qty)
 
-  def genOrderBook = for {
+  def genOrderBook: Gen[OrderBook] = for {
     selling <- genAsset
     buying <- if (selling == NativeAsset) genNonNativeAsset else genAsset
     qtyBids <- Gen.choose(0, 20)
@@ -334,6 +335,17 @@ trait ArbitraryInput extends ScalaCheck {
     bids <- Gen.listOfN(qtyBids, genOrder)
     asks <- Gen.listOfN(qtyAsks, genOrder)
   } yield OrderBook(selling, buying, bids, asks)
+
+  def genTrade: Gen[Trade] = for {
+    id <- Gen.identifier
+    ledgerCloseTime <- genZonedDateTime
+    offerId <- Gen.posNum[Long]
+    baseAccount <- genVerifyingKey
+    baseAmount <- genAmount
+    counterAccount <- genVerifyingKey
+    counterAmount <- genAmount
+    baseIsSeller <- Gen.oneOf(true, false)
+  } yield Trade(id, ledgerCloseTime, offerId, baseAccount, baseAmount, counterAccount, counterAmount, baseIsSeller)
 
   def round(d: Double) = f"$d%.7f".toDouble
 }
