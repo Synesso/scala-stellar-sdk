@@ -146,8 +146,8 @@ TestNetwork.assets(code = Some("ETH"), issuer = Some("GAE325UC3T63ROIUFBBRNMWGM7
   [🚀] Payments
     [✓] Unfiltered stream
     [✓] By account
-    [🚀] By ledger
-    [ ] By transaction
+    [✓] By ledger
+    [🚀] By transaction
   [ ] Trade aggregations
   [ ] Trades
     [ ] Unfiltered

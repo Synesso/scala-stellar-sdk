@@ -222,6 +222,20 @@ class SequentialIntegrationSpec(implicit ee: ExecutionEnv) extends Specification
             sourceAccount = None))
       ).awaitFor(10.seconds)
     }
+
+    "filter payments by ledger" >> {
+      PublicNetwork.paymentsByLedger(16034375).map(_.head) must beEqualTo(
+        Transacted(
+          id = 68867116236808193L,
+          txnHash = "4d0c7f118ca939fe10ba3e1facc601814e3e0135991634fe43f019450fa2b5cd",
+          sourceAccount = KeyPair.fromAccountId("GA5XIGA5C7QTPTWXQHY6MCJRMTRZDOSHR6EFIBNDQTCQHG262N4GGKTM"),
+          createdAt = ZonedDateTime.parse("2018-02-02T08:55:32Z"),
+          operation = PaymentOperation(
+            destinationAccount = KeyPair.fromAccountId("GAHK7EEG2WWHVKDNT4CEQFZGKF2LGDSW2IVM4S5DP42RBW3K6BTODB4A"),
+            amount = Amount.lumens(19999.99998).get,
+            sourceAccount = None))
+      ).awaitFor(10.seconds)
+    }
   }
 
 }
