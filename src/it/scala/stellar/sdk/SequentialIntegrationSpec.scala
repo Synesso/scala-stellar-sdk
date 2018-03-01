@@ -207,6 +207,21 @@ class SequentialIntegrationSpec(implicit ee: ExecutionEnv) extends Specification
             sourceAccount = None))
       ).awaitFor(10.seconds)
     }
+
+    "filter payments by account" >> {
+      PublicNetwork.paymentsByAccount(KeyPair.fromAccountId("GDKUP3J2MXYLSMU556XDSPLGPH5NFITGRT3HSNGNCZP3HTYBZ6AVNB7N"))
+        .map(_.drop(9).head) must beEqualTo(
+        Transacted(
+          id = 68867133416685569L,
+          txnHash = "1459b596c081eb87829c9168e9eb044eebc434fd92e4b8bc59a195dbf5c4c123",
+          sourceAccount = KeyPair.fromAccountId("GDKUP3J2MXYLSMU556XDSPLGPH5NFITGRT3HSNGNCZP3HTYBZ6AVNB7N"),
+          createdAt = ZonedDateTime.parse("2018-02-02T08:55:47Z"),
+          operation = PaymentOperation(
+            destinationAccount = KeyPair.fromAccountId("GAHK7EEG2WWHVKDNT4CEQFZGKF2LGDSW2IVM4S5DP42RBW3K6BTODB4A"),
+            amount = Amount.lumens(6440).get,
+            sourceAccount = None))
+      ).awaitFor(10.seconds)
+    }
   }
 
 }

@@ -81,6 +81,9 @@ trait Network extends ByteArrays {
     server.getStream[Transacted[Operation]](s"/payments", TransactedOperationDeserializer)
       .map(_.map(_.asInstanceOf[Transacted[PayOperation]]))
 
+  def paymentsByAccount(pubKey: PublicKeyOps)(implicit ex: ExecutionContext): Future[Stream[Transacted[PayOperation]]] =
+    server.getStream[Transacted[Operation]](s"/accounts/${pubKey.accountId}/payments", TransactedOperationDeserializer)
+      .map(_.map(_.asInstanceOf[Transacted[PayOperation]]))
 
 }
 
