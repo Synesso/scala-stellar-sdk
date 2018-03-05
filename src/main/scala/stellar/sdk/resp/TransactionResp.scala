@@ -9,8 +9,8 @@ object TransactionRespDeserializer extends CustomSerializer[TransactionResp](for
   case o: JObject =>
     implicit val formats = DefaultFormats
 
-    import org.json4s.native.JsonMethods._
-    println(pretty(render(o)))
+//    import org.json4s.native.JsonMethods._
+//    println(pretty(render(o)))
 
     TransactionResp(
       hash = (o \ "hash").extract[String],

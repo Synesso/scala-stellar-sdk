@@ -1,4 +1,4 @@
-// creates a new account via a payment from an existing account
+// creates a trustline
 
 import stellar.sdk._
 import stellar.sdk.op._
@@ -10,11 +10,11 @@ import scala.util.{Failure, Success}
 // declare that we are going to submit transactions to the test network by bringing it into implicit scope
 implicit val network = TestNetwork
 
-// the account we will pay from
+// the trustor
 val source = KeyPair.fromSecretSeed("SBQT6A2GSA3RE5GPMURKKQ5KIS7OUD42USX57UJVHW4ZCB5R7B6CVD62")
 
-// the account to be created
-val newAccount = KeyPair.random
+// the issuer
+val issuer = KeyPair.fromAccountId("GAQUWIRXODT4OE3YE6L4NF3AYSR5ACEHPINM5S3J2F4XKH7FRZD4NDW2")
 
 val response = for {
 
@@ -23,10 +23,13 @@ val response = for {
 
   txn <- Future.fromTry {
 
-    // create a transaction, add the create account operation and sign it
-    Transaction(Account(keyPair = source, sequenceNumber = account.lastSequence + 1))
-      .add(CreateAccountOperation(newAccount, Amount.lumens(1)))
-      .sign(source)
+    // create a transaction with the create trust operation and sign it
+    Transaction(
+      Account(keyPair = source, sequenceNumber = account.lastSequence + 1),
+      Seq(
+        ChangeTrustOperation(IssuedAmount(1000, AssetTypeCreditAlphaNum12("PANCAKE", issuer)))
+      )
+    ).sign(source)
   }
 
   // and submit it
@@ -38,9 +41,10 @@ val response = for {
 response onComplete {
 
   case Success(resp) =>
-    println(s"Account ${newAccount.accountId} was created with payment in ledger ${resp.ledger}")
+    println(s"Account ${source.accountId} trusts PANCAKE from ${issuer.accountId}")
 
   case Failure(t) =>
-    println(s"Failed to create ${newAccount.accountId}. $t")
+    println(s"Failed to trust PANCAKE. $t")
 
 }
+
