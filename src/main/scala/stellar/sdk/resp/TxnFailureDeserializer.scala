@@ -12,7 +12,7 @@ object TxnFailureDeserializer extends CustomSerializer[TxnFailure](format => ( {
       uri = uri"file://unknown", // overwritten
       status =(o \ "status").extract[Int],
       detail = (o \ "detail").extract[String],
-      resultCode = (o \ "extras" \ "result_codes" \ "transaction").extract[String],
-      resultXDR = (o \ "extras" \ "result_xdr").extract[String]
+      resultCode = (o \ "extras" \ "result_codes" \ "transaction").extractOpt[String],
+      resultXDR = (o \ "extras" \ "result_xdr").extractOpt[String]
     )
 }, PartialFunction.empty))

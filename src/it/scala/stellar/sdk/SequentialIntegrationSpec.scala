@@ -21,8 +21,7 @@ class SequentialIntegrationSpec(implicit ee: ExecutionEnv) extends Specification
       TestNetwork.account(accn) must beLike[AccountResp] {
         case AccountResp(id, _, _, _, _, _, List(lumens), _) =>
           id mustEqual accn.accountId
-          lumens mustEqual Amount.lumens(1000)
-          // todo - add check for data when we can submit manage data ops
+          lumens mustEqual Amount.lumens(10000)
       }.awaitFor(30.seconds)
     }
 
@@ -79,7 +78,7 @@ class SequentialIntegrationSpec(implicit ee: ExecutionEnv) extends Specification
       byAccount.map(_.head) must beLike[EffectResp] {
         case EffectAccountCreated(_, account, startingBalance) =>
           account.accountId mustEqual accn.accountId
-          startingBalance mustEqual Amount.lumens(1000)
+          startingBalance mustEqual Amount.lumens(10000)
       }.awaitFor(10.seconds)
     }
 
@@ -141,14 +140,15 @@ class SequentialIntegrationSpec(implicit ee: ExecutionEnv) extends Specification
     "list operations by account" >> {
       TestNetwork.operationsByAccount(KeyPair.fromAccountId("GCXYKQF35XWATRB6AWDDV2Y322IFU2ACYYN5M2YB44IBWAIITQ4RYPXK"))
         .map(_.take(4).last) must beEqualTo(Transacted(
-        id = 31553806168764417L,
-        txnHash = "ec6d2466be15aeb909240ed590f8a0230ee0da5b263e931aefd64eefbaf6ac5f",
+        id = 30985448851509249L,
+        txnHash = "685bcbdf699139f3e244fa9af09c8108b55fd3c554c38f7d54a5c4a4ad1e38d4",
         sourceAccount = KeyPair.fromAccountId("GCXYKQF35XWATRB6AWDDV2Y322IFU2ACYYN5M2YB44IBWAIITQ4RYPXK"),
-        createdAt = ZonedDateTime.parse("2018-02-14T11:06:51Z"),
-        operation = CreateOfferOperation(
-          selling = Amount.lumens(165),
-          buying = AssetTypeCreditAlphaNum12("sausage", KeyPair.fromAccountId("GCXYKQF35XWATRB6AWDDV2Y322IFU2ACYYN5M2YB44IBWAIITQ4RYPXK")),
-          price = Price(303, 100)
+        createdAt = ZonedDateTime.parse("2018-02-08T10:18:39Z"),
+        operation = PaymentOperation(
+          destinationAccount = KeyPair.fromAccountId("GAR2WMVXCTFUXHU4K5KZNRAVTYFAFWT4XWFLKJ5IKEQ65Q47WNSMDVKH"),
+          amount = IssuedAmount(10000000000L,
+            AssetTypeCreditAlphaNum12("sausage", KeyPair.fromAccountId("GCXYKQF35XWATRB6AWDDV2Y322IFU2ACYYN5M2YB44IBWAIITQ4RYPXK"))
+          )
       ))).awaitFor(10.seconds)
     }
     val kinPayment = Transacted(

@@ -8,7 +8,7 @@ import stellar.sdk.resp.TxnFailureDeserializer
 
 import scala.util.Try
 
-case class TxnFailure(uri: Uri, status: Int, detail: String, resultCode: String, resultXDR: String)
+case class TxnFailure(uri: Uri, status: Int, detail: String, resultCode: Option[String], resultXDR: Option[String])
   extends Exception(s"Uri: $uri - $detail: $resultCode")
 
 object TxnFailure {
