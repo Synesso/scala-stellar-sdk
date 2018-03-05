@@ -1,6 +1,7 @@
 // creates a new account via a payment from an existing account
 
 import stellar.sdk._
+import stellar.sdk.inet.TxnFailure
 import stellar.sdk.op._
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -21,17 +22,11 @@ val response = for {
   // obtain up-to-date data about our source account
   account <- TestNetwork.account(source)
 
-  _ = println(account)
-
   txn <- Future.fromTry {
 
-    // create a transaction
-    Transaction(Account(keyPair = source, sequenceNumber = account.lastSequence + 1))
-
-      // add the create account operation
+    // create a transaction, add the create account operation and sign it
+    Transaction(Account(keyPair = source, sequenceNumber = account.lastSequence + 2))
       .add(CreateAccountOperation(newAccount, Amount.lumens(1)))
-
-      // sign the transaction
       .sign(source)
   }
 
@@ -44,10 +39,9 @@ val response = for {
 response onComplete {
 
   case Success(resp) =>
-    println(resp)
+    println(s"Account ${newAccount.accountId} was created with payment in ledger ${resp.ledger}")
 
   case Failure(t) =>
-    println(s"Failed to create ${newAccount.accountId}")
-    t.printStackTrace()
+    println(s"Failed to create ${newAccount.accountId}. $t")
 
 }

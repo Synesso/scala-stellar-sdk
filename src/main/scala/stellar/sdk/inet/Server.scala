@@ -5,11 +5,11 @@ import java.net.URI
 import com.softwaremill.sttp._
 import com.softwaremill.sttp.akkahttp.AkkaHttpBackend
 import com.softwaremill.sttp.json4s._
-import org.json4s.{CustomSerializer, NoTypeHints, Serializer}
 import org.json4s.native.Serialization
-import stellar.sdk.{OrderBookDeserializer, SignedTransaction}
+import org.json4s.{CustomSerializer, NoTypeHints}
 import stellar.sdk.op.TransactedOperationDeserializer
 import stellar.sdk.resp._
+import stellar.sdk.{OrderBookDeserializer, SignedTransaction}
 
 import scala.concurrent.duration._
 import scala.concurrent.{Await, ExecutionContext, Future}
@@ -20,12 +20,16 @@ import scala.util.Try
 case class Server(uri: URI) {
   implicit val backend = AkkaHttpBackend()
   implicit val formats = Serialization.formats(NoTypeHints) + AccountRespDeserializer + DataValueRespDeserializer +
-    LedgerRespDeserializer + TransactedOperationDeserializer + OrderBookDeserializer
+    LedgerRespDeserializer + TransactedOperationDeserializer + OrderBookDeserializer + TransactionRespDeserializer
 
   def post(txn: SignedTransaction)(implicit ec: ExecutionContext): Future[TransactionResp] = for {
     envelope <- Future.fromTry(txn.toEnvelopeXDRBase64)
-    response <- sttp.body(Map("tx" -> envelope)).post(uri"$uri/transactions").send()
-  } yield null
+    requestUri = uri"$uri/transactions"
+    response <- sttp.body(Map("tx" -> envelope)).post(requestUri).response(asJson[TransactionResp]).send()
+  } yield response.body match {
+    case Right(r) => r
+    case Left(s) => throw TxnFailure(requestUri, s).getOrElse(new RuntimeException(s"Unrecognised response: $s"))
+  }
 
   def get[T: ClassTag](path: String, params: Map[String, Any] = Map.empty)(implicit ec: ExecutionContext, m: Manifest[T]): Future[T] = {
     val requestUri = uri"$uri/$path?$params"
@@ -33,7 +37,7 @@ case class Server(uri: URI) {
       resp <- sttp.get(requestUri).response(asJson[T]).send()
     } yield resp.body match {
       case Right(r) => r
-      case Left(s) => throw ResourceMissingException(requestUri, s).getOrElse(new RuntimeException(s"Unrecognised response: $s"))
+      case Left(s) => throw TxnFailure(requestUri, s).getOrElse(new RuntimeException(s"Unrecognised response: $s"))
     }
   }
 
@@ -43,7 +47,7 @@ case class Server(uri: URI) {
     implicit val inner = de
 
     def next(p: Page[T]): Future[Option[Page[T]]] =
-      (getPageAbsoluteUri(uri"${p.nextLink}"): Future[Page[T]]).map(Some(_)).recover { case e: ResourceMissingException => None }
+      (getPageAbsoluteUri(uri"${p.nextLink}"): Future[Page[T]]).map(Some(_)).recover { case e: TxnFailure => None }
 
     def stream(ts: Seq[T], maybeNextPage: Future[Option[Page[T]]]): Stream[T] = {
       ts match {
@@ -74,7 +78,7 @@ case class Server(uri: URI) {
       resp <- sttp.get(uri).response(asString).send()
     } yield resp.body match {
       case Right(r) => Page(r, de)
-      case Left(s) => throw ResourceMissingException(uri, s).getOrElse(new RuntimeException(s"Unrecognised response: $s"))
+      case Left(s) => throw TxnFailure(uri, s).getOrElse(new RuntimeException(s"Unrecognised response: $s"))
     }
   }
 }

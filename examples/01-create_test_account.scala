@@ -1,7 +1,6 @@
 // uses FriendBot to create and fund a new account
 
 import stellar.sdk._
-import stellar.sdk.resp.FundTestAccountResp
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.util.{Failure, Success}
@@ -13,8 +12,8 @@ val kp = KeyPair.random
 val result = TestNetwork.fund(kp)
 
 result onComplete {
-  case Success(FundTestAccountResp(hash, ledger)) =>
-    println(s"Account ${kp.accountId} was funded in ledger $ledger")
+  case Success(response) =>
+    println(s"Account ${kp.accountId} was funded in ledger ${response.ledger}")
   case Failure(t) =>
     println(s"Failed to fund ${kp.accountId}")
     t.printStackTrace()

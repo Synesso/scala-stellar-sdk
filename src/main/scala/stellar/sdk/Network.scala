@@ -105,6 +105,6 @@ case object TestNetwork extends Network {
   override val server = Server(URI.create("https://horizon-testnet.stellar.org"))
   implicit val backend = AkkaHttpBackend()
 
-  def fund(pk: PublicKeyOps)(implicit ec: ExecutionContext): Future[FundTestAccountResp] =
-    server.get[FundTestAccountResp]("friendbot", Map("addr" -> pk.accountId))
+  def fund(pk: PublicKeyOps)(implicit ec: ExecutionContext): Future[TransactionResp] =
+    server.get[TransactionResp]("friendbot", Map("addr" -> pk.accountId))
 }

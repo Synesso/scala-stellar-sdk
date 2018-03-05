@@ -5,7 +5,7 @@ import java.time.ZonedDateTime
 import org.specs2.concurrent.ExecutionEnv
 import org.specs2.mutable.Specification
 import stellar.sdk.SessionTestAccount.{accWithData, accn}
-import stellar.sdk.inet.ResourceMissingException
+import stellar.sdk.inet.TxnFailure
 import stellar.sdk.op.{CreateOfferOperation, PaymentOperation, Transacted}
 import stellar.sdk.resp._
 
@@ -27,7 +27,7 @@ class SequentialIntegrationSpec(implicit ee: ExecutionEnv) extends Specification
     }
 
     "fetch nothing if no account exists" >> {
-      TestNetwork.account(KeyPair.random) must throwA[ResourceMissingException].awaitFor(5.seconds)
+      TestNetwork.account(KeyPair.random) must throwA[TxnFailure].awaitFor(5.seconds)
     }
 
     "return the data for an account" >> {
@@ -35,7 +35,7 @@ class SequentialIntegrationSpec(implicit ee: ExecutionEnv) extends Specification
     }
 
     "fetch nothing if no data exists for the account" >> {
-      TestNetwork.accountData(accWithData, "brain_size_of_planet") must throwA[ResourceMissingException].awaitFor(5.seconds)
+      TestNetwork.accountData(accWithData, "brain_size_of_planet") must throwA[TxnFailure].awaitFor(5.seconds)
     }
   }
 

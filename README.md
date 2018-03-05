@@ -148,7 +148,7 @@ TestNetwork.assets(code = Some("ETH"), issuer = Some("GAE325UC3T63ROIUFBBRNMWGM7
     [✓] By account
     [✓] By ledger
     [] By transaction
-  [🚀] Trade aggregations
+  [ ] Trade aggregations
   [ ] Trades
     [ ] Unfiltered
     [ ] By orderbook
@@ -157,7 +157,9 @@ TestNetwork.assets(code = Some("ETH"), issuer = Some("GAE325UC3T63ROIUFBBRNMWGM7
     [ ] By orderbook
     [ ] By account
     [ ] By ledger
-  [ ] Post transaction
+  [🚀] Post transaction
+    [🚀] Shallow parse response
+    [ ] XDR response parse
 [ ] Streams
   [ ] Effects
   [ ] Ledgers
