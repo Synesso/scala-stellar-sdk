@@ -48,6 +48,10 @@ case class KeyPair(pk: EdDSAPublicKey, sk: EdDSAPrivateKey) extends PublicKeyOps
     xdr
   }
 
+
+  override def toString: String = {
+    s"""KeyPair("$accountId", "${secretSeed.mkString}")"""
+  }
 }
 
 case class VerifyingKey(pk: EdDSAPublicKey) extends PublicKeyOps {
@@ -202,5 +206,4 @@ object KeyPair {
     val pair = new KeyPairGenerator().generateKeyPair()
     KeyPair(pair.getPublic.asInstanceOf[EdDSAPublicKey], pair.getPrivate.asInstanceOf[EdDSAPrivateKey])
   }
-
 }

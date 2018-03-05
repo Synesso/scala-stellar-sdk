@@ -51,7 +51,7 @@ object EffectRespDeserializer extends CustomSerializer[EffectResp](format => ({
     val id = (o \ "id").extract[String]
     (o \ "type").extract[String] match {
       case "account_created" =>
-        val startingBalance = Amount.lumens((o \ "starting_balance").extract[String].toDouble).get
+        val startingBalance = Amount.lumens((o \ "starting_balance").extract[String].toDouble)
         EffectAccountCreated(id, account(), startingBalance)
       case "account_credited" => EffectAccountCredited(id, account(), amount())
       case "account_debited" => EffectAccountDebited(id, account(), amount())

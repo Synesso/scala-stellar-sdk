@@ -116,11 +116,11 @@ class AccountRespSpec extends Specification {
       parse(doc).extract[AccountResp] must beLike {
         case r: AccountResp =>
           r.id mustEqual "GBU6GMZZ2KTQ33CHNVPAWWEJ22ZHLYGBGO3LIBKNANXUMNEOFROZKO62"
-          r.sequence mustEqual 56251530273100047L
+          r.lastSequence mustEqual 56251530273100047L
           r.subEntryCount mustEqual 156
           r.thresholds mustEqual Thresholds(1, 5, 10)
           r.balances must containTheSameElementsAs(Seq(
-            Amount.lumens(19309.4481807).get,
+            Amount.lumens(19309.4481807),
             Amount(160014653423L, AssetTypeCreditAlphaNum4("EURT", KeyPair.fromAccountId("GAP5LETOV6YIE62YAM56STDANPRDO7ZFDBGSNHJQIYGGKSMOZAHOOS2S"))),
             Amount(386158026333L, AssetTypeCreditAlphaNum4("CNY", KeyPair.fromAccountId("GAREELUB43IRHWEASCFBLKHURCGMHE5IF6XSE7EXDLACYHGRHM43RFOX"))),
             Amount(28256257L, AssetTypeCreditAlphaNum4("BTC", KeyPair.fromAccountId("GATEMHCCKCY67ZUCKTROYN24ZYT5GK4EQZ65JJLDHKHRUZI3EUEKMTCH"))),

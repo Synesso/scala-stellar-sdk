@@ -22,9 +22,10 @@ case class Server(uri: URI) {
   implicit val formats = Serialization.formats(NoTypeHints) + AccountRespDeserializer + DataValueRespDeserializer +
     LedgerRespDeserializer + TransactedOperationDeserializer + OrderBookDeserializer
 
-  def post(txn: SignedTransaction): Future[SubmitTransactionResponse] = {
-    ???
-  }
+  def post(txn: SignedTransaction)(implicit ec: ExecutionContext): Future[TransactionResp] = for {
+    envelope <- Future.fromTry(txn.toEnvelopeXDRBase64)
+    response <- sttp.body(Map("tx" -> envelope)).post(uri"$uri/transactions").send()
+  } yield null
 
   def get[T: ClassTag](path: String, params: Map[String, Any] = Map.empty)(implicit ec: ExecutionContext, m: Manifest[T]): Future[T] = {
     val requestUri = uri"$uri/$path?$params"

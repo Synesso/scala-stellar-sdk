@@ -13,7 +13,7 @@ import scala.util.Try
   * @see <a href="https://www.stellar.org/developers/learn/concepts/list-of-operations.html" target="_blank">List of Operations</a>
   */
 case class CreateAccountOperation(destinationAccount: PublicKeyOps,
-                                  startingBalance: NativeAmount = NativeAmount(0), // todo - zero? try to not have a default
+                                  startingBalance: NativeAmount = Amount.lumens(1),
                                   sourceAccount: Option[PublicKeyOps] = None) extends PayOperation {
 
   override def toOperationBody: OperationBody = {

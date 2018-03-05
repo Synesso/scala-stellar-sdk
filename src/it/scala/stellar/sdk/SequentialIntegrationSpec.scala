@@ -21,7 +21,7 @@ class SequentialIntegrationSpec(implicit ee: ExecutionEnv) extends Specification
       TestNetwork.account(accn) must beLike[AccountResp] {
         case AccountResp(id, _, _, _, _, _, List(lumens), _) =>
           id mustEqual accn.accountId
-          lumens mustEqual Amount.lumens(1000).get
+          lumens mustEqual Amount.lumens(1000)
           // todo - add check for data when we can submit manage data ops
       }.awaitFor(30.seconds)
     }
@@ -79,7 +79,7 @@ class SequentialIntegrationSpec(implicit ee: ExecutionEnv) extends Specification
       byAccount.map(_.head) must beLike[EffectResp] {
         case EffectAccountCreated(_, account, startingBalance) =>
           account.accountId mustEqual accn.accountId
-          startingBalance mustEqual Amount.lumens(1000).get
+          startingBalance mustEqual Amount.lumens(1000)
       }.awaitFor(10.seconds)
     }
 
@@ -123,7 +123,7 @@ class SequentialIntegrationSpec(implicit ee: ExecutionEnv) extends Specification
         OfferResp(
           id = 101542,
           seller = KeyPair.fromAccountId("GCXYKQF35XWATRB6AWDDV2Y322IFU2ACYYN5M2YB44IBWAIITQ4RYPXK"),
-          selling = Amount.lumens(165).get,
+          selling = Amount.lumens(165),
           buying = AssetTypeCreditAlphaNum12(
             code = "sausage",
             issuer = KeyPair.fromAccountId("GCXYKQF35XWATRB6AWDDV2Y322IFU2ACYYN5M2YB44IBWAIITQ4RYPXK")),
@@ -146,7 +146,7 @@ class SequentialIntegrationSpec(implicit ee: ExecutionEnv) extends Specification
         sourceAccount = KeyPair.fromAccountId("GCXYKQF35XWATRB6AWDDV2Y322IFU2ACYYN5M2YB44IBWAIITQ4RYPXK"),
         createdAt = ZonedDateTime.parse("2018-02-14T11:06:51Z"),
         operation = CreateOfferOperation(
-          selling = Amount.lumens(165).get,
+          selling = Amount.lumens(165),
           buying = AssetTypeCreditAlphaNum12("sausage", KeyPair.fromAccountId("GCXYKQF35XWATRB6AWDDV2Y322IFU2ACYYN5M2YB44IBWAIITQ4RYPXK")),
           price = Price(303, 100)
       ))).awaitFor(10.seconds)
@@ -218,7 +218,7 @@ class SequentialIntegrationSpec(implicit ee: ExecutionEnv) extends Specification
           createdAt = ZonedDateTime.parse("2018-02-02T08:55:47Z"),
           operation = PaymentOperation(
             destinationAccount = KeyPair.fromAccountId("GAHK7EEG2WWHVKDNT4CEQFZGKF2LGDSW2IVM4S5DP42RBW3K6BTODB4A"),
-            amount = Amount.lumens(6440).get,
+            amount = Amount.lumens(6440),
             sourceAccount = None))
       ).awaitFor(10.seconds)
     }
@@ -232,7 +232,7 @@ class SequentialIntegrationSpec(implicit ee: ExecutionEnv) extends Specification
           createdAt = ZonedDateTime.parse("2018-02-02T08:55:32Z"),
           operation = PaymentOperation(
             destinationAccount = KeyPair.fromAccountId("GAHK7EEG2WWHVKDNT4CEQFZGKF2LGDSW2IVM4S5DP42RBW3K6BTODB4A"),
-            amount = Amount.lumens(19999.99998).get,
+            amount = Amount.lumens(19999.99998),
             sourceAccount = None))
       ).awaitFor(10.seconds)
     }
@@ -247,7 +247,7 @@ class SequentialIntegrationSpec(implicit ee: ExecutionEnv) extends Specification
           createdAt = ZonedDateTime.parse("2018-02-02T08:55:47Z"),
           operation = PaymentOperation(
             destinationAccount = KeyPair.fromAccountId("GAHK7EEG2WWHVKDNT4CEQFZGKF2LGDSW2IVM4S5DP42RBW3K6BTODB4A"),
-            amount = Amount.lumens(6440).get,
+            amount = Amount.lumens(6440),
             sourceAccount = None))
       ).awaitFor(10.seconds)
     }

@@ -7,7 +7,7 @@ import org.json4s.DefaultFormats
 
 // e.g. https://horizon-testnet.stellar.org/accounts/GDGUM5IKSJIFQEHXAWGQD2IWT2OUD6YTY4U7D7SSZLO23BVWHAFL54YN
 case class AccountResp(id: String,
-                       sequence: Long,
+                       lastSequence: Long,
                        subEntryCount: Int,
                        thresholds: Thresholds,
                        authRequired: Boolean,

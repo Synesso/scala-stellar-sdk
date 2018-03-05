@@ -6,7 +6,8 @@ import java.time.{Instant, ZoneId, ZonedDateTime}
 import org.apache.commons.codec.binary.Base64
 import org.scalacheck.{Arbitrary, Gen}
 import org.specs2.ScalaCheck
-import org.stellar.sdk.xdr.{Signature, SignerKey}
+import org.stellar.sdk.xdr.TransactionResult.{TransactionResultExt, TransactionResultResult}
+import org.stellar.sdk.xdr.{Operation => _, _}
 import stellar.sdk.op._
 import stellar.sdk.resp._
 
@@ -273,7 +274,7 @@ trait ArbitraryInput extends ScalaCheck {
     memo <- genMemo
     operations <- Gen.nonEmptyListOf(genOperation)
     timeBounds <- Gen.option(genTimeBounds)
-  } yield Transaction(source, memo, operations, timeBounds)
+  } yield Transaction(source, operations, memo, timeBounds)
 
   def genSignature: Gen[Signature] =
     Gen.nonEmptyContainerOf[Array, Byte](Arbitrary.arbByte.arbitrary).map { bs: Array[Byte] =>

@@ -32,4 +32,9 @@ class AmountSpec extends Specification with ArbitraryInput {
       }
     }.setGen(Gen.posNum[Double])
   }
+
+  "throw an exception if there are too many digits in fractional portion of lumens constructor" >> {
+    Amount.lumens(0.1234567) must not(throwAn[IllegalArgumentException])
+    Amount.lumens(0.12345678) must throwAn[IllegalArgumentException]
+  }
 }

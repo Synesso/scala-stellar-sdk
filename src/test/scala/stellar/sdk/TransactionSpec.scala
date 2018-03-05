@@ -13,14 +13,14 @@ class TransactionSpec extends Specification with ArbitraryInput with DomainMatch
 
   "a transaction fee" should {
     "be equal to 100 * the quantity of operations" >> prop { (source: Account, ops: Seq[Operation]) =>
-      Transaction(source, NoMemo, ops).fee mustEqual ops.size * 100
+      Transaction(source, ops, NoMemo).fee mustEqual ops.size * 100
     }.setGen2(Gen.nonEmptyListOf(genOperation))
   }
 
   "a transaction" should {
     "allow adding of operations one at a time" >> prop { (source: Account, ops: Seq[Operation]) =>
-      val expected = Transaction(source, NoMemo, ops)
-      val actual = ops.foldLeft(Transaction(source, NoMemo)) { case (txn, op) => txn add op }
+      val expected = Transaction(source, ops, NoMemo)
+      val actual = ops.foldLeft(Transaction(source, memo = NoMemo)) { case (txn, op) => txn add op }
       actual must beEquivalentTo(expected)
     }
 
@@ -53,7 +53,7 @@ class TransactionSpec extends Specification with ArbitraryInput with DomainMatch
 
   "signing a transaction" should {
     "add a signature to that transaction" >> prop { (source: Account, op: Operation, signers: Seq[KeyPair]) =>
-      val signatures = Transaction(source, NoMemo, Seq(op)).sign(signers.head, signers.tail: _*).get.signatures
+      val signatures = Transaction(source, Seq(op), NoMemo).sign(signers.head, signers.tail: _*).get.signatures
       signatures must haveSize(signers.length)
     }.setGen3(Gen.nonEmptyListOf(genKeyPair))
   }

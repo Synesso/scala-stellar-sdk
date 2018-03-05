@@ -6,14 +6,14 @@ import java.nio.ByteBuffer
 import org.stellar.sdk.xdr.Transaction.TransactionExt
 import org.stellar.sdk.xdr.{DecoratedSignature, EnvelopeType, TransactionEnvelope, XdrDataOutputStream, Transaction => XDRTransaction}
 import stellar.sdk.op.Operation
-import stellar.sdk.resp.SubmitTransactionResponse
+import stellar.sdk.resp.TransactionResp
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
 
 case class Transaction(source: Account,
-                       memo: Memo = NoMemo,
                        operations: Seq[Operation] = Nil,
+                       memo: Memo = NoMemo,
                        timeBounds: Option[TimeBounds] = None)(implicit val network: Network)
   extends ByteArrays with XDRPrimitives with TrySeq {
 
@@ -58,7 +58,7 @@ case class Transaction(source: Account,
 case class SignedTransaction(transaction: Transaction, signatures: Seq[DecoratedSignature], hash: Array[Byte])
   extends ByteArrays {
 
-  def submit: Future[SubmitTransactionResponse] = {
+  def submit()(implicit ec: ExecutionContext): Future[TransactionResp] = {
     transaction.network.submit(this)
   }
 
