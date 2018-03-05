@@ -6,7 +6,7 @@ import org.specs2.concurrent.ExecutionEnv
 import org.specs2.mutable.Specification
 import stellar.sdk.SessionTestAccount.{accWithData, accn}
 import stellar.sdk.inet.TxnFailure
-import stellar.sdk.op.{CreateOfferOperation, PaymentOperation, Transacted}
+import stellar.sdk.op.{PaymentOperation, Transacted}
 import stellar.sdk.resp._
 
 import scala.concurrent.Await

@@ -1,7 +1,6 @@
 // creates a new account via a payment from an existing account
 
 import stellar.sdk._
-import stellar.sdk.inet.TxnFailure
 import stellar.sdk.op._
 
 import scala.concurrent.ExecutionContext.Implicits.global
