@@ -4,8 +4,6 @@ import java.net.URI
 import java.nio.charset.StandardCharsets.UTF_8
 
 import com.softwaremill.sttp.akkahttp.AkkaHttpBackend
-import org.json4s.{DefaultFormats, NoTypeHints}
-import org.json4s.native.Serialization
 import stellar.sdk.inet.Server
 import stellar.sdk.op.{Operation, PayOperation, Transacted, TransactedOperationDeserializer}
 import stellar.sdk.resp._

@@ -6,7 +6,7 @@ import org.specs2.concurrent.ExecutionEnv
 import org.specs2.mutable.Specification
 import stellar.sdk.SessionTestAccount.{accWithData, accn}
 import stellar.sdk.inet.TxnFailure
-import stellar.sdk.op.{PaymentOperation, Transacted}
+import stellar.sdk.op.{CreateOfferOperation, PaymentOperation, Transacted}
 import stellar.sdk.resp._
 
 import scala.concurrent.Await
@@ -147,8 +147,7 @@ class SequentialIntegrationSpec(implicit ee: ExecutionEnv) extends Specification
         operation = PaymentOperation(
           destinationAccount = KeyPair.fromAccountId("GAR2WMVXCTFUXHU4K5KZNRAVTYFAFWT4XWFLKJ5IKEQ65Q47WNSMDVKH"),
           amount = IssuedAmount(10000000000L,
-            AssetTypeCreditAlphaNum12("sausage", KeyPair.fromAccountId("GCXYKQF35XWATRB6AWDDV2Y322IFU2ACYYN5M2YB44IBWAIITQ4RYPXK"))
-          )
+            AssetTypeCreditAlphaNum12("sausage", KeyPair.fromAccountId("GCXYKQF35XWATRB6AWDDV2Y322IFU2ACYYN5M2YB44IBWAIITQ4RYPXK")))
       ))).awaitFor(10.seconds)
     }
     val kinPayment = Transacted(

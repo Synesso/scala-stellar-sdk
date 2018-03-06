@@ -157,12 +157,22 @@ TestNetwork.assets(code = Some("ETH"), issuer = Some("GAE325UC3T63ROIUFBBRNMWGM7
     [ ] By orderbook
     [ ] By account
     [ ] By ledger
-  [🚀] Post transaction
-    [🚀] Shallow parse response
+  [ ] Post transaction
+    [✓] Shallow parse response
     [ ] XDR response parse
+    [ ] Type heirarchy for errors
+  [ ] Single methods for common operations
+    [ ] payment
+    [ ] create offer
+    [ ] create & fund account
 [ ] Streams
   [ ] Effects
   [ ] Ledgers
   [ ] Operations
   [ ] ...
+[ ] Federation
 ```
+
+### todo
+
+* all txns require an account, so account can record the network it came from.
