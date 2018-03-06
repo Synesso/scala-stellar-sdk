@@ -8,8 +8,11 @@ import stellar.sdk.resp.TxnFailureDeserializer
 
 import scala.util.Try
 
-case class TxnFailure(uri: Uri, status: Int, detail: String, resultCode: Option[String], resultXDR: Option[String])
-  extends Exception(s"Uri: $uri - $detail: $resultCode")
+case class TxnFailure(uri: Uri, status: Int, detail: String, resultCode: Option[String],
+                      operationResultCodes: Option[Array[String]], resultXDR: Option[String])
+  extends Exception(s"Uri: $uri - $detail${resultCode.map(": " + _).getOrElse("")}${
+    operationResultCodes.map(_.mkString(",")).map(" - " + _).getOrElse("")
+  }")
 
 object TxnFailure {
   implicit val formats = Serialization.formats(NoTypeHints) + TxnFailureDeserializer
