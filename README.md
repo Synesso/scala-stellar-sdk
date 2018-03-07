@@ -34,61 +34,57 @@ In your `build.sbt`
 ```
 resolvers += "scala-stellar-sdk-repo" at "https://dl.bintray.com/synesso/mvn"
 
-libraryDependencies +=  "stellar.scala.sdk" %% "scala-stellar-sdk" % "0.0.1.5"
+libraryDependencies +=  "stellar.scala.sdk" %% "scala-stellar-sdk" % "0.1.0"
 ```
 
 ## Examples
 
-All of the following examples use the [Ammonite REPL](http://ammonite.io/). After launching `amm`, fetch and import the
+The following examples use the [Ammonite REPL](http://ammonite.io/). After launching `amm`, fetch and import the
 Stellar SDK for Scala.
 
 ```
 interp.repositories() ++= Seq(coursier.MavenRepository("https://dl.bintray.com/synesso/mvn/"))
 
-import $ivy.`stellar.scala.sdk::scala-stellar-sdk:0.0.1.5`
+import $ivy.`stellar.scala.sdk::scala-stellar-sdk:0.1.0`
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent._
 import stellar.sdk._
 import stellar.sdk.resp._
 ```
 
-### Accounts
-
-#### Creating and funding a test account
+### Creating and funding a test account
 
 ```
 val kp = KeyPair.random
 TestNetwork.fund(kp) // Future[FundTestAccountResp]
 ```
 
-#### Checking the status of an account
+### Checking the status of an account
 
 ```
 TestNetwork.account(kp) // Future[AccountResp]
 ```
 
-#### Fetch data for an account
+### Funding a new account with a create account operation
 
 ```
-TestNetwork.accountData(kp, "data_key") // Future[String]
+implicit val network = TestNetwork
+
+val funder: KeyPair = kp // funded account from first example
+val toCreate = KeyPair.random
+
+for {
+  account <- TestNetwork.account(funder)
+  txn <- Future.fromTry {
+    Transaction(Account(funder, sequenceNumber))
+      .add(CreateAccountOperation(toCreate, Amount.lumens(1)))
+      .sign(source)
+  } yield txn.submit
+}
+
 ```
 
-
-### Assets
-
-#### Fetching a stream of all assets
-
-```
-TestNetwork.assets // Future[Stream[AssetResp]]
-```
-
-#### Filtering assets by code or issuer, or both.
-
-```
-TestNetwork.assets(code = Some("ETH"))
-TestNetwork.assets(issuer = Some("GAE325UC3T63ROIUFBBRNMWGM7AY2NI5C2YO55IPLRKCF3UECXLXKNNZ"))
-TestNetwork.assets(code = Some("ETH"), issuer = Some("GAE325UC3T63ROIUFBBRNMWGM7AY2NI5C2YO55IPLRKCF3UECXLXKNNZ"))
-```
+Additional examples can be found in the `/examples` folder.
 
 
 
@@ -97,7 +93,7 @@ TestNetwork.assets(code = Some("ETH"), issuer = Some("GAE325UC3T63ROIUFBBRNMWGM7
 ```
 [✓] Operations
 [✓] Transactions
-[🚀] Horizon Endpoints
+[ ] Horizon Endpoints
   [✓] Account details
   [✓] Assets
     [✓] Unfiltered
@@ -179,6 +175,3 @@ TestNetwork.assets(code = Some("ETH"), issuer = Some("GAE325UC3T63ROIUFBBRNMWGM7
 [ ] Federation
 ```
 
-### todo
-
-* all txns require an account, so account can record the network it came from.
