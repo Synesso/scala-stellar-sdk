@@ -10,8 +10,8 @@ The Scala SDK for the [Stellar network](https://www.stellar.org/) provides an AP
 * Create accounts
 * Build and submit transactions
 * Query network state from Horizon
-* Stream network updates from Horizon [[Pending]]
-* Query federation servers [[Pending]]
+* Stream network updates from Horizon [Pending]
+* Query federation servers [Pending]
 
 
 ## Benefits
