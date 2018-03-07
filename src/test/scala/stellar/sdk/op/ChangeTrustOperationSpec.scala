@@ -5,7 +5,8 @@ import org.json4s.native.JsonMethods.parse
 import org.json4s.native.Serialization
 import org.scalacheck.Arbitrary
 import org.specs2.mutable.Specification
-import stellar.sdk.{ArbitraryInput, DomainMatchers}
+import org.stellar.sdk.xdr.{ChangeTrustOp, Int64, Operation => XDROperation}
+import stellar.sdk.{ArbitraryInput, DomainMatchers, NativeAsset}
 
 class ChangeTrustOperationSpec extends Specification with ArbitraryInput with DomainMatchers with JsonSnippets {
 
@@ -17,6 +18,14 @@ class ChangeTrustOperationSpec extends Specification with ArbitraryInput with Do
       Operation.fromXDR(actual.toXDR) must beSuccessfulTry.like {
         case expected: ChangeTrustOperation => expected must beEquivalentTo(actual)
       }
+    }
+
+    "fail if the xdr specifies a native asset" >> {
+      val op = new ChangeTrustOp
+      op.setLimit(new Int64)
+      op.getLimit.setInt64(10000000L)
+      op.setLine(NativeAsset.toXDR)
+      ChangeTrustOperation.from(op) must beAFailedTry[ChangeTrustOperation]
     }
 
     "parse from json" >> prop { op: Transacted[ChangeTrustOperation] =>
