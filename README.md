@@ -16,16 +16,21 @@ The Scala SDK for the [Stellar network](https://www.stellar.org/) provides an AP
 
 ## Benefits
 
-A Scala developer would choose this SDK over the Java SDK because:
+A Scala developer would choose to use this SDK because it aims to provide:
 
-* `Option`s, not nulls
-* `Try`s, not exceptions
-* `Future`s for all network operations
-* Encapsulation of paged responses into `Stream`s
-* Case classes instead of builder patterns
-* Explicit type hierarchies instead of meaningful primitives
-* Test coverage: Generative testing using scalacheck with the goal of 100% coverage
-* Perform network operations on the terminal through the scala REPL
+* Code safety
+  * `Option`s, not nulls
+  * `Try`s, not exceptions
+  * Explicit type hierarchies instead of meaningful primitives
+
+* Convenience
+  * Asynchronous by default
+  * Encapsulation of paged responses into `Stream`s
+  * Case classes instead of builder patterns
+  * Perform network operations on the terminal through the scala REPL
+
+* Correctness
+  * Generative testing using scalacheck with the goal of 100% test coverage
 
 
 ## Deprecation warning
