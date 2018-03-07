@@ -5,11 +5,11 @@ import org.stellar.sdk.xdr.Operation.OperationBody
 import org.stellar.sdk.xdr.OperationType._
 import org.stellar.sdk.xdr.{AccountID, AllowTrustOp}
 import stellar.sdk._
-import stellar.sdk.{ByteArrays, KeyPair, VerifyingKey}
+import stellar.sdk.{ByteArrays, KeyPair, PublicKey}
 
 import scala.util.Try
 
-case class AllowTrustOperation(trustor: VerifyingKey,
+case class AllowTrustOperation(trustor: PublicKey,
                                assetCode: String,
                                authorize: Boolean,
                                sourceAccount: Option[PublicKeyOps] = None) extends Operation with ByteArrays {

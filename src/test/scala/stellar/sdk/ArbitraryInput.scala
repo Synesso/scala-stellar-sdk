@@ -19,7 +19,7 @@ trait ArbitraryInput extends ScalaCheck {
 
   implicit def arbKeyPair: Arbitrary[KeyPair] = Arbitrary(genKeyPair)
 
-  implicit def arbVerifyingKey: Arbitrary[VerifyingKey] = Arbitrary(genVerifyingKey)
+  implicit def arbPublicKey: Arbitrary[PublicKey] = Arbitrary(genPublicKey)
 
   implicit def arbAccount: Arbitrary[Account] = Arbitrary(genAccount)
 
@@ -34,25 +34,25 @@ trait ArbitraryInput extends ScalaCheck {
   implicit def arbNonNativeAsset: Arbitrary[NonNativeAsset] = Arbitrary(genNonNativeAsset)
 
   implicit def arbAccountMergeOperation: Arbitrary[AccountMergeOperation] = Arbitrary(genAccountMergeOperation)
-  
+
   implicit def arbAllowTrustOperation: Arbitrary[AllowTrustOperation] = Arbitrary(genAllowTrustOperation)
-  
+
   implicit def arbChangeTrustOperation: Arbitrary[ChangeTrustOperation] = Arbitrary(genChangeTrustOperation)
-  
+
   implicit def arbCreateAccountOperation: Arbitrary[CreateAccountOperation] = Arbitrary(genCreateAccountOperation)
-  
+
   implicit def arbCreatePassiveOfferOperation: Arbitrary[CreatePassiveOfferOperation] = Arbitrary(genCreatePassiveOfferOperation)
-  
+
   implicit def arbWriteDataOperation: Arbitrary[WriteDataOperation] = Arbitrary(genWriteDataOperation)
-  
+
   implicit def arbDeleteDataOperation: Arbitrary[DeleteDataOperation] = Arbitrary(genDeleteDataOperation)
-  
+
   implicit def arbCreateOfferOperation: Arbitrary[CreateOfferOperation] = Arbitrary(genCreateOfferOperation)
-  
+
   implicit def arbDeleteOfferOperation: Arbitrary[DeleteOfferOperation] = Arbitrary(genDeleteOfferOperation)
-  
+
   implicit def arbUpdateOfferOperation: Arbitrary[UpdateOfferOperation] = Arbitrary(genUpdateOfferOperation)
-  
+
   implicit def arbPathPaymentOperation: Arbitrary[PathPaymentOperation] = Arbitrary(genPathPaymentOperation)
 
   implicit def arbPaymentOperation: Arbitrary[PaymentOperation] = Arbitrary(genPaymentOperation)
@@ -87,7 +87,7 @@ trait ArbitraryInput extends ScalaCheck {
 
   def genSignerKey: Gen[SignerKey] = genKeyPair.map(_.getXDRSignerKey)
 
-  def genVerifyingKey: Gen[VerifyingKey] = genKeyPair.map(kp => VerifyingKey(kp.pk))
+  def genPublicKey: Gen[PublicKey] = genKeyPair.map(kp => PublicKey(kp.pk))
 
   def genAccount: Gen[Account] = for {
     kp <- genKeyPair
@@ -145,11 +145,11 @@ trait ArbitraryInput extends ScalaCheck {
     Gen.oneOf(AuthorizationRequiredFlag, AuthorizationRevocableFlag, AuthorizationImmutableFlag)
 
   def genAccountMergeOperation: Gen[AccountMergeOperation] = for {
-    destination <- genVerifyingKey
+    destination <- genPublicKey
   } yield AccountMergeOperation(destination)
 
   def genAllowTrustOperation = for {
-    trustor <- genVerifyingKey
+    trustor <- genPublicKey
     assetCode <- Gen.identifier.map(_.take(12))
     authorise <- Gen.oneOf(true, false)
   } yield AllowTrustOperation(trustor, assetCode, authorise)
@@ -159,7 +159,7 @@ trait ArbitraryInput extends ScalaCheck {
   } yield ChangeTrustOperation(limit)
 
   def genCreateAccountOperation = for {
-    destination <- genVerifyingKey
+    destination <- genPublicKey
     startingBalance <- genNativeAmount
   } yield CreateAccountOperation(destination, startingBalance)
 
@@ -206,18 +206,18 @@ trait ArbitraryInput extends ScalaCheck {
 
   def genPathPaymentOperation = for {
     sendMax <- genAmount
-    destAccount <- genVerifyingKey
+    destAccount <- genPublicKey
     destAmount <- genAmount
     path <- Gen.listOf(genAsset)
   } yield PathPaymentOperation(sendMax, destAccount, destAmount, path)
 
   def genPaymentOperation = for {
-    destAccount <- genVerifyingKey
+    destAccount <- genPublicKey
     amount <- genAmount
   } yield PaymentOperation(destAccount, amount)
 
   def genSetOptionsOperation: Gen[SetOptionsOperation] = for {
-      inflationDestination <- Gen.option(genVerifyingKey)
+      inflationDestination <- Gen.option(genPublicKey)
       clearFlags <- Gen.option(Gen.nonEmptyContainerOf[Set, IssuerFlag](genIssuerFlag))
       setFlags <- Gen.option(Gen.nonEmptyContainerOf[Set, IssuerFlag](genIssuerFlag))
       masterKeyWeight <- Gen.option(Gen.choose(0, 255))
@@ -226,7 +226,7 @@ trait ArbitraryInput extends ScalaCheck {
       highThreshold <- Gen.option(Gen.choose(0, 255))
       homeDomain <- Gen.option(Gen.identifier)
       signer <- Gen.option{ for {
-        accn <- genVerifyingKey
+        accn <- genPublicKey
         weight <- Gen.choose(0, 255)
       } yield AccountSigner(accn, weight)}
     } yield SetOptionsOperation(inflationDestination, clearFlags, setFlags, masterKeyWeight, lowThreshold, medThreshold,
@@ -309,7 +309,7 @@ trait ArbitraryInput extends ScalaCheck {
 
   def genOfferResp: Gen[OfferResp] = for {
     id <- Gen.posNum[Long]
-    seller <- genVerifyingKey
+    seller <- genPublicKey
     selling <- genAmount
     buying <- genAsset
     price <- genPrice
@@ -318,7 +318,7 @@ trait ArbitraryInput extends ScalaCheck {
   def genTransacted[O <: Operation](genOp: Gen[O]): Gen[Transacted[O]] = for {
     id <- Gen.posNum[Long]
     hash <- genHash
-    source <- genVerifyingKey
+    source <- genPublicKey
     createdAt <- genZonedDateTime
     op <- genOp
   } yield Transacted(id, hash, source, createdAt, op)
@@ -341,9 +341,9 @@ trait ArbitraryInput extends ScalaCheck {
     id <- Gen.identifier
     ledgerCloseTime <- genZonedDateTime
     offerId <- Gen.posNum[Long]
-    baseAccount <- genVerifyingKey
+    baseAccount <- genPublicKey
     baseAmount <- genAmount
-    counterAccount <- genVerifyingKey
+    counterAccount <- genPublicKey
     counterAmount <- genAmount
     baseIsSeller <- Gen.oneOf(true, false)
   } yield Trade(id, ledgerCloseTime, offerId, baseAccount, baseAmount, counterAccount, counterAmount, baseIsSeller)

@@ -14,21 +14,21 @@ class SignerEffectRespSpec extends Specification with ArbitraryInput {
   "a signer created effect document" should {
     "parse to a signer created effect" >> prop { (id : String, kp: KeyPair, weight: Short, pubKey: String) =>
       val json = doc(id, kp, "signer_created", weight, "public_key" -> pubKey)
-      parse(json).extract[EffectResp] mustEqual EffectSignerCreated(id, kp.asVerifyingKey, weight, pubKey)
+      parse(json).extract[EffectResp] mustEqual EffectSignerCreated(id, kp.asPublicKey, weight, pubKey)
     }.setGen1(Gen.identifier).setGen4(Gen.identifier)
   }
 
   "a signer updated effect document" should {
     "parse to a signer updated effect" >> prop { (id : String, kp: KeyPair, weight: Short, pubKey: String) =>
       val json = doc(id, kp, "signer_updated", weight, "public_key" -> pubKey)
-      parse(json).extract[EffectResp] mustEqual EffectSignerUpdated(id, kp.asVerifyingKey, weight, pubKey)
+      parse(json).extract[EffectResp] mustEqual EffectSignerUpdated(id, kp.asPublicKey, weight, pubKey)
     }.setGen1(Gen.identifier).setGen4(Gen.identifier)
   }
 
   "a signer removed effect document" should {
     "parse to a signer removed effect" >> prop { (id : String, kp: KeyPair, pubKey: String) =>
       val json = doc(id, kp, "signer_removed", 0, "public_key" -> pubKey)
-      parse(json).extract[EffectResp] mustEqual EffectSignerRemoved(id, kp.asVerifyingKey, pubKey)
+      parse(json).extract[EffectResp] mustEqual EffectSignerRemoved(id, kp.asPublicKey, pubKey)
     }.setGen1(Gen.identifier).setGen3(Gen.identifier)
   }
 

@@ -15,7 +15,7 @@ class TrustLineEffectRespSpec extends Specification with ArbitraryInput {
     "parse to a trustline created effect" >> prop {
       (id : String, accn: KeyPair, asset: NonNativeAsset, limit: Double) =>
       val json = doc(id, "trustline_created", accn, asset, limit)
-      parse(json).extract[EffectResp] mustEqual EffectTrustLineCreated(id, accn.asVerifyingKey, asset, limit)
+      parse(json).extract[EffectResp] mustEqual EffectTrustLineCreated(id, accn.asPublicKey, asset, limit)
     }.setGen1(Gen.identifier).setGen4(Gen.posNum[Double])
   }
 
@@ -23,14 +23,14 @@ class TrustLineEffectRespSpec extends Specification with ArbitraryInput {
     "parse to a trustline updated effect" >> prop {
       (id : String, accn: KeyPair, asset: NonNativeAsset, limit: Double) =>
       val json = doc(id, "trustline_updated", accn, asset, limit)
-      parse(json).extract[EffectResp] mustEqual EffectTrustLineUpdated(id, accn.asVerifyingKey, asset, limit)
+      parse(json).extract[EffectResp] mustEqual EffectTrustLineUpdated(id, accn.asPublicKey, asset, limit)
     }.setGen1(Gen.identifier).setGen4(Gen.posNum[Double])
   }
 
   "a trustline removed effect document" should {
     "parse to a trustline removed effect" >> prop { (id : String, accn: KeyPair, asset: NonNativeAsset) =>
       val json = doc(id, "trustline_removed", accn, asset, 0.0)
-      parse(json).extract[EffectResp] mustEqual EffectTrustLineRemoved(id, accn.asVerifyingKey, asset)
+      parse(json).extract[EffectResp] mustEqual EffectTrustLineRemoved(id, accn.asPublicKey, asset)
     }.setGen1(Gen.identifier)
   }
 

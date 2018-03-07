@@ -5,7 +5,7 @@ import java.time.format.DateTimeFormatter
 
 import org.apache.commons.codec.binary.Hex
 import org.specs2.matcher.{AnyMatchers, Matcher, MustExpectations, OptionMatchers, SequenceMatchersCreation}
-import org.stellar.sdk.xdr.{DecoratedSignature, Hash, PublicKey, SignerKey, Uint64, Memo => XDRMemo, Operation => XDROperation}
+import org.stellar.sdk.xdr.{DecoratedSignature, Hash, PublicKey => XDRPublicKey, SignerKey, Uint64, Memo => XDRMemo, Operation => XDROperation}
 import stellar.sdk._
 import stellar.sdk.op._
 
@@ -45,8 +45,8 @@ trait DomainMatchers extends AnyMatchers with MustExpectations with SequenceMatc
       signer.getEd25519.getUint256.toSeq mustEqual other.getEd25519.getUint256.toSeq
   }
 
-  def beEquivalentTo(other: VerifyingKey): Matcher[VerifyingKey] = beLike[VerifyingKey] {
-    case VerifyingKey(pk) =>
+  def beEquivalentTo(other: PublicKey): Matcher[PublicKey] = beLike[PublicKey] {
+    case PublicKey(pk) =>
       Hex.encodeHex(pk.getAbyte) mustEqual Hex.encodeHex(other.pk.getAbyte)
   }
 
@@ -71,7 +71,7 @@ trait DomainMatchers extends AnyMatchers with MustExpectations with SequenceMatc
       memo.getText mustEqual other.getText
   }
 
-  def beEquivalentTo(other: PublicKey): Matcher[PublicKey] = beLike[PublicKey] {
+  def beEquivalentTo(other: XDRPublicKey): Matcher[XDRPublicKey] = beLike[XDRPublicKey] {
     case pk =>
       pk.getDiscriminant mustEqual other.getDiscriminant
       pk.getEd25519.getUint256.toSeq mustEqual other.getEd25519.getUint256.toSeq

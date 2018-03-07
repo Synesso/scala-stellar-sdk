@@ -6,7 +6,7 @@ import java.util
 
 import net.i2p.crypto.eddsa._
 import net.i2p.crypto.eddsa.spec._
-import org.stellar.sdk.xdr._
+import org.stellar.sdk.xdr.{PublicKey => XDRPublicKey, _}
 
 import scala.util.Try
 
@@ -54,7 +54,7 @@ case class KeyPair(pk: EdDSAPublicKey, sk: EdDSAPrivateKey) extends PublicKeyOps
   }
 }
 
-case class VerifyingKey(pk: EdDSAPublicKey) extends PublicKeyOps {
+case class PublicKey(pk: EdDSAPublicKey) extends PublicKeyOps {
 
   override def hashCode(): Int = accountId.hashCode()
 
@@ -63,7 +63,7 @@ case class VerifyingKey(pk: EdDSAPublicKey) extends PublicKeyOps {
     case _ => false
   }
 
-  override def toString: String = s"VerifyingKey($accountId)"
+  override def toString: String = s"PublicKey($accountId)"
 
 }
 
@@ -93,8 +93,8 @@ trait PublicKeyOps {
     case _: SignatureException => false
   }.get
 
-  def getXDRPublicKey: PublicKey = {
-    val publicKey = new PublicKey
+  def getXDRPublicKey: XDRPublicKey = {
+    val publicKey = new XDRPublicKey
     publicKey.setDiscriminant(PublicKeyType.PUBLIC_KEY_TYPE_ED25519)
     val uint256 = new Uint256
     uint256.setUint256(pk.getAbyte)
@@ -114,7 +114,7 @@ trait PublicKeyOps {
   /**
     * This key pair or verifying key without the private key.
     */
-  def asVerifyingKey = VerifyingKey(pk)
+  def asPublicKey = PublicKey(pk)
 
 
   /**
@@ -123,7 +123,7 @@ trait PublicKeyOps {
   val signatureHint: Try[SignatureHint] = Try {
     val pkStream = new ByteArrayOutputStream
     val os = new XdrDataOutputStream(pkStream)
-    PublicKey.encode(os, getXDRPublicKey)
+    XDRPublicKey.encode(os, getXDRPublicKey)
     val pkBytes = pkStream.toByteArray
     val hintBytes = util.Arrays.copyOfRange(pkBytes, pkBytes.length - 4, pkBytes.length)
     val hint = new SignatureHint
@@ -181,21 +181,21 @@ object KeyPair {
     * Creates a new Stellar verifying key from a 32 byte address.
     *
     * @param publicKey The 32 byte public key.
-    * @return { @link VerifyingKey}
+    * @return { @link PublicKey }
     */
-  def fromPublicKey(publicKey: Array[Byte]): VerifyingKey = {
-    VerifyingKey(new EdDSAPublicKey(new EdDSAPublicKeySpec(publicKey, ed25519)))
+  def fromPublicKey(publicKey: Array[Byte]): PublicKey = {
+    PublicKey(new EdDSAPublicKey(new EdDSAPublicKeySpec(publicKey, ed25519)))
   }
 
   /**
-    * Creates a new Stellar VerifyingKey from a strkey encoded Stellar account ID.
+    * Creates a new Stellar PublicKey from a strkey encoded Stellar account ID.
     *
     * @param accountId The strkey encoded Stellar account ID.
-    * @return { @link VerifyingKey}
+    * @return { @link PublicKey}
     */
-  def fromAccountId(accountId: String): VerifyingKey = fromPublicKey(StrKey.decodeStellarAccountId(accountId))
+  def fromAccountId(accountId: String): PublicKey = fromPublicKey(StrKey.decodeStellarAccountId(accountId))
 
-  def fromXDRPublicKey(key: PublicKey) = fromPublicKey(key.getEd25519.getUint256)
+  def fromXDRPublicKey(key: XDRPublicKey) = fromPublicKey(key.getEd25519.getUint256)
 
   /**
     * Generates a random Stellar keypair.

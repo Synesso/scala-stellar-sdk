@@ -14,7 +14,7 @@ class AccountEffectRespSpec extends Specification with ArbitraryInput {
   "a create account effect document" should {
     "parse to a create account effect" >> prop { (id: String, accn: KeyPair, amount: NativeAmount) =>
       parse(doc(id, accn, "account_created", "starting_balance" -> amountString(amount)))
-        .extract[EffectResp] mustEqual EffectAccountCreated(id, accn.asVerifyingKey, amount)
+        .extract[EffectResp] mustEqual EffectAccountCreated(id, accn.asPublicKey, amount)
     }.setGen1(Gen.identifier)
   }
 
@@ -23,7 +23,7 @@ class AccountEffectRespSpec extends Specification with ArbitraryInput {
       val json = doc(id, accn, "account_debited",
         "asset_type" -> "native",
         "amount" -> amountString(amount))
-      parse(json).extract[EffectResp] mustEqual EffectAccountDebited(id, accn.asVerifyingKey, amount)
+      parse(json).extract[EffectResp] mustEqual EffectAccountDebited(id, accn.asPublicKey, amount)
     }.setGen1(Gen.identifier)
 
     "parse to a debit account effect with non-native amount" >> prop { (id: String, accn: KeyPair, amount: IssuedAmount) =>
@@ -35,7 +35,7 @@ class AccountEffectRespSpec extends Specification with ArbitraryInput {
         "asset_code" -> amount.asset.code,
         "asset_issuer" -> amount.asset.issuer.accountId,
         "amount" -> amountString(amount))
-      parse(json).extract[EffectResp] mustEqual EffectAccountDebited(id, accn.asVerifyingKey, amount)
+      parse(json).extract[EffectResp] mustEqual EffectAccountDebited(id, accn.asPublicKey, amount)
     }.setGen1(Gen.identifier)
   }
 
@@ -44,7 +44,7 @@ class AccountEffectRespSpec extends Specification with ArbitraryInput {
       val json = doc(id, accn, "account_credited",
         "asset_type" -> "native",
         "amount" -> amountString(amount))
-      parse(json).extract[EffectResp] mustEqual EffectAccountCredited(id, accn.asVerifyingKey, amount)
+      parse(json).extract[EffectResp] mustEqual EffectAccountCredited(id, accn.asPublicKey, amount)
     }.setGen1(Gen.identifier)
 
     "parse to a credit account effect with non-native amount" >> prop { (id: String, accn: KeyPair, amount: IssuedAmount) =>
@@ -56,14 +56,14 @@ class AccountEffectRespSpec extends Specification with ArbitraryInput {
         "asset_code" -> amount.asset.code,
         "asset_issuer" -> amount.asset.issuer.accountId,
         "amount" -> amountString(amount))
-      parse(json).extract[EffectResp] mustEqual EffectAccountCredited(id, accn.asVerifyingKey, amount)
+      parse(json).extract[EffectResp] mustEqual EffectAccountCredited(id, accn.asPublicKey, amount)
     }.setGen1(Gen.identifier)
   }
 
   "an account removed effect document" should {
     "parse to an account removed effect" >> prop { (id: String, accn: KeyPair) =>
       val json = doc(id, accn, "account_removed")
-      parse(json).extract[EffectResp] mustEqual EffectAccountRemoved(id, accn.asVerifyingKey)
+      parse(json).extract[EffectResp] mustEqual EffectAccountRemoved(id, accn.asPublicKey)
     }.setGen1(Gen.identifier)
   }
 
@@ -73,7 +73,7 @@ class AccountEffectRespSpec extends Specification with ArbitraryInput {
         "low_threshold" -> thresholds.low,
         "med_threshold" -> thresholds.med,
         "high_threshold" -> thresholds.high)
-      parse(json).extract[EffectResp] mustEqual EffectAccountThresholdsUpdated(id, accn.asVerifyingKey, thresholds)
+      parse(json).extract[EffectResp] mustEqual EffectAccountThresholdsUpdated(id, accn.asPublicKey, thresholds)
     }.setGen1(Gen.identifier)
   }
 
@@ -81,7 +81,7 @@ class AccountEffectRespSpec extends Specification with ArbitraryInput {
     "parse to an account home domain updated effect" >> prop { (id : String, accn: KeyPair, domain: String) =>
       val json = doc(id, accn, "account_home_domain_updated",
         "home_domain" -> domain)
-      parse(json).extract[EffectResp] mustEqual EffectAccountHomeDomainUpdated(id, accn.asVerifyingKey, domain)
+      parse(json).extract[EffectResp] mustEqual EffectAccountHomeDomainUpdated(id, accn.asPublicKey, domain)
     }.setGen1(Gen.identifier).setGen3(Gen.identifier)
   }
 
@@ -89,7 +89,7 @@ class AccountEffectRespSpec extends Specification with ArbitraryInput {
     "parse to an account flags updated effect" >> prop { (id : String, accn: KeyPair, authRequired: Boolean) =>
       // todo - support all 3 flags, when behaviour is known.  https://stellar.stackexchange.com/questions/429/confusing-effects-after-set-options-transaction
       val json = doc(id, accn, "account_flags_updated", "auth_required_flag" -> authRequired)
-      parse(json).extract[EffectResp] mustEqual EffectAccountFlagsUpdated(id, accn.asVerifyingKey, authRequired)
+      parse(json).extract[EffectResp] mustEqual EffectAccountFlagsUpdated(id, accn.asPublicKey, authRequired)
     }.setGen1(Gen.identifier)
   }
 

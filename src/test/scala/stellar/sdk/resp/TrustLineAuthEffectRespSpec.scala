@@ -14,14 +14,14 @@ class TrustLineAuthEffectRespSpec extends Specification with ArbitraryInput {
   "an authorize trustline effect document" should {
     "parse to an authorize trustline effect" >> prop { (id : String, accn: KeyPair, asset: NonNativeAsset) =>
       val json = doc(id, "trustline_authorized", accn, asset, 0.0)
-      parse(json).extract[EffectResp] mustEqual EffectTrustLineAuthorized(id, accn.asVerifyingKey, asset)
+      parse(json).extract[EffectResp] mustEqual EffectTrustLineAuthorized(id, accn.asPublicKey, asset)
     }.setGen1(Gen.identifier)
   }
 
   "a deauthorize trustline effect document" should {
     "parse to a deauthorize trustline effect" >> prop { (id : String, accn: KeyPair, asset: NonNativeAsset) =>
       val json = doc(id, "trustline_deauthorized", accn, asset, 0.0)
-      parse(json).extract[EffectResp] mustEqual EffectTrustLineDeauthorized(id, accn.asVerifyingKey, asset)
+      parse(json).extract[EffectResp] mustEqual EffectTrustLineDeauthorized(id, accn.asPublicKey, asset)
     }.setGen1(Gen.identifier)
   }
 
