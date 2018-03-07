@@ -49,6 +49,7 @@ import $ivy.`stellar.scala.sdk::scala-stellar-sdk:0.1.0`
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent._
 import stellar.sdk._
+import stellar.sdk.op._
 import stellar.sdk.resp._
 ```
 
@@ -56,13 +57,17 @@ import stellar.sdk.resp._
 
 ```
 val kp = KeyPair.random
-TestNetwork.fund(kp) // Future[FundTestAccountResp]
+TestNetwork.fund(kp)
 ```
 
 ### Checking the status of an account
 
 ```
-TestNetwork.account(kp) // Future[AccountResp]
+import scala.util.Success
+
+TestNetwork.account(kp) onSuccess { case resp =>
+  println(s"Account ${resp.id}: last sequence was ${resp.lastSequence}. Balances: ${resp.balances.mkString(",")}")
+}
 ```
 
 ### Funding a new account with a create account operation
@@ -76,12 +81,11 @@ val toCreate = KeyPair.random
 for {
   account <- TestNetwork.account(funder)
   txn <- Future.fromTry {
-    Transaction(Account(funder, sequenceNumber))
+    Transaction(Account(funder, account.lastSequence + 1))
       .add(CreateAccountOperation(toCreate, Amount.lumens(1)))
-      .sign(source)
+      .sign(funder)
+    }
   } yield txn.submit
-}
-
 ```
 
 Additional examples can be found in the `/examples` folder.
@@ -96,9 +100,6 @@ Additional examples can be found in the `/examples` folder.
 [ ] Horizon Endpoints
   [✓] Account details
   [✓] Assets
-    [✓] Unfiltered
-    [✓] By code
-    [✓] By issuer
   [✓] Data for account
   [ ] Effects
     [ ] Unfiltered stream
