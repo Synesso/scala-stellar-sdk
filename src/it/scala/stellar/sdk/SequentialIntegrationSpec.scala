@@ -6,10 +6,10 @@ import org.specs2.concurrent.ExecutionEnv
 import org.specs2.mutable.Specification
 import stellar.sdk.SessionTestAccount.{accWithData, accn}
 import stellar.sdk.inet.TxnFailure
-import stellar.sdk.op.{CreateOfferOperation, PaymentOperation, Transacted}
+import stellar.sdk.op.{CreateAccountOperation, CreateOfferOperation, PaymentOperation, Transacted}
 import stellar.sdk.resp._
 
-import scala.concurrent.Await
+import scala.concurrent.{Await, Future}
 import scala.concurrent.duration._
 
 class SequentialIntegrationSpec(implicit ee: ExecutionEnv) extends Specification with DomainMatchersIT {
@@ -250,7 +250,26 @@ class SequentialIntegrationSpec(implicit ee: ExecutionEnv) extends Specification
             sourceAccount = None))
       ).awaitFor(10.seconds)
     }
+  }
 
+  "transaction" should {
+    "be accepted when posted to the network" >> {
+      implicit val network = TestNetwork
+
+      val newAccount = KeyPair.random
+      val balance = for {
+        sequence <- network.account(accn).map(_.lastSequence + 1)
+        txn <- Future.fromTry {
+          Transaction(Account(accn, sequence))
+            .add(CreateAccountOperation(newAccount))
+            .sign(accn)
+        }
+        resp <- txn.submit
+        newBalances <- network.account(newAccount).map(_.balances)
+      } yield newBalances
+
+      balance must beEqualTo(Seq(Amount.lumens(1))).awaitFor(10.seconds)
+    }
   }
 
 }

@@ -27,6 +27,13 @@ A Scala developer would choose this SDK over the Java SDK because:
 * Test coverage: Generative testing using scalacheck with the goal of 100% coverage
 * Perform network operations on the terminal through the scala REPL
 
+
+## Deprecation warning
+
+At this stage, some classes and interfaces are likely to be refined. Minor releases may break backwards compatibility
+with minimal notice until v1.0.0.
+
+
 ## Installation
 
 In your `build.sbt`
@@ -66,7 +73,11 @@ TestNetwork.fund(kp)
 import scala.util.Success
 
 TestNetwork.account(kp) onSuccess { case resp =>
-  println(s"Account ${resp.id}: last sequence was ${resp.lastSequence}. Balances: ${resp.balances.mkString(",")}")
+  println(s"""
+    |Account ${resp.id}
+    |  Last sequence was ${resp.lastSequence}.
+    |  Balances: ${resp.balances.mkString(",")}
+    """.stripMargin)
 }
 ```
 
