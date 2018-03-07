@@ -5,8 +5,14 @@
 
 # Stellar SDK for Scala
 
-A Scala SDK for the [Stellar network](https://www.stellar.org/). It is a work in [progress](#progress) with a target of being fully functional
-by March 15, 2018. Contributions are welcome.
+The Scala SDK for the [Stellar network](https://www.stellar.org/) provides an API to:
+
+* Create accounts
+* Build and submit transactions
+* Query network state from Horizon
+* Stream network updates from Horizon [[Pending]]
+* Query federation servers [[Pending]]
+
 
 ## Benefits
 
@@ -16,7 +22,7 @@ A Scala developer would choose this SDK over the Java SDK because:
 * `Try`s, not exceptions
 * `Future`s for all network operations
 * Encapsulation of paged responses into `Stream`s
-* No builder patterns, just case classes
+* Case classes instead of builder patterns
 * Explicit type hierarchies instead of meaningful primitives
 * Test coverage: Generative testing using scalacheck with the goal of 100% coverage
 * Perform network operations on the terminal through the scala REPL
