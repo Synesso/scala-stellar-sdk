@@ -1,8 +1,8 @@
 package stellar.sdk.op
 
 import org.json4s.NoTypeHints
-import org.json4s.native.Serialization
 import org.json4s.native.JsonMethods.parse
+import org.json4s.native.Serialization
 import org.scalacheck.Arbitrary
 import org.specs2.mutable.Specification
 import org.stellar.sdk.xdr.ManageOfferOp
@@ -25,30 +25,30 @@ class ManageOfferOperationSpec extends Specification with ArbitraryInput with Do
     "be parsed from json" >> prop { op: Transacted[CreateOfferOperation] =>
       val doc =
         s"""
-          |{
-          |  "_links":{
-          |    "self":{"href":"https://horizon.stellar.org/operations/109521666052097"},
-          |    "transaction":{"href":"https://horizon.stellar.org/transactions/85bcf02eed66ac86fd3d26e813214f2d4e25841d8420f7f52d377418040f4592"},
-          |    "effects":{"href":"https://horizon.stellar.org/operations/109521666052097/effects"},
-          |    "succeeds":{"href":"https://horizon.stellar.org/effects?order=desc&cursor=109521666052097"},
-          |    "precedes":{"href":"https://horizon.stellar.org/effects?order=asc&cursor=109521666052097"}
-          |  },
-          |  "id":"${op.id}",
-          |  "paging_token":"109521666052097",
-          |  "source_account":"${op.sourceAccount.accountId}",
-          |  "type":"manage_offer",
-          |  "type_i":3,
-          |  "created_at":"${formatter.format(op.createdAt)}",
-          |  "transaction_hash":"${op.txnHash}",
-          |  ${amountDocPortion(op.operation.selling, assetPrefix = "selling_")}
-          |  ${asset(op.operation.buying, assetPrefix = "buying_")}
-          |  "price":"1.0000000",
-          |  "price_r":{
-          |    "n":${op.operation.price.n},
-          |    "d":${op.operation.price.d}
-          |  },
-          |  "offer_id":0
-          |}
+           |{
+           |  "_links":{
+           |    "self":{"href":"https://horizon.stellar.org/operations/109521666052097"},
+           |    "transaction":{"href":"https://horizon.stellar.org/transactions/85bcf02eed66ac86fd3d26e813214f2d4e25841d8420f7f52d377418040f4592"},
+           |    "effects":{"href":"https://horizon.stellar.org/operations/109521666052097/effects"},
+           |    "succeeds":{"href":"https://horizon.stellar.org/effects?order=desc&cursor=109521666052097"},
+           |    "precedes":{"href":"https://horizon.stellar.org/effects?order=asc&cursor=109521666052097"}
+           |  },
+           |  "id":"${op.id}",
+           |  "paging_token":"109521666052097",
+           |  "source_account":"${op.sourceAccount.accountId}",
+           |  "type":"manage_offer",
+           |  "type_i":3,
+           |  "created_at":"${formatter.format(op.createdAt)}",
+           |  "transaction_hash":"${op.txnHash}",
+           |  ${amountDocPortion(op.operation.selling, assetPrefix = "selling_")}
+           |  ${asset(op.operation.buying, assetPrefix = "buying_")}
+           |  "price":"1.0000000",
+           |  "price_r":{
+           |    "n":${op.operation.price.n},
+           |    "d":${op.operation.price.d}
+           |  },
+           |  "offer_id":0
+           |}
         """.stripMargin
 
       parse(doc).extract[Transacted[Operation]] mustEqual op

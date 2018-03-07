@@ -1,6 +1,5 @@
 package stellar.sdk.op
 
-import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
 import stellar.sdk.{Amount, Asset, NonNativeAsset}
@@ -31,12 +30,14 @@ trait JsonSnippets {
         """.stripMargin.trim
   }
 
-  def opt(key: String, value: Option[Any]) = value.map{
+  def opt(key: String, value: Option[Any]) = value.map {
     case v: String => s""""$key":"$v","""
-    case v: Set[_] => s""""$key":[${v.map {
-      case s: String => s""""$s""""
-      case a => a
-    }.mkString(",")}],"""
+    case v: Set[_] => s""""$key":[${
+      v.map {
+        case s: String => s""""$s""""
+        case a => a
+      }.mkString(",")
+    }],"""
     case v => s""""$key":$v,"""
   }.getOrElse("")
 

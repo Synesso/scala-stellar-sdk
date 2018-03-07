@@ -34,7 +34,7 @@ class TradeSpec extends Specification with ArbitraryInput with JsonSnippets {
            |}
          """.stripMargin
 
-        parse(doc).extract[Trade] mustEqual trade
+      parse(doc).extract[Trade] mustEqual trade
     }
   }
 

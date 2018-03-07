@@ -6,11 +6,11 @@ import org.specs2.concurrent.ExecutionEnv
 import org.specs2.mutable.Specification
 import stellar.sdk.SessionTestAccount.{accWithData, accn}
 import stellar.sdk.inet.TxnFailure
-import stellar.sdk.op.{CreateAccountOperation, CreateOfferOperation, PaymentOperation, Transacted}
+import stellar.sdk.op.{CreateAccountOperation, PaymentOperation, Transacted}
 import stellar.sdk.resp._
 
-import scala.concurrent.{Await, Future}
 import scala.concurrent.duration._
+import scala.concurrent.{Await, Future}
 
 class SequentialIntegrationSpec(implicit ee: ExecutionEnv) extends Specification with DomainMatchersIT {
 
@@ -148,7 +148,7 @@ class SequentialIntegrationSpec(implicit ee: ExecutionEnv) extends Specification
           destinationAccount = KeyPair.fromAccountId("GAR2WMVXCTFUXHU4K5KZNRAVTYFAFWT4XWFLKJ5IKEQ65Q47WNSMDVKH"),
           amount = IssuedAmount(10000000000L,
             AssetTypeCreditAlphaNum12("sausage", KeyPair.fromAccountId("GCXYKQF35XWATRB6AWDDV2Y322IFU2ACYYN5M2YB44IBWAIITQ4RYPXK")))
-      ))).awaitFor(10.seconds)
+        ))).awaitFor(10.seconds)
     }
     val kinPayment = Transacted(
       id = 70009259709968385L,
@@ -181,8 +181,8 @@ class SequentialIntegrationSpec(implicit ee: ExecutionEnv) extends Specification
         selling = NativeAsset,
         buying = mobi
       ), 10.seconds) must beLike { case ob: OrderBook =>
-          ob.selling mustEqual NativeAsset
-          ob.buying mustEqual mobi
+        ob.selling mustEqual NativeAsset
+        ob.buying mustEqual mobi
       }
     }
   }
@@ -264,9 +264,11 @@ class SequentialIntegrationSpec(implicit ee: ExecutionEnv) extends Specification
             .add(CreateAccountOperation(newAccount))
             .sign(accn)
         }
-        resp <- txn.submit
+        _ <- txn.submit
         newBalances <- network.account(newAccount).map(_.balances)
-      } yield newBalances
+      } yield {
+        newBalances
+      }
 
       balance must beEqualTo(Seq(Amount.lumens(1))).awaitFor(10.seconds)
     }

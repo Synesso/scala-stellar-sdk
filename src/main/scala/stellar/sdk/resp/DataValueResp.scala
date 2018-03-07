@@ -5,7 +5,7 @@ import org.json4s.{CustomSerializer, DefaultFormats}
 
 case class DataValueResp(v: String)
 
-object DataValueRespDeserializer extends CustomSerializer[DataValueResp](format => ({
+object DataValueRespDeserializer extends CustomSerializer[DataValueResp](format => ( {
   case o: JObject =>
     implicit val formats = DefaultFormats
     DataValueResp((o \ "value").extract[String])

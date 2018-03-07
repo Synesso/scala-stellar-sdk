@@ -1,8 +1,5 @@
 package stellar.sdk.op
 
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
-
 import org.apache.commons.codec.binary.Base64
 import org.json4s.JsonAST.{JArray, JObject, JValue}
 import org.json4s.{CustomSerializer, DefaultFormats}
@@ -107,8 +104,11 @@ object OperationDeserializer extends CustomSerializer[Operation](format => ( {
           )
           case id =>
             val amnt = (o \ "amount").extract[String].toDouble
-            if (amnt == 0.0) DeleteOfferOperation(id, asset("selling_"), asset("buying_"), price())
-            else UpdateOfferOperation(id, selling = amount(assetPrefix = "selling_"), buying = asset("buying_"), price = price())
+            if (amnt == 0.0) {
+              DeleteOfferOperation(id, asset("selling_"), asset("buying_"), price())
+            } else {
+              UpdateOfferOperation(id, selling = amount(assetPrefix = "selling_"), buying = asset("buying_"), price = price())
+            }
         }
       case "create_passive_offer" =>
         CreatePassiveOfferOperation(
@@ -129,7 +129,9 @@ object OperationDeserializer extends CustomSerializer[Operation](format => ( {
           signer = for {
             key <- (o \ "signer_key").extractOpt[String]
             weight <- (o \ "signer_weight").extractOpt[Int]
-          } yield AccountSigner(KeyPair.fromAccountId(key), weight)
+          } yield {
+            AccountSigner(KeyPair.fromAccountId(key), weight)
+          }
         )
       case "change_trust" =>
         ChangeTrustOperation(issuedAmount("limit"))

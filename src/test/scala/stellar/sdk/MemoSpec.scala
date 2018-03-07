@@ -8,7 +8,6 @@ import org.specs2.matcher.Matcher
 import org.specs2.mutable.Specification
 import org.stellar.sdk.xdr.MemoType._
 import org.stellar.sdk.xdr.{XdrDataInputStream, XdrDataOutputStream, Memo => XDRMemo}
-import stellar.sdk._
 
 class MemoSpec extends Specification with ArbitraryInput with ByteArrays with DomainMatchers {
 
@@ -25,8 +24,8 @@ class MemoSpec extends Specification with ArbitraryInput with ByteArrays with Do
 
     "serialise to xdr" >> prop { s: String =>
       val text = s.foldLeft("") { case (acc, next) =>
-          val append = s"$acc$next"
-          if (append.getBytes("UTF-8").length < 28) append else acc
+        val append = s"$acc$next"
+        if (append.getBytes("UTF-8").length < 28) append else acc
       }.mkString
       val memo = MemoText(text)
       val xdr = memo.toXDR

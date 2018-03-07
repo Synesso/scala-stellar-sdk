@@ -3,8 +3,7 @@ package stellar.sdk.op
 import org.stellar.sdk.xdr.Operation.OperationBody
 import org.stellar.sdk.xdr.OperationType.CHANGE_TRUST
 import org.stellar.sdk.xdr.{ChangeTrustOp, Int64}
-import stellar.sdk._
-import stellar.sdk.{Amount, Asset}
+import stellar.sdk.{Amount, Asset, _}
 
 import scala.util.Try
 
@@ -28,7 +27,7 @@ case class ChangeTrustOperation(limit: IssuedAmount, sourceAccount: Option[Publi
 
 object ChangeTrustOperation {
   def from(op: ChangeTrustOp): Try[ChangeTrustOperation] = {
-    Asset.fromXDR(op.getLine).map(Amount(op.getLimit.getInt64.longValue, _)).map{
+    Asset.fromXDR(op.getLine).map(Amount(op.getLimit.getInt64.longValue, _)).map {
       case a: IssuedAmount => ChangeTrustOperation(a)
       case _: NativeAmount => throw new IllegalArgumentException("Change trust operation with a native limit")
     }

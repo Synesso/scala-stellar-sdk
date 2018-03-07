@@ -35,7 +35,9 @@ val response = for {
   // and submit it
   response <- txn.submit
 
-} yield response
+} yield {
+  response
+}
 
 // print the results on completion
 response onComplete {

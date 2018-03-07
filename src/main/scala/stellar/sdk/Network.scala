@@ -14,6 +14,7 @@ trait Network extends ByteArrays {
   val passphrase: String
   lazy val networkId: Array[Byte] = sha256(passphrase.getBytes(UTF_8)).get
   val server: Server
+
   def submit(txn: SignedTransaction)(implicit ec: ExecutionContext): Future[TransactionResp] = server.post(txn)
 
   def account(pubKey: PublicKeyOps)(implicit ec: ExecutionContext): Future[AccountResp] =
@@ -71,6 +72,7 @@ trait Network extends ByteArrays {
         )
       }
     }
+
     val params = assetParams("selling", selling) ++ assetParams("buying", buying).updated("limit", limit)
     server.get[OrderBook]("/order_book", params)
   }

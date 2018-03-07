@@ -2,8 +2,7 @@ package stellar.sdk.op
 
 import org.stellar.sdk.xdr.Operation.OperationBody
 import org.stellar.sdk.xdr._
-import stellar.sdk._
-import stellar.sdk.{KeyPair, NativeAmount, PublicKeyOps}
+import stellar.sdk.{KeyPair, NativeAmount, PublicKeyOps, _}
 
 import scala.util.Try
 

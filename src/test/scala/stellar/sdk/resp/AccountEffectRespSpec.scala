@@ -68,7 +68,7 @@ class AccountEffectRespSpec extends Specification with ArbitraryInput {
   }
 
   "an account thresholds updated effect document" should {
-    "parse to an account thresholds updated effect" >> prop { (id : String, accn: KeyPair, thresholds: Thresholds) =>
+    "parse to an account thresholds updated effect" >> prop { (id: String, accn: KeyPair, thresholds: Thresholds) =>
       val json = doc(id, accn, "account_thresholds_updated",
         "low_threshold" -> thresholds.low,
         "med_threshold" -> thresholds.med,
@@ -78,7 +78,7 @@ class AccountEffectRespSpec extends Specification with ArbitraryInput {
   }
 
   "an account home domain updated effect document" should {
-    "parse to an account home domain updated effect" >> prop { (id : String, accn: KeyPair, domain: String) =>
+    "parse to an account home domain updated effect" >> prop { (id: String, accn: KeyPair, domain: String) =>
       val json = doc(id, accn, "account_home_domain_updated",
         "home_domain" -> domain)
       parse(json).extract[EffectResp] mustEqual EffectAccountHomeDomainUpdated(id, accn.asPublicKey, domain)
@@ -86,7 +86,7 @@ class AccountEffectRespSpec extends Specification with ArbitraryInput {
   }
 
   "an account flags updated effect document" should {
-    "parse to an account flags updated effect" >> prop { (id : String, accn: KeyPair, authRequired: Boolean) =>
+    "parse to an account flags updated effect" >> prop { (id: String, accn: KeyPair, authRequired: Boolean) =>
       // todo - support all 3 flags, when behaviour is known.  https://stellar.stackexchange.com/questions/429/confusing-effects-after-set-options-transaction
       val json = doc(id, accn, "account_flags_updated", "auth_required_flag" -> authRequired)
       parse(json).extract[EffectResp] mustEqual EffectAccountFlagsUpdated(id, accn.asPublicKey, authRequired)
@@ -95,28 +95,30 @@ class AccountEffectRespSpec extends Specification with ArbitraryInput {
 
   def doc(id: String, accn: PublicKeyOps, tpe: String, extra: (String, Any)*) =
     s"""
-      |{
-      |  "_links": {
-      |    "operation": {
-      |      "href": "https://horizon-testnet.stellar.org/operations/10157597659144"
-      |    },
-      |    "succeeds": {
-      |      "href": "https://horizon-testnet.stellar.org/effects?order=desc\u0026cursor=10157597659144-2"
-      |    },
-      |    "precedes": {
-      |      "href": "https://horizon-testnet.stellar.org/effects?order=asc\u0026cursor=10157597659144-2"
-      |    }
-      |  },
-      |  "id": "$id",
-      |  "paging_token": "10157597659144-2",
-      |  "account": "${accn.accountId}",
-      |  "type": "$tpe",
-      |  "type_i": 3,
-      |  ${extra.map{
-             case (k, v: String) => s""""$k": "$v"""".trim
-             case (k, v) => s""""$k": $v""".trim
-          }.mkString(", ")}
-      |}
+       |{
+       |  "_links": {
+       |    "operation": {
+       |      "href": "https://horizon-testnet.stellar.org/operations/10157597659144"
+       |    },
+       |    "succeeds": {
+       |      "href": "https://horizon-testnet.stellar.org/effects?order=desc\u0026cursor=10157597659144-2"
+       |    },
+       |    "precedes": {
+       |      "href": "https://horizon-testnet.stellar.org/effects?order=asc\u0026cursor=10157597659144-2"
+       |    }
+       |  },
+       |  "id": "$id",
+       |  "paging_token": "10157597659144-2",
+       |  "account": "${accn.accountId}",
+       |  "type": "$tpe",
+       |  "type_i": 3,
+       |  ${
+      extra.map {
+        case (k, v: String) => s""""$k": "$v"""".trim
+        case (k, v) => s""""$k": $v""".trim
+      }.mkString(", ")
+    }
+       |}
     """.stripMargin
 
   def amountString(a: Amount): String = f"${a.units / math.pow(10, 7)}%.7f"

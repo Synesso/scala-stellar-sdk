@@ -1,7 +1,6 @@
 package stellar.sdk.op
 
-import java.time.format.DateTimeFormatter
-import java.time.{ZoneId, ZonedDateTime}
+import java.time.ZonedDateTime
 
 import org.json4s.JsonAST.JObject
 import org.json4s.{CustomSerializer, DefaultFormats}
@@ -16,7 +15,9 @@ case class Transacted[O <: Operation](id: Long,
 object TransactedOperationDeserializer extends CustomSerializer[Transacted[Operation]](format => ( {
   case o: JObject =>
     implicit val formats = DefaultFormats + OperationDeserializer
+
     def account(accountKey: String = "account") = KeyPair.fromAccountId((o \ accountKey).extract[String])
+
     def date(key: String) = ZonedDateTime.parse((o \ key).extract[String])
 
     Transacted(

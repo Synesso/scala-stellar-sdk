@@ -26,18 +26,22 @@ case class Server(uri: URI) {
     envelope <- Future.fromTry(txn.toEnvelopeXDRBase64)
     requestUri = uri"$uri/transactions"
     response <- sttp.body(Map("tx" -> envelope)).post(requestUri).response(asJson[TransactionResp]).send()
-  } yield response.body match {
-    case Right(r) => r
-    case Left(s) => throw TxnFailure(requestUri, s).getOrElse(new RuntimeException(s"Unrecognised response: $s"))
+  } yield {
+    response.body match {
+      case Right(r) => r
+      case Left(s) => throw TxnFailure(requestUri, s).getOrElse(new RuntimeException(s"Unrecognised response: $s"))
+    }
   }
 
   def get[T: ClassTag](path: String, params: Map[String, Any] = Map.empty)(implicit ec: ExecutionContext, m: Manifest[T]): Future[T] = {
     val requestUri = uri"$uri/$path?$params"
     for {
       resp <- sttp.get(requestUri).response(asJson[T]).send()
-    } yield resp.body match {
-      case Right(r) => r
-      case Left(s) => throw TxnFailure(requestUri, s).getOrElse(new RuntimeException(s"Unrecognised response: $s"))
+    } yield {
+      resp.body match {
+        case Right(r) => r
+        case Left(s) => throw TxnFailure(requestUri, s).getOrElse(new RuntimeException(s"Unrecognised response: $s"))
+      }
     }
   }
 
@@ -63,6 +67,7 @@ case class Server(uri: URI) {
           Stream.cons(h, stream(t, maybeNextPage))
       }
     }
+
     (getPage(path, params): Future[Page[T]]).map { p0: Page[T] => stream(p0.xs, next(p0)) }
   }
 
@@ -76,9 +81,11 @@ case class Server(uri: URI) {
                                                         m: Manifest[T]): Future[Page[T]] = {
     for {
       resp <- sttp.get(uri).response(asString).send()
-    } yield resp.body match {
-      case Right(r) => Page(r, de)
-      case Left(s) => throw TxnFailure(uri, s).getOrElse(new RuntimeException(s"Unrecognised response: $s"))
+    } yield {
+      resp.body match {
+        case Right(r) => Page(r, de)
+        case Left(s) => throw TxnFailure(uri, s).getOrElse(new RuntimeException(s"Unrecognised response: $s"))
+      }
     }
   }
 }

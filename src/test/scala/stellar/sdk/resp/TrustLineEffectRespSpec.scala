@@ -13,22 +13,22 @@ class TrustLineEffectRespSpec extends Specification with ArbitraryInput {
 
   "a trustline created effect document" should {
     "parse to a trustline created effect" >> prop {
-      (id : String, accn: KeyPair, asset: NonNativeAsset, limit: Double) =>
-      val json = doc(id, "trustline_created", accn, asset, limit)
-      parse(json).extract[EffectResp] mustEqual EffectTrustLineCreated(id, accn.asPublicKey, asset, limit)
+      (id: String, accn: KeyPair, asset: NonNativeAsset, limit: Double) =>
+        val json = doc(id, "trustline_created", accn, asset, limit)
+        parse(json).extract[EffectResp] mustEqual EffectTrustLineCreated(id, accn.asPublicKey, asset, limit)
     }.setGen1(Gen.identifier).setGen4(Gen.posNum[Double])
   }
 
   "a trustline updated effect document" should {
     "parse to a trustline updated effect" >> prop {
-      (id : String, accn: KeyPair, asset: NonNativeAsset, limit: Double) =>
-      val json = doc(id, "trustline_updated", accn, asset, limit)
-      parse(json).extract[EffectResp] mustEqual EffectTrustLineUpdated(id, accn.asPublicKey, asset, limit)
+      (id: String, accn: KeyPair, asset: NonNativeAsset, limit: Double) =>
+        val json = doc(id, "trustline_updated", accn, asset, limit)
+        parse(json).extract[EffectResp] mustEqual EffectTrustLineUpdated(id, accn.asPublicKey, asset, limit)
     }.setGen1(Gen.identifier).setGen4(Gen.posNum[Double])
   }
 
   "a trustline removed effect document" should {
-    "parse to a trustline removed effect" >> prop { (id : String, accn: KeyPair, asset: NonNativeAsset) =>
+    "parse to a trustline removed effect" >> prop { (id: String, accn: KeyPair, asset: NonNativeAsset) =>
       val json = doc(id, "trustline_removed", accn, asset, 0.0)
       parse(json).extract[EffectResp] mustEqual EffectTrustLineRemoved(id, accn.asPublicKey, asset)
     }.setGen1(Gen.identifier)
@@ -36,28 +36,28 @@ class TrustLineEffectRespSpec extends Specification with ArbitraryInput {
 
   def doc(id: String, tpe: String, accn: PublicKeyOps, asset: NonNativeAsset, limit: Double) = {
     s"""
-      |{
-      |  "_links": {
-      |    "operation": {
-      |      "href": "https://horizon-testnet.stellar.org/operations/10157597659144"
-      |    },
-      |    "succeeds": {
-      |      "href": "https://horizon-testnet.stellar.org/effects?order=desc\u0026cursor=10157597659144-2"
-      |    },
-      |    "precedes": {
-      |      "href": "https://horizon-testnet.stellar.org/effects?order=asc\u0026cursor=10157597659144-2"
-      |    }
-      |  },
-      |  "id": "$id",
-      |  "paging_token": "10157597659144-2",
-      |  "account": "${accn.accountId}",
-      |  "type": "$tpe",
-      |  "type_i": 20,
-      |  "asset_type": "${asset.typeString}",
-      |  "asset_code": "${asset.code}",
-      |  "asset_issuer": "${asset.issuer.accountId}",
-      |  "limit": "$limit"
-      |}
+       |{
+       |  "_links": {
+       |    "operation": {
+       |      "href": "https://horizon-testnet.stellar.org/operations/10157597659144"
+       |    },
+       |    "succeeds": {
+       |      "href": "https://horizon-testnet.stellar.org/effects?order=desc\u0026cursor=10157597659144-2"
+       |    },
+       |    "precedes": {
+       |      "href": "https://horizon-testnet.stellar.org/effects?order=asc\u0026cursor=10157597659144-2"
+       |    }
+       |  },
+       |  "id": "$id",
+       |  "paging_token": "10157597659144-2",
+       |  "account": "${accn.accountId}",
+       |  "type": "$tpe",
+       |  "type_i": 20,
+       |  "asset_type": "${asset.typeString}",
+       |  "asset_code": "${asset.code}",
+       |  "asset_issuer": "${asset.issuer.accountId}",
+       |  "limit": "$limit"
+       |}
     """.stripMargin
   }
 

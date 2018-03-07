@@ -7,7 +7,6 @@ import stellar.sdk.op.JsonSnippets
 class TransactionRespSpec extends Specification with ArbitraryInput with JsonSnippets {
 
 
-
 }
 
 /*

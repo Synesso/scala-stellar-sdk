@@ -1,6 +1,6 @@
 package stellar.sdk.resp
 
-import java.time.{Instant, ZonedDateTime}
+import java.time.ZonedDateTime
 
 import org.json4s.JsonAST.JObject
 import org.json4s.{CustomSerializer, DefaultFormats}

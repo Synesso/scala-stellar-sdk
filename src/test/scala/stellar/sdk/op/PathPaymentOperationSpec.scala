@@ -5,7 +5,6 @@ import org.json4s.native.JsonMethods.parse
 import org.json4s.native.Serialization
 import org.scalacheck.Arbitrary
 import org.specs2.mutable.Specification
-import stellar.sdk._
 import stellar.sdk.{ArbitraryInput, DomainMatchers}
 
 class PathPaymentOperationSpec extends Specification with ArbitraryInput with DomainMatchers with JsonSnippets {
@@ -42,7 +41,7 @@ class PathPaymentOperationSpec extends Specification with ArbitraryInput with Do
            |  ${amountDocPortion(op.operation.sendMax, "source_max", "source_")}
            |  "from":"${op.sourceAccount.accountId}",
            |  "to":"${op.operation.destinationAccount.accountId}",
-           |  "path":[${if (op.operation.path.isEmpty) "" else op.operation.path.map(asset(_)).mkString("{","},{", "}")}]
+           |  "path":[${if (op.operation.path.isEmpty) "" else op.operation.path.map(asset(_)).mkString("{", "},{", "}")}]
            |}
          """.stripMargin
 

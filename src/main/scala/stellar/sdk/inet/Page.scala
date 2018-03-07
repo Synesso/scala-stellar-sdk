@@ -1,10 +1,10 @@
 package stellar.sdk.inet
 
-import org.json4s.JsonAST.{JArray, JObject}
+import org.json4s.JsonAST.JArray
+import org.json4s.native.JsonParser._
 import org.json4s.native.Serialization
 import org.json4s.{CustomSerializer, NoTypeHints}
-import stellar.sdk.resp.{AssetRespDeserializer, EffectRespDeserializer}
-import org.json4s.native.JsonParser._
+
 /**
   * A page of results
   */

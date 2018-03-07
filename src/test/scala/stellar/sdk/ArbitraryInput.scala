@@ -6,7 +6,6 @@ import java.time.{Instant, ZoneId, ZonedDateTime}
 import org.apache.commons.codec.binary.Base64
 import org.scalacheck.{Arbitrary, Gen}
 import org.specs2.ScalaCheck
-import org.stellar.sdk.xdr.TransactionResult.{TransactionResultExt, TransactionResultResult}
 import org.stellar.sdk.xdr.{Operation => _, _}
 import stellar.sdk.op._
 import stellar.sdk.resp._
@@ -146,39 +145,53 @@ trait ArbitraryInput extends ScalaCheck {
 
   def genAccountMergeOperation: Gen[AccountMergeOperation] = for {
     destination <- genPublicKey
-  } yield AccountMergeOperation(destination)
+  } yield {
+    AccountMergeOperation(destination)
+  }
 
   def genAllowTrustOperation = for {
     trustor <- genPublicKey
     assetCode <- Gen.identifier.map(_.take(12))
     authorise <- Gen.oneOf(true, false)
-  } yield AllowTrustOperation(trustor, assetCode, authorise)
+  } yield {
+    AllowTrustOperation(trustor, assetCode, authorise)
+  }
 
   def genChangeTrustOperation = for {
     limit <- genIssuedAmount
-  } yield ChangeTrustOperation(limit)
+  } yield {
+    ChangeTrustOperation(limit)
+  }
 
   def genCreateAccountOperation = for {
     destination <- genPublicKey
     startingBalance <- genNativeAmount
-  } yield CreateAccountOperation(destination, startingBalance)
+  } yield {
+    CreateAccountOperation(destination, startingBalance)
+  }
 
   def genCreatePassiveOfferOperation = for {
     selling <- genAmount
     buying <- genAsset
     price <- genPrice
-  } yield CreatePassiveOfferOperation(selling, buying, price)
+  } yield {
+    CreatePassiveOfferOperation(selling, buying, price)
+  }
 
   def genInflationOperation = Gen.oneOf(Seq(InflationOperation()))
 
   def genDeleteDataOperation = for {
     name <- Gen.identifier
-  } yield DeleteDataOperation(name)
+  } yield {
+    DeleteDataOperation(name)
+  }
 
   def genWriteDataOperation = for {
     name <- Gen.identifier
     value <- Gen.identifier
-  } yield WriteDataOperation(name, value)
+  } yield {
+    WriteDataOperation(name, value)
+  }
 
   def genManageDataOperation = Gen.oneOf(genDeleteDataOperation, genWriteDataOperation)
 
@@ -186,21 +199,27 @@ trait ArbitraryInput extends ScalaCheck {
     selling <- genAmount
     buying <- genAsset
     price <- genPrice
-  } yield CreateOfferOperation(selling, buying, price)
+  } yield {
+    CreateOfferOperation(selling, buying, price)
+  }
 
   def genDeleteOfferOperation = for {
     id <- Gen.posNum[Long]
     selling <- genAsset
     buying <- genAsset
     price <- genPrice
-  } yield DeleteOfferOperation(id, selling, buying, price)
+  } yield {
+    DeleteOfferOperation(id, selling, buying, price)
+  }
 
   def genUpdateOfferOperation = for {
     id <- Gen.posNum[Long]
     selling <- genAmount
     buying <- genAsset
     price <- genPrice
-  } yield UpdateOfferOperation(id, selling, buying, price)
+  } yield {
+    UpdateOfferOperation(id, selling, buying, price)
+  }
 
   def genManageOfferOperation = Gen.oneOf(genCreateOfferOperation, genDeleteOfferOperation, genUpdateOfferOperation)
 
@@ -209,28 +228,38 @@ trait ArbitraryInput extends ScalaCheck {
     destAccount <- genPublicKey
     destAmount <- genAmount
     path <- Gen.listOf(genAsset)
-  } yield PathPaymentOperation(sendMax, destAccount, destAmount, path)
+  } yield {
+    PathPaymentOperation(sendMax, destAccount, destAmount, path)
+  }
 
   def genPaymentOperation = for {
     destAccount <- genPublicKey
     amount <- genAmount
-  } yield PaymentOperation(destAccount, amount)
+  } yield {
+    PaymentOperation(destAccount, amount)
+  }
 
   def genSetOptionsOperation: Gen[SetOptionsOperation] = for {
-      inflationDestination <- Gen.option(genPublicKey)
-      clearFlags <- Gen.option(Gen.nonEmptyContainerOf[Set, IssuerFlag](genIssuerFlag))
-      setFlags <- Gen.option(Gen.nonEmptyContainerOf[Set, IssuerFlag](genIssuerFlag))
-      masterKeyWeight <- Gen.option(Gen.choose(0, 255))
-      lowThreshold <- Gen.option(Gen.choose(0, 255))
-      medThreshold <- Gen.option(Gen.choose(0, 255))
-      highThreshold <- Gen.option(Gen.choose(0, 255))
-      homeDomain <- Gen.option(Gen.identifier)
-      signer <- Gen.option{ for {
+    inflationDestination <- Gen.option(genPublicKey)
+    clearFlags <- Gen.option(Gen.nonEmptyContainerOf[Set, IssuerFlag](genIssuerFlag))
+    setFlags <- Gen.option(Gen.nonEmptyContainerOf[Set, IssuerFlag](genIssuerFlag))
+    masterKeyWeight <- Gen.option(Gen.choose(0, 255))
+    lowThreshold <- Gen.option(Gen.choose(0, 255))
+    medThreshold <- Gen.option(Gen.choose(0, 255))
+    highThreshold <- Gen.option(Gen.choose(0, 255))
+    homeDomain <- Gen.option(Gen.identifier)
+    signer <- Gen.option {
+      for {
         accn <- genPublicKey
         weight <- Gen.choose(0, 255)
-      } yield AccountSigner(accn, weight)}
-    } yield SetOptionsOperation(inflationDestination, clearFlags, setFlags, masterKeyWeight, lowThreshold, medThreshold,
+      } yield {
+        AccountSigner(accn, weight)
+      }
+    }
+  } yield {
+    SetOptionsOperation(inflationDestination, clearFlags, setFlags, masterKeyWeight, lowThreshold, medThreshold,
       highThreshold, homeDomain, signer)
+  }
 
   def genOperation: Gen[Operation] = {
     Gen.oneOf(genAccountMergeOperation, genAllowTrustOperation, genChangeTrustOperation, genCreateAccountOperation,
@@ -241,7 +270,9 @@ trait ArbitraryInput extends ScalaCheck {
   def genPrice: Gen[Price] = for {
     n <- Gen.posNum[Int]
     d <- Gen.posNum[Int]
-  } yield Price(n, d)
+  } yield {
+    Price(n, d)
+  }
 
   def genInstant: Gen[Instant] = Gen.posNum[Long].map(Instant.ofEpochMilli)
 
@@ -249,9 +280,9 @@ trait ArbitraryInput extends ScalaCheck {
     .map(_.`with`(ChronoField.NANO_OF_SECOND, 0))
 
   def genTimeBounds: Gen[TimeBounds] = Gen.listOfN(2, genInstant)
-    .suchThat{ case List(a, b) => a != b }
+    .suchThat { case List(a, b) => a != b }
     .map(_.sortBy(_.toEpochMilli))
-    .map{ case List(a, b) => TimeBounds(a, b) }
+    .map { case List(a, b) => TimeBounds(a, b) }
 
   def genMemoNone: Gen[Memo] = Gen.oneOf(Seq(NoMemo))
 
@@ -261,11 +292,15 @@ trait ArbitraryInput extends ScalaCheck {
 
   def genMemoHash: Gen[MemoHash] = for {
     bs <- Gen.nonEmptyContainerOf[Array, Byte](Arbitrary.arbByte.arbitrary)
-  } yield MemoHash(bs.take(32))
+  } yield {
+    MemoHash(bs.take(32))
+  }
 
   def genMemoReturnHash: Gen[MemoReturnHash] = for {
     bs <- Gen.nonEmptyContainerOf[Array, Byte](Arbitrary.arbByte.arbitrary)
-  } yield MemoReturnHash(bs.take(32))
+  } yield {
+    MemoReturnHash(bs.take(32))
+  }
 
   def genMemo: Gen[Memo] = Gen.oneOf(genMemoNone, genMemoText, genMemoId, genMemoHash, genMemoReturnHash)
 
@@ -274,20 +309,24 @@ trait ArbitraryInput extends ScalaCheck {
     memo <- genMemo
     operations <- Gen.nonEmptyListOf(genOperation)
     timeBounds <- Gen.option(genTimeBounds)
-  } yield Transaction(source, operations, memo, timeBounds)
+  } yield {
+    Transaction(source, operations, memo, timeBounds)
+  }
 
   def genSignature: Gen[Signature] =
     Gen.nonEmptyContainerOf[Array, Byte](Arbitrary.arbByte.arbitrary).map { bs: Array[Byte] =>
-    val s = new Signature
-    s.setSignature(bs)
-    s
-  }
+      val s = new Signature
+      s.setSignature(bs)
+      s
+    }
 
   def genThresholds: Gen[Thresholds] = for {
     low <- Gen.choose(0, 255)
     med <- Gen.choose(0, 255)
     high <- Gen.choose(0, 255)
-  } yield Thresholds(low, med, high)
+  } yield {
+    Thresholds(low, med, high)
+  }
 
   def genHash = Gen.identifier.map(_.getBytes("UTF-8")).map(Base64.encodeBase64String)
 
@@ -304,8 +343,10 @@ trait ArbitraryInput extends ScalaCheck {
     baseFee <- Gen.posNum[Long]
     baseReserve <- Gen.posNum[Long]
     maxTxSetSize <- Gen.posNum[Int]
-  } yield LedgerResp(id, hash, previousHash, sequence, transactionCount, operationCount, closedAt, totalCoins, feePool,
-    baseFee, baseReserve, maxTxSetSize)
+  } yield {
+    LedgerResp(id, hash, previousHash, sequence, transactionCount, operationCount, closedAt, totalCoins, feePool,
+      baseFee, baseReserve, maxTxSetSize)
+  }
 
   def genOfferResp: Gen[OfferResp] = for {
     id <- Gen.posNum[Long]
@@ -313,7 +354,9 @@ trait ArbitraryInput extends ScalaCheck {
     selling <- genAmount
     buying <- genAsset
     price <- genPrice
-  } yield OfferResp(id, seller, selling, buying, price)
+  } yield {
+    OfferResp(id, seller, selling, buying, price)
+  }
 
   def genTransacted[O <: Operation](genOp: Gen[O]): Gen[Transacted[O]] = for {
     id <- Gen.posNum[Long]
@@ -321,12 +364,16 @@ trait ArbitraryInput extends ScalaCheck {
     source <- genPublicKey
     createdAt <- genZonedDateTime
     op <- genOp
-  } yield Transacted(id, hash, source, createdAt, op)
+  } yield {
+    Transacted(id, hash, source, createdAt, op)
+  }
 
   def genOrder: Gen[Order] = for {
     price <- genPrice
     qty <- Gen.posNum[Long]
-  } yield Order(price, qty)
+  } yield {
+    Order(price, qty)
+  }
 
   def genOrderBook: Gen[OrderBook] = for {
     selling <- genAsset
@@ -335,7 +382,9 @@ trait ArbitraryInput extends ScalaCheck {
     qtyAsks <- Gen.choose(0, 20)
     bids <- Gen.listOfN(qtyBids, genOrder)
     asks <- Gen.listOfN(qtyAsks, genOrder)
-  } yield OrderBook(selling, buying, bids, asks)
+  } yield {
+    OrderBook(selling, buying, bids, asks)
+  }
 
   def genTrade: Gen[Trade] = for {
     id <- Gen.identifier
@@ -346,7 +395,9 @@ trait ArbitraryInput extends ScalaCheck {
     counterAccount <- genPublicKey
     counterAmount <- genAmount
     baseIsSeller <- Gen.oneOf(true, false)
-  } yield Trade(id, ledgerCloseTime, offerId, baseAccount, baseAmount, counterAccount, counterAmount, baseIsSeller)
+  } yield {
+    Trade(id, ledgerCloseTime, offerId, baseAccount, baseAmount, counterAccount, counterAmount, baseIsSeller)
+  }
 
   def round(d: Double) = f"$d%.7f".toDouble
 }

@@ -15,12 +15,12 @@ class OrderBookSpec extends Specification with ArbitraryInput with JsonSnippets 
     "parse from json" >> prop { ob: OrderBook =>
       val doc =
         s"""
-          |{
-          |  "bids": [${ob.bids.map(order).mkString(",")}],
-          |  "asks": [${ob.asks.map(order).mkString(",")}],
-          |  "base": {${asset(ob.selling)}}
-          |  "counter": {${asset(ob.buying)}}
-          |}
+           |{
+           |  "bids": [${ob.bids.map(order).mkString(",")}],
+           |  "asks": [${ob.asks.map(order).mkString(",")}],
+           |  "base": {${asset(ob.selling)}}
+           |  "counter": {${asset(ob.buying)}}
+           |}
         """.stripMargin
 
       parse(doc).extract[OrderBook] mustEqual ob

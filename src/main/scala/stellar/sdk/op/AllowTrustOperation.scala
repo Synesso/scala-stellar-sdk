@@ -4,8 +4,7 @@ import org.stellar.sdk.xdr.AssetType._
 import org.stellar.sdk.xdr.Operation.OperationBody
 import org.stellar.sdk.xdr.OperationType._
 import org.stellar.sdk.xdr.{AccountID, AllowTrustOp}
-import stellar.sdk._
-import stellar.sdk.{ByteArrays, KeyPair, PublicKey}
+import stellar.sdk.{ByteArrays, KeyPair, PublicKey, _}
 
 import scala.util.Try
 

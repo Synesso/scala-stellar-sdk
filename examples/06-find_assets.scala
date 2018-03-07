@@ -1,8 +1,8 @@
 // filters assets by issuer, code or both
 
-import scala.concurrent.ExecutionContext.Implicits.global
-
 import stellar.sdk._
+
+import scala.concurrent.ExecutionContext.Implicits.global
 
 
 TestNetwork.assets(code = Some("ETH"))

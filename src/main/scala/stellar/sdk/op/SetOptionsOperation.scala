@@ -92,11 +92,13 @@ case object AuthorizationRevocableFlag extends IssuerFlag {
 
 case object AuthorizationImmutableFlag extends IssuerFlag {
   val i = 0x4
-  val s ="auth_immutable_flag"
+  val s = "auth_immutable_flag"
 }
 
 object IssuerFlags {
   val all: Set[IssuerFlag] = Set(AuthorizationRequiredFlag, AuthorizationRevocableFlag, AuthorizationImmutableFlag)
+
   def apply(i: Int): Option[IssuerFlag] = all.find(_.i == i)
+
   def from(i: Uint32): Set[IssuerFlag] = all.filter { f => (i.getUint32.toInt & f.i) == f.i }
 }

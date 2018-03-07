@@ -16,7 +16,7 @@ class ByteArraysSpec extends Specification with ArbitraryInput with ByteArrays {
       paddedByteArray(bs, bs.length - 1).toSeq mustEqual bs.toSeq
     }.setGen(Gen.nonEmptyListOf(Gen.posNum[Byte]).map(_.toArray))
 
-    "pad with zeros when required length is greater than the array length" >> prop { (bs : Array[Byte], plus: Byte) =>
+    "pad with zeros when required length is greater than the array length" >> prop { (bs: Array[Byte], plus: Byte) =>
       paddedByteArray(bs, bs.length + plus.toInt).toSeq mustEqual bs.toSeq ++ (1 to plus).map(_ => 0)
     }.setGen2(Gen.posNum[Byte])
   }

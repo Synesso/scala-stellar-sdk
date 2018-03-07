@@ -3,7 +3,6 @@ package stellar.sdk.op
 import org.stellar.sdk.xdr.Operation.OperationBody
 import org.stellar.sdk.xdr.OperationType.PAYMENT
 import org.stellar.sdk.xdr._
-import stellar.sdk.{Asset, KeyPair, PublicKeyOps}
 import stellar.sdk
 import stellar.sdk.{Amount, KeyPair, PublicKeyOps}
 
@@ -44,5 +43,7 @@ object PaymentOperation {
         amount = Amount(op.getAmount.getInt64.longValue, asset)
       )
     }
-  } yield paymentOp
+  } yield {
+    paymentOp
+  }
 }

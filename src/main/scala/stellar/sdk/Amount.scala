@@ -7,6 +7,7 @@ import scala.util.Try
 trait Amount {
   val units: Long
   val asset: Asset
+
   def toHumanValue: Double = units / math.pow(10, Amount.decimalPlaces)
 }
 
@@ -34,6 +35,7 @@ object Amount {
 
   /**
     * Convenience method to create native amount denoted in lumens.
+    *
     * @param units quantity of lumens
     * @return NativeAmount of the given quantity
     * @throws IllegalArgumentException if the fractional portion of the input is more than 7 places.

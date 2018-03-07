@@ -32,10 +32,12 @@ class ManageDataOperationSpec extends Specification with ArbitraryInput with Dom
        |  "created_at": "${formatter.format(op.createdAt)}",
        |  "transaction_hash": "${op.txnHash}",
        |  "name": "${op.operation.name}",
-       |  "value": "${op.operation match {
-             case WriteDataOperation(_, value, _) => Base64.encodeBase64String(value.getBytes("UTF-8"))
-             case _ => ""
-          }}"
+       |  "value": "${
+      op.operation match {
+        case WriteDataOperation(_, value, _) => Base64.encodeBase64String(value.getBytes("UTF-8"))
+        case _ => ""
+      }
+    }"
        |}""".stripMargin
 
   "a write data operation" should {

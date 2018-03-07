@@ -2,7 +2,7 @@ package stellar.sdk
 
 import org.apache.commons.codec.binary.Hex
 import org.specs2.matcher.{AnyMatchers, Matcher, MustExpectations, OptionMatchers, SequenceMatchersCreation}
-import org.stellar.sdk.xdr.{DecoratedSignature, Hash, PublicKey => XDRPublicKey, SignerKey, Uint64, Memo => XDRMemo, Operation => XDROperation}
+import org.stellar.sdk.xdr.{DecoratedSignature, Hash, SignerKey, Uint64, Memo => XDRMemo, Operation => XDROperation, PublicKey => XDRPublicKey}
 import stellar.sdk.op._
 
 trait DomainMatchersIT extends AnyMatchers with MustExpectations with SequenceMatchersCreation with OptionMatchers {
@@ -48,14 +48,20 @@ trait DomainMatchersIT extends AnyMatchers with MustExpectations with SequenceMa
 
   def beEquivalentTo(other: Hash): Matcher[Hash] = beLike[Hash] {
     case hash =>
-      if (other == null) hash must beNull
-      else hash.getHash.toSeq mustEqual other.getHash.toSeq
+      if (other == null) {
+        hash must beNull
+      } else {
+        hash.getHash.toSeq mustEqual other.getHash.toSeq
+      }
   }
 
   def beEquivalentTo(other: Uint64): Matcher[Uint64] = beLike[Uint64] {
     case id =>
-      if (other == null) id must beNull
-      else other.getUint64 mustEqual id.getUint64
+      if (other == null) {
+        id must beNull
+      } else {
+        other.getUint64 mustEqual id.getUint64
+      }
   }
 
   def beEquivalentTo(other: XDRMemo): Matcher[XDRMemo] = beLike[XDRMemo] {

@@ -16,12 +16,15 @@ object StrKey {
   case object AccountId extends VersionByte {
     val value: Byte = (6 << 3).toByte // G
   }
+
   case object Seed extends VersionByte {
     val value: Byte = (18 << 3).toByte // S
   }
+
   case object PreAuthTx extends VersionByte {
     val value: Byte = (19 << 3).toByte // T
   }
+
   case object SHA256Hash extends VersionByte {
     val value: Byte = (23 << 3).toByte // X
   }

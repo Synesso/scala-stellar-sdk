@@ -3,9 +3,8 @@ package stellar.sdk
 import org.scalacheck.Gen
 import org.specs2.mutable.Specification
 import org.stellar.sdk.xdr.TransactionEnvelope
-import stellar.sdk._
-import stellar.sdk.op.{CreateAccountOperation, Operation}
 import stellar.sdk
+import stellar.sdk.op.{CreateAccountOperation, Operation}
 
 import scala.util.Try
 
@@ -28,7 +27,7 @@ class TransactionSpec extends Specification with ArbitraryInput with DomainMatch
       val expected = transaction.sign(signers.head, signers.tail: _*).get
       val actual: SignedTransaction = signers match {
         case Seq(only) => transaction.sign(only).get
-        case h +: t => t.foldLeft(transaction.sign(h).get) { case (txn, kp) => txn.sign(kp).get}
+        case h +: t => t.foldLeft(transaction.sign(h).get) { case (txn, kp) => txn.sign(kp).get }
       }
       actual must beEquivalentTo(expected)
     }.setGen2(Gen.nonEmptyListOf(genKeyPair))
@@ -46,7 +45,7 @@ class TransactionSpec extends Specification with ArbitraryInput with DomainMatch
       ).sign(source)
 
       txn.flatMap(_.toEnvelopeXDRBase64) must beSuccessfulTry("AAAAAF7FIiDToW1fOYUFBC0dmyufJbFTOa2GQESGz+S2h5ViAAAAZAAKVaMAAAABAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAA7eBSYbzcL5UKo7oXO24y1ckX+XuCtkDsyNHOp1n1bxAAAAAEqBfIAAAAAAAAAAABtoeVYgAAAEDLki9Oi700N60Lo8gUmEFHbKvYG4QSqXiLIt9T0ru2O5BphVl/jR9tYtHAD+UeDYhgXNgwUxqTEu1WukvEyYcD")
-      txn.map(_.transaction.source) must beSuccessfulTry[Account].like{ case accn => accn must beEquivalentTo(account)}
+      txn.map(_.transaction.source) must beSuccessfulTry[Account].like { case accn => accn must beEquivalentTo(account) }
       txn.map(_.transaction.fee) must beSuccessfulTry(100)
     }
   }
@@ -84,7 +83,7 @@ class TransactionSpec extends Specification with ArbitraryInput with DomainMatch
       forall(txn.operations.zip(xdr.getOperations.map(Operation.fromXDR))) {
         case (expected: Operation, actualTry: Try[Operation]) =>
           actualTry must beSuccessfulTry[Operation].like { case actual =>
-              actual must beEquivalentTo(expected)
+            actual must beEquivalentTo(expected)
           }
       }
     }

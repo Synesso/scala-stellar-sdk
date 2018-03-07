@@ -1,8 +1,8 @@
 package stellar.sdk.op
 
+import org.stellar.sdk.xdr.ManageOfferOp
 import org.stellar.sdk.xdr.Operation.OperationBody
 import org.stellar.sdk.xdr.OperationType._
-import org.stellar.sdk.xdr.ManageOfferOp
 import stellar.sdk.{Amount, Asset, _}
 
 import scala.util.Try
@@ -78,7 +78,7 @@ object ManageOfferOperation {
     (offerId, amount) match {
       case (0, _) => CreateOfferOperation(Amount(amount, selling), buying, price)
       case (_, 0) => DeleteOfferOperation(offerId, selling, buying, price)
-      case _      => UpdateOfferOperation(offerId, Amount(amount, selling), buying, price)
+      case _ => UpdateOfferOperation(offerId, Amount(amount, selling), buying, price)
     }
   }
 }

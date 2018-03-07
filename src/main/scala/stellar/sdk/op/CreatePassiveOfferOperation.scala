@@ -3,8 +3,7 @@ package stellar.sdk.op
 import org.stellar.sdk.xdr.CreatePassiveOfferOp
 import org.stellar.sdk.xdr.Operation.OperationBody
 import org.stellar.sdk.xdr.OperationType.CREATE_PASSIVE_OFFER
-import stellar.sdk._
-import stellar.sdk.{Amount, Asset}
+import stellar.sdk.{Amount, Asset, _}
 
 import scala.util.Try
 
@@ -33,5 +32,7 @@ object CreatePassiveOfferOperation {
       n = op.getPrice.getN.getInt32,
       d = op.getPrice.getD.getInt32
     )
-  } yield CreatePassiveOfferOperation(Amount(units, selling), buying, price)
+  } yield {
+    CreatePassiveOfferOperation(Amount(units, selling), buying, price)
+  }
 }

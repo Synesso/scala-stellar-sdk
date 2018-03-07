@@ -9,29 +9,48 @@ sealed trait EffectResp {
 }
 
 case class EffectAccountCreated(id: String, account: PublicKeyOps, startingBalance: NativeAmount) extends EffectResp
+
 case class EffectAccountCredited(id: String, account: PublicKeyOps, amount: Amount) extends EffectResp
+
 case class EffectAccountDebited(id: String, account: PublicKeyOps, amount: Amount) extends EffectResp
+
 case class EffectAccountRemoved(id: String, account: PublicKeyOps) extends EffectResp
+
 case class EffectAccountThresholdsUpdated(id: String, account: PublicKeyOps, thresholds: Thresholds) extends EffectResp
+
 case class EffectAccountHomeDomainUpdated(id: String, account: PublicKeyOps, domain: String) extends EffectResp
+
 case class EffectAccountFlagsUpdated(id: String, account: PublicKeyOps, authRequiredFlag: Boolean) extends EffectResp
+
 case class EffectSignerCreated(id: String, account: PublicKeyOps, weight: Short, publicKey: String) extends EffectResp
+
 case class EffectSignerUpdated(id: String, account: PublicKeyOps, weight: Short, publicKey: String) extends EffectResp
+
 case class EffectSignerRemoved(id: String, account: PublicKeyOps, publicKey: String) extends EffectResp
+
 case class EffectTrustLineCreated(id: String, account: PublicKeyOps, asset: NonNativeAsset, limit: Double) extends EffectResp
+
 case class EffectTrustLineUpdated(id: String, account: PublicKeyOps, asset: NonNativeAsset, limit: Double) extends EffectResp
+
 case class EffectTrustLineRemoved(id: String, account: PublicKeyOps, asset: NonNativeAsset) extends EffectResp
+
 case class EffectTrustLineAuthorized(id: String, trustor: PublicKeyOps, asset: NonNativeAsset) extends EffectResp
+
 case class EffectTrustLineDeauthorized(id: String, trustor: PublicKeyOps, asset: NonNativeAsset) extends EffectResp
+
 case class EffectTrade(id: String, offerId: Long, buyer: PublicKeyOps, bought: Amount, seller: PublicKeyOps, sold: Amount) extends EffectResp
 
-object EffectRespDeserializer extends CustomSerializer[EffectResp](format => ({
+object EffectRespDeserializer extends CustomSerializer[EffectResp](format => ( {
   case o: JObject =>
     implicit val formats = DefaultFormats
+
     def account(accountKey: String = "account") = KeyPair.fromAccountId((o \ accountKey).extract[String])
+
     def asset(prefix: String = "", issuerKey: String = "asset_issuer") = {
       def assetCode = (o \ s"${prefix}asset_code").extract[String]
+
       def assetIssuer = KeyPair.fromAccountId((o \ s"$prefix$issuerKey").extract[String])
+
       (o \ s"${prefix}asset_type").extract[String] match {
         case "native" => NativeAsset
         case "credit_alphanum4" => AssetTypeCreditAlphaNum4(assetCode, assetIssuer)
@@ -39,7 +58,9 @@ object EffectRespDeserializer extends CustomSerializer[EffectResp](format => ({
         case t => throw new RuntimeException(s"Unrecognised asset type '$t'")
       }
     }
+
     def doubleFromString(key: String) = (o \ key).extract[String].toDouble
+
     def amount(prefix: String = "") = {
       val units = Amount.toBaseUnits(doubleFromString(s"${prefix}amount")).get
       asset(prefix) match {
@@ -47,7 +68,9 @@ object EffectRespDeserializer extends CustomSerializer[EffectResp](format => ({
         case NativeAsset => NativeAmount(units)
       }
     }
+
     def weight = (o \ "weight").extract[Int].toShort
+
     val id = (o \ "id").extract[String]
     (o \ "type").extract[String] match {
       case "account_created" =>

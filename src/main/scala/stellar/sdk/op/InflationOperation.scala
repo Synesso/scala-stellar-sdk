@@ -2,7 +2,7 @@ package stellar.sdk.op
 
 import org.stellar.sdk.xdr.Operation.OperationBody
 import org.stellar.sdk.xdr.OperationType.INFLATION
-import stellar.sdk.{KeyPair, PublicKeyOps}
+import stellar.sdk.PublicKeyOps
 
 case class InflationOperation(sourceAccount: Option[PublicKeyOps] = None) extends Operation {
   override val toOperationBody: OperationBody = {

@@ -1,7 +1,6 @@
 package stellar.sdk
 
 import org.specs2.mutable.Specification
-import stellar.sdk._
 
 class AssetSpec extends Specification with ArbitraryInput {
 

@@ -9,12 +9,12 @@ object TxnFailureDeserializer extends CustomSerializer[TxnFailure](format => ( {
   case o: JObject =>
     implicit val formats = DefaultFormats
 
-//    import org.json4s.native.JsonMethods._
-//    println(pretty(render(o)))
+    //    import org.json4s.native.JsonMethods._
+    //    println(pretty(render(o)))
 
     TxnFailure(
       uri = uri"file://unknown", // overwritten
-      status =(o \ "status").extract[Int],
+      status = (o \ "status").extract[Int],
       detail = (o \ "detail").extract[String],
       resultCode = (o \ "extras" \ "result_codes" \ "transaction").extractOpt[String],
       operationResultCodes = (o \ "extras" \ "result_codes" \ "operations").extractOpt[Array[String]],

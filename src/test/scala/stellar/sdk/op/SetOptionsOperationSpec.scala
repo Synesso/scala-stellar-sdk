@@ -5,7 +5,7 @@ import org.json4s.native.JsonMethods.parse
 import org.json4s.native.Serialization
 import org.scalacheck.Arbitrary
 import org.specs2.mutable.Specification
-import stellar.sdk.{AccountSigner, ArbitraryInput, DomainMatchers, KeyPair}
+import stellar.sdk.{AccountSigner, ArbitraryInput, DomainMatchers}
 
 class SetOptionsOperationSpec extends Specification with ArbitraryInput with DomainMatchers with JsonSnippets {
 
@@ -18,7 +18,7 @@ class SetOptionsOperationSpec extends Specification with ArbitraryInput with Dom
         case expected: SetOptionsOperation => expected must beEquivalentTo(actual)
       }
     }
-    
+
     "parse from json" >> prop { op: Transacted[SetOptionsOperation] =>
       val doc =
         s"""
@@ -38,14 +38,18 @@ class SetOptionsOperationSpec extends Specification with ArbitraryInput with Dom
            |  ${opt("inflation_dest", op.operation.inflationDestination.map(_.accountId))}
            |  ${opt("home_domain", op.operation.homeDomain)}
            |  ${opt("master_key_weight", op.operation.masterKeyWeight)}
-           |  ${opt("signer_key", op.operation.signer.flatMap{
-                case AccountSigner(accn, _) => Some(accn.accountId)
-                case _ => None
-              })}
-           |  ${opt("signer_weight", op.operation.signer.flatMap{
-                case AccountSigner(_, w) => Some(w)
-                case _ => None
-              })}
+           |  ${
+          opt("signer_key", op.operation.signer.flatMap {
+            case AccountSigner(accn, _) => Some(accn.accountId)
+            case _ => None
+          })
+        }
+           |  ${
+          opt("signer_weight", op.operation.signer.flatMap {
+            case AccountSigner(_, w) => Some(w)
+            case _ => None
+          })
+        }
            |  ${opt("set_flags", op.operation.setFlags.map(_.map(_.i)))}
            |  ${opt("set_flags_s", op.operation.setFlags.map(_.map(_.s)))}
            |  ${opt("clear_flags", op.operation.clearFlags.map(_.map(_.i)))}

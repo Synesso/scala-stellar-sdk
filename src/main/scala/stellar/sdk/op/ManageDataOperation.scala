@@ -3,12 +3,13 @@ package stellar.sdk.op
 import org.stellar.sdk.xdr.ManageDataOp
 import org.stellar.sdk.xdr.Operation.OperationBody
 import org.stellar.sdk.xdr.OperationType.MANAGE_DATA
-import stellar.sdk.{KeyPair, PublicKeyOps}
+import stellar.sdk.PublicKeyOps
 
 import scala.util.Try
 
 sealed trait ManageDataOperation extends Operation {
   val name: String
+
   override def toOperationBody: OperationBody = {
     val op = new ManageDataOp
     op.setDataName(str64(name))

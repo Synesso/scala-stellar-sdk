@@ -23,6 +23,7 @@ case class MemoText(text: String) extends Memo {
   val Length = 28
   val bytes = text.getBytes(UTF_8)
   assert(bytes.length <= Length, s"Text exceeded limit (${bytes.length}/$Length bytes)")
+
   override def toXDR: XDRMemo = {
     val m = new XDRMemo
     m.setDiscriminant(MEMO_TEXT)
@@ -33,6 +34,7 @@ case class MemoText(text: String) extends Memo {
 
 case class MemoId(id: Long) extends Memo with XDRPrimitives {
   assert(id > 0, s"Id must be positive (not $id)")
+
   override def toXDR: XDRMemo = {
     val m = new XDRMemo
     m.setDiscriminant(MEMO_ID)
@@ -45,12 +47,15 @@ trait MemoWithHash extends Memo with ByteArrays with XDRPrimitives {
   val Length = 32
   val bs: Array[Byte]
   val bytes = paddedByteArray(bs, Length)
+
   def hex: String = bytesToHex(bytes)
+
   def hexTrim: String = bytesToHex(bs)
 }
 
 case class MemoHash(bs: Array[Byte]) extends MemoWithHash {
   assert(bs.length <= Length, s"Hash exceeded limit (${bytes.length}/$Length bytes)")
+
   override def toXDR: XDRMemo = {
     val m = new XDRMemo
     m.setDiscriminant(MEMO_HASH)
@@ -65,6 +70,7 @@ object MemoHash extends ByteArrays {
 
 case class MemoReturnHash(bs: Array[Byte]) extends MemoWithHash {
   assert(bs.length <= Length, s"Hash exceeded limit (${bytes.length}/$Length bytes)")
+
   override def toXDR: XDRMemo = {
     val m = new XDRMemo
     m.setDiscriminant(MEMO_RETURN)
