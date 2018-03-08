@@ -6,9 +6,9 @@ import org.json4s.native.JsonMethods.parse
 import org.json4s.native.Serialization
 import org.scalacheck.Arbitrary
 import org.specs2.mutable.Specification
-import stellar.sdk.{ArbitraryInput, ByteArrays, DomainMatchers}
+import stellar.sdk.{ArbitraryInput, DomainMatchers}
 
-class ManageDataOperationSpec extends Specification with ArbitraryInput with DomainMatchers with JsonSnippets with ByteArrays {
+class ManageDataOperationSpec extends Specification with ArbitraryInput with DomainMatchers with JsonSnippets {
 
   implicit val arbDelete: Arbitrary[Transacted[DeleteDataOperation]] = Arbitrary(genTransacted(genDeleteDataOperation))
   implicit val arbWrite: Arbitrary[Transacted[WriteDataOperation]] = Arbitrary(genTransacted(genWriteDataOperation))

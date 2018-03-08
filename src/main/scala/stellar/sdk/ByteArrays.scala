@@ -6,7 +6,7 @@ import org.apache.commons.codec.binary.Base64
 
 import scala.util.Try
 
-trait ByteArrays {
+object ByteArrays {
 
   def paddedByteArray(bs: Array[Byte], length: Int): Array[Byte] = {
     val padded = Array.ofDim[Byte](math.max(length, bs.length))

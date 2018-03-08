@@ -4,6 +4,8 @@ import java.nio.charset.StandardCharsets.UTF_8
 
 import org.stellar.sdk.xdr.MemoType._
 import org.stellar.sdk.xdr.{Memo => XDRMemo}
+import stellar.sdk.ByteArrays._
+import stellar.sdk.XDRPrimitives._
 
 import scala.util.Try
 
@@ -32,7 +34,7 @@ case class MemoText(text: String) extends Memo {
   }
 }
 
-case class MemoId(id: Long) extends Memo with XDRPrimitives {
+case class MemoId(id: Long) extends Memo {
   assert(id > 0, s"Id must be positive (not $id)")
 
   override def toXDR: XDRMemo = {
@@ -43,7 +45,7 @@ case class MemoId(id: Long) extends Memo with XDRPrimitives {
   }
 }
 
-trait MemoWithHash extends Memo with ByteArrays with XDRPrimitives {
+trait MemoWithHash extends Memo {
   val Length = 32
   val bs: Array[Byte]
   val bytes = paddedByteArray(bs, Length)
@@ -64,7 +66,7 @@ case class MemoHash(bs: Array[Byte]) extends MemoWithHash {
   }
 }
 
-object MemoHash extends ByteArrays {
+object MemoHash {
   def from(hex: String): Try[MemoHash] = Try(MemoHash(hexToBytes(hex)))
 }
 
@@ -79,6 +81,6 @@ case class MemoReturnHash(bs: Array[Byte]) extends MemoWithHash {
   }
 }
 
-object MemoReturnHash extends ByteArrays {
+object MemoReturnHash {
   def from(hex: String) = Try(MemoReturnHash(hexToBytes(hex)))
 }

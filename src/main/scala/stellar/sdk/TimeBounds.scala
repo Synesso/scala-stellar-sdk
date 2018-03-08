@@ -3,8 +3,9 @@ package stellar.sdk
 import java.time.Instant
 
 import org.stellar.sdk.xdr.{TimeBounds => XDRTimeBounds}
+import stellar.sdk.XDRPrimitives._
 
-case class TimeBounds(start: Instant, end: Instant) extends XDRPrimitives {
+case class TimeBounds(start: Instant, end: Instant) {
   assert(start.isBefore(end))
 
   def toXDR: XDRTimeBounds = {

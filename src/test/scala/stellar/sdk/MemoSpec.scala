@@ -8,8 +8,9 @@ import org.specs2.matcher.Matcher
 import org.specs2.mutable.Specification
 import org.stellar.sdk.xdr.MemoType._
 import org.stellar.sdk.xdr.{XdrDataInputStream, XdrDataOutputStream, Memo => XDRMemo}
+import stellar.sdk.ByteArrays._
 
-class MemoSpec extends Specification with ArbitraryInput with ByteArrays with DomainMatchers {
+class MemoSpec extends Specification with ArbitraryInput with DomainMatchers {
 
   "memo none" should {
     "serialise to xdr" >> {

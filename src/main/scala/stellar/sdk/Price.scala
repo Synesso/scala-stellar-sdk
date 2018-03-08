@@ -1,8 +1,9 @@
 package stellar.sdk
 
 import org.stellar.sdk.xdr.{Price => XDRPrice}
+import stellar.sdk.XDRPrimitives._
 
-case class Price(n: Int, d: Int) extends XDRPrimitives {
+case class Price(n: Int, d: Int) {
   def toXDR = {
     val xdr = new XDRPrice
     xdr.setN(int32(n))

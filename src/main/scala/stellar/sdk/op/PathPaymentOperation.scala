@@ -4,6 +4,7 @@ import org.stellar.sdk.xdr.Operation.OperationBody
 import org.stellar.sdk.xdr.OperationType.PATH_PAYMENT
 import org.stellar.sdk.xdr._
 import stellar.sdk
+import stellar.sdk.TrySeq._
 import stellar.sdk.{Amount, KeyPair, PublicKeyOps, TrySeq}
 
 import scala.util.Try
@@ -41,7 +42,7 @@ case class PathPaymentOperation(sendMax: Amount,
 
 }
 
-object PathPaymentOperation extends TrySeq {
+object PathPaymentOperation {
 
   def from(op: PathPaymentOp): Try[PathPaymentOperation] = for {
     sendAsset <- sdk.Asset.fromXDR(op.getSendAsset)

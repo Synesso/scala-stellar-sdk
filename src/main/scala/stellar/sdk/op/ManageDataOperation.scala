@@ -4,6 +4,7 @@ import org.stellar.sdk.xdr.ManageDataOp
 import org.stellar.sdk.xdr.Operation.OperationBody
 import org.stellar.sdk.xdr.OperationType.MANAGE_DATA
 import stellar.sdk.PublicKeyOps
+import stellar.sdk.XDRPrimitives._
 
 import scala.util.Try
 

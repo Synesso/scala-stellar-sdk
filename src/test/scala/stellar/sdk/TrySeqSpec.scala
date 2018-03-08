@@ -1,10 +1,11 @@
 package stellar.sdk
 
 import org.specs2.mutable.Specification
+import stellar.sdk.TrySeq._
 
 import scala.util.{Failure, Success}
 
-class TrySeqSpec extends Specification with TrySeq {
+class TrySeqSpec extends Specification {
 
   "sequencing an empty list of trys" should {
     "be a successful empty list" >> {

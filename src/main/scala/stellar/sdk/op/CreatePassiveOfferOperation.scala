@@ -3,6 +3,7 @@ package stellar.sdk.op
 import org.stellar.sdk.xdr.CreatePassiveOfferOp
 import org.stellar.sdk.xdr.Operation.OperationBody
 import org.stellar.sdk.xdr.OperationType.CREATE_PASSIVE_OFFER
+import stellar.sdk.XDRPrimitives._
 import stellar.sdk.{Amount, Asset, _}
 
 import scala.util.Try

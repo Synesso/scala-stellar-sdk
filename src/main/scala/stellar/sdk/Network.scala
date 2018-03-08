@@ -4,13 +4,14 @@ import java.net.URI
 import java.nio.charset.StandardCharsets.UTF_8
 
 import com.softwaremill.sttp.akkahttp.AkkaHttpBackend
+import stellar.sdk.ByteArrays._
 import stellar.sdk.inet.Server
 import stellar.sdk.op.{Operation, PayOperation, Transacted, TransactedOperationDeserializer}
 import stellar.sdk.resp._
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait Network extends ByteArrays {
+trait Network {
   val passphrase: String
   lazy val networkId: Array[Byte] = sha256(passphrase.getBytes(UTF_8)).get
   val server: Server

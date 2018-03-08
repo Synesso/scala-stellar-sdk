@@ -3,6 +3,7 @@ package stellar.sdk.op
 import org.stellar.sdk.xdr.ManageOfferOp
 import org.stellar.sdk.xdr.Operation.OperationBody
 import org.stellar.sdk.xdr.OperationType._
+import stellar.sdk.XDRPrimitives._
 import stellar.sdk.{Amount, Asset, _}
 
 import scala.util.Try

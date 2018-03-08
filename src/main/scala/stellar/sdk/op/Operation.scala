@@ -6,11 +6,11 @@ import org.json4s.{CustomSerializer, DefaultFormats}
 import org.stellar.sdk.xdr.Operation.OperationBody
 import org.stellar.sdk.xdr.OperationType._
 import org.stellar.sdk.xdr.{Operation => XDROp}
-import stellar.sdk.{XDRPrimitives, _}
+import stellar.sdk._
 
 import scala.util.{Success, Try}
 
-trait Operation extends XDRPrimitives {
+trait Operation {
   val sourceAccount: Option[PublicKeyOps]
 
   def toOperationBody: OperationBody

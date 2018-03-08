@@ -4,8 +4,9 @@ import java.math.BigInteger
 
 import org.scalacheck.Gen
 import org.specs2.mutable.Specification
+import stellar.sdk.ByteArrays._
 
-class ByteArraysSpec extends Specification with ArbitraryInput with ByteArrays {
+class ByteArraysSpec extends Specification with ArbitraryInput {
 
   "padding a byte array" should {
     "do nothing when required length is the array length" >> prop { bs: Array[Byte] =>

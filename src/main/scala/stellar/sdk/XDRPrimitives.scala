@@ -2,7 +2,7 @@ package stellar.sdk
 
 import org.stellar.sdk.xdr._
 
-trait XDRPrimitives {
+object XDRPrimitives {
 
   def str32(s: String) = {
     val s32 = new String32

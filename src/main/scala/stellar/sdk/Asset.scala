@@ -2,14 +2,15 @@ package stellar.sdk
 
 import org.stellar.sdk.xdr.AssetType._
 import org.stellar.sdk.xdr.{AccountID, AssetType, Asset => XDRAsset}
+import stellar.sdk.ByteArrays._
 
 import scala.util.Try
 
-sealed trait Asset extends ByteArrays {
+sealed trait Asset {
   def toXDR: XDRAsset
 }
 
-object Asset extends ByteArrays {
+object Asset {
   def createNonNative(code: String, issuer: PublicKeyOps): Try[Asset] = Try {
     if (code.length <= 4) AssetTypeCreditAlphaNum4(code, issuer) else AssetTypeCreditAlphaNum12(code, issuer)
   }
