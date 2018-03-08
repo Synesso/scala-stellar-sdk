@@ -14,14 +14,9 @@ The Scala SDK for the [Stellar network](https://www.stellar.org/) provides an AP
 * Query federation servers [Pending]
 
 
-## Benefits
+## Aims
 
 A Scala developer would choose to use this SDK because it aims to provide:
-
-* Code safety
-  * `Option`s, not nulls
-  * `Try`s, not exceptions
-  * Explicit type hierarchies instead of meaningful primitives
 
 * Convenience
   * Asynchronous by default
@@ -31,6 +26,9 @@ A Scala developer would choose to use this SDK because it aims to provide:
 
 * Correctness
   * Generative testing using scalacheck with the goal of 100% test coverage
+  * `Option`s, not nulls
+  * `Try`s, not exceptions
+  * Explicit type hierarchies instead of meaningful primitives
 
 
 ## Deprecation warning
@@ -113,7 +111,7 @@ Additional examples can be found in the `/examples` folder.
 ```
 [✓] Operations
 [✓] Transactions
-[ ] Horizon Endpoints
+[🚀] Horizon Endpoints
   [✓] Account details
   [✓] Assets
   [✓] Data for account
@@ -168,8 +166,8 @@ Additional examples can be found in the `/examples` folder.
     [✓] By ledger
     [] By transaction
   [ ] Trade aggregations
-  [ ] Trades
-    [ ] Unfiltered
+  [🚀] Trades
+    [🚀] Unfiltered
     [ ] By orderbook
   [ ] Transactions
     [ ] Unfiltered

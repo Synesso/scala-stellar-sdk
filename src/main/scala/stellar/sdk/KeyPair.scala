@@ -50,7 +50,7 @@ case class KeyPair(pk: EdDSAPublicKey, sk: EdDSAPrivateKey) extends PublicKeyOps
 
 
   override def toString: String = {
-    s"""KeyPair("$accountId", "${secretSeed.mkString}")"""
+    s"""KeyPair("$accountId", "S...")"""
   }
 }
 
