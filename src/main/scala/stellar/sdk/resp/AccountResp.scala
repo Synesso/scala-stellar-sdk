@@ -31,12 +31,12 @@ object AccountRespDeserializer extends CustomSerializer[AccountResp](format => (
         val units = Amount.toBaseUnits((balObj \ "balance").extract[String].toDouble).get
         (balObj \ "asset_type").extract[String] match {
           case "credit_alphanum4" =>
-            Amount(units, AssetTypeCreditAlphaNum4(
+            Amount(units, IssuedAsset4(
               code = (balObj \ "asset_code").extract[String],
               issuer = KeyPair.fromAccountId((balObj \ "asset_issuer").extract[String])
             ))
           case "credit_alphanum12" =>
-            Amount(units, AssetTypeCreditAlphaNum12(
+            Amount(units, IssuedAsset12(
               code = (balObj \ "asset_code").extract[String],
               issuer = KeyPair.fromAccountId((balObj \ "asset_issuer").extract[String])
             ))

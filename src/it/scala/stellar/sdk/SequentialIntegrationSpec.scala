@@ -61,7 +61,7 @@ class SequentialIntegrationSpec(implicit ee: ExecutionEnv) extends Specification
       val issuerAccount = "GCZAKXMQZKYJBQK7U2LFIF77PKGDCZRU3IOPV2VON5CHWJSWDH2B5A42"
       val byCodeAndIssuer = TestNetwork.assets(code = Some("ALX1"), issuer = Some(issuerAccount)).map(_.toList)
       byCodeAndIssuer.map(_.map(_.asset)) must beLike[Seq[NonNativeAsset]] {
-        case Seq(asset) => asset must beEquivalentTo(AssetTypeCreditAlphaNum4("ALX1", KeyPair.fromAccountId(issuerAccount)))
+        case Seq(asset) => asset must beEquivalentTo(IssuedAsset4("ALX1", KeyPair.fromAccountId(issuerAccount)))
       }.awaitFor(10 seconds)
     }
   }
@@ -86,14 +86,14 @@ class SequentialIntegrationSpec(implicit ee: ExecutionEnv) extends Specification
       val byLedger = PublicNetwork.effectsByLedger(16237465).map(_.toList)
       byLedger must beEqualTo(Seq(
         EffectTrade("0069739381144948737-0000000001", 747605, KeyPair.fromAccountId("GD3IYBNQ45LXHFABSX4HLGDL7BQA62SVB5NB5O6XMBCITFZOLWLVS22B"),
-          Amount(5484522, AssetTypeCreditAlphaNum4("XLM", KeyPair.fromAccountId("GBSTRH4QOTWNSVA6E4HFERETX4ZLSR3CIUBLK7AXYII277PFJC4BBYOG"))),
+          Amount(5484522, IssuedAsset4("XLM", KeyPair.fromAccountId("GBSTRH4QOTWNSVA6E4HFERETX4ZLSR3CIUBLK7AXYII277PFJC4BBYOG"))),
           KeyPair.fromAccountId("GBBMSYSNV7PC6XAI3JL6F5OWP54TIONGDDTEJ4AQS3YMFUSPDSSSDQVB"),
-          Amount(2445, AssetTypeCreditAlphaNum4("ETH", KeyPair.fromAccountId("GBSTRH4QOTWNSVA6E4HFERETX4ZLSR3CIUBLK7AXYII277PFJC4BBYOG")))),
+          Amount(2445, IssuedAsset4("ETH", KeyPair.fromAccountId("GBSTRH4QOTWNSVA6E4HFERETX4ZLSR3CIUBLK7AXYII277PFJC4BBYOG")))),
 
         EffectTrade("0069739381144948737-0000000002", 747605, KeyPair.fromAccountId("GBBMSYSNV7PC6XAI3JL6F5OWP54TIONGDDTEJ4AQS3YMFUSPDSSSDQVB"),
-          Amount(2445, AssetTypeCreditAlphaNum4("ETH", KeyPair.fromAccountId("GBSTRH4QOTWNSVA6E4HFERETX4ZLSR3CIUBLK7AXYII277PFJC4BBYOG"))),
+          Amount(2445, IssuedAsset4("ETH", KeyPair.fromAccountId("GBSTRH4QOTWNSVA6E4HFERETX4ZLSR3CIUBLK7AXYII277PFJC4BBYOG"))),
           KeyPair.fromAccountId("GD3IYBNQ45LXHFABSX4HLGDL7BQA62SVB5NB5O6XMBCITFZOLWLVS22B"),
-          Amount(5484522, AssetTypeCreditAlphaNum4("XLM", KeyPair.fromAccountId("GBSTRH4QOTWNSVA6E4HFERETX4ZLSR3CIUBLK7AXYII277PFJC4BBYOG")))
+          Amount(5484522, IssuedAsset4("XLM", KeyPair.fromAccountId("GBSTRH4QOTWNSVA6E4HFERETX4ZLSR3CIUBLK7AXYII277PFJC4BBYOG")))
         )
       )).awaitFor(10.seconds)
     }
@@ -123,7 +123,7 @@ class SequentialIntegrationSpec(implicit ee: ExecutionEnv) extends Specification
           id = 101542,
           seller = KeyPair.fromAccountId("GCXYKQF35XWATRB6AWDDV2Y322IFU2ACYYN5M2YB44IBWAIITQ4RYPXK"),
           selling = Amount.lumens(165),
-          buying = AssetTypeCreditAlphaNum12(
+          buying = IssuedAsset12(
             code = "sausage",
             issuer = KeyPair.fromAccountId("GCXYKQF35XWATRB6AWDDV2Y322IFU2ACYYN5M2YB44IBWAIITQ4RYPXK")),
           price = Price(303, 100)
@@ -147,7 +147,7 @@ class SequentialIntegrationSpec(implicit ee: ExecutionEnv) extends Specification
         operation = PaymentOperation(
           destinationAccount = KeyPair.fromAccountId("GAR2WMVXCTFUXHU4K5KZNRAVTYFAFWT4XWFLKJ5IKEQ65Q47WNSMDVKH"),
           amount = IssuedAmount(10000000000L,
-            AssetTypeCreditAlphaNum12("sausage", KeyPair.fromAccountId("GCXYKQF35XWATRB6AWDDV2Y322IFU2ACYYN5M2YB44IBWAIITQ4RYPXK")))
+            IssuedAsset12("sausage", KeyPair.fromAccountId("GCXYKQF35XWATRB6AWDDV2Y322IFU2ACYYN5M2YB44IBWAIITQ4RYPXK")))
         ))).awaitFor(10.seconds)
     }
     val kinPayment = Transacted(
@@ -158,7 +158,7 @@ class SequentialIntegrationSpec(implicit ee: ExecutionEnv) extends Specification
       operation = PaymentOperation(
         destinationAccount = KeyPair.fromAccountId("GCT4TTKW2HPCMHM6PJHQ33FIIDCVKIJXLXDHMKQEC7DKHPPGLUKCHKY7"),
         amount = IssuedAmount(28553980000000L,
-          AssetTypeCreditAlphaNum4("KIN", KeyPair.fromAccountId("GBDEVU63Y6NTHJQQZIKVTC23NWLQVP3WJ2RI2OTSJTNYOIGICST6DUXR")))
+          IssuedAsset4("KIN", KeyPair.fromAccountId("GBDEVU63Y6NTHJQQZIKVTC23NWLQVP3WJ2RI2OTSJTNYOIGICST6DUXR")))
       )
     )
     "list operations by ledger" >> {
@@ -176,7 +176,7 @@ class SequentialIntegrationSpec(implicit ee: ExecutionEnv) extends Specification
   "orderbook endpoint" should {
     "fetch current orders" >> {
       // todo - replace with a static test network assertion
-      val mobi = AssetTypeCreditAlphaNum4("MOBI", KeyPair.fromAccountId("GA6HCMBLTZS5VYYBCATRBRZ3BZJMAFUDKYYF6AH6MVCMGWMRDNSWJPIH"))
+      val mobi = IssuedAsset4("MOBI", KeyPair.fromAccountId("GA6HCMBLTZS5VYYBCATRBRZ3BZJMAFUDKYYF6AH6MVCMGWMRDNSWJPIH"))
       Await.result(PublicNetwork.orderBook(
         selling = NativeAsset,
         buying = mobi
@@ -199,7 +199,7 @@ class SequentialIntegrationSpec(implicit ee: ExecutionEnv) extends Specification
             destinationAccount = KeyPair.fromAccountId("GD7E76FQQDNM5GXQX3SMEN5FIZKVHD2KYRYN2UPDQIDKHSXV4QUN7ZT3"),
             amount = IssuedAmount(
               units = 10000L,
-              asset = AssetTypeCreditAlphaNum4(
+              asset = IssuedAsset4(
                 "USD",
                 KeyPair.fromAccountId("GBK4EP3WICCDJQ3MSYUNRV3PNVQQZAESFGV4DALFENUFAGOY4J7QQNGW")
               )),

@@ -27,7 +27,7 @@ val response = for {
     Transaction(
       Account(keyPair = source, sequenceNumber = account.lastSequence + 1),
       Seq(
-        ChangeTrustOperation(IssuedAmount(1000, AssetTypeCreditAlphaNum12("PANCAKE", issuer)))
+        ChangeTrustOperation(IssuedAmount(1000, IssuedAsset12("PANCAKE", issuer)))
       )
     ).sign(source)
   }

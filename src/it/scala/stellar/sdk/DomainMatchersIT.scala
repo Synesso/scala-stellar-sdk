@@ -10,12 +10,12 @@ trait DomainMatchersIT extends AnyMatchers with MustExpectations with SequenceMa
   def beEquivalentTo(other: Asset): Matcher[Asset] = beLike[Asset] {
     case NativeAsset =>
       other mustEqual NativeAsset
-    case AssetTypeCreditAlphaNum4(code, issuer) =>
-      val AssetTypeCreditAlphaNum4(expectedCode, expectedIssuer) = other
+    case IssuedAsset4(code, issuer) =>
+      val IssuedAsset4(expectedCode, expectedIssuer) = other
       code mustEqual expectedCode
       issuer.accountId mustEqual expectedIssuer.accountId
-    case AssetTypeCreditAlphaNum12(code, issuer) =>
-      val AssetTypeCreditAlphaNum12(expectedCode, expectedIssuer) = other
+    case IssuedAsset12(code, issuer) =>
+      val IssuedAsset12(expectedCode, expectedIssuer) = other
       code mustEqual expectedCode
       issuer.accountId mustEqual expectedIssuer.accountId
   }

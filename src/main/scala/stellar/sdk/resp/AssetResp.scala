@@ -13,8 +13,8 @@ object AssetRespDeserializer extends CustomSerializer[AssetResp](format => ( {
       val code = (o \ "asset_code").extract[String]
       val issuer = KeyPair.fromAccountId((o \ "asset_issuer").extract[String])
       (o \ "asset_type").extract[String] match {
-        case "credit_alphanum4" => AssetTypeCreditAlphaNum4(code, issuer)
-        case "credit_alphanum12" => AssetTypeCreditAlphaNum12(code, issuer)
+        case "credit_alphanum4" => IssuedAsset4(code, issuer)
+        case "credit_alphanum12" => IssuedAsset12(code, issuer)
         case t => throw new RuntimeException(s"Unrecognised asset type: $t")
       }
     }

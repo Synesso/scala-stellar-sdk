@@ -122,11 +122,11 @@ class AccountRespSpec extends Specification {
           r.thresholds mustEqual Thresholds(1, 5, 10)
           r.balances must containTheSameElementsAs(Seq(
             Amount.lumens(19309.4481807),
-            Amount(160014653423L, AssetTypeCreditAlphaNum4("EURT", KeyPair.fromAccountId("GAP5LETOV6YIE62YAM56STDANPRDO7ZFDBGSNHJQIYGGKSMOZAHOOS2S"))),
-            Amount(386158026333L, AssetTypeCreditAlphaNum4("CNY", KeyPair.fromAccountId("GAREELUB43IRHWEASCFBLKHURCGMHE5IF6XSE7EXDLACYHGRHM43RFOX"))),
-            Amount(28256257L, AssetTypeCreditAlphaNum4("BTC", KeyPair.fromAccountId("GATEMHCCKCY67ZUCKTROYN24ZYT5GK4EQZ65JJLDHKHRUZI3EUEKMTCH"))),
-            Amount(1L, AssetTypeCreditAlphaNum4("BTC", KeyPair.fromAccountId("GDXTJEK4JZNSTNQAWA53RZNS2GIKTDRPEUWDXELFMKU52XNECNVDVXDI"))),
-            Amount(3332771622L, AssetTypeCreditAlphaNum4("JPY", KeyPair.fromAccountId("GBVAOIACNSB7OVUXJYC5UE2D4YK2F7A24T7EE5YOMN4CE6GCHUTOUQXM")))
+            Amount(160014653423L, IssuedAsset4("EURT", KeyPair.fromAccountId("GAP5LETOV6YIE62YAM56STDANPRDO7ZFDBGSNHJQIYGGKSMOZAHOOS2S"))),
+            Amount(386158026333L, IssuedAsset4("CNY", KeyPair.fromAccountId("GAREELUB43IRHWEASCFBLKHURCGMHE5IF6XSE7EXDLACYHGRHM43RFOX"))),
+            Amount(28256257L, IssuedAsset4("BTC", KeyPair.fromAccountId("GATEMHCCKCY67ZUCKTROYN24ZYT5GK4EQZ65JJLDHKHRUZI3EUEKMTCH"))),
+            Amount(1L, IssuedAsset4("BTC", KeyPair.fromAccountId("GDXTJEK4JZNSTNQAWA53RZNS2GIKTDRPEUWDXELFMKU52XNECNVDVXDI"))),
+            Amount(3332771622L, IssuedAsset4("JPY", KeyPair.fromAccountId("GBVAOIACNSB7OVUXJYC5UE2D4YK2F7A24T7EE5YOMN4CE6GCHUTOUQXM")))
           ))
           r.signers mustEqual Seq(AccountSigner(KeyPair.fromAccountId("GBU6GMZZ2KTQ33CHNVPAWWEJ22ZHLYGBGO3LIBKNANXUMNEOFROZKO62"), 1))
       }

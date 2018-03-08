@@ -15,10 +15,10 @@ class AssetSpec extends Specification with ArbitraryInput {
       val issuer = KeyPair.random
       val asset = Asset.createNonNative(code, issuer).get
       Asset.fromXDR(asset.toXDR) must beSuccessfulTry[Asset].like {
-        case a: AssetTypeCreditAlphaNum4 if code.length <= 4 =>
+        case a: IssuedAsset4 if code.length <= 4 =>
           a.code mustEqual code
           a.issuer.accountId mustEqual issuer.accountId
-        case a: AssetTypeCreditAlphaNum12 =>
+        case a: IssuedAsset12 =>
           a.code mustEqual code
           a.issuer.accountId mustEqual issuer.accountId
       }
@@ -29,8 +29,8 @@ class AssetSpec extends Specification with ArbitraryInput {
     "not allow non-native asset construction" >> {
       val issuer = KeyPair.random
       Asset.createNonNative("", issuer) must beFailedTry[Asset]
-      AssetTypeCreditAlphaNum4("", issuer) must throwAn[AssertionError]
-      AssetTypeCreditAlphaNum12("", issuer) must throwAn[AssertionError]
+      IssuedAsset4("", issuer) must throwAn[AssertionError]
+      IssuedAsset12("", issuer) must throwAn[AssertionError]
     }
   }
 
@@ -38,7 +38,7 @@ class AssetSpec extends Specification with ArbitraryInput {
     "result in a 4-char non-native asset" >> prop { code: String =>
       val issuer = KeyPair.random
       Asset.createNonNative(code, issuer) must beSuccessfulTry[Asset].like {
-        case a: AssetTypeCreditAlphaNum4 =>
+        case a: IssuedAsset4 =>
           a.code mustEqual code
           a.issuer.accountId mustEqual issuer.accountId
       }
@@ -46,14 +46,14 @@ class AssetSpec extends Specification with ArbitraryInput {
 
     "successfully create a 4-char non-native asset directly" >> prop { code: String =>
       val issuer = KeyPair.random
-      val a = AssetTypeCreditAlphaNum4(code, issuer)
+      val a = IssuedAsset4(code, issuer)
       a.code mustEqual code
       a.issuer.accountId mustEqual issuer.accountId
     }.setGen(genCode(1, 4))
 
     "fail to create a 12-char non-native asset directly" >> prop { code: String =>
       val issuer = KeyPair.random
-      AssetTypeCreditAlphaNum12(code, issuer) must throwAn[AssertionError]
+      IssuedAsset12(code, issuer) must throwAn[AssertionError]
     }.setGen(genCode(1, 4))
   }
 
@@ -61,7 +61,7 @@ class AssetSpec extends Specification with ArbitraryInput {
     "result in a 12-char non-native asset" >> prop { code: String =>
       val issuer = KeyPair.random
       Asset.createNonNative(code, issuer) must beSuccessfulTry[Asset].like {
-        case a: AssetTypeCreditAlphaNum12 =>
+        case a: IssuedAsset12 =>
           a.code mustEqual code
           a.issuer.accountId mustEqual issuer.accountId
       }
@@ -69,12 +69,12 @@ class AssetSpec extends Specification with ArbitraryInput {
 
     "fail to create a 4-char non-native asset directly" >> prop { code: String =>
       val issuer = KeyPair.random
-      AssetTypeCreditAlphaNum4(code, issuer) must throwAn[AssertionError]
+      IssuedAsset4(code, issuer) must throwAn[AssertionError]
     }.setGen(genCode(5, 12))
 
     "successfully create a 12-char non-native asset directly" >> prop { code: String =>
       val issuer = KeyPair.random
-      val a = AssetTypeCreditAlphaNum12(code, issuer)
+      val a = IssuedAsset12(code, issuer)
       a.code mustEqual code
       a.issuer.accountId mustEqual issuer.accountId
     }.setGen(genCode(5, 12))
@@ -84,8 +84,8 @@ class AssetSpec extends Specification with ArbitraryInput {
     "not allow non-native asset construction" >> prop { code: String =>
       val issuer = KeyPair.random
       Asset.createNonNative(code, issuer) must beFailedTry[Asset]
-      AssetTypeCreditAlphaNum4(code, issuer) must throwAn[AssertionError]
-      AssetTypeCreditAlphaNum12(code, issuer) must throwAn[AssertionError]
+      IssuedAsset4(code, issuer) must throwAn[AssertionError]
+      IssuedAsset12(code, issuer) must throwAn[AssertionError]
     }.setGen(genCode(13, 1000))
   }
 

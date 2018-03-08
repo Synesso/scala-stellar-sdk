@@ -29,7 +29,7 @@ class AccountEffectRespSpec extends Specification with ArbitraryInput {
     "parse to a debit account effect with non-native amount" >> prop { (id: String, accn: KeyPair, amount: IssuedAmount) =>
       val json = doc(id, accn, "account_debited",
         "asset_type" -> (amount.asset match {
-          case _: AssetTypeCreditAlphaNum4 => "credit_alphanum4"
+          case _: IssuedAsset4 => "credit_alphanum4"
           case _ => "credit_alphanum12"
         }),
         "asset_code" -> amount.asset.code,
@@ -50,7 +50,7 @@ class AccountEffectRespSpec extends Specification with ArbitraryInput {
     "parse to a credit account effect with non-native amount" >> prop { (id: String, accn: KeyPair, amount: IssuedAmount) =>
       val json = doc(id, accn, "account_credited",
         "asset_type" -> (amount.asset match {
-          case _: AssetTypeCreditAlphaNum4 => "credit_alphanum4"
+          case _: IssuedAsset4 => "credit_alphanum4"
           case _ => "credit_alphanum12"
         }),
         "asset_code" -> amount.asset.code,

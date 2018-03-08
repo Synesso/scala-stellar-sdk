@@ -28,8 +28,8 @@ object TradeDeserializer extends CustomSerializer[Trade](format => ( {
 
       (o \ s"${prefix}asset_type").extract[String] match {
         case "native" => NativeAsset
-        case "credit_alphanum4" => AssetTypeCreditAlphaNum4(assetCode, assetIssuer)
-        case "credit_alphanum12" => AssetTypeCreditAlphaNum12(assetCode, assetIssuer)
+        case "credit_alphanum4" => IssuedAsset4(assetCode, assetIssuer)
+        case "credit_alphanum12" => IssuedAsset12(assetCode, assetIssuer)
         case t => throw new RuntimeException(s"Unrecognised asset type '$t'")
       }
     }
