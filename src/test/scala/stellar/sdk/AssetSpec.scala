@@ -29,8 +29,8 @@ class AssetSpec extends Specification with ArbitraryInput {
     "not allow non-native asset construction" >> {
       val issuer = KeyPair.random
       Asset.createNonNative("", issuer) must beFailedTry[Asset]
-      IssuedAsset4("", issuer) must throwAn[AssertionError]
-      IssuedAsset12("", issuer) must throwAn[AssertionError]
+      IssuedAsset4.of("", issuer) must beFailedTry[Asset]
+      IssuedAsset12.of("", issuer) must beFailedTry[Asset]
     }
   }
 
@@ -43,18 +43,6 @@ class AssetSpec extends Specification with ArbitraryInput {
           a.issuer.accountId mustEqual issuer.accountId
       }
     }.setGen(genCode(1, 4))
-
-    "successfully create a 4-char non-native asset directly" >> prop { code: String =>
-      val issuer = KeyPair.random
-      val a = IssuedAsset4(code, issuer)
-      a.code mustEqual code
-      a.issuer.accountId mustEqual issuer.accountId
-    }.setGen(genCode(1, 4))
-
-    "fail to create a 12-char non-native asset directly" >> prop { code: String =>
-      val issuer = KeyPair.random
-      IssuedAsset12(code, issuer) must throwAn[AssertionError]
-    }.setGen(genCode(1, 4))
   }
 
   "an 5-to-12-char code" should {
@@ -66,26 +54,14 @@ class AssetSpec extends Specification with ArbitraryInput {
           a.issuer.accountId mustEqual issuer.accountId
       }
     }.setGen(genCode(5, 12))
-
-    "fail to create a 4-char non-native asset directly" >> prop { code: String =>
-      val issuer = KeyPair.random
-      IssuedAsset4(code, issuer) must throwAn[AssertionError]
-    }.setGen(genCode(5, 12))
-
-    "successfully create a 12-char non-native asset directly" >> prop { code: String =>
-      val issuer = KeyPair.random
-      val a = IssuedAsset12(code, issuer)
-      a.code mustEqual code
-      a.issuer.accountId mustEqual issuer.accountId
-    }.setGen(genCode(5, 12))
   }
 
   "a greater than 12 character code" should {
     "not allow non-native asset construction" >> prop { code: String =>
       val issuer = KeyPair.random
       Asset.createNonNative(code, issuer) must beFailedTry[Asset]
-      IssuedAsset4(code, issuer) must throwAn[AssertionError]
-      IssuedAsset12(code, issuer) must throwAn[AssertionError]
+      IssuedAsset4.of(code, issuer) must beFailedTry[Asset]
+      IssuedAsset12.of(code, issuer) must beFailedTry[Asset]
     }.setGen(genCode(13, 1000))
   }
 

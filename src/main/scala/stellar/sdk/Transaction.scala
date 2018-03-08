@@ -26,10 +26,8 @@ case class Transaction(source: Account,
 
   def sign(key: KeyPair, otherKeys: KeyPair*): Try[SignedTransaction] = for {
     h <- hash
-    sigs <- sequence((key +: otherKeys).map(_.signToXDR(h)))
-  } yield {
-    SignedTransaction(this, sigs, h)
-  }
+    signatures <- sequence((key +: otherKeys).map(_.signToXDR(h)))
+  } yield SignedTransaction(this, signatures, h)
 
   def fee: Int = BaseFee * operations.size
 

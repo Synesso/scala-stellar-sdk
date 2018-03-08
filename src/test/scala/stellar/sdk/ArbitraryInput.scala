@@ -121,17 +121,13 @@ trait ArbitraryInput extends ScalaCheck {
 
   def genAsset4: Gen[IssuedAsset4] = for {
     code <- genCode(1, 4)
-    keyPair <- genKeyPair
-  } yield {
-    IssuedAsset4(code, keyPair)
-  }
+    issuer <- genKeyPair
+  } yield IssuedAsset4.of(code, issuer).get
 
   def genAsset12: Gen[IssuedAsset12] = for {
     code <- genCode(5, 12)
-    keyPair <- genKeyPair
-  } yield {
-    IssuedAsset12(code, keyPair)
-  }
+    issuer <- genKeyPair
+  } yield IssuedAsset12.of(code, issuer).get
 
   def genAssetPath: Gen[Seq[Asset]] = (for {
     qty <- Gen.choose(0, 5)

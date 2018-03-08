@@ -21,16 +21,13 @@ val response = for {
   // obtain up-to-date data about our source account
   account <- TestNetwork.account(source)
 
-  txn <- Future.fromTry {
+  asset <- Future.fromTry(IssuedAsset12.of("PANCAKE", issuer))
 
-    // create a transaction with the create trust operation and sign it
-    Transaction(
-      Account(keyPair = source, sequenceNumber = account.lastSequence + 1),
-      Seq(
-        ChangeTrustOperation(IssuedAmount(1000, IssuedAsset12("PANCAKE", issuer)))
-      )
-    ).sign(source)
-  }
+  // create a transaction with the create trust operation and sign it
+  txn <- Future.fromTry(Transaction(
+    Account(keyPair = source, sequenceNumber = account.lastSequence + 1),
+    Seq(ChangeTrustOperation(IssuedAmount(1000, asset)))
+  ).sign(source))
 
   // and submit it
   response <- txn.submit

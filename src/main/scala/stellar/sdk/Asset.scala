@@ -4,28 +4,27 @@ import org.stellar.sdk.xdr.AssetType._
 import org.stellar.sdk.xdr.{AccountID, AssetType, Asset => XDRAsset}
 import stellar.sdk.ByteArrays._
 
-import scala.util.Try
+import scala.util.{Success, Try}
 
 sealed trait Asset {
   def toXDR: XDRAsset
 }
 
 object Asset {
-  def createNonNative(code: String, issuer: PublicKeyOps): Try[Asset] = Try {
-    if (code.length <= 4) IssuedAsset4(code, issuer) else IssuedAsset12(code, issuer)
-  }
+  def createNonNative(code: String, issuer: PublicKeyOps): Try[Asset] =
+    if (code.length <= 4) IssuedAsset4.of(code, issuer) else IssuedAsset12.of(code, issuer)
 
-  def fromXDR(xdr: XDRAsset): Try[Asset] = Try {
+  def fromXDR(xdr: XDRAsset): Try[Asset] = Try{
     xdr.getDiscriminant match {
       case ASSET_TYPE_NATIVE => NativeAsset
       case ASSET_TYPE_CREDIT_ALPHANUM4 =>
         val code = paddedByteArrayToString(xdr.getAlphaNum4.getAssetCode)
         val issuer = KeyPair.fromXDRPublicKey(xdr.getAlphaNum4.getIssuer.getAccountID)
-        IssuedAsset4(code, issuer)
+        IssuedAsset4.of(code, issuer).get
       case ASSET_TYPE_CREDIT_ALPHANUM12 =>
         val code = paddedByteArrayToString(xdr.getAlphaNum12.getAssetCode)
         val issuer = KeyPair.fromXDRPublicKey(xdr.getAlphaNum12.getIssuer.getAccountID)
-        IssuedAsset12(code, issuer)
+        IssuedAsset12.of(code, issuer).get
     }
   }
 }
@@ -49,7 +48,7 @@ trait NonNativeAsset extends Asset {
   *
   * @see <a href="https://www.stellar.org/developers/learn/concepts/assets.html" target="_blank">Assets</a>
   */
-case class IssuedAsset4(code: String, issuer: PublicKey) extends NonNativeAsset {
+case class IssuedAsset4 private(code: String, issuer: PublicKey) extends NonNativeAsset {
   assert(code.nonEmpty, s"Asset's code '$code' cannot be empty")
   assert(code.length <= 4, s"Asset's code '$code' should have length no greater than 4")
 
@@ -69,8 +68,8 @@ case class IssuedAsset4(code: String, issuer: PublicKey) extends NonNativeAsset 
 }
 
 object IssuedAsset4 {
-  def apply(code: String, keyPair: PublicKeyOps): IssuedAsset4 =
-    IssuedAsset4(code, keyPair.asPublicKey)
+  def of(code: String, issuer: PublicKeyOps): Try[IssuedAsset4] =
+    Try(IssuedAsset4(code, issuer.asPublicKey))
 }
 
 
@@ -79,7 +78,7 @@ object IssuedAsset4 {
   *
   * @see <a href="https://www.stellar.org/developers/learn/concepts/assets.html" target="_blank">Assets</a>
   */
-case class IssuedAsset12(code: String, issuer: PublicKey) extends NonNativeAsset {
+case class IssuedAsset12 private (code: String, issuer: PublicKey) extends NonNativeAsset {
   assert(code.length >= 5 && code.length <= 12, s"Asset's code '$code' should have length between 5 & 12 inclusive")
 
   override def toXDR: XDRAsset = {
@@ -98,6 +97,6 @@ case class IssuedAsset12(code: String, issuer: PublicKey) extends NonNativeAsset
 }
 
 object IssuedAsset12 {
-  def apply(code: String, keyPair: PublicKeyOps): IssuedAsset12 =
-    IssuedAsset12(code, keyPair.asPublicKey)
+  def of(code: String, keyPair: PublicKeyOps): Try[IssuedAsset12] =
+    Try(IssuedAsset12(code, keyPair.asPublicKey))
 }

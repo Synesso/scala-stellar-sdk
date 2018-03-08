@@ -27,23 +27,18 @@ val response = for {
   // obtain up-to-date data about our source account
   account <- TestNetwork.account(source)
 
+  // create a transaction with the create trust operation and sign it
   txn <- Future.fromTry {
-
-    // create a transaction with the create trust operation and sign it
     Transaction(
       Account(keyPair = source, sequenceNumber = account.lastSequence + 1),
-      Seq(
-        CreateOfferOperation(selling, buying, price)
-      )
+      Seq(CreateOfferOperation(selling, buying, price))
     ).sign(source)
   }
 
   // and submit it
   response <- txn.submit
 
-} yield {
-  response
-}
+} yield response
 
 // print the results on completion
 response onComplete {
