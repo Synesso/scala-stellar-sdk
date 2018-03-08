@@ -4,11 +4,7 @@ import org.json4s.JsonAST.JObject
 import org.json4s.native.JsonMethods._
 import org.json4s.{CustomSerializer, DefaultFormats, JValue}
 
-case class OrderBook(selling: Asset, buying: Asset, bids: Seq[Order], asks: Seq[Order]) {
-  def base = selling
-
-  def counter = buying
-}
+case class OrderBook(selling: Asset, buying: Asset, bids: Seq[Order], asks: Seq[Order])
 
 case class Order(price: Price, quantity: Long)
 

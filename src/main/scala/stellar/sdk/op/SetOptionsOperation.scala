@@ -33,6 +33,7 @@ case class SetOptionsOperation(inflationDestination: Option[PublicKeyOps] = None
     highThreshold.map(uint32).foreach(op.setHighThreshold)
     homeDomain.map(str32).foreach(op.setHomeDomain)
     signer.foreach {
+      // todo - use https://github.com/stellar/java-stellar-sdk/blob/master/src/main/java/org/stellar/sdk/Signer.java#L19-L73 to complete this
       case AccountSigner(k, w) =>
         val s = new XDRSigner
         s.setKey(k.getXDRSignerKey)
