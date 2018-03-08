@@ -21,6 +21,7 @@ object StrKey {
     val value: Byte = (18 << 3).toByte // S
   }
 
+/*
   case object PreAuthTx extends VersionByte {
     val value: Byte = (19 << 3).toByte // T
   }
@@ -28,6 +29,7 @@ object StrKey {
   case object SHA256Hash extends VersionByte {
     val value: Byte = (23 << 3).toByte // X
   }
+*/
 
   def decodeStellarAccountId(data: String): Array[Byte] = decodeCheck(AccountId, data.toCharArray)
 
