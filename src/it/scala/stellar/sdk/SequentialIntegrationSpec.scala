@@ -252,6 +252,28 @@ class SequentialIntegrationSpec(implicit ee: ExecutionEnv) extends Specification
     }
   }
 
+  "trades endpoint" should {
+    "fetch trades in pages" >> {
+      PublicNetwork.trades().map(_.take(230).last) must beEqualTo(
+        Trade(
+          id = "39969884779581441-0",
+          ledgerCloseTime = ZonedDateTime.parse("2017-02-25T22:51:46Z"),
+          offerId = 2585L,
+          baseAccount = KeyPair.fromAccountId("GA6KWMT33N63HIV2NZ3AFWENTYI4ZJSNAXQMTQI3XJK5GORN36SETSNF"),
+          baseAmount = IssuedAmount(
+            units = 200000000,
+            asset = IssuedAsset4("PHP", KeyPair.fromAccountId("GBUQWP3BOUZX34TOND2QV7QQ7K7VJTG6VSE7WMLBTMDJLLAW7YKGU6EP"))
+          ),
+          counterAccount = KeyPair.fromAccountId("GBZ2KAUWAKA7UKYUHTTXQ3QKXG3HTMMP33BLYJIHUTIXSXMOR6OD2ITZ"),
+          counterAmount = IssuedAmount(
+            units = 4000000,
+            asset = IssuedAsset4("USD", KeyPair.fromAccountId("GDLL2FS5TXV5PCXFYJSLRZFCYEV52QY726R4XYBZKICKQLRARR5Q4SSK"))
+          ),
+          baseIsSeller = true)
+      ).awaitFor(10.seconds)
+    }
+  }
+
   "transaction" should {
     "be accepted when posted to the network" >> {
       implicit val network = TestNetwork

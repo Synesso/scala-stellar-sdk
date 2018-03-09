@@ -167,8 +167,8 @@ Additional examples can be found in the `/examples` folder.
     [] By transaction
   [ ] Trade aggregations
   [🚀] Trades
-    [🚀] Unfiltered
-    [ ] By orderbook
+    [✓] Unfiltered
+    [🚀] By orderbook
   [ ] Transactions
     [ ] Unfiltered
     [ ] By orderbook

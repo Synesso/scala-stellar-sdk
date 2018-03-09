@@ -94,6 +94,9 @@ trait Network {
     server.getStream[Transacted[Operation]](s"/transactions/$txnHash/payments", TransactedOperationDeserializer)
       .map(_.map(_.asInstanceOf[Transacted[PayOperation]]))
 
+  def trades()(implicit ex: ExecutionContext): Future[Stream[Trade]] =
+    server.getStream[Trade]("/trades", TradeDeserializer)
+
 }
 
 case object PublicNetwork extends Network {
