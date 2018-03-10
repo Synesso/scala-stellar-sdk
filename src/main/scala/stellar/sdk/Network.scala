@@ -91,6 +91,11 @@ trait Network {
     server.getStream[Trade]("/trades", TradeDeserializer, params)
   }
 
+  def tradesByOfferId(offerId: Long)(implicit ex: ExecutionContext): Future[Stream[Trade]] = {
+    val params = Map("offerid" -> s"$offerId")
+    server.getStream[Trade]("/trades", TradeDeserializer, params)
+  }
+
   private def assetParams(prefix: String, asset: Asset): Map[String, String] = {
     asset match {
       case NativeAsset => Map(s"${prefix}_asset_type" -> "native")

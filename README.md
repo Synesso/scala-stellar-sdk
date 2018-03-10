@@ -169,8 +169,8 @@ Additional examples can be found in the `/examples` folder.
   [🚀] Trades
     [✓] Unfiltered
     [✓] By orderbook
-    [🚀] By offer
-  [ ] Transactions
+    [✓] By offer
+  [🚀] Transactions
     [ ] Unfiltered
     [ ] By orderbook
     [ ] By account
