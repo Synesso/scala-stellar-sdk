@@ -166,12 +166,12 @@ Additional examples can be found in the `/examples` folder.
     [✓] By ledger
     [] By transaction
   [ ] Trade aggregations
-  [🚀] Trades
+  [✓] Trades
     [✓] Unfiltered
     [✓] By orderbook
     [✓] By offer
   [🚀] Transactions
-    [ ] Unfiltered
+    [🚀] Unfiltered
     [ ] By orderbook
     [ ] By account
     [ ] By ledger
