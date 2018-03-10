@@ -168,7 +168,8 @@ Additional examples can be found in the `/examples` folder.
   [ ] Trade aggregations
   [🚀] Trades
     [✓] Unfiltered
-    [🚀] By orderbook
+    [✓] By orderbook
+    [🚀] By offer
   [ ] Transactions
     [ ] Unfiltered
     [ ] By orderbook

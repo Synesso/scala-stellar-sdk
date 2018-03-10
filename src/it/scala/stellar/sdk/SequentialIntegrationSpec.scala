@@ -272,6 +272,26 @@ class SequentialIntegrationSpec(implicit ee: ExecutionEnv) extends Specification
           baseIsSeller = true)
       ).awaitFor(10.seconds)
     }
+
+    "filter trades by orderbook" >> {
+      PublicNetwork.tradesByOrderBook(
+        base = NativeAsset,
+        counter = IssuedAsset4("SLT", KeyPair.fromAccountId("GCKA6K5PCQ6PNF5RQBF7PQDJWRHO6UOGFMRLK3DYHDOI244V47XKQ4GP"))
+      ).map(_.take(10).last) must beEqualTo(
+        Trade(
+          id = "61564881559621633-0",
+          ledgerCloseTime = ZonedDateTime.parse("2017-11-02T15:34:05Z"),
+          offerId = 187430L,
+          baseAccount = KeyPair.fromAccountId("GDLHSCWRFUNEEJL6PR67OZL7QVO2L57MKQOMS6LGKNLGZPX6KCHXREMP"),
+          baseAmount = Amount.lumens(0.1457620),
+          counterAccount = KeyPair.fromAccountId("GAYDG77BFUUHYXC4IMFGXNBFDS5TMBB545Q6MON3EXYXHDOEJWU2LD2P"),
+          counterAmount = IssuedAmount(
+            units = 100000L,
+            asset = IssuedAsset4("SLT", KeyPair.fromAccountId("GCKA6K5PCQ6PNF5RQBF7PQDJWRHO6UOGFMRLK3DYHDOI244V47XKQ4GP"))
+          ),
+          baseIsSeller = false)
+      ).awaitFor(10.seconds)
+    }
   }
 
   "transaction" should {
