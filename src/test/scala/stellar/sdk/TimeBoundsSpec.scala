@@ -30,10 +30,12 @@ class TimeBoundsSpec extends Specification with ArbitraryInput {
   }
 
   "time bounds" should {
-    "serialise to xdr" >> prop { tb: TimeBounds =>
+    "serde to/from xdr" >> prop { tb: TimeBounds =>
       val xdr = tb.toXDR
       xdr.getMinTime.getUint64 mustEqual tb.start.toEpochMilli
       xdr.getMaxTime.getUint64 mustEqual tb.end.toEpochMilli
+
+      TimeBounds.fromXDR(xdr) mustEqual tb
     }
   }
 }

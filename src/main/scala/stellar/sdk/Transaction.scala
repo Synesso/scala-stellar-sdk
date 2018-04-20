@@ -1,10 +1,10 @@
 package stellar.sdk
 
-import java.io.ByteArrayOutputStream
+import java.io.{ByteArrayInputStream, ByteArrayOutputStream}
 import java.nio.ByteBuffer
 
 import org.stellar.sdk.xdr.Transaction.TransactionExt
-import org.stellar.sdk.xdr.{DecoratedSignature, EnvelopeType, TransactionEnvelope, XdrDataOutputStream, Transaction => XDRTransaction}
+import org.stellar.sdk.xdr.{DecoratedSignature, EnvelopeType, TransactionEnvelope, XdrDataInputStream, XdrDataOutputStream, Transaction => XDRTransaction}
 import stellar.sdk.ByteArrays._
 import stellar.sdk.TrySeq._
 import stellar.sdk.XDRPrimitives._
@@ -17,21 +17,30 @@ import scala.util.Try
 case class Transaction(source: Account,
                        operations: Seq[Operation] = Nil,
                        memo: Memo = NoMemo,
-                       timeBounds: Option[TimeBounds] = None)(implicit val network: Network) {
+                       timeBounds: Option[TimeBounds] = None,
+                       fee: Option[NativeAmount] = None)(implicit val network: Network) {
 
-  private val BaseFee = 100
+  private val BaseFee = 100L
   private val EnvelopeTypeTx = ByteBuffer.allocate(4).putInt(EnvelopeType.ENVELOPE_TYPE_TX.getValue).array
 
   def add(op: Operation): Transaction = this.copy(operations = operations :+ op)
+
+  /**
+    * @return The maximum of
+    *         A: The fee derived from the quantity of transactions; or
+    *         B: the specified `fee`.
+    */
+  def calculatedFee: NativeAmount = {
+    val minFee = BaseFee * operations.size
+    NativeAmount(math.max(minFee, fee.map(_.units).getOrElse(minFee)))
+  }
 
   def sign(key: KeyPair, otherKeys: KeyPair*): Try[SignedTransaction] = for {
     h <- hash
     signatures <- sequence((key +: otherKeys).map(_.signToXDR(h)))
   } yield SignedTransaction(this, signatures, h)
 
-  def fee: Int = BaseFee * operations.size
-
-  private def hash: Try[Array[Byte]] = sha256 {
+  def hash: Try[Array[Byte]] = sha256 {
     val os = new ByteArrayOutputStream
     os.write(network.networkId)
     os.write(EnvelopeTypeTx)
@@ -47,7 +56,7 @@ case class Transaction(source: Account,
     val ext = new TransactionExt
     ext.setDiscriminant(0)
     txn.setExt(ext)
-    txn.setFee(uint32(fee))
+    txn.setFee(uint32(calculatedFee.units.toInt))
     txn.setSeqNum(seqNum(source.sequenceNumber))
     txn.setSourceAccount(accountId(source.keyPair))
     txn.setOperations(operations.toArray.map(_.toXDR))
@@ -55,6 +64,21 @@ case class Transaction(source: Account,
     timeBounds.map(_.toXDR).foreach(txn.setTimeBounds)
     txn
   }
+}
+
+object Transaction {
+
+  def fromXDR(txn: XDRTransaction): Try[Transaction] = {
+//    for {
+//      account <- Account.fromXDR(txn.getSourceAccount)
+//      operations <- TrySeq.sequence(txn.getOperations.map(Operation.fromXDR))
+//      memo <- Memo.fromXDR(txn.getMemo)
+//      timeBounds <- TimeBounds.fromXDR(txn.getTimeBounds)
+//      fee = Some(NativeAmount(txn.getFee.getUint32.longValue.toInt))
+//    } yield Transaction(account, operations, memo, timeBounds, fee)
+    ???
+  }
+
 }
 
 case class SignedTransaction(transaction: Transaction, signatures: Seq[DecoratedSignature], hash: Array[Byte]) {
@@ -82,3 +106,18 @@ case class SignedTransaction(transaction: Transaction, signatures: Seq[Decorated
   }
 }
 
+object SignedTransaction {
+
+  def fromXDR(base64: String): Try[SignedTransaction] = {
+    val bytes = ByteArrays.base64(base64)
+    val in = new ByteArrayInputStream(bytes)
+    val xdrIn = new XdrDataInputStream(in)
+    for {
+      envelope <- Try(TransactionEnvelope.decode(xdrIn))
+      txn <- Transaction.fromXDR(envelope.getTx)
+      signatures = envelope.getSignatures
+      hash <- txn.hash
+    } yield SignedTransaction(txn, signatures, hash)
+  }
+
+}

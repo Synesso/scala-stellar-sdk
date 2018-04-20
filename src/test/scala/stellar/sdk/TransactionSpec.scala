@@ -12,7 +12,7 @@ class TransactionSpec extends Specification with ArbitraryInput with DomainMatch
 
   "a transaction fee" should {
     "be equal to 100 * the quantity of operations" >> prop { (source: Account, ops: Seq[Operation]) =>
-      Transaction(source, ops, NoMemo).fee mustEqual ops.size * 100
+      Transaction(source, ops, NoMemo).calculatedFee mustEqual NativeAmount(ops.size * 100)
     }.setGen2(Gen.nonEmptyListOf(genOperation))
   }
 
@@ -46,7 +46,7 @@ class TransactionSpec extends Specification with ArbitraryInput with DomainMatch
 
       txn.flatMap(_.toEnvelopeXDRBase64) must beSuccessfulTry("AAAAAF7FIiDToW1fOYUFBC0dmyufJbFTOa2GQESGz+S2h5ViAAAAZAAKVaMAAAABAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAA7eBSYbzcL5UKo7oXO24y1ckX+XuCtkDsyNHOp1n1bxAAAAAEqBfIAAAAAAAAAAABtoeVYgAAAEDLki9Oi700N60Lo8gUmEFHbKvYG4QSqXiLIt9T0ru2O5BphVl/jR9tYtHAD+UeDYhgXNgwUxqTEu1WukvEyYcD")
       txn.map(_.transaction.source) must beSuccessfulTry[Account].like { case accn => accn must beEquivalentTo(account) }
-      txn.map(_.transaction.fee) must beSuccessfulTry(100)
+      txn.map(_.transaction.calculatedFee) must beSuccessfulTry(NativeAmount(100))
     }
   }
 
@@ -67,7 +67,7 @@ class TransactionSpec extends Specification with ArbitraryInput with DomainMatch
     "serialise to xdr" >> prop { txn: Transaction =>
       val xdr = txn.toXDR
       xdr.getExt.getDiscriminant mustEqual 0
-      xdr.getFee.getUint32 mustEqual txn.fee
+      xdr.getFee.getUint32 mustEqual txn.calculatedFee.units
       xdr.getSeqNum.getSequenceNumber.getUint64 mustEqual txn.source.sequenceNumber
       xdr.getSourceAccount.getAccountID must beEquivalentTo(txn.source.keyPair.getXDRPublicKey)
       xdr.getMemo must beEquivalentTo(txn.memo.toXDR)
@@ -86,6 +86,20 @@ class TransactionSpec extends Specification with ArbitraryInput with DomainMatch
             actual must beEquivalentTo(expected)
           }
       }
+    }
+  }
+
+  "deserialising signed transaction from transaction envelope" should {
+    "be successful using sample data" >> {
+      val sample = "AAAAAAEMy3/N735+S8/jcLYweVCmRxnN2QqWCvGGbxlhX5v3AAAAZAB4Dl4AAAADAAAAAAAAAAEAAAAXSGkgWnksIGhlcmVzI" +
+        "GFuIGFuZ3BhbyEAAAAAAQAAAAAAAAABAAAAAK5TNRH+gV9qHLIuWk99Epe7OYH6l7cSXKW18R9DFoIDAAAAAAAAAAAAmJaAAAAAAAAAAAFhX" +
+        "5v3AAAAQHx9LVy0EsDozAxndsy+D6E2bWmTAMmnhLoFqf2FfoRAMXjC9BW16ZQlOR+wWH5PSKnz22QpAxY4gMkJvH8LCwQ="
+
+//      val s = SignedTransaction.fromXDR(sample)
+//
+//      println(s.get.transaction)
+
+      pending
     }
   }
 }

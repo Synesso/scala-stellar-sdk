@@ -15,3 +15,13 @@ case class TimeBounds(start: Instant, end: Instant) {
     tb
   }
 }
+
+object TimeBounds {
+
+  def fromXDR(timeBounds: XDRTimeBounds): TimeBounds = {
+    TimeBounds(
+      start = Instant.ofEpochMilli(timeBounds.getMinTime.getUint64),
+      end = Instant.ofEpochMilli(timeBounds.getMaxTime.getUint64)
+    )
+  }
+}
