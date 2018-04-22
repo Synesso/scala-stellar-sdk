@@ -7,6 +7,7 @@ import org.apache.commons.codec.binary.Base64
 import org.scalacheck.{Arbitrary, Gen}
 import org.specs2.ScalaCheck
 import org.stellar.sdk.xdr.{Operation => _, _}
+import stellar.sdk.ByteArrays.trimmedByteArray
 import stellar.sdk.op._
 import stellar.sdk.resp._
 
@@ -289,13 +290,13 @@ trait ArbitraryInput extends ScalaCheck {
   def genMemoHash: Gen[MemoHash] = for {
     bs <- Gen.nonEmptyContainerOf[Array, Byte](Arbitrary.arbByte.arbitrary)
   } yield {
-    MemoHash(bs.take(32))
+    MemoHash(trimmedByteArray(bs.take(32)))
   }
 
   def genMemoReturnHash: Gen[MemoReturnHash] = for {
     bs <- Gen.nonEmptyContainerOf[Array, Byte](Arbitrary.arbByte.arbitrary)
   } yield {
-    MemoReturnHash(bs.take(32))
+    MemoReturnHash(trimmedByteArray(bs.take(32)))
   }
 
   def genMemo: Gen[Memo] = Gen.oneOf(genMemoNone, genMemoText, genMemoId, genMemoHash, genMemoReturnHash)

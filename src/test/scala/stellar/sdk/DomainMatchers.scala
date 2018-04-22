@@ -64,6 +64,15 @@ trait DomainMatchers extends AnyMatchers with MustExpectations with SequenceMatc
       }
   }
 
+  def beEquivalentTo(other: Memo): Matcher[Memo] = beLike[Memo] {
+    case memo =>
+      (memo, other) match {
+        case (MemoHash(a), MemoHash(b)) => a.toSeq mustEqual b.toSeq
+        case (MemoReturnHash(a), MemoReturnHash(b)) => a.toSeq mustEqual b.toSeq
+        case _ => memo mustEqual other
+      }
+  }
+
   def beEquivalentTo(other: XDRMemo): Matcher[XDRMemo] = beLike[XDRMemo] {
     case memo =>
       memo.getDiscriminant mustEqual other.getDiscriminant

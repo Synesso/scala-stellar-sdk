@@ -13,6 +13,18 @@ sealed trait Memo {
   def toXDR: XDRMemo
 }
 
+object Memo {
+  def fromXDR(memo: XDRMemo): Memo = {
+    memo.getDiscriminant match {
+      case MEMO_NONE => NoMemo
+      case MEMO_TEXT => MemoText(memo.getText)
+      case MEMO_ID => MemoId(memo.getId.getUint64)
+      case MEMO_HASH => MemoHash(trimmedByteArray(memo.getHash.getHash))
+      case MEMO_RETURN => MemoReturnHash(trimmedByteArray(memo.getRetHash.getHash))
+    }
+  }
+}
+
 case object NoMemo extends Memo {
   override def toXDR: XDRMemo = {
     val m = new XDRMemo

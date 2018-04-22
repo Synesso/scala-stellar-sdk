@@ -130,6 +130,10 @@ class MemoSpec extends Specification with ArbitraryInput with DomainMatchers {
     "be en/decoded to xdr stream" >> prop { memo: Memo =>
       memo must beEncodable
     }
+
+    "ser/de to/from XDR" >> prop { memo: Memo =>
+      Memo.fromXDR(memo.toXDR) must beEquivalentTo(memo)
+    }
   }
 
   private def beEncodable: Matcher[Memo] = { memo: Memo =>

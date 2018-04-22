@@ -22,6 +22,15 @@ class ByteArraysSpec extends Specification with ArbitraryInput {
     }.setGen2(Gen.posNum[Byte])
   }
 
+  "trimming a byte array" should {
+    "remove trailing zeros" >> {
+      trimmedByteArray(Array()) mustEqual Array()
+      trimmedByteArray("hello".getBytes()) mustEqual "hello".getBytes()
+      trimmedByteArray("hello\u0000\u0000".getBytes()) mustEqual "hello".getBytes()
+      trimmedByteArray("hello\u0000there".getBytes()) mustEqual "hello\u0000there".getBytes()
+    }
+  }
+
   "sha256" should {
     "hash correctly" >> {
       sha256("今日は世界".getBytes).map(new BigInteger(1, _).toString(16).toUpperCase) must

@@ -18,6 +18,8 @@ object ByteArrays {
 
   def paddedByteArrayToString(bs: Array[Byte]): String = new String(bs).split("\u0000")(0)
 
+  def trimmedByteArray(bs: Array[Byte]): Array[Byte] = bs.reverse.dropWhile(_ == 0).reverse
+
   def sha256(bs: Array[Byte]): Try[Array[Byte]] = Try {
     val md = MessageDigest.getInstance("SHA-256")
     md.update(bs)
