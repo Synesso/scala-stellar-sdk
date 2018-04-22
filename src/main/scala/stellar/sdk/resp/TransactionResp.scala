@@ -6,6 +6,7 @@ import stellar.sdk.{Network, SignedTransaction}
 
 case class TransactionResp(hash: String, ledger: Long, envelopeXDR: String, resultXDR: String, resultMetaXDR: String) {
   def transaction(implicit network: Network) = SignedTransaction.decodeXDR(envelopeXDR)
+
 }
 
 object TransactionRespDeserializer extends CustomSerializer[TransactionResp](format => ( {

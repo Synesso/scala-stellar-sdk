@@ -1,5 +1,7 @@
 package stellar.sdk
 
+import java.io.ByteArrayInputStream
+
 import org.stellar.sdk.xdr._
 
 object XDRPrimitives {
@@ -62,6 +64,12 @@ object XDRPrimitives {
     val h = new Hash
     h.setHash(bs)
     h
+  }
+
+  def inputStream(base64: String): XdrDataInputStream = {
+    val bytes = ByteArrays.base64(base64)
+    val in = new ByteArrayInputStream(bytes)
+    new XdrDataInputStream(in)
   }
 
 }
