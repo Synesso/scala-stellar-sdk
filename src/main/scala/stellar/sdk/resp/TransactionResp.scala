@@ -2,8 +2,11 @@ package stellar.sdk.resp
 
 import org.json4s.JsonAST.JObject
 import org.json4s.{CustomSerializer, DefaultFormats}
+import stellar.sdk.{Network, SignedTransaction}
 
-case class TransactionResp(hash: String, ledger: Long, envelopeXDR: String, resultXDR: String, resultMetaXDR: String)
+case class TransactionResp(hash: String, ledger: Long, envelopeXDR: String, resultXDR: String, resultMetaXDR: String) {
+  def transaction(implicit network: Network) = SignedTransaction.decodeXDR(envelopeXDR)
+}
 
 object TransactionRespDeserializer extends CustomSerializer[TransactionResp](format => ( {
   case o: JObject =>
