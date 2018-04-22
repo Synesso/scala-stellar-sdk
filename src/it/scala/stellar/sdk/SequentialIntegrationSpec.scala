@@ -4,9 +4,9 @@ import java.time.ZonedDateTime
 
 import org.specs2.concurrent.ExecutionEnv
 import org.specs2.mutable.Specification
-import stellar.sdk.SessionTestAccount.{accWithData, accn}
+import stellar.sdk.SessionTestAccount._
 import stellar.sdk.inet.TxnFailure
-import stellar.sdk.op.{CreateAccountOperation, PaymentOperation, Transacted}
+import stellar.sdk.op._
 import stellar.sdk.resp._
 
 import scala.concurrent.duration._
@@ -16,11 +16,27 @@ class SequentialIntegrationSpec(implicit ee: ExecutionEnv) extends Specification
 
   sequential
 
+  implicit val network = TestNetwork
+
+  // setup
+  val assetCode = "ScalaSDKSpec"
+  // issue an asset from test account accnA, by trusting from accnB
+  val createTrustOpResponse: TransactionResp = Await.result(for {
+    account <- TestNetwork.account(accnB)
+    asset <- Future.fromTry(Asset.createNonNative("ScalaSDKSpec", accnA))
+    txn <- Future.fromTry(Transaction(
+        Account(accnB, account.lastSequence + 1),
+        Seq(ChangeTrustOperation(IssuedAmount(99, asset)))
+      ).sign(accnB))
+    response <- txn.submit
+  } yield response, 10 seconds)
+
+
   "account endpoint" >> {
     "fetch account details" >> {
-      TestNetwork.account(accn) must beLike[AccountResp] {
+      TestNetwork.account(accnA) must beLike[AccountResp] {
         case AccountResp(id, _, _, _, _, _, List(lumens), _) =>
-          id mustEqual accn.accountId
+          id mustEqual accnA.accountId
           lumens mustEqual Amount.lumens(10000)
       }.awaitFor(30.seconds)
     }
@@ -39,29 +55,28 @@ class SequentialIntegrationSpec(implicit ee: ExecutionEnv) extends Specification
   }
 
   "asset endpoint" should {
+
     "list all assets" >> {
       val oneFifteen = TestNetwork.assets().map(_.take(115))
       oneFifteen.map(_.distinct.size) must beEqualTo(115).awaitFor(10 seconds)
     }
 
     "filter assets by code" >> {
-      val byCode = TestNetwork.assets(code = Some("ALX1")).map(_.take(10).toList)
+      val byCode = TestNetwork.assets(code = Some(assetCode)).map(_.take(10).toList)
       byCode.map(_.isEmpty) must beFalse.awaitFor(10 seconds)
-      byCode.map(_.map(_.asset.code).toSet) must beEqualTo(Set("ALX1")).awaitFor(10 seconds)
+      byCode.map(_.map(_.asset.code).toSet) must beEqualTo(Set(assetCode)).awaitFor(10 seconds)
     }
 
     "filter assets by issuer" >> {
-      val issuerAccount = "GCZAKXMQZKYJBQK7U2LFIF77PKGDCZRU3IOPV2VON5CHWJSWDH2B5A42"
-      val byIssuer = TestNetwork.assets(issuer = Some(issuerAccount)).map(_.take(10).toList)
+      val byIssuer = TestNetwork.assets(issuer = Some(accnA.accountId)).map(_.take(10).toList)
       byIssuer.map(_.isEmpty) must beFalse.awaitFor(10 seconds)
-      byIssuer.map(_.map(_.asset.issuer.accountId).toSet) must beEqualTo(Set(issuerAccount)).awaitFor(10 seconds)
+      byIssuer.map(_.map(_.asset.issuer.accountId).toSet) must beEqualTo(Set(accnA.accountId)).awaitFor(10 seconds)
     }
 
     "filter assets by code and issuer" >> {
-      val issuerAccount = "GCZAKXMQZKYJBQK7U2LFIF77PKGDCZRU3IOPV2VON5CHWJSWDH2B5A42"
-      val byCodeAndIssuer = TestNetwork.assets(code = Some("ALX1"), issuer = Some(issuerAccount)).map(_.toList)
+      val byCodeAndIssuer = TestNetwork.assets(code = Some(assetCode), issuer = Some(accnA.accountId)).map(_.toList)
       byCodeAndIssuer.map(_.map(_.asset)) must beLike[Seq[NonNativeAsset]] {
-        case Seq(asset) => asset must beEquivalentTo(IssuedAsset4("ALX1", KeyPair.fromAccountId(issuerAccount)))
+        case Seq(asset) => asset must beEquivalentTo(IssuedAsset12(assetCode, KeyPair.fromAccountId(accnA.accountId)))
       }.awaitFor(10 seconds)
     }
   }
@@ -69,15 +84,15 @@ class SequentialIntegrationSpec(implicit ee: ExecutionEnv) extends Specification
   "effect endpoint" should {
     "list all effects" >> {
       val oneFifteen = TestNetwork.effects().map(_.take(115))
-      oneFifteen.map(_.distinct.size) must beEqualTo(115).awaitFor(10.seconds)
+      oneFifteen.map(_.distinct.size) must beEqualTo(115).awaitFor(30.seconds)
     }
 
     "filter effects by account" >> {
-      val byAccount = TestNetwork.effectsByAccount(accn).map(_.take(10).toList)
+      val byAccount = TestNetwork.effectsByAccount(accnA).map(_.take(10).toList)
       byAccount.map(_.isEmpty) must beFalse.awaitFor(10 seconds)
       byAccount.map(_.head) must beLike[EffectResp] {
         case EffectAccountCreated(_, account, startingBalance) =>
-          account.accountId mustEqual accn.accountId
+          account.accountId mustEqual accnA.accountId
           startingBalance mustEqual Amount.lumens(10000)
       }.awaitFor(10.seconds)
     }
@@ -138,18 +153,14 @@ class SequentialIntegrationSpec(implicit ee: ExecutionEnv) extends Specification
       oneThirty.map(_.distinct.size) must beEqualTo(130).awaitFor(10.seconds)
     }
     "list operations by account" >> {
-      TestNetwork.operationsByAccount(KeyPair.fromAccountId("GCXYKQF35XWATRB6AWDDV2Y322IFU2ACYYN5M2YB44IBWAIITQ4RYPXK"))
-        .map(_.take(4).last) must beEqualTo(Transacted(
-        id = 30985448851509249L,
-        txnHash = "685bcbdf699139f3e244fa9af09c8108b55fd3c554c38f7d54a5c4a4ad1e38d4",
-        sourceAccount = KeyPair.fromAccountId("GCXYKQF35XWATRB6AWDDV2Y322IFU2ACYYN5M2YB44IBWAIITQ4RYPXK"),
-        createdAt = ZonedDateTime.parse("2018-02-08T10:18:39Z"),
-        operation = PaymentOperation(
-          destinationAccount = KeyPair.fromAccountId("GAR2WMVXCTFUXHU4K5KZNRAVTYFAFWT4XWFLKJ5IKEQ65Q47WNSMDVKH"),
-          amount = IssuedAmount(10000000000L,
-            IssuedAsset12("sausage", KeyPair.fromAccountId("GCXYKQF35XWATRB6AWDDV2Y322IFU2ACYYN5M2YB44IBWAIITQ4RYPXK")))
-        ))).awaitFor(10.seconds)
+      TestNetwork.operationsByAccount(accnB).map(_.drop(1).head) must beLike[Transacted[Operation]] {
+        case op =>
+          op.operation mustEqual ChangeTrustOperation(IssuedAmount(99, Asset.createNonNative("ScalaSDKSpec", accnA).get))
+        // todo - opresponse object should allow lazy deserialisation of xdr
+        // todo - and we should be asserting those values are returned from this call
+      }.awaitFor(10.seconds)
     }
+
     val kinPayment = Transacted(
       id = 70009259709968385L,
       txnHash = "233ce5d17477706e097f72ae1c46241f4586ad1476d191119d46a93e88b9d3fa",
@@ -161,6 +172,7 @@ class SequentialIntegrationSpec(implicit ee: ExecutionEnv) extends Specification
           IssuedAsset4("KIN", KeyPair.fromAccountId("GBDEVU63Y6NTHJQQZIKVTC23NWLQVP3WJ2RI2OTSJTNYOIGICST6DUXR")))
       )
     )
+
     "list operations by ledger" >> {
       PublicNetwork.operationsByLedger(16300301).map(_.last) must beEqualTo(kinPayment).awaitFor(10.seconds)
     }
@@ -317,11 +329,11 @@ class SequentialIntegrationSpec(implicit ee: ExecutionEnv) extends Specification
 
       val newAccount = KeyPair.random
       val balance = for {
-        sequence <- network.account(accn).map(_.lastSequence + 1)
+        sequence <- network.account(accnA).map(_.lastSequence + 1)
         txn <- Future.fromTry {
-          Transaction(Account(accn, sequence))
+          Transaction(Account(accnA, sequence))
             .add(CreateAccountOperation(newAccount))
-            .sign(accn)
+            .sign(accnA)
         }
         _ <- txn.submit
         newBalances <- network.account(newAccount).map(_.balances)

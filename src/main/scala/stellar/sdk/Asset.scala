@@ -11,7 +11,7 @@ sealed trait Asset {
 }
 
 object Asset {
-  def createNonNative(code: String, issuer: PublicKeyOps): Try[Asset] =
+  def createNonNative(code: String, issuer: PublicKeyOps): Try[NonNativeAsset] =
     if (code.length <= 4) IssuedAsset4.of(code, issuer) else IssuedAsset12.of(code, issuer)
 
   def fromXDR(xdr: XDRAsset): Try[Asset] = Try{
