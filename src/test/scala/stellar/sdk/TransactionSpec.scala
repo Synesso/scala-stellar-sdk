@@ -4,7 +4,8 @@ import org.scalacheck.Gen
 import org.specs2.mutable.Specification
 import org.stellar.sdk.xdr.TransactionEnvelope
 import stellar.sdk
-import stellar.sdk.op.{CreateAccountOperation, Operation}
+import stellar.sdk.ByteArrays.bytesToHex
+import stellar.sdk.op.{CreateAccountOperation, Operation, PaymentOperation}
 
 import scala.util.Try
 
@@ -101,17 +102,32 @@ class TransactionSpec extends Specification with ArbitraryInput with DomainMatch
     }
   }
 
-  "deserialising signed transaction from transaction envelope" should {
+  "decoding signed transaction from xdr string" should {
     "be successful using sample data" >> {
       val sample = "AAAAAAEMy3/N735+S8/jcLYweVCmRxnN2QqWCvGGbxlhX5v3AAAAZAB4Dl4AAAADAAAAAAAAAAEAAAAXSGkgWnksIGhlcmVzI" +
         "GFuIGFuZ3BhbyEAAAAAAQAAAAAAAAABAAAAAK5TNRH+gV9qHLIuWk99Epe7OYH6l7cSXKW18R9DFoIDAAAAAAAAAAAAmJaAAAAAAAAAAAFhX" +
         "5v3AAAAQHx9LVy0EsDozAxndsy+D6E2bWmTAMmnhLoFqf2FfoRAMXjC9BW16ZQlOR+wWH5PSKnz22QpAxY4gMkJvH8LCwQ="
 
-//      val s = SignedTransaction.fromXDR(sample)
-//
-//      println(s.get.transaction)
+      SignedTransaction.decodeXDR(sample) must beSuccessfulTry[SignedTransaction].like {
+        case SignedTransaction(txn, signatures, hash) =>
+          txn mustEqual Transaction(
+            Account(
+              KeyPair.fromAccountId("GAAQZS37ZXXX47SLZ7RXBNRQPFIKMRYZZXMQVFQK6GDG6GLBL6N7PBYD"),
+              33792794094993411L
+            ), Seq(
+              PaymentOperation(
+                KeyPair.fromAccountId("GCXFGNIR72AV62Q4WIXFUT35CKL3WOMB7KL3OES4UW27CH2DC2BAHMZH"),
+                NativeAmount(10000000)
+              )
+            ), MemoText("Hi Zy, heres an angpao!"), None, Some(NativeAmount(100))
+          )
 
-      pending
+          signatures.map(_.getHint.getSignatureHint).map(bytesToHex) mustEqual Seq("615F9BF7")
+          signatures.map(_.getSignature.getSignature).map(bytesToHex) mustEqual Seq("7C7D2D5CB412C0E8CC0C6776CC" +
+            "BE0FA1366D699300C9A784BA05A9FD857E84403178C2F415B5E99425391FB0587E4F48A9F3DB642903163880C909BC7F0B0B04")
+          bytesToHex(hash) mustEqual "7D91CFC50E907A677F769E6DB82BDB958D148D810955C597AA7A4B24AE97475B"
+
+      }
     }
   }
 }

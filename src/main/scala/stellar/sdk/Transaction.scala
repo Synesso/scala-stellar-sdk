@@ -108,7 +108,7 @@ case class SignedTransaction(transaction: Transaction, signatures: Seq[Decorated
 
 object SignedTransaction {
 
-  def fromXDR(base64: String)(implicit network: Network): Try[SignedTransaction] = {
+  def decodeXDR(base64: String)(implicit network: Network): Try[SignedTransaction] = {
     val bytes = ByteArrays.base64(base64)
     val in = new ByteArrayInputStream(bytes)
     val xdrIn = new XdrDataInputStream(in)
