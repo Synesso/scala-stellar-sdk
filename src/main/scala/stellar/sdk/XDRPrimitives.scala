@@ -52,7 +52,7 @@ object XDRPrimitives {
     sn
   }
 
-  def accountId(kp: KeyPair): AccountID = {
+  def accountId(kp: PublicKeyOps): AccountID = {
     val a = new AccountID
     a.setAccountID(kp.getXDRPublicKey)
     a

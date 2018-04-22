@@ -203,7 +203,7 @@ trait DomainMatchers extends AnyMatchers with MustExpectations with SequenceMatc
 
   def beEquivalentTo(other: Account): Matcher[Account] = beLike {
     case acc =>
-      acc.keyPair must beEquivalentTo(other.keyPair)
+      acc.publicKey.accountId mustEqual other.publicKey.accountId
       acc.sequenceNumber mustEqual other.sequenceNumber
   }
 

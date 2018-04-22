@@ -58,7 +58,7 @@ case class Transaction(source: Account,
     txn.setExt(ext)
     txn.setFee(uint32(calculatedFee.units.toInt))
     txn.setSeqNum(seqNum(source.sequenceNumber))
-    txn.setSourceAccount(accountId(source.keyPair))
+    txn.setSourceAccount(accountId(source.publicKey))
     txn.setOperations(operations.toArray.map(_.toXDR))
     txn.setMemo(memo.toXDR)
     timeBounds.map(_.toXDR).foreach(txn.setTimeBounds)
@@ -67,18 +67,18 @@ case class Transaction(source: Account,
 }
 
 object Transaction {
-
-  def fromXDR(txn: XDRTransaction): Try[Transaction] = {
-//    for {
-//      account <- Account.fromXDR(txn.getSourceAccount)
-//      operations <- TrySeq.sequence(txn.getOperations.map(Operation.fromXDR))
-//      memo <- Memo.fromXDR(txn.getMemo)
-//      timeBounds <- TimeBounds.fromXDR(txn.getTimeBounds)
-//      fee = Some(NativeAmount(txn.getFee.getUint32.longValue.toInt))
-//    } yield Transaction(account, operations, memo, timeBounds, fee)
-    ???
+  def fromXDR(txn: XDRTransaction)(implicit network: Network): Try[Transaction] = {
+    val account = Account(
+      KeyPair.fromXDRPublicKey(txn.getSourceAccount.getAccountID),
+      txn.getSeqNum.getSequenceNumber.getUint64
+    )
+    for {
+      operations <- TrySeq.sequence(txn.getOperations.map(Operation.fromXDR))
+      memo = Memo.fromXDR(txn.getMemo)
+      timeBounds = Option(txn.getTimeBounds).map(TimeBounds.fromXDR)
+      fee = Some(NativeAmount(txn.getFee.getUint32.longValue.toInt))
+    } yield Transaction(account, operations, memo, timeBounds, fee)
   }
-
 }
 
 case class SignedTransaction(transaction: Transaction, signatures: Seq[DecoratedSignature], hash: Array[Byte]) {
@@ -108,7 +108,7 @@ case class SignedTransaction(transaction: Transaction, signatures: Seq[Decorated
 
 object SignedTransaction {
 
-  def fromXDR(base64: String): Try[SignedTransaction] = {
+  def fromXDR(base64: String)(implicit network: Network): Try[SignedTransaction] = {
     val bytes = ByteArrays.base64(base64)
     val in = new ByteArrayInputStream(bytes)
     val xdrIn = new XdrDataInputStream(in)

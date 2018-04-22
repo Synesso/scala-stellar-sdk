@@ -69,7 +69,7 @@ class TransactionSpec extends Specification with ArbitraryInput with DomainMatch
       xdr.getExt.getDiscriminant mustEqual 0
       xdr.getFee.getUint32 mustEqual txn.calculatedFee.units
       xdr.getSeqNum.getSequenceNumber.getUint64 mustEqual txn.source.sequenceNumber
-      xdr.getSourceAccount.getAccountID must beEquivalentTo(txn.source.keyPair.getXDRPublicKey)
+      xdr.getSourceAccount.getAccountID must beEquivalentTo(txn.source.publicKey.getXDRPublicKey)
       xdr.getMemo must beEquivalentTo(txn.memo.toXDR)
       Option(xdr.getTimeBounds) must beLike {
         case None => txn.timeBounds must beNone
@@ -85,6 +85,18 @@ class TransactionSpec extends Specification with ArbitraryInput with DomainMatch
           actualTry must beSuccessfulTry[Operation].like { case actual =>
             actual must beEquivalentTo(expected)
           }
+      }
+    }
+
+    "ser/de to/from xdr" >> prop { txn: Transaction =>
+      Transaction.fromXDR(txn.toXDR) must beSuccessfulTry[Transaction].like {
+        case Transaction(source, ops, memo, timeBounds, fee) =>
+          source.publicKey.accountId mustEqual txn.source.publicKey.accountId
+          source.sequenceNumber mustEqual txn.source.sequenceNumber
+          ops mustEqual txn.operations
+          memo must beEquivalentTo(txn.memo)
+          timeBounds mustEqual txn.timeBounds
+          fee mustEqual (txn.fee orElse Some(txn.calculatedFee))
       }
     }
   }

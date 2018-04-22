@@ -29,6 +29,7 @@ object Operation {
 
   val ONE = BigDecimal(10).pow(7)
 
+  // todo - these should not be Trys because any received xdr object should be correct
   def fromXDR(op: XDROp): Try[Operation] = {
     op.getBody.getDiscriminant match {
       case ALLOW_TRUST => AllowTrustOperation.from(op.getBody.getAllowTrustOp)
