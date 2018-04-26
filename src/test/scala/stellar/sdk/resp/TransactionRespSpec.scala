@@ -1,6 +1,7 @@
 package stellar.sdk.resp
 
 import org.specs2.mutable.Specification
+import org.stellar.sdk.xdr.TransactionResult
 import stellar.sdk.ByteArrays.bytesToHex
 import stellar.sdk._
 import stellar.sdk.op.CreateAccountOperation
@@ -33,6 +34,14 @@ class TransactionRespSpec extends Specification {
             signatures.map(_.getHint.getSignatureHint).map(bytesToHex) mustEqual Seq("0C99B7D8")
             bytesToHex(hash) mustEqual "BA68C0112AFE25A2FEA9A6E7926A4AEF9FF12FB627EC840840541813AAA695DB"
         }
+    }
+
+    "provide access to the XDR Transaction Result" >> {
+      TransactionResp("", 1, "", "AAAAAAAAAGQAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAB////+wAAAAA=", "").result must
+      beSuccessfulTry[TransactionResult].like { case tr: TransactionResult =>
+        tr.getFeeCharged.getInt64 mustEqual 100
+        // todo - more assertions from here
+      }
     }
   }
 

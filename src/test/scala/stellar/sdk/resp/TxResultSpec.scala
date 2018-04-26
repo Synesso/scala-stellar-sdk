@@ -3,7 +3,7 @@ package stellar.sdk.resp
 import org.specs2.mutable.Specification
 import org.stellar.sdk.xdr.TransactionResult
 
-class TransactionResultSpec extends Specification {
+class TxResultSpec extends Specification {
 
   "An XDR transaction success" should {
     "be decodable" >> {
