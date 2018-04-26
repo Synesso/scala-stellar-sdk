@@ -30,7 +30,7 @@ val response = for {
   // create a transaction with the create trust operation and sign it
   txn <- Future.fromTry {
     Transaction(
-      Account(keyPair = source, sequenceNumber = account.lastSequence + 1),
+      Account(source, account.lastSequence + 1),
       Seq(CreateOfferOperation(selling, buying, price))
     ).sign(source)
   }

@@ -24,7 +24,7 @@ val response = for {
   txn <- Future.fromTry {
 
     // create a transaction, add the create account operation and sign it
-    Transaction(Account(keyPair = source, sequenceNumber = account.lastSequence + 1))
+    Transaction(Account(source, account.lastSequence + 1))
       .add(CreateAccountOperation(newAccount, Amount.lumens(1)))
       .sign(source)
   }
