@@ -1,10 +1,12 @@
 package stellar.sdk.resp
 
 import org.specs2.mutable.Specification
-import org.stellar.sdk.xdr.TransactionResult
+import org.stellar.sdk.xdr.{OperationResultCode, OperationType, TransactionResult, TransactionResultCode}
 import stellar.sdk.ByteArrays.bytesToHex
 import stellar.sdk._
 import stellar.sdk.op.CreateAccountOperation
+
+import scala.collection.JavaConverters._
 
 class TransactionRespSpec extends Specification {
 
@@ -38,10 +40,14 @@ class TransactionRespSpec extends Specification {
 
     "provide access to the XDR Transaction Result" >> {
       TransactionResp("", 1, "", "AAAAAAAAAGQAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAB////+wAAAAA=", "").result must
-      beSuccessfulTry[TransactionResult].like { case tr: TransactionResult =>
-        tr.getFeeCharged.getInt64 mustEqual 100
-        // todo - more assertions from here
-      }
+        beSuccessfulTry[TransactionResult].like { case tr: TransactionResult =>
+          tr.getFeeCharged.getInt64 mustEqual 100
+          tr.getExt.getDiscriminant mustEqual 0
+          tr.getResult.getDiscriminant mustEqual TransactionResultCode.txSUCCESS
+          tr.getResult.getResults must haveSize(2)
+          tr.getResult.getResults.head.getTr.getDiscriminant mustEqual OperationType.CREATE_ACCOUNT
+          tr.getResult.getResults.last.getTr.getDiscriminant mustEqual OperationType.PAYMENT
+        }
     }
   }
 
