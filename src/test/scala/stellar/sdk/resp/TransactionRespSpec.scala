@@ -1,12 +1,10 @@
 package stellar.sdk.resp
 
 import org.specs2.mutable.Specification
-import org.stellar.sdk.xdr.{OperationResultCode, OperationType, TransactionResult, TransactionResultCode}
+import org.stellar.sdk.xdr.{OperationType, TransactionResult, TransactionResultCode}
 import stellar.sdk.ByteArrays.bytesToHex
 import stellar.sdk._
 import stellar.sdk.op.CreateAccountOperation
-
-import scala.collection.JavaConverters._
 
 class TransactionRespSpec extends Specification {
 

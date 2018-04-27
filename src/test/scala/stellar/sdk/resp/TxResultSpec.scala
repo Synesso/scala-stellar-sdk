@@ -1,7 +1,7 @@
 package stellar.sdk.resp
 
 import org.specs2.mutable.Specification
-import org.stellar.sdk.xdr.TransactionResult
+import org.stellar.sdk.xdr.{TransactionMeta, TransactionResult}
 
 class TxResultSpec extends Specification {
 
@@ -57,5 +57,23 @@ class TxResultSpec extends Specification {
       TxResult.decodeXDR("AAAAAAAAAGT////1AAAAAA==") must
         beSuccessfulTry[TransactionResult]
     }
+    "return failure when not decodable" >> {
+      TxResult.decodeXDR("foo") must beFailedTry[TransactionResult]
+    }
   }
+
+  "An XDR transaction meta" should {
+    "be decodable" >> {
+      TxResult.decodeMetaXDR(
+        "AAAAAAAAAAEAAAADAAAAAAB18EMAAAAAAAAAALkbMPgKFokh2tU1rsRPDtL3uWLY9iSRNbA6yzSbKbMbAAAAAACYloAAdfBDAA" +
+          "AAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAwB18EMAAAAAAAAAAJYHU4BtUa8ACOZZzHII4+FtEgRa9lBknmI+jQ8" +
+          "MmbfYAAAAF0h255wAdeiJAAAAAQAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAQB18EMAAAAAAAAAAJYHU4BtUa8ACOZZ" +
+          "zHII4+FtEgRa9lBknmI+jQ8MmbfYAAAAF0feURwAdeiJAAAAAQAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAA") must
+        beSuccessfulTry[TransactionMeta]
+    }
+    "return failure when not decodable" >> {
+      TxResult.decodeMetaXDR("foo") must beFailedTry[TransactionMeta]
+    }
+  }
+
 }
