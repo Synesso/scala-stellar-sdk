@@ -44,7 +44,7 @@ In your `build.sbt`
 ```
 resolvers += "scala-stellar-sdk-repo" at "https://dl.bintray.com/synesso/mvn"
 
-libraryDependencies +=  "stellar.scala.sdk" %% "scala-stellar-sdk" % "0.1.1"
+libraryDependencies +=  "stellar.scala.sdk" %% "scala-stellar-sdk" % "0.1.2"
 ```
 
 ## Examples
@@ -55,7 +55,7 @@ Stellar SDK for Scala.
 ```
 interp.repositories() ++= Seq(coursier.MavenRepository("https://dl.bintray.com/synesso/mvn/"))
 
-import $ivy.`stellar.scala.sdk::scala-stellar-sdk:0.1.1`
+import $ivy.`stellar.scala.sdk::scala-stellar-sdk:0.1.2`
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent._
 import stellar.sdk._
