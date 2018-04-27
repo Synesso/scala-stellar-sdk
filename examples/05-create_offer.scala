@@ -11,7 +11,7 @@ import scala.util.{Failure, Success}
 implicit val network = TestNetwork
 
 // the offerer
-val source = KeyPair.fromSecretSeed("SBQT6A2GSA3RE5GPMURKKQ5KIS7OUD42USX57UJVHW4ZCB5R7B6CVD62")
+val source = KeyPair.fromSecretSeed("SBSXEY6KKORS4IKD5FXFXALODD7FXTM5PTZU7I7QTRXEAQQHUYDODSC5")
 
 // the amount offered
 val selling = Amount(100, IssuedAsset12("PANCAKE", KeyPair.fromAccountId("GAQUWIRXODT4OE3YE6L4NF3AYSR5ACEHPINM5S3J2F4XKH7FRZD4NDW2")))
