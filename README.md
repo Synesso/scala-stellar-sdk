@@ -109,3 +109,11 @@ Additional examples can be found in the `/examples` folder.
 ## Progress
 
 Project progress & roadmap can be viewed in the [projects tab](https://github.com/Synesso/scala-stellar-sdk/projects).
+
+## Contributing
+
+Contributions are warmly welcomed. See [issues](https://github.com/Synesso/scala-stellar-sdk/issues) for features that can be worked on immediately. Or feel free to add your own features/issues to that list. 
+
+## Contact
+
+Let's chat about this on the [Stellar-public Slack](https://stellar-public.slack.com/) #dev channel. My username is [@jem](https://keybase.io/jem).
