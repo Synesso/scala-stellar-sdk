@@ -16,7 +16,7 @@ trait Network {
   lazy val networkId: Array[Byte] = sha256(passphrase.getBytes(UTF_8)).get
   val server: Server
 
-  def submit(txn: SignedTransaction)(implicit ec: ExecutionContext): Future[TransactionResp] = server.post(txn)
+  def submit(txn: SignedTransaction)(implicit ec: ExecutionContext): Future[TransactionPostResp] = server.post(txn)
 
   def account(pubKey: PublicKeyOps)(implicit ec: ExecutionContext): Future[AccountResp] =
     server.get[AccountResp](s"/accounts/${pubKey.accountId}")
@@ -96,6 +96,10 @@ trait Network {
     server.getStream[Trade]("/trades", TradeDeserializer, params)
   }
 
+  def transactions()(implicit ex: ExecutionContext): Future[Stream[TransactionHistoryResp]] = {
+    server.getStream[TransactionHistoryResp]("/transactions", TransactionHistoryRespDeserializer)
+  }
+
   private def assetParams(prefix: String, asset: Asset): Map[String, String] = {
     asset match {
       case NativeAsset => Map(s"${prefix}_asset_type" -> "native")
@@ -119,6 +123,6 @@ case object TestNetwork extends Network {
   override val server = Server(URI.create("https://horizon-testnet.stellar.org"))
   implicit val backend = AkkaHttpBackend()
 
-  def fund(pk: PublicKeyOps)(implicit ec: ExecutionContext): Future[TransactionResp] =
-    server.get[TransactionResp]("friendbot", Map("addr" -> pk.accountId))
+  def fund(pk: PublicKeyOps)(implicit ec: ExecutionContext): Future[TransactionPostResp] =
+    server.get[TransactionPostResp]("friendbot", Map("addr" -> pk.accountId))
 }

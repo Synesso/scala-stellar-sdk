@@ -3,7 +3,9 @@ package stellar.sdk
 import org.apache.commons.codec.binary.Hex
 import org.specs2.matcher.{AnyMatchers, Matcher, MustExpectations, OptionMatchers, SequenceMatchersCreation}
 import org.stellar.sdk.xdr.{DecoratedSignature, Hash, SignerKey, Uint64, Memo => XDRMemo, Operation => XDROperation, PublicKey => XDRPublicKey}
+import stellar.sdk.ByteArrays.base64
 import stellar.sdk.op._
+import stellar.sdk.resp.TransactionHistoryResp
 
 trait DomainMatchersIT extends AnyMatchers with MustExpectations with SequenceMatchersCreation with OptionMatchers {
 
@@ -218,6 +220,21 @@ trait DomainMatchersIT extends AnyMatchers with MustExpectations with SequenceMa
           stxnSig.getHint.getSignatureHint.toSeq mustEqual otherSig.getHint.getSignatureHint.toSeq
           stxnSig.getSignature.getSignature.toSeq mustEqual otherSig.getSignature.getSignature.toSeq
       }
+  }
+
+  def beEquivalentTo(other: Memo): Matcher[Memo] = beLike[Memo] {
+    case memo =>
+      (memo, other) match {
+        case (MemoHash(a), MemoHash(b)) => base64(a) mustEqual base64(b)
+        case (MemoReturnHash(a), MemoReturnHash(b)) => a.toSeq mustEqual b.toSeq
+        case _ => memo mustEqual other
+      }
+  }
+
+  def beEquivalentTo(other: TransactionHistoryResp): Matcher[TransactionHistoryResp] = beLike {
+    case thr =>
+      other.memo must beEquivalentTo(thr.memo)
+      other.copy(memo = thr.memo) mustEqual thr
   }
 
 }

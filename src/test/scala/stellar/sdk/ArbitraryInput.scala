@@ -83,6 +83,10 @@ trait ArbitraryInput extends ScalaCheck {
 
   implicit def arbTrade = Arbitrary(genTrade)
 
+  implicit def arbTransactionPostResponse = Arbitrary(genTransactionPostResponse)
+
+  implicit def arbTransactionHistoryResponse = Arbitrary(genTransactionHistoryResponse)
+
   def genKeyPair: Gen[KeyPair] = Gen.oneOf(Seq(KeyPair.random))
 
   def genSignerKey: Gen[SignerKey] = genKeyPair.map(_.getXDRSignerKey)
@@ -395,6 +399,34 @@ trait ArbitraryInput extends ScalaCheck {
   } yield {
     Trade(id, ledgerCloseTime, offerId, baseAccount, baseAmount, counterAccount, counterAmount, baseIsSeller)
   }
+
+  def genTransactionPostResponse: Gen[TransactionPostResp] = for {
+    hash <- genHash
+    ledger <- Gen.posNum[Long]
+    envelopeXDR <- genHash
+    resultXDR <- genHash
+    resultMetaXDR <- genHash
+  } yield TransactionPostResp(hash, ledger, envelopeXDR, resultXDR, resultMetaXDR)
+
+  def genTransactionHistoryResponse: Gen[TransactionHistoryResp] = for {
+    hash <- genHash
+    ledger <- Gen.posNum[Long]
+    createdAt <- genZonedDateTime
+    account <- genPublicKey
+    sequence <- Gen.posNum[Long]
+    feePaid <- Gen.posNum[Int]
+    operationCount <- Gen.posNum[Int]
+    memo <- genMemo.map {
+      case MemoReturnHash(bs) => MemoHash(bs)
+      case m => m
+    }
+    signatures <- Gen.nonEmptyListOf(genHash)
+    envelopeXDR <- genHash
+    resultXDR <- genHash
+    resultMetaXDR <- genHash
+    feeMetaXDR <- genHash
+  } yield TransactionHistoryResp(hash, ledger, createdAt, account, sequence, feePaid, operationCount,
+    memo, signatures, envelopeXDR, resultXDR, resultMetaXDR, feeMetaXDR)
 
   def round(d: Double) = f"$d%.7f".toDouble
 }

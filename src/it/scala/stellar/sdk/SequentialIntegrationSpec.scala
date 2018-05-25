@@ -4,6 +4,7 @@ import java.time.ZonedDateTime
 
 import org.specs2.concurrent.ExecutionEnv
 import org.specs2.mutable.Specification
+import stellar.sdk.ByteArrays.base64
 import stellar.sdk.SessionTestAccount._
 import stellar.sdk.inet.TxnFailure
 import stellar.sdk.op._
@@ -21,7 +22,7 @@ class SequentialIntegrationSpec(implicit ee: ExecutionEnv) extends Specification
   // setup
   val assetCode = "ScalaSDKSpec"
   // issue an asset from test account accnA, by trusting from accnB
-  val createTrustOpResponse: TransactionResp = Await.result(for {
+  val createTrustOpResponse: TransactionPostResp = Await.result(for {
     account <- TestNetwork.account(accnB)
     asset <- Future.fromTry(Asset.createNonNative("ScalaSDKSpec", accnA))
     txn <- Future.fromTry(Transaction(
@@ -156,8 +157,6 @@ class SequentialIntegrationSpec(implicit ee: ExecutionEnv) extends Specification
       TestNetwork.operationsByAccount(accnB).map(_.drop(1).head) must beLike[Transacted[Operation]] {
         case op =>
           op.operation mustEqual ChangeTrustOperation(IssuedAmount(99, Asset.createNonNative("ScalaSDKSpec", accnA).get))
-        // todo - opresponse object should allow lazy deserialisation of xdr
-        // todo - and we should be asserting those values are returned from this call
       }.awaitFor(10.seconds)
     }
 
@@ -319,6 +318,27 @@ class SequentialIntegrationSpec(implicit ee: ExecutionEnv) extends Specification
             asset = IssuedAsset4("JPY", KeyPair.fromAccountId("GBVAOIACNSB7OVUXJYC5UE2D4YK2F7A24T7EE5YOMN4CE6GCHUTOUQXM"))
           ),
           baseIsSeller = true)
+      ).awaitFor(10.seconds)
+    }
+  }
+
+  "transaction endpoint" should {
+    "fetch transactions in pages" >> {
+      PublicNetwork.transactions().map(_.take(230).last) must beEquivalentTo(
+        TransactionHistoryResp(
+          hash = "52190acc9ed1a2cafad9eb050477b7da88a4e1b3ddbd232081bf0a9c6e18e194",
+          ledger = 557315,
+          createdAt = ZonedDateTime.parse("2015-11-03T23:37:36Z"),
+          account = KeyPair.fromAccountId("GAV6F4353XZAYP4OX5AZWYXNMDWSNCAGWKMXQFJRUAV2PEF3RDW2UMIW"),
+          sequence = 2373008085745670L,
+          feePaid = 100,
+          operationCount = 1,
+          memo = MemoHash(base64("deRcswHJAMVOb/2YEZS98PMm07UAAAAAAAAAAAAAAAA=")),
+          signatures = Seq("YcVM8eFXkkIQk7b3IiWh+eJzYAH9Uhm1U//MtF9Gd52rM+Xi5Q5cSw210gYJXirgXB+9mYdqF1HpxIGEUys/DA=="),
+          envelopeXDR = "AAAAACvi833d8gw/jr9Bm2LtYO0miAaymXgVMaArp5C7iO2qAAAAZAAIbj0AAAAGAAAAAAAAAAN15FyzAckAxU5v/ZgRlL3w8ybTtQAAAAAAAAAAAAAAAAAAAAEAAAABAAAAAP1qe44j+i4uIT+arbD4QDQBt8ryEeJd7a0jskQ3nwDeAAAAAAAAAACMeNF28DnnCSCEKAXA9o9jW52f/KL1uSismOAQsmeU7QAAAAAPf0g4AAAAAAAAAAG7iO2qAAAAQGHFTPHhV5JCEJO29yIlofnic2AB/VIZtVP/zLRfRnedqzPl4uUOXEsNtdIGCV4q4FwfvZmHahdR6cSBhFMrPww=",
+          resultXDR = "AAAAAAAAAGQAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAA=",
+          resultMetaXDR = "AAAAAAAAAAEAAAADAAAAAAAIgQMAAAAAAAAAAIx40XbwOecJIIQoBcD2j2NbnZ/8ovW5KKyY4BCyZ5TtAAAAAA9/SDgACIEDAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAwAIgPYAAAAAAAAAAP1qe44j+i4uIT+arbD4QDQBt8ryEeJd7a0jskQ3nwDeAAKb9aOWO8QACD1BAAAAHgAAAAoAAAAAAAAAAAAAAAABAAAAAAAACgAAAAARC07BokpLTOF+/vVKBwiAlop7hHGJTNeGGlY4MoPykwAAAAEAAAAAK+Lzfd3yDD+Ov0GbYu1g7SaIBrKZeBUxoCunkLuI7aoAAAABAAAAAERmsKL73CyLV/HvjyQCERDXXpWE70Xhyb6MR5qPO3yQAAAAAQAAAABSORGwAdyuanN3sNOHqNSpACyYdkUM3L8VafUu69EvEgAAAAEAAAAAeCzqJNkMM/jLvyuMIfyFHljBlLCtDyj17RMycPuNtRMAAAABAAAAAIEi4R7juq15ymL00DNlAddunyFT4FyUD4muC4t3bobdAAAAAQAAAACaNpLL5YMfjOTdXVEqrAh99LM12sN6He6pHgCRAa1f1QAAAAEAAAAAqB+lfAPV9ak+Zkv4aTNZwGaFFAfui4+yhM3dGhoYJ+sAAAABAAAAAMNJrEvdMg6M+M+n4BDIdzsVSj/ZI9SvAp7mOOsvAD/WAAAAAQAAAADbHA6xiKB1+G79mVqpsHMOleOqKa5mxDpP5KEp/Xdz9wAAAAEAAAAAAAAAAAAAAAEACIEDAAAAAAAAAAD9anuOI/ouLiE/mq2w+EA0AbfK8hHiXe2tI7JEN58A3gACm/WUFvOMAAg9QQAAAB4AAAAKAAAAAAAAAAAAAAAAAQAAAAAAAAoAAAAAEQtOwaJKS0zhfv71SgcIgJaKe4RxiUzXhhpWODKD8pMAAAABAAAAACvi833d8gw/jr9Bm2LtYO0miAaymXgVMaArp5C7iO2qAAAAAQAAAABEZrCi+9wsi1fx748kAhEQ116VhO9F4cm+jEeajzt8kAAAAAEAAAAAUjkRsAHcrmpzd7DTh6jUqQAsmHZFDNy/FWn1LuvRLxIAAAABAAAAAHgs6iTZDDP4y78rjCH8hR5YwZSwrQ8o9e0TMnD7jbUTAAAAAQAAAACBIuEe47qtecpi9NAzZQHXbp8hU+BclA+JrguLd26G3QAAAAEAAAAAmjaSy+WDH4zk3V1RKqwIffSzNdrDeh3uqR4AkQGtX9UAAAABAAAAAKgfpXwD1fWpPmZL+GkzWcBmhRQH7ouPsoTN3RoaGCfrAAAAAQAAAADDSaxL3TIOjPjPp+AQyHc7FUo/2SPUrwKe5jjrLwA/1gAAAAEAAAAA2xwOsYigdfhu/ZlaqbBzDpXjqimuZsQ6T+ShKf13c/cAAAABAAAAAAAAAAA=",
+          feeMetaXDR = "AAAAAgAAAAMACH/IAAAAAAAAAAAr4vN93fIMP46/QZti7WDtJogGspl4FTGgK6eQu4jtqgAAAAAdzWMMAAhuPQAAAAUAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAEACIEDAAAAAAAAAAAr4vN93fIMP46/QZti7WDtJogGspl4FTGgK6eQu4jtqgAAAAAdzWKoAAhuPQAAAAYAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAA==")
       ).awaitFor(10.seconds)
     }
   }

@@ -9,7 +9,7 @@ import stellar.sdk.ByteArrays._
 import stellar.sdk.TrySeq._
 import stellar.sdk.XDRPrimitives._
 import stellar.sdk.op.Operation
-import stellar.sdk.resp.TransactionResp
+import stellar.sdk.resp.TransactionPostResp
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
@@ -83,7 +83,7 @@ object Transaction {
 
 case class SignedTransaction(transaction: Transaction, signatures: Seq[DecoratedSignature], hash: Array[Byte]) {
 
-  def submit()(implicit ec: ExecutionContext): Future[TransactionResp] = {
+  def submit()(implicit ec: ExecutionContext): Future[TransactionPostResp] = {
     transaction.network.submit(this)
   }
 

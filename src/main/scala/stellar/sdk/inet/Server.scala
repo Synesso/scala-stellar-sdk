@@ -20,12 +20,12 @@ import scala.util.Try
 case class Server(uri: URI) {
   implicit val backend = AkkaHttpBackend()
   implicit val formats = Serialization.formats(NoTypeHints) + AccountRespDeserializer + DataValueRespDeserializer +
-    LedgerRespDeserializer + TransactedOperationDeserializer + OrderBookDeserializer + TransactionRespDeserializer
+    LedgerRespDeserializer + TransactedOperationDeserializer + OrderBookDeserializer + TransactionPostRespDeserializer
 
-  def post(txn: SignedTransaction)(implicit ec: ExecutionContext): Future[TransactionResp] = for {
+  def post(txn: SignedTransaction)(implicit ec: ExecutionContext): Future[TransactionPostResp] = for {
     envelope <- Future.fromTry(txn.toEnvelopeXDRBase64)
     requestUri = uri"$uri/transactions"
-    response <- sttp.body(Map("tx" -> envelope)).post(requestUri).response(asJson[TransactionResp]).send()
+    response <- sttp.body(Map("tx" -> envelope)).post(requestUri).response(asJson[TransactionPostResp]).send()
   } yield {
     response.body match {
       case Right(r) => r

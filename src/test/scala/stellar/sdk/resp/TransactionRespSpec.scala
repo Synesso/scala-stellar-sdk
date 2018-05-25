@@ -1,18 +1,22 @@
 package stellar.sdk.resp
 
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+
 import org.specs2.mutable.Specification
 import org.stellar.sdk.xdr.{OperationType, TransactionResult, TransactionResultCode}
-import stellar.sdk.ByteArrays.bytesToHex
+import stellar.sdk.ByteArrays.{base64, bytesToHex}
 import stellar.sdk._
 import stellar.sdk.op.CreateAccountOperation
+import org.json4s.JsonDSL._
 
-class TransactionRespSpec extends Specification {
+class TransactionRespSpec extends Specification with ArbitraryInput with DomainMatchers {
 
-  implicit val network = TestNetwork
+  val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'").withZone(ZoneId.of("UTC"))
 
-  "a transaction response" should {
+  "a transaction post response" should {
     "provide access to the signed transaction via XDR decoding" >> {
-      TransactionResp("", 1, "AAAAAJYHU4BtUa8ACOZZzHII4+FtEgRa9lBknmI+jQ8MmbfYAAAAZAB16IkAAAABAAAAAAAAAAAAAAABAAAAA" +
+      TransactionPostResp("", 1, "AAAAAJYHU4BtUa8ACOZZzHII4+FtEgRa9lBknmI+jQ8MmbfYAAAAZAB16IkAAAABAAAAAAAAAAAAAAABAAAAA" +
         "AAAAAAAAAAAuRsw+AoWiSHa1TWuxE8O0ve5Ytj2JJE1sDrLNJspsxsAAAAAAJiWgAAAAAAAAAABDJm32AAAAEDnDn8POBeTu0v5Hj6VCVB" +
         "KABHtap9ut+HH0+taBQsDPNLA+WXfiwrq1hG5cEQP0qTHG59vkmyjxcejqjz7dPwO", "", "").transaction must
         beSuccessfulTry[SignedTransaction].like {
@@ -37,7 +41,7 @@ class TransactionRespSpec extends Specification {
     }
 
     "provide access to the XDR Transaction Result" >> {
-      TransactionResp("", 1, "", "AAAAAAAAAGQAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAB////+wAAAAA=", "").result must
+      TransactionPostResp("", 1, "", "AAAAAAAAAGQAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAB////+wAAAAA=", "").result must
         beSuccessfulTry[TransactionResult].like { case tr: TransactionResult =>
           tr.getFeeCharged.getInt64 mustEqual 100
           tr.getExt.getDiscriminant mustEqual 0
@@ -47,27 +51,36 @@ class TransactionRespSpec extends Specification {
           tr.getResult.getResults.last.getTr.getDiscriminant mustEqual OperationType.PAYMENT
         }
     }
+
+    "deserialise from JSON" >> prop { tpr: TransactionPostResp =>
+      val json = ("hash" -> tpr.hash) ~ ("ledger" -> tpr.ledger) ~ ("envelope_xdr" -> tpr.envelopeXDR) ~
+        ("result_xdr" -> tpr.resultXDR) ~ ("result_meta_xdr" -> tpr.resultMetaXDR)
+
+      implicit val fmt = org.json4s.DefaultFormats + TransactionPostRespDeserializer
+      json.extract[TransactionPostResp] mustEqual tpr
+    }
+  }
+
+  "a transaction history response" should {
+    "deserialise from JSON" >> prop { thr: TransactionHistoryResp =>
+      val (memoType, memo) = thr.memo match {
+        case NoMemo => "none" -> None
+        case MemoId(id) => "id" -> Some(s"$id")
+        case MemoText(t) => "text" -> Some(t)
+        case m: MemoWithHash => "hash" -> Some(base64(m.bs))
+      }
+      val json = memo.foldLeft(("hash" -> thr.hash) ~ ("ledger" -> thr.ledger) ~
+        ("created_at" -> formatter.format(thr.createdAt)) ~
+        ("source_account" -> thr.account.accountId) ~ ("source_account_sequence" -> thr.sequence) ~
+        ("fee_paid" -> thr.feePaid) ~ ("operation_count" -> thr.operationCount) ~ ("signatures" -> thr.signatures) ~
+        ("memo_type" -> memoType) ~ ("envelope_xdr" -> thr.envelopeXDR) ~ ("result_xdr" -> thr.resultXDR) ~
+        ("result_meta_xdr" -> thr.resultMetaXDR) ~ ("fee_meta_xdr" -> thr.feeMetaXDR)) {
+        case (js, memoText) => js ~ ("memo" -> memoText)
+      }
+
+      implicit val fmt = org.json4s.DefaultFormats + TransactionHistoryRespDeserializer
+      json.extract[TransactionHistoryResp] must beEquivalentTo(thr)
+    }
   }
 
 }
-
-/*
-{
-"_links": {
-  "transaction": {
-    "href": "https://horizon-testnet.stellar.org/transactions/ba68c0112afe25a2fea9a6e7926a4aef9ff12fb627ec840840541813aaa695db"
-  }
-},
-"hash": "ba68c0112afe25a2fea9a6e7926a4aef9ff12fb627ec840840541813aaa695db",
-"ledger": 7729219,
-"envelope_xdr": "AAAAAJYHU4BtUa8ACOZZzHII4+FtEgRa9lBknmI+jQ8MmbfYAAAAZAB16IkAAAABAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAuRsw+AoWiSHa1TWuxE8O0ve5Ytj2JJE1sDrLNJspsxsAAAAAAJiWgAAAAAAAAAABDJm32AAAAEDnDn8POBeTu0v5Hj6VCVBKABHtap9ut+HH0+taBQsDPNLA+WXfiwrq1hG5cEQP0qTHG59vkmyjxcejqjz7dPwO",
-"result_xdr": "AAAAAAAAAGQAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAA=",
-"result_meta_xdr": "AAAAAAAAAAEAAAADAAAAAAB18EMAAAAAAAAAALkbMPgKFokh2tU1rsRPDtL3uWLY9iSRNbA6yzSbKbMbAAAAAACYloAAdfBDAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAwB18EMAAAAAAAAAAJYHU4BtUa8ACOZZzHII4+FtEgRa9lBknmI+jQ8MmbfYAAAAF0h255wAdeiJAAAAAQAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAQB18EMAAAAAAAAAAJYHU4BtUa8ACOZZzHII4+FtEgRa9lBknmI+jQ8MmbfYAAAAF0feURwAdeiJAAAAAQAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAA"
-}
-
-
-    val is = new XdrDataInputStream(new ByteArrayInputStream(baos.toByteArray))
-    XDRMemo.decode(is) must beEquivalentTo(xdrMemo)
-
-
- */

@@ -1,13 +1,22 @@
 package stellar.sdk.resp
 
+import java.time.ZonedDateTime
+
 import org.json4s.JsonAST.JObject
 import org.json4s.{CustomSerializer, DefaultFormats}
 import org.stellar.sdk.xdr.{TransactionMeta, TransactionResult}
-import stellar.sdk.{Network, SignedTransaction}
+import stellar.sdk.ByteArrays.base64
+import stellar.sdk._
 
 import scala.util.Try
 
-case class TransactionResp(hash: String, ledger: Long, envelopeXDR: String, resultXDR: String, resultMetaXDR: String) {
+sealed trait TransactionResp {
+  val hash: String
+  val ledger: Long
+  val envelopeXDR: String
+  val resultXDR: String
+  val resultMetaXDR: String
+
   /**
     * The previously submitted signed transaction as reported in the XDR returned from Horizon.
     */
@@ -26,19 +35,64 @@ case class TransactionResp(hash: String, ledger: Long, envelopeXDR: String, resu
   def resultMeta: Try[TransactionMeta] = TxResult.decodeMetaXDR(resultMetaXDR)
 }
 
-object TransactionRespDeserializer extends CustomSerializer[TransactionResp](format => ( {
+/**
+  * The response received after submitting a new transaction to Horizon
+  */
+case class TransactionPostResp(hash: String, ledger: Long, envelopeXDR: String, resultXDR: String, resultMetaXDR: String)
+  extends TransactionResp
+
+/**
+  * The response received when viewing historical transactions
+  */
+case class TransactionHistoryResp(hash: String, ledger: Long, createdAt: ZonedDateTime, account: PublicKey,
+                                  sequence: Long, feePaid: Int, operationCount: Int, memo: Memo, signatures: Seq[String],
+                                  envelopeXDR: String, resultXDR: String, resultMetaXDR: String, feeMetaXDR: String)
+  extends TransactionResp
+
+object TransactionPostRespDeserializer extends CustomSerializer[TransactionPostResp](_ => ( {
   case o: JObject =>
     implicit val formats = DefaultFormats
 
-    //    import org.json4s.native.JsonMethods._
-    //    println(pretty(render(o)))
+//        import org.json4s.native.JsonMethods._
+//        println(pretty(render(o)))
 
-    TransactionResp(
+    TransactionPostResp(
       hash = (o \ "hash").extract[String],
       ledger = (o \ "ledger").extract[Long],
       envelopeXDR = (o \ "envelope_xdr").extract[String],
       resultXDR = (o \ "result_xdr").extract[String],
       resultMetaXDR = (o \ "result_meta_xdr").extract[String]
+    )
+
+}, PartialFunction.empty)
+)
+
+object TransactionHistoryRespDeserializer extends CustomSerializer[TransactionHistoryResp](_ => ( {
+  case o: JObject =>
+    implicit val formats = DefaultFormats
+
+//    import org.json4s.native.JsonMethods._
+//    println(pretty(render(o)))
+
+    TransactionHistoryResp(
+      hash = (o \ "hash").extract[String],
+      ledger = (o \ "ledger").extract[Long],
+      createdAt = ZonedDateTime.parse((o \ "created_at").extract[String]),
+      account = KeyPair.fromAccountId((o \ "source_account").extract[String]),
+      sequence = (o \ "source_account_sequence").extract[String].toLong,
+      feePaid = (o \ "fee_paid").extract[Int],
+      operationCount = (o \ "operation_count").extract[Int],
+      memo = (o \ "memo_type").extract[String] match {
+        case "none" => NoMemo
+        case "id" => MemoId((o \ "memo").extract[String].toLong)
+        case "text" => MemoText((o \ "memo").extractOpt[String].getOrElse(""))
+        case "hash" => MemoHash(base64((o \ "memo").extract[String]))
+      },
+      signatures = (o \ "signatures").extract[Seq[String]], // todo - replace with Signature domain object after #13
+      envelopeXDR = (o \ "envelope_xdr").extract[String],
+      resultXDR = (o \ "result_xdr").extract[String],
+      resultMetaXDR = (o \ "result_meta_xdr").extract[String],
+      feeMetaXDR = (o \ "fee_meta_xdr").extract[String]
     )
 
 }, PartialFunction.empty)
