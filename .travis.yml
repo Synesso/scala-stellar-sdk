@@ -4,8 +4,7 @@ scala:
   - 2.12.4
 
 script:
-  - sbt test
-  # - sbt coverage test 'it:testOnly -- timefactor 5' coverageReport
+  - sbt coverage test 'it:testOnly -- timefactor 5' coverageReport
 
 cache:
   directories:
