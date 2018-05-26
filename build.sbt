@@ -24,6 +24,8 @@ lazy val commonSettings = Seq(
   bintrayPackageLabels := Seq("scala", "stellar")
 )
 
+resolvers += "scala-stellar-sdk-repo" at "https://dl.bintray.com/synesso/mvn"
+
 enablePlugins(GitVersioning)
 
 lazy val root = (project in file("."))
