@@ -41,7 +41,7 @@ with minimal notice until v1.0.0.
 
 In your `build.sbt`
 
-```
+```scala
 resolvers += "scala-stellar-sdk-repo" at "https://dl.bintray.com/synesso/mvn"
 
 libraryDependencies +=  "stellar.scala.sdk" %% "scala-stellar-sdk" % "0.1.2.1"
@@ -52,7 +52,7 @@ libraryDependencies +=  "stellar.scala.sdk" %% "scala-stellar-sdk" % "0.1.2.1"
 The following examples use the [Ammonite REPL](http://ammonite.io/). After launching `amm`, fetch and import the
 Stellar SDK for Scala.
 
-```
+```scala
 interp.repositories() ++= Seq(coursier.MavenRepository("https://dl.bintray.com/synesso/mvn/"))
 
 import $ivy.`stellar.scala.sdk::scala-stellar-sdk:0.1.2.1`
@@ -65,14 +65,14 @@ import stellar.sdk.resp._
 
 ### Creating and funding a test account
 
-```
+```scala
 val kp = KeyPair.random
 TestNetwork.fund(kp)
 ```
 
 ### Checking the status of an account
 
-```
+```scala
 import scala.util.Success
 
 TestNetwork.account(kp) onSuccess { case resp =>
@@ -86,7 +86,7 @@ TestNetwork.account(kp) onSuccess { case resp =>
 
 ### Funding a new account with a create account operation
 
-```
+```scala
 implicit val network = TestNetwork
 
 val funder: KeyPair = kp // funded account from first example
