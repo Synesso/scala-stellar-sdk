@@ -341,6 +341,19 @@ class SequentialIntegrationSpec(implicit ee: ExecutionEnv) extends Specification
           feeMetaXDR = "AAAAAgAAAAMACH/IAAAAAAAAAAAr4vN93fIMP46/QZti7WDtJogGspl4FTGgK6eQu4jtqgAAAAAdzWMMAAhuPQAAAAUAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAEACIEDAAAAAAAAAAAr4vN93fIMP46/QZti7WDtJogGspl4FTGgK6eQu4jtqgAAAAAdzWKoAAhuPQAAAAYAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAA==")
       ).awaitFor(10.seconds)
     }
+
+    "filter transactions by account" >> {
+        val byAccount = TestNetwork.transactionsByAccount(accnA).map(_.take(10).toList)
+        byAccount.map(_.isEmpty) must beFalse.awaitFor(10 seconds)
+        byAccount.map(_.head) must beLike[TransactionHistoryResp] {
+          case t =>
+            t.createdAt.plusMinutes(15).isAfter(ZonedDateTime.now) must beTrue // recent
+            t.account mustEqual KeyPair.fromAccountId("GAIH3ULLFQ4DGSECF2AR555KZ4KNDGEKN4AFI4SU2M7B43MGK3QJZNSR")
+            t.feePaid mustEqual 100
+            t.operationCount mustEqual 1
+            t.memo mustEqual NoMemo
+        }.awaitFor(10.seconds)
+    }
   }
 
   "transaction" should {

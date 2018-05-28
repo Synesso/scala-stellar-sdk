@@ -100,6 +100,10 @@ trait Network {
     server.getStream[TransactionHistoryResp]("/transactions", TransactionHistoryRespDeserializer)
   }
 
+  def transactionsByAccount(pubKey: PublicKeyOps)(implicit ex: ExecutionContext): Future[Stream[TransactionHistoryResp]] = {
+    server.getStream[TransactionHistoryResp](s"/accounts/${pubKey.accountId}/transactions", TransactionHistoryRespDeserializer)
+  }
+
   private def assetParams(prefix: String, asset: Asset): Map[String, String] = {
     asset match {
       case NativeAsset => Map(s"${prefix}_asset_type" -> "native")
