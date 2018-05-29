@@ -354,6 +354,18 @@ class SequentialIntegrationSpec(implicit ee: ExecutionEnv) extends Specification
             t.memo mustEqual NoMemo
         }.awaitFor(10.seconds)
     }
+
+    "filter transactions by ledger" >> {
+      val byLedger = PublicNetwork.transactionsByLedger(16237465).map(_.toList)
+      byLedger.map(_.size) must beEqualTo(1).awaitFor(10 seconds)
+      byLedger.map(_.head) must beLike[TransactionHistoryResp] {
+        case t =>
+          t.account mustEqual KeyPair.fromAccountId("GA7W7RKIDQMVQ5Y2OCPEVQ5DSLVVN2KUXTLVQ555AZLUMO2Z5JKGKCEH")
+          t.feePaid mustEqual 100
+          t.operationCount mustEqual 1
+          t.memo mustEqual NoMemo
+      }.awaitFor(10.seconds)
+    }
   }
 
   "transaction" should {
