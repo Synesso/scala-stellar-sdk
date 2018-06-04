@@ -3,7 +3,6 @@ package stellar.sdk
 import java.net.URI
 import java.nio.charset.StandardCharsets.UTF_8
 
-import com.softwaremill.sttp.akkahttp.AkkaHttpBackend
 import stellar.sdk.ByteArrays._
 import stellar.sdk.inet.Server
 import stellar.sdk.op.{Operation, PayOperation, Transacted, TransactedOperationDeserializer}
@@ -129,7 +128,6 @@ case object PublicNetwork extends Network {
 case object TestNetwork extends Network {
   override val passphrase = "Test SDF Network ; September 2015"
   override val server = Server(URI.create("https://horizon-testnet.stellar.org"))
-  implicit val backend = AkkaHttpBackend()
 
   def fund(pk: PublicKeyOps)(implicit ec: ExecutionContext): Future[TransactionPostResp] =
     server.get[TransactionPostResp]("friendbot", Map("addr" -> pk.accountId))

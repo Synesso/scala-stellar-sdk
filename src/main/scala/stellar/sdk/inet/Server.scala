@@ -2,6 +2,7 @@ package stellar.sdk.inet
 
 import java.net.URI
 
+import akka.actor.ActorSystem
 import com.softwaremill.sttp._
 import com.softwaremill.sttp.akkahttp.AkkaHttpBackend
 import com.softwaremill.sttp.json4s._
@@ -17,8 +18,8 @@ import scala.reflect.ClassTag
 import scala.util.Try
 
 
-case class Server(uri: URI) {
-  implicit val backend = AkkaHttpBackend()
+case class Server(uri: URI, system: ActorSystem = ActorSystem("stellar-sdk")) {
+  implicit val backend = AkkaHttpBackend.usingActorSystem(system)
   implicit val formats = Serialization.formats(NoTypeHints) + AccountRespDeserializer + DataValueRespDeserializer +
     LedgerRespDeserializer + TransactedOperationDeserializer + OrderBookDeserializer + TransactionPostRespDeserializer
 
