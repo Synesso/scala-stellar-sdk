@@ -6,7 +6,7 @@ import org.json4s.native.Serialization
 import org.specs2.mutable.Specification
 import stellar.sdk._
 
-class AccountRespSpec extends Specification {
+class AccountRespSpec extends Specification with ArbitraryInput {
 
   implicit val formats = Serialization.formats(NoTypeHints) + AccountRespDeserializer
 
@@ -129,6 +129,12 @@ class AccountRespSpec extends Specification {
             Amount(3332771622L, IssuedAsset4("JPY", KeyPair.fromAccountId("GBVAOIACNSB7OVUXJYC5UE2D4YK2F7A24T7EE5YOMN4CE6GCHUTOUQXM")))
           ))
           r.signers mustEqual Seq(AccountSigner(KeyPair.fromAccountId("GBU6GMZZ2KTQ33CHNVPAWWEJ22ZHLYGBGO3LIBKNANXUMNEOFROZKO62"), 1))
+      }
+    }
+
+    "an account response" should {
+      "be convertible to an account" >> prop { ar: AccountResp =>
+        ar.toAccount mustEqual Account(ar.id, ar.lastSequence + 1)
       }
     }
   }

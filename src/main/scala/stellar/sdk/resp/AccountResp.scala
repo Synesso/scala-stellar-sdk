@@ -12,7 +12,10 @@ case class AccountResp(id: PublicKey,
                        authRequired: Boolean,
                        authRevocable: Boolean,
                        balances: List[Amount],
-                       signers: List[Signer])
+                       signers: List[Signer]) {
+
+  def toAccount: Account = Account(id, lastSequence + 1)
+}
 
 object AccountRespDeserializer extends CustomSerializer[AccountResp](format => ( {
   case o: JObject =>

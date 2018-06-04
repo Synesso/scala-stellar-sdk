@@ -75,6 +75,8 @@ trait ArbitraryInput extends ScalaCheck {
 
   implicit def arbThreshold = Arbitrary(genThresholds)
 
+  implicit def arbAccountResp = Arbitrary(genAccountResp)
+
   implicit def arbLedgerResp = Arbitrary(genLedgerResp)
 
   implicit def arbOfferResp = Arbitrary(genOfferResp)
@@ -330,6 +332,34 @@ trait ArbitraryInput extends ScalaCheck {
   }
 
   def genHash = Gen.identifier.map(_.getBytes("UTF-8")).map(Base64.encodeBase64String)
+
+  def genAccountResp: Gen[AccountResp] = for {
+    id <- genPublicKey
+    lastSequence <- Gen.posNum[Long]
+    subEntryCount <- Gen.posNum[Int]
+    thresholds <- genThresholds
+    authRequired <- Gen.oneOf(true, false)
+    authRevocable <- Gen.oneOf(true, false)
+    balances <- Gen.nonEmptyListOf(genAmount)
+    signers <- Gen.nonEmptyListOf(genSigner)
+  } yield AccountResp(id, lastSequence, subEntryCount, thresholds, authRequired, authRevocable, balances, signers)
+
+  def genSigner: Gen[Signer] = Gen.oneOf(genAccountSigner, genHashSigner, genPreAuthTxnSigner)
+
+  def genAccountSigner: Gen[AccountSigner] = for {
+    key <- genPublicKey
+    weight <- Gen.posNum[Int]
+  } yield AccountSigner(key, weight)
+
+  def genHashSigner: Gen[HashSigner] = for {
+    hash <- genHash
+    weight <- Gen.posNum[Int]
+  } yield HashSigner(hash, weight)
+
+  def genPreAuthTxnSigner: Gen[PreAuthTxnSigner] = for {
+    hash <- genHash
+    weight <- Gen.posNum[Int]
+  } yield PreAuthTxnSigner(hash, weight)
 
   def genLedgerResp: Gen[LedgerResp] = for {
     id <- Gen.identifier
