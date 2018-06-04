@@ -116,7 +116,7 @@ class AccountRespSpec extends Specification {
 
       parse(doc).extract[AccountResp] must beLike {
         case r: AccountResp =>
-          r.id mustEqual "GBU6GMZZ2KTQ33CHNVPAWWEJ22ZHLYGBGO3LIBKNANXUMNEOFROZKO62"
+          r.id mustEqual KeyPair.fromAccountId("GBU6GMZZ2KTQ33CHNVPAWWEJ22ZHLYGBGO3LIBKNANXUMNEOFROZKO62")
           r.lastSequence mustEqual 56251530273100047L
           r.subEntryCount mustEqual 156
           r.thresholds mustEqual Thresholds(1, 5, 10)

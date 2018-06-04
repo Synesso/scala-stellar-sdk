@@ -5,7 +5,7 @@ import org.json4s.{CustomSerializer, DefaultFormats}
 import stellar.sdk._
 
 // e.g. https://horizon-testnet.stellar.org/accounts/GDGUM5IKSJIFQEHXAWGQD2IWT2OUD6YTY4U7D7SSZLO23BVWHAFL54YN
-case class AccountResp(id: String,
+case class AccountResp(id: PublicKey,
                        lastSequence: Long,
                        subEntryCount: Int,
                        thresholds: Thresholds,
@@ -17,7 +17,7 @@ case class AccountResp(id: String,
 object AccountRespDeserializer extends CustomSerializer[AccountResp](format => ( {
   case o: JObject =>
     implicit val formats = DefaultFormats
-    val id = (o \ "id").extract[String]
+    val id = KeyPair.fromAccountId((o \ "id").extract[String])
     val seq = (o \ "sequence").extract[String].toLong
     val subEntryCount = (o \ "subentry_count").extract[Int]
     val lowThreshold = (o \ "thresholds" \ "low_threshold").extract[Int]
