@@ -6,6 +6,7 @@ import akka.actor.ActorSystem
 import com.softwaremill.sttp._
 import com.softwaremill.sttp.akkahttp.AkkaHttpBackend
 import com.softwaremill.sttp.json4s._
+import com.typesafe.config.ConfigFactory
 import org.json4s.native.Serialization
 import org.json4s.{CustomSerializer, NoTypeHints}
 import stellar.sdk.op.TransactedOperationDeserializer
@@ -18,7 +19,7 @@ import scala.reflect.ClassTag
 import scala.util.Try
 
 
-case class Server(uri: URI, system: ActorSystem = ActorSystem("stellar-sdk")) {
+case class Server(uri: URI, system: ActorSystem = ActorSystem("stellar-sdk", ConfigFactory.load().getConfig("scala-stellar-sdk"))) {
   implicit val backend = AkkaHttpBackend.usingActorSystem(system)
   implicit val formats = Serialization.formats(NoTypeHints) + AccountRespDeserializer + DataValueRespDeserializer +
     LedgerRespDeserializer + TransactedOperationDeserializer + OrderBookDeserializer + TransactionPostRespDeserializer
