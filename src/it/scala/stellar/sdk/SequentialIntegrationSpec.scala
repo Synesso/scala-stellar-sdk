@@ -37,7 +37,7 @@ class SequentialIntegrationSpec(implicit ee: ExecutionEnv) extends Specification
     "fetch account details" >> {
       TestNetwork.account(accnA) must beLike[AccountResp] {
         case AccountResp(id, _, _, _, _, _, List(lumens), _) =>
-          id mustEqual accnA.accountId
+          id mustEqual accnA
           lumens mustEqual Amount.lumens(10000)
       }.awaitFor(30.seconds)
     }
