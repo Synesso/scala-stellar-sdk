@@ -36,7 +36,8 @@ case class Server(uri: URI, system: ActorSystem = ActorSystem("stellar-sdk", Con
   }
 
   def get[T: ClassTag](path: String, params: Map[String, Any] = Map.empty)(implicit ec: ExecutionContext, m: Manifest[T]): Future[T] = {
-    val requestUri = uri"$uri/$path?$params"
+    val uriPath = s"$uri$path"
+    val requestUri = uri"$uriPath?$params"
     for {
       resp <- sttp.get(requestUri).response(asJson[T]).send()
     } yield {

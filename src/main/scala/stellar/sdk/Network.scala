@@ -130,5 +130,5 @@ case object TestNetwork extends Network {
   override val server = Server(URI.create("https://horizon-testnet.stellar.org"))
 
   def fund(pk: PublicKeyOps)(implicit ec: ExecutionContext): Future[TransactionPostResp] =
-    server.get[TransactionPostResp]("friendbot", Map("addr" -> pk.accountId))
+    server.get[TransactionPostResp]("/friendbot", Map("addr" -> pk.accountId))
 }
