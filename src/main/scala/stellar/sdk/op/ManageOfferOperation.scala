@@ -66,7 +66,7 @@ case class UpdateOfferOperation(override val offerId: Long,
 }
 
 object ManageOfferOperation {
-  def from(op: ManageOfferOp): Try[ManageOfferOperation] = for {
+  def from(op: ManageOfferOp, source: Option[PublicKey]): Try[ManageOfferOperation] = for {
     selling <- Asset.fromXDR(op.getSelling)
     buying <- Asset.fromXDR(op.getBuying)
   } yield {
@@ -77,9 +77,9 @@ object ManageOfferOperation {
       d = op.getPrice.getD.getInt32.intValue
     )
     (offerId, amount) match {
-      case (0, _) => CreateOfferOperation(Amount(amount, selling), buying, price)
-      case (_, 0) => DeleteOfferOperation(offerId, selling, buying, price)
-      case _ => UpdateOfferOperation(offerId, Amount(amount, selling), buying, price)
+      case (0, _) => CreateOfferOperation(Amount(amount, selling), buying, price, source)
+      case (_, 0) => DeleteOfferOperation(offerId, selling, buying, price, source)
+      case _ => UpdateOfferOperation(offerId, Amount(amount, selling), buying, price, source)
     }
   }
 }

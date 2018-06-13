@@ -25,7 +25,7 @@ case class CreatePassiveOfferOperation(selling: Amount, buying: Asset, price: Pr
 }
 
 object CreatePassiveOfferOperation {
-  def from(op: CreatePassiveOfferOp): Try[CreatePassiveOfferOperation] = for {
+  def from(op: CreatePassiveOfferOp, source: Option[PublicKey]): Try[CreatePassiveOfferOperation] = for {
     selling <- Asset.fromXDR(op.getSelling)
     buying <- Asset.fromXDR(op.getBuying)
     units = op.getAmount.getInt64.longValue
@@ -34,6 +34,6 @@ object CreatePassiveOfferOperation {
       d = op.getPrice.getD.getInt32
     )
   } yield {
-    CreatePassiveOfferOperation(Amount(units, selling), buying, price)
+    CreatePassiveOfferOperation(Amount(units, selling), buying, price, source)
   }
 }

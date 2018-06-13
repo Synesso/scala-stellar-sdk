@@ -4,7 +4,7 @@ import org.stellar.sdk.xdr.Operation.OperationBody
 import org.stellar.sdk.xdr.OperationType.PAYMENT
 import org.stellar.sdk.xdr._
 import stellar.sdk
-import stellar.sdk.{Amount, KeyPair, PublicKeyOps}
+import stellar.sdk.{Amount, KeyPair, PublicKey, PublicKeyOps}
 
 import scala.util.Try
 
@@ -35,12 +35,13 @@ case class PaymentOperation(destinationAccount: PublicKeyOps,
 }
 
 object PaymentOperation {
-  def from(op: PaymentOp): Try[PaymentOperation] = for {
+  def from(op: PaymentOp, source: Option[PublicKey]): Try[PaymentOperation] = for {
     asset <- sdk.Asset.fromXDR(op.getAsset)
     paymentOp <- Try {
       PaymentOperation(
         destinationAccount = KeyPair.fromPublicKey(op.getDestination.getAccountID.getEd25519.getUint256),
-        amount = Amount(op.getAmount.getInt64.longValue, asset)
+        amount = Amount(op.getAmount.getInt64.longValue, asset),
+        sourceAccount = source
       )
     }
   } yield {

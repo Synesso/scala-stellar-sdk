@@ -3,8 +3,8 @@ package stellar.sdk.op
 import org.stellar.sdk.xdr.ManageDataOp
 import org.stellar.sdk.xdr.Operation.OperationBody
 import org.stellar.sdk.xdr.OperationType.MANAGE_DATA
-import stellar.sdk.PublicKeyOps
 import stellar.sdk.XDRPrimitives._
+import stellar.sdk.{PublicKey, PublicKeyOps}
 
 import scala.util.Try
 
@@ -33,11 +33,11 @@ case class WriteDataOperation(name: String, value: String, sourceAccount: Option
 
 
 object ManageDataOperation {
-  def from(op: ManageDataOp): Try[ManageDataOperation] = Try {
+  def from(op: ManageDataOp, source: Option[PublicKey]): Try[ManageDataOperation] = Try {
     val name = op.getDataName.getString64
     Option(op.getDataValue) match {
-      case Some(value) => WriteDataOperation(name, new String(value.getDataValue, "UTF-8"))
-      case _ => DeleteDataOperation(name)
+      case Some(value) => WriteDataOperation(name, new String(value.getDataValue, "UTF-8"), source)
+      case _ => DeleteDataOperation(name, source)
     }
   }
 

@@ -26,12 +26,11 @@ class SequentialIntegrationSpec(implicit ee: ExecutionEnv) extends Specification
     account <- TestNetwork.account(accnB)
     asset <- Future.fromTry(Asset.createNonNative("ScalaSDKSpec", accnA))
     txn <- Future.fromTry(Transaction(
-        Account(accnB, account.lastSequence + 1),
-        Seq(ChangeTrustOperation(IssuedAmount(99, asset)))
-      ).sign(accnB))
+      Account(accnB, account.lastSequence + 1),
+      Seq(ChangeTrustOperation(IssuedAmount(99, asset)))
+    ).sign(accnB))
     response <- txn.submit
   } yield response, 10 seconds)
-
 
   "account endpoint" >> {
     "fetch account details" >> {
@@ -163,12 +162,12 @@ class SequentialIntegrationSpec(implicit ee: ExecutionEnv) extends Specification
     val kinPayment = Transacted(
       id = 70009259709968385L,
       txnHash = "233ce5d17477706e097f72ae1c46241f4586ad1476d191119d46a93e88b9d3fa",
-      sourceAccount = KeyPair.fromAccountId("GDBWXSZDYO4C3EHYXRLCGU3NP55LUBEQO5K2RWIWWMXWVI57L7VUWSZA"),
       createdAt = ZonedDateTime.parse("2018-02-16T09:37:30Z"),
       operation = PaymentOperation(
         destinationAccount = KeyPair.fromAccountId("GCT4TTKW2HPCMHM6PJHQ33FIIDCVKIJXLXDHMKQEC7DKHPPGLUKCHKY7"),
         amount = IssuedAmount(28553980000000L,
-          IssuedAsset4("KIN", KeyPair.fromAccountId("GBDEVU63Y6NTHJQQZIKVTC23NWLQVP3WJ2RI2OTSJTNYOIGICST6DUXR")))
+          IssuedAsset4("KIN", KeyPair.fromAccountId("GBDEVU63Y6NTHJQQZIKVTC23NWLQVP3WJ2RI2OTSJTNYOIGICST6DUXR"))),
+        sourceAccount = Some(KeyPair.fromAccountId("GDBWXSZDYO4C3EHYXRLCGU3NP55LUBEQO5K2RWIWWMXWVI57L7VUWSZA"))
       )
     )
 
@@ -204,7 +203,6 @@ class SequentialIntegrationSpec(implicit ee: ExecutionEnv) extends Specification
         Transacted(
           id = 91946659876865L,
           txnHash = "dd667058cb84fef012a102e5c6be22c532534f0182076d7eabced3e606b22d7d",
-          sourceAccount = KeyPair.fromAccountId("GBK4EP3WICCDJQ3MSYUNRV3PNVQQZAESFGV4DALFENUFAGOY4J7QQNGW"),
           createdAt = ZonedDateTime.parse("2017-03-21T16:06:42Z"),
           operation = PaymentOperation(
             destinationAccount = KeyPair.fromAccountId("GD7E76FQQDNM5GXQX3SMEN5FIZKVHD2KYRYN2UPDQIDKHSXV4QUN7ZT3"),
@@ -214,7 +212,7 @@ class SequentialIntegrationSpec(implicit ee: ExecutionEnv) extends Specification
                 "USD",
                 KeyPair.fromAccountId("GBK4EP3WICCDJQ3MSYUNRV3PNVQQZAESFGV4DALFENUFAGOY4J7QQNGW")
               )),
-            sourceAccount = None))
+            sourceAccount = Some(KeyPair.fromAccountId("GBK4EP3WICCDJQ3MSYUNRV3PNVQQZAESFGV4DALFENUFAGOY4J7QQNGW"))))
       ).awaitFor(10.seconds)
     }
 
@@ -224,12 +222,11 @@ class SequentialIntegrationSpec(implicit ee: ExecutionEnv) extends Specification
         Transacted(
           id = 68867133416685569L,
           txnHash = "1459b596c081eb87829c9168e9eb044eebc434fd92e4b8bc59a195dbf5c4c123",
-          sourceAccount = KeyPair.fromAccountId("GDKUP3J2MXYLSMU556XDSPLGPH5NFITGRT3HSNGNCZP3HTYBZ6AVNB7N"),
           createdAt = ZonedDateTime.parse("2018-02-02T08:55:47Z"),
           operation = PaymentOperation(
             destinationAccount = KeyPair.fromAccountId("GAHK7EEG2WWHVKDNT4CEQFZGKF2LGDSW2IVM4S5DP42RBW3K6BTODB4A"),
             amount = Amount.lumens(6440),
-            sourceAccount = None))
+            sourceAccount = Some(KeyPair.fromAccountId("GDKUP3J2MXYLSMU556XDSPLGPH5NFITGRT3HSNGNCZP3HTYBZ6AVNB7N"))))
       ).awaitFor(10.seconds)
     }
 
@@ -238,12 +235,11 @@ class SequentialIntegrationSpec(implicit ee: ExecutionEnv) extends Specification
         Transacted(
           id = 68867116236808193L,
           txnHash = "4d0c7f118ca939fe10ba3e1facc601814e3e0135991634fe43f019450fa2b5cd",
-          sourceAccount = KeyPair.fromAccountId("GA5XIGA5C7QTPTWXQHY6MCJRMTRZDOSHR6EFIBNDQTCQHG262N4GGKTM"),
           createdAt = ZonedDateTime.parse("2018-02-02T08:55:32Z"),
           operation = PaymentOperation(
             destinationAccount = KeyPair.fromAccountId("GAHK7EEG2WWHVKDNT4CEQFZGKF2LGDSW2IVM4S5DP42RBW3K6BTODB4A"),
             amount = Amount.lumens(19999.99998),
-            sourceAccount = None))
+            sourceAccount = Some(KeyPair.fromAccountId("GA5XIGA5C7QTPTWXQHY6MCJRMTRZDOSHR6EFIBNDQTCQHG262N4GGKTM"))))
       ).awaitFor(10.seconds)
     }
 
@@ -253,12 +249,11 @@ class SequentialIntegrationSpec(implicit ee: ExecutionEnv) extends Specification
         Transacted(
           id = 68867133416685569L,
           txnHash = "1459b596c081eb87829c9168e9eb044eebc434fd92e4b8bc59a195dbf5c4c123",
-          sourceAccount = KeyPair.fromAccountId("GDKUP3J2MXYLSMU556XDSPLGPH5NFITGRT3HSNGNCZP3HTYBZ6AVNB7N"),
           createdAt = ZonedDateTime.parse("2018-02-02T08:55:47Z"),
           operation = PaymentOperation(
             destinationAccount = KeyPair.fromAccountId("GAHK7EEG2WWHVKDNT4CEQFZGKF2LGDSW2IVM4S5DP42RBW3K6BTODB4A"),
             amount = Amount.lumens(6440),
-            sourceAccount = None))
+            sourceAccount = Some(KeyPair.fromAccountId("GDKUP3J2MXYLSMU556XDSPLGPH5NFITGRT3HSNGNCZP3HTYBZ6AVNB7N"))))
       ).awaitFor(10.seconds)
     }
   }
@@ -343,16 +338,16 @@ class SequentialIntegrationSpec(implicit ee: ExecutionEnv) extends Specification
     }
 
     "filter transactions by account" >> {
-        val byAccount = TestNetwork.transactionsByAccount(accnA).map(_.take(10).toList)
-        byAccount.map(_.isEmpty) must beFalse.awaitFor(10 seconds)
-        byAccount.map(_.head) must beLike[TransactionHistoryResp] {
-          case t =>
-            t.createdAt.plusMinutes(15).isAfter(ZonedDateTime.now) must beTrue // recent
-            t.account mustEqual KeyPair.fromAccountId("GAIH3ULLFQ4DGSECF2AR555KZ4KNDGEKN4AFI4SU2M7B43MGK3QJZNSR")
-            t.feePaid mustEqual 100
-            t.operationCount mustEqual 1
-            t.memo mustEqual NoMemo
-        }.awaitFor(10.seconds)
+      val byAccount = TestNetwork.transactionsByAccount(accnA).map(_.take(10).toList)
+      byAccount.map(_.isEmpty) must beFalse.awaitFor(10 seconds)
+      byAccount.map(_.head) must beLike[TransactionHistoryResp] {
+        case t =>
+          t.createdAt.plusMinutes(15).isAfter(ZonedDateTime.now) must beTrue // recent
+          t.account mustEqual KeyPair.fromAccountId("GAIH3ULLFQ4DGSECF2AR555KZ4KNDGEKN4AFI4SU2M7B43MGK3QJZNSR")
+          t.feePaid mustEqual 100
+          t.operationCount mustEqual 1
+          t.memo mustEqual NoMemo
+      }.awaitFor(10.seconds)
     }
 
     "filter transactions by ledger" >> {

@@ -30,7 +30,7 @@ class InflationOperationSpec extends Specification with ArbitraryInput with Doma
            |  },
            |  "id": "${op.id}",
            |  "paging_token": "10157597659137",
-           |  "source_account": "${op.sourceAccount.accountId}",
+           |  "source_account": "${op.operation.sourceAccount.get.accountId}",
            |  "type": "inflation",
            |  "type_i": 9,
            |  "created_at": "${formatter.format(op.createdAt)}",
@@ -39,8 +39,7 @@ class InflationOperationSpec extends Specification with ArbitraryInput with Doma
          """.stripMargin
 
       parse(doc).extract[Transacted[InflationOperation]] mustEqual op
-
-    }
+    }.setGen(genTransacted(genInflationOperation.suchThat(_.sourceAccount.nonEmpty)))
   }
 
 }

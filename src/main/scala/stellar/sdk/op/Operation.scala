@@ -5,7 +5,7 @@ import org.json4s.JsonAST.{JArray, JObject, JValue}
 import org.json4s.{CustomSerializer, DefaultFormats}
 import org.stellar.sdk.xdr.Operation.OperationBody
 import org.stellar.sdk.xdr.OperationType._
-import org.stellar.sdk.xdr.{Operation => XDROp}
+import org.stellar.sdk.xdr.{AccountID, Operation => XDROp}
 import stellar.sdk._
 
 import scala.util.{Success, Try}
@@ -17,9 +17,10 @@ trait Operation {
 
   def toXDR: XDROp = {
     val op = new org.stellar.sdk.xdr.Operation()
-    //    val src = new AccountID()
-    //    src.setAccountID(sourceAccount.getXDRPublicKey)
-    //    op.setSourceAccount(src)
+    sourceAccount.foreach { source =>
+      op.setSourceAccount(new AccountID)
+      op.getSourceAccount.setAccountID(source.getXDRPublicKey)
+    }
     op.setBody(toOperationBody)
     op
   }
@@ -31,18 +32,19 @@ object Operation {
 
   // todo - these should not be Trys because any received xdr object should be correct
   def fromXDR(op: XDROp): Try[Operation] = {
+    val source = Option(op.getSourceAccount).map(_.getAccountID).map(KeyPair.fromXDRPublicKey)
     op.getBody.getDiscriminant match {
-      case ALLOW_TRUST => AllowTrustOperation.from(op.getBody.getAllowTrustOp)
-      case CHANGE_TRUST => ChangeTrustOperation.from(op.getBody.getChangeTrustOp)
-      case CREATE_ACCOUNT => CreateAccountOperation.from(op.getBody.getCreateAccountOp)
-      case PATH_PAYMENT => PathPaymentOperation.from(op.getBody.getPathPaymentOp)
-      case PAYMENT => PaymentOperation.from(op.getBody.getPaymentOp)
-      case SET_OPTIONS => SetOptionsOperation.from(op.getBody.getSetOptionsOp)
-      case MANAGE_OFFER => ManageOfferOperation.from(op.getBody.getManageOfferOp)
-      case CREATE_PASSIVE_OFFER => CreatePassiveOfferOperation.from(op.getBody.getCreatePassiveOfferOp)
-      case ACCOUNT_MERGE => AccountMergeOperation.from(op.getBody)
-      case INFLATION => Success(InflationOperation())
-      case MANAGE_DATA => ManageDataOperation.from(op.getBody.getManageDataOp)
+      case ALLOW_TRUST => AllowTrustOperation.from(op.getBody.getAllowTrustOp, source)
+      case CHANGE_TRUST => ChangeTrustOperation.from(op.getBody.getChangeTrustOp, source)
+      case CREATE_ACCOUNT => CreateAccountOperation.from(op.getBody.getCreateAccountOp, source)
+      case PATH_PAYMENT => PathPaymentOperation.from(op.getBody.getPathPaymentOp, source)
+      case PAYMENT => PaymentOperation.from(op.getBody.getPaymentOp, source)
+      case SET_OPTIONS => SetOptionsOperation.from(op.getBody.getSetOptionsOp, source)
+      case MANAGE_OFFER => ManageOfferOperation.from(op.getBody.getManageOfferOp, source)
+      case CREATE_PASSIVE_OFFER => CreatePassiveOfferOperation.from(op.getBody.getCreatePassiveOfferOp, source)
+      case ACCOUNT_MERGE => AccountMergeOperation.from(op.getBody, source)
+      case INFLATION => Success(InflationOperation(source))
+      case MANAGE_DATA => ManageDataOperation.from(op.getBody.getManageDataOp, source)
     }
   }
 }
@@ -52,6 +54,8 @@ object OperationDeserializer extends CustomSerializer[Operation](format => ( {
     implicit val formats = DefaultFormats
 
     def account(accountKey: String = "account") = KeyPair.fromAccountId((o \ accountKey).extract[String])
+
+    def sourceAccount: Option[PublicKey] = Some(account("source_account"))
 
     def asset(prefix: String = "", obj: JValue = o) = {
       def assetCode = (obj \ s"${prefix}asset_code").extract[String]
@@ -90,32 +94,35 @@ object OperationDeserializer extends CustomSerializer[Operation](format => ( {
     }
 
     (o \ "type").extract[String] match {
-      case "create_account" => CreateAccountOperation(account(), nativeAmount("starting_balance"))
-      case "payment" => PaymentOperation(account("to"), amount())
+      case "create_account" => CreateAccountOperation(account(), nativeAmount("starting_balance"), sourceAccount)
+      case "payment" => PaymentOperation(account("to"), amount(), sourceAccount)
       case "path_payment" =>
         val JArray(pathJs) = o \ "path"
         val path: List[Asset] = pathJs.map(a => asset(obj = a))
-        PathPaymentOperation(amount("source_max", "source_"), account("to"), amount(), path)
+        PathPaymentOperation(amount("source_max", "source_"), account("to"), amount(), path, sourceAccount)
       case "manage_offer" =>
         (o \ "offer_id").extract[Long] match {
           case 0L => CreateOfferOperation(
             selling = amount(assetPrefix = "selling_"),
             buying = asset("buying_"),
-            price = price()
+            price = price(),
+            sourceAccount = sourceAccount
           )
           case id =>
             val amnt = (o \ "amount").extract[String].toDouble
             if (amnt == 0.0) {
-              DeleteOfferOperation(id, asset("selling_"), asset("buying_"), price())
+              DeleteOfferOperation(id, asset("selling_"), asset("buying_"), price(), sourceAccount)
             } else {
-              UpdateOfferOperation(id, selling = amount(assetPrefix = "selling_"), buying = asset("buying_"), price = price())
+              UpdateOfferOperation(id, selling = amount(assetPrefix = "selling_"), buying = asset("buying_"),
+                price = price(), sourceAccount)
             }
         }
       case "create_passive_offer" =>
         CreatePassiveOfferOperation(
           selling = amount(assetPrefix = "selling_"),
           buying = asset("buying_"),
-          price = price()
+          price = price(),
+          sourceAccount = sourceAccount
         )
       case "set_options" =>
         SetOptionsOperation(
@@ -132,23 +139,24 @@ object OperationDeserializer extends CustomSerializer[Operation](format => ( {
             weight <- (o \ "signer_weight").extractOpt[Int]
           } yield {
             AccountSigner(KeyPair.fromAccountId(key), weight)
-          }
+          },
+          sourceAccount = sourceAccount
         )
       case "change_trust" =>
-        ChangeTrustOperation(issuedAmount("limit"))
+        ChangeTrustOperation(issuedAmount("limit"), sourceAccount)
       case "allow_trust" =>
         val asset: NonNativeAsset = nonNativeAsset
-        AllowTrustOperation(account("trustor"), asset.code, (o \ "authorize").extract[Boolean])
+        AllowTrustOperation(account("trustor"), asset.code, (o \ "authorize").extract[Boolean], sourceAccount)
       case "account_merge" =>
-        AccountMergeOperation(KeyPair.fromAccountId((o \ "into").extract[String]))
+        AccountMergeOperation(KeyPair.fromAccountId((o \ "into").extract[String]), sourceAccount)
       case "inflation" =>
-        InflationOperation()
+        InflationOperation(sourceAccount)
       case "manage_data" =>
         val name = (o \ "name").extract[String]
         val value = (o \ "value").extract[String]
         value match {
-          case "" => DeleteDataOperation(name)
-          case _ => WriteDataOperation(name, new String(Base64.decodeBase64(value), "UTF-8"))
+          case "" => DeleteDataOperation(name, sourceAccount)
+          case _ => WriteDataOperation(name, new String(Base64.decodeBase64(value), "UTF-8"), sourceAccount)
         }
       case t =>
         throw new RuntimeException(s"Unrecognised operation type '$t'")

@@ -3,7 +3,7 @@ package stellar.sdk.op
 import org.stellar.sdk.xdr.AccountID
 import org.stellar.sdk.xdr.Operation.OperationBody
 import org.stellar.sdk.xdr.OperationType.ACCOUNT_MERGE
-import stellar.sdk.{KeyPair, PublicKeyOps}
+import stellar.sdk.{KeyPair, PublicKey, PublicKeyOps}
 
 import scala.util.Try
 
@@ -19,7 +19,7 @@ case class AccountMergeOperation(destination: PublicKeyOps, sourceAccount: Optio
 }
 
 object AccountMergeOperation {
-  def from(body: OperationBody): Try[AccountMergeOperation] = Try {
-    AccountMergeOperation(KeyPair.fromXDRPublicKey(body.getDestination.getAccountID))
+  def from(body: OperationBody, source: Option[PublicKey]): Try[AccountMergeOperation] = Try {
+    AccountMergeOperation(KeyPair.fromXDRPublicKey(body.getDestination.getAccountID), source)
   }
 }

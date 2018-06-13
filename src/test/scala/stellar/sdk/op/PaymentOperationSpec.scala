@@ -32,20 +32,19 @@ class PaymentOperationSpec extends Specification with ArbitraryInput with Domain
            |  },
            |  "id": "${op.id}",
            |  "paging_token": "10157597659137",
-           |  "source_account": "${op.sourceAccount.accountId}",
+           |  "source_account": "${op.operation.sourceAccount.get.accountId}",
            |  "type": "payment",
            |  "type_i": 1,
            |  "created_at": "${formatter.format(op.createdAt)}",
            |  "transaction_hash": "${op.txnHash}",
            |  ${amountDocPortion(op.operation.amount)},
-           |  "from": "${op.sourceAccount.accountId}",
+           |  "from": "${op.operation.sourceAccount.get.accountId}",
            |  "to": "${op.operation.destinationAccount.accountId}",
            |}
          """.stripMargin
 
       parse(doc).extract[Transacted[PaymentOperation]] mustEqual op
-
-    }
+    }.setGen(genTransacted(genPaymentOperation.suchThat(_.sourceAccount.nonEmpty)))
   }
 
 }

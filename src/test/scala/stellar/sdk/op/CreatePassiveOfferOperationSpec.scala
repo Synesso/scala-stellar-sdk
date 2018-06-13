@@ -32,7 +32,7 @@ class CreatePassiveOfferOperationSpec extends Specification with ArbitraryInput 
            |  },
            |  "id": "${op.id}",
            |  "paging_token": "10157597659137",
-           |  "source_account": "${op.sourceAccount.accountId}",
+           |  "source_account": "${op.operation.sourceAccount.get.accountId}",
            |  "type": "create_passive_offer",
            |  "type_i": 4,
            |  "created_at": "${formatter.format(op.createdAt)}",
@@ -48,8 +48,8 @@ class CreatePassiveOfferOperationSpec extends Specification with ArbitraryInput 
            |}
          """.stripMargin
 
-      parse(doc).extract[Transacted[CreateAccountOperation]] mustEqual op
-    }
+      parse(doc).extract[Transacted[CreatePassiveOfferOperation]] mustEqual op
+    }.setGen(genTransacted(genCreatePassiveOfferOperation.suchThat(_.sourceAccount.nonEmpty)))
   }
 
 }

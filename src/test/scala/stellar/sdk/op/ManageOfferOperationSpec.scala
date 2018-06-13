@@ -35,7 +35,7 @@ class ManageOfferOperationSpec extends Specification with ArbitraryInput with Do
            |  },
            |  "id":"${op.id}",
            |  "paging_token":"109521666052097",
-           |  "source_account":"${op.sourceAccount.accountId}",
+           |  "source_account":"${op.operation.sourceAccount.get.accountId}",
            |  "type":"manage_offer",
            |  "type_i":3,
            |  "created_at":"${formatter.format(op.createdAt)}",
@@ -52,7 +52,7 @@ class ManageOfferOperationSpec extends Specification with ArbitraryInput with Do
         """.stripMargin
 
       parse(doc).extract[Transacted[Operation]] mustEqual op
-    }
+    }.setGen(genTransacted(genCreateOfferOperation.suchThat(_.sourceAccount.nonEmpty)))
   }
 
   "update offer operation" should {
@@ -75,7 +75,7 @@ class ManageOfferOperationSpec extends Specification with ArbitraryInput with Do
            |  },
            |  "id":"${op.id}",
            |  "paging_token":"109521666052097",
-           |  "source_account":"${op.sourceAccount.accountId}",
+           |  "source_account":"${op.operation.sourceAccount.get.accountId}",
            |  "type":"manage_offer",
            |  "type_i":3,
            |  "created_at":"${formatter.format(op.createdAt)}",
@@ -92,7 +92,7 @@ class ManageOfferOperationSpec extends Specification with ArbitraryInput with Do
         """.stripMargin
 
       parse(doc).extract[Transacted[Operation]] mustEqual op
-    }
+    }.setGen(genTransacted(genUpdateOfferOperation.suchThat(_.sourceAccount.nonEmpty)))
   }
 
   "delete offer operation" should {
@@ -115,7 +115,7 @@ class ManageOfferOperationSpec extends Specification with ArbitraryInput with Do
            |  },
            |  "id":"${op.id}",
            |  "paging_token":"109521666052097",
-           |  "source_account":"${op.sourceAccount.accountId}",
+           |  "source_account":"${op.operation.sourceAccount.get.accountId}",
            |  "type":"manage_offer",
            |  "type_i":3,
            |  "created_at":"${formatter.format(op.createdAt)}",
@@ -133,12 +133,12 @@ class ManageOfferOperationSpec extends Specification with ArbitraryInput with Do
         """.stripMargin
 
       parse(doc).extract[Transacted[Operation]] mustEqual op
-    }
+    }.setGen(genTransacted(genDeleteOfferOperation.suchThat(_.sourceAccount.nonEmpty)))
   }
 
   "manage offer op with no id and no details" should {
     "not deserialise" >> {
-      ManageOfferOperation.from(new ManageOfferOp) must beFailedTry[ManageOfferOperation]
+      ManageOfferOperation.from(new ManageOfferOp, None) must beFailedTry[ManageOfferOperation]
     }
   }
 

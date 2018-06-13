@@ -4,7 +4,7 @@ import org.stellar.sdk.xdr.Operation.OperationBody
 import org.stellar.sdk.xdr.OperationType.SET_OPTIONS
 import org.stellar.sdk.xdr.{Signer => XDRSigner, _}
 import stellar.sdk.XDRPrimitives._
-import stellar.sdk._
+import stellar.sdk.{PublicKey, _}
 
 import scala.util.Try
 
@@ -52,7 +52,7 @@ case class SetOptionsOperation(inflationDestination: Option[PublicKeyOps] = None
 
 object SetOptionsOperation {
 
-  def from(op: SetOptionsOp): Try[SetOptionsOperation] = Try {
+  def from(op: SetOptionsOp, source: Option[PublicKey]): Try[SetOptionsOperation] = Try {
     SetOptionsOperation(
       clearFlags = Option(op.getClearFlags).map(IssuerFlags.from),
       setFlags = Option(op.getSetFlags).map(IssuerFlags.from),
@@ -62,7 +62,8 @@ object SetOptionsOperation {
       mediumThreshold = Option(op.getMedThreshold).map(_.getUint32),
       highThreshold = Option(op.getHighThreshold).map(_.getUint32),
       homeDomain = Option(op.getHomeDomain).map(_.getString32),
-      signer = Option(op.getSigner).map(s => AccountSigner(KeyPair.fromPublicKey(s.getKey.getEd25519.getUint256), s.getWeight.getUint32))
+      signer = Option(op.getSigner).map(s => AccountSigner(KeyPair.fromPublicKey(s.getKey.getEd25519.getUint256), s.getWeight.getUint32)),
+      sourceAccount = source
     )
   }
 

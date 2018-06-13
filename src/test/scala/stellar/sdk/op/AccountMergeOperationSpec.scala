@@ -32,19 +32,18 @@ class AccountMergeOperationSpec extends Specification with ArbitraryInput with D
            |  },
            |  "id": "${op.id}",
            |  "paging_token": "10157597659137",
-           |  "source_account": "${op.sourceAccount.accountId}",
+           |  "source_account":"${op.operation.sourceAccount.get.accountId}",
            |  "type_i": 8,
            |  "type": "account_merge"
            |  "created_at": "${formatter.format(op.createdAt)}",
            |  "transaction_hash": "${op.txnHash}",
-           |  "account": "${op.sourceAccount.accountId}",
+           |  "account": "${op.operation.sourceAccount.get.accountId}",
            |  "into": "${op.operation.destination.accountId}",
            |}
          """.stripMargin
 
       parse(doc).extract[Transacted[AccountMergeOperation]] mustEqual op
-
-    }
+    }.setGen(genTransacted(genAccountMergeOperation.suchThat(_.sourceAccount.nonEmpty)))
   }
 
 }

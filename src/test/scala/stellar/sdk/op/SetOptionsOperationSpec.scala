@@ -32,7 +32,7 @@ class SetOptionsOperationSpec extends Specification with ArbitraryInput with Dom
            |  },
            |  "id": "${op.id}",
            |  "paging_token": "10157597659137",
-           |  "source_account": "${op.sourceAccount.accountId}",
+           |  "source_account": "${op.operation.sourceAccount.get.accountId}",
            |  "created_at": "${formatter.format(op.createdAt)}",
            |  "transaction_hash": "${op.txnHash}",
            |  ${opt("inflation_dest", op.operation.inflationDestination.map(_.accountId))}
@@ -63,7 +63,6 @@ class SetOptionsOperationSpec extends Specification with ArbitraryInput with Dom
          """.stripMargin
 
       parse(doc).extract[Transacted[SetOptionsOperation]] mustEqual op
-
-    }
+    }.setGen(genTransacted(genSetOptionsOperation.suchThat(_.sourceAccount.nonEmpty)))
   }
 }

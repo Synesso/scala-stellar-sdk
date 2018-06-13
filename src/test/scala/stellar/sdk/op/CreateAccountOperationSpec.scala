@@ -32,19 +32,19 @@ class CreateAccountOperationSpec extends Specification with ArbitraryInput with 
            |  },
            |  "id": "${op.id}",
            |  "paging_token": "10157597659137",
-           |  "source_account": "${op.sourceAccount.accountId}",
+           |  "source_account": "${op.operation.sourceAccount.get.accountId}",
            |  "type": "create_account",
            |  "type_i": 0,
            |  "created_at": "${formatter.format(op.createdAt)}",
            |  "transaction_hash": "${op.txnHash}",
            |  "starting_balance": "${amountString(op.operation.startingBalance)}",
-           |  "funder": "${op.sourceAccount.accountId}",
+           |  "funder": "${op.operation.sourceAccount.get.accountId}",
            |  "account": "${op.operation.destinationAccount.accountId}"
            |}
          """.stripMargin
 
       parse(doc).extract[Transacted[CreateAccountOperation]] mustEqual op
-    }
+    }.setGen(genTransacted(genCreateAccountOperation.suchThat(_.sourceAccount.nonEmpty)))
   }
 
 }

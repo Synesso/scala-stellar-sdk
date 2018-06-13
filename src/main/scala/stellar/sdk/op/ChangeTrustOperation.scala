@@ -26,9 +26,9 @@ case class ChangeTrustOperation(limit: IssuedAmount, sourceAccount: Option[Publi
 }
 
 object ChangeTrustOperation {
-  def from(op: ChangeTrustOp): Try[ChangeTrustOperation] = {
+  def from(op: ChangeTrustOp, source: Option[PublicKey]): Try[ChangeTrustOperation] = {
     Asset.fromXDR(op.getLine).map(Amount(op.getLimit.getInt64.longValue, _)).map {
-      case a: IssuedAmount => ChangeTrustOperation(a)
+      case a: IssuedAmount => ChangeTrustOperation(a, source)
       case _: NativeAmount => throw new IllegalArgumentException("Change trust operation with a native limit")
     }
   }

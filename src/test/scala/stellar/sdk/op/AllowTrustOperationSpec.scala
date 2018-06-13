@@ -26,7 +26,7 @@ class AllowTrustOperationSpec extends Specification with ArbitraryInput with Dom
       input.getAsset.setDiscriminant(AssetType.ASSET_TYPE_NATIVE)
       input.setTrustor(new AccountID)
       input.getTrustor.setAccountID(KeyPair.random.getXDRPublicKey)
-      AllowTrustOperation.from(input) must beFailedTry[AllowTrustOperation]
+      AllowTrustOperation.from(input, None) must beFailedTry[AllowTrustOperation]
     }
 
     "parse from json" >> prop { op: Transacted[AllowTrustOperation] =>
@@ -42,23 +42,22 @@ class AllowTrustOperationSpec extends Specification with ArbitraryInput with Dom
            |  },
            |  "id": "${op.id}",
            |  "paging_token": "10157597659137",
-           |  "source_account": "${op.sourceAccount.accountId}",
+           |  "source_account": "${op.operation.sourceAccount.get.accountId}",
            |  "type": "allow_trust",
            |  "type_i": 7,
            |  "created_at": "${formatter.format(op.createdAt)}",
            |  "transaction_hash": "${op.txnHash}",
            |  "asset_type": "${if (op.operation.assetCode.length <= 4) "credit_alphanum4" else "credit_alphanum12"}",
            |  "asset_code": "${op.operation.assetCode}",
-           |  "asset_issuer": "${op.sourceAccount.accountId}"
+           |  "asset_issuer": "${op.operation.sourceAccount.get.accountId}"
            |  "trustor": "${op.operation.trustor.accountId}",
-           |  "trustee": "${op.sourceAccount.accountId}",
+           |  "trustee": "${op.operation.sourceAccount.get.accountId}",
            |  "authorize": ${op.operation.authorize}
            |}
          """.stripMargin
 
       parse(doc).extract[Transacted[AllowTrustOperation]] mustEqual op
-
-    }
+    }.setGen(genTransacted(genAllowTrustOperation.suchThat(_.sourceAccount.nonEmpty)))
   }
 
 }

@@ -2,10 +2,10 @@ package stellar.sdk.op
 
 import org.stellar.sdk.xdr.Operation.OperationBody
 import org.stellar.sdk.xdr.OperationType.PATH_PAYMENT
-import org.stellar.sdk.xdr._
+import org.stellar.sdk.xdr.{PublicKey => _, _}
 import stellar.sdk
 import stellar.sdk.TrySeq._
-import stellar.sdk.{Amount, KeyPair, PublicKeyOps, TrySeq}
+import stellar.sdk._
 
 import scala.util.Try
 
@@ -44,7 +44,7 @@ case class PathPaymentOperation(sendMax: Amount,
 
 object PathPaymentOperation {
 
-  def from(op: PathPaymentOp): Try[PathPaymentOperation] = for {
+  def from(op: PathPaymentOp, source: Option[PublicKey]): Try[PathPaymentOperation] = for {
     sendAsset <- sdk.Asset.fromXDR(op.getSendAsset)
     destAsset <- sdk.Asset.fromXDR(op.getDestAsset)
     path <- sequence(op.getPath.map(sdk.Asset.fromXDR))
@@ -53,7 +53,8 @@ object PathPaymentOperation {
         sendMax = Amount(op.getSendMax.getInt64.longValue, sendAsset),
         destinationAccount = KeyPair.fromPublicKey(op.getDestination.getAccountID.getEd25519.getUint256),
         destinationAmount = Amount(op.getDestAmount.getInt64.longValue(), destAsset),
-        path = path
+        path = path,
+        sourceAccount = source
       )
     }
   } yield {

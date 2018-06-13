@@ -32,21 +32,21 @@ class PathPaymentOperationSpec extends Specification with ArbitraryInput with Do
            |  },
            |  "id": "${op.id}",
            |  "paging_token": "10157597659137",
-           |  "source_account": "${op.sourceAccount.accountId}",
+           |  "source_account": "${op.operation.sourceAccount.get.accountId}",
            |  "type":"path_payment",
            |  "type_i":2,
            |  "created_at": "${formatter.format(op.createdAt)}",
            |  "transaction_hash": "${op.txnHash}",
            |  ${amountDocPortion(op.operation.destinationAmount)}
            |  ${amountDocPortion(op.operation.sendMax, "source_max", "source_")}
-           |  "from":"${op.sourceAccount.accountId}",
+           |  "from":"${op.operation.sourceAccount.get.accountId}",
            |  "to":"${op.operation.destinationAccount.accountId}",
            |  "path":[${if (op.operation.path.isEmpty) "" else op.operation.path.map(asset(_)).mkString("{", "},{", "}")}]
            |}
          """.stripMargin
 
       parse(doc).extract[Transacted[Operation]] mustEqual op
-    }
+    }.setGen(genTransacted(genPathPaymentOperation.suchThat(_.sourceAccount.nonEmpty)))
   }
 
 }

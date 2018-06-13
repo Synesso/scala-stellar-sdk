@@ -5,7 +5,7 @@ import org.stellar.sdk.xdr.Operation.OperationBody
 import org.stellar.sdk.xdr.OperationType._
 import org.stellar.sdk.xdr.{AccountID, AllowTrustOp}
 import stellar.sdk.ByteArrays._
-import stellar.sdk.{ByteArrays, KeyPair, PublicKey, _}
+import stellar.sdk.{KeyPair, PublicKey, _}
 
 import scala.util.Try
 
@@ -35,14 +35,15 @@ case class AllowTrustOperation(trustor: PublicKey,
 }
 
 object AllowTrustOperation {
-  def from(op: AllowTrustOp): Try[AllowTrustOperation] = Try {
+  def from(op: AllowTrustOp, source: Option[PublicKey]): Try[AllowTrustOperation] = Try {
     AllowTrustOperation(
       trustor = KeyPair.fromXDRPublicKey(op.getTrustor.getAccountID),
       assetCode = (op.getAsset.getDiscriminant: @unchecked) match {
         case ASSET_TYPE_CREDIT_ALPHANUM4 => new String(op.getAsset.getAssetCode4).trim
         case ASSET_TYPE_CREDIT_ALPHANUM12 => new String(op.getAsset.getAssetCode12).trim
       },
-      authorize = op.getAuthorize
+      authorize = op.getAuthorize,
+      sourceAccount = source
     )
   }
 }

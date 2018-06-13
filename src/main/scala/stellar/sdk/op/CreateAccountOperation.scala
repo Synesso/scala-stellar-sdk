@@ -2,7 +2,7 @@ package stellar.sdk.op
 
 import org.stellar.sdk.xdr.Operation.OperationBody
 import org.stellar.sdk.xdr._
-import stellar.sdk.{KeyPair, NativeAmount, PublicKeyOps, _}
+import stellar.sdk.{KeyPair, NativeAmount, PublicKey, PublicKeyOps, _}
 
 import scala.util.Try
 
@@ -33,10 +33,11 @@ case class CreateAccountOperation(destinationAccount: PublicKeyOps,
 
 object CreateAccountOperation {
 
-  def from(op: CreateAccountOp): Try[CreateAccountOperation] = Try {
+  def from(op: CreateAccountOp, source: Option[PublicKey]): Try[CreateAccountOperation] = Try {
     CreateAccountOperation(
       destinationAccount = KeyPair.fromPublicKey(op.getDestination.getAccountID.getEd25519.getUint256),
-      startingBalance = NativeAmount(op.getStartingBalance.getInt64.longValue)
+      startingBalance = NativeAmount(op.getStartingBalance.getInt64.longValue),
+      sourceAccount = source
     )
   }
 }

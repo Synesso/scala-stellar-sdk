@@ -5,7 +5,7 @@ import org.json4s.native.JsonMethods.parse
 import org.json4s.native.Serialization
 import org.scalacheck.Arbitrary
 import org.specs2.mutable.Specification
-import org.stellar.sdk.xdr.{ChangeTrustOp, Int64, Operation => XDROperation}
+import org.stellar.sdk.xdr.{ChangeTrustOp, Int64}
 import stellar.sdk.{ArbitraryInput, DomainMatchers, NativeAsset}
 
 class ChangeTrustOperationSpec extends Specification with ArbitraryInput with DomainMatchers with JsonSnippets {
@@ -25,7 +25,7 @@ class ChangeTrustOperationSpec extends Specification with ArbitraryInput with Do
       op.setLimit(new Int64)
       op.getLimit.setInt64(10000000L)
       op.setLine(NativeAsset.toXDR)
-      ChangeTrustOperation.from(op) must beAFailedTry[ChangeTrustOperation]
+      ChangeTrustOperation.from(op, None) must beAFailedTry[ChangeTrustOperation]
     }
 
     "parse from json" >> prop { op: Transacted[ChangeTrustOperation] =>
@@ -41,19 +41,19 @@ class ChangeTrustOperationSpec extends Specification with ArbitraryInput with Do
            |  },
            |  "id": "${op.id}",
            |  "paging_token": "10157597659137",
-           |  "source_account": "${op.sourceAccount.accountId}",
+           |  "source_account": "${op.operation.sourceAccount.get.accountId}",
            |  "type": "change_trust",
            |  "type_i": 6,
            |  "created_at": "${formatter.format(op.createdAt)}",
            |  "transaction_hash": "${op.txnHash}",
            |  ${amountDocPortion(op.operation.limit, "limit")},
            |  "trustee": "${op.operation.limit.asset.issuer.accountId}",
-           |  "trustor": "${op.sourceAccount.accountId}",
+           |  "trustor": "${op.operation.sourceAccount.get.accountId}",
            |}
          """.stripMargin
 
       parse(doc).extract[Transacted[ChangeTrustOperation]] mustEqual op
-    }
+    }.setGen(genTransacted(genChangeTrustOperation.suchThat(_.sourceAccount.nonEmpty)))
   }
 
 }

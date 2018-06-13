@@ -26,7 +26,7 @@ class ManageDataOperationSpec extends Specification with ArbitraryInput with Dom
        |  },
        |  "id": "${op.id}",
        |  "paging_token": "10157597659137",
-       |  "source_account": "${op.sourceAccount.accountId}",
+       |  "source_account": "${op.operation.sourceAccount.get.accountId}",
        |  "type": "manage_data",
        |  "type_i": 1,
        |  "created_at": "${formatter.format(op.createdAt)}",
@@ -49,7 +49,7 @@ class ManageDataOperationSpec extends Specification with ArbitraryInput with Dom
 
     "parse from json" >> prop { op: Transacted[WriteDataOperation] =>
       parse(doc(op)).extract[Transacted[ManageDataOperation]] mustEqual op
-    }
+    }.setGen(genTransacted(genWriteDataOperation.suchThat(_.sourceAccount.nonEmpty)))
   }
 
   "a delete data operation" should {
@@ -61,7 +61,7 @@ class ManageDataOperationSpec extends Specification with ArbitraryInput with Dom
 
     "parse from json" >> prop { op: Transacted[DeleteDataOperation] =>
       parse(doc(op)).extract[Transacted[ManageDataOperation]] mustEqual op
-    }
+    }.setGen(genTransacted(genDeleteDataOperation.suchThat(_.sourceAccount.nonEmpty)))
   }
 
 }
