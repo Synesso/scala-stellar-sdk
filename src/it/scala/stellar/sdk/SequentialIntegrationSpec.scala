@@ -155,7 +155,10 @@ class SequentialIntegrationSpec(implicit ee: ExecutionEnv) extends Specification
     "list operations by account" >> {
       TestNetwork.operationsByAccount(accnB).map(_.drop(1).head) must beLike[Transacted[Operation]] {
         case op =>
-          op.operation mustEqual ChangeTrustOperation(IssuedAmount(99, Asset.createNonNative("ScalaSDKSpec", accnA).get))
+          op.operation mustEqual ChangeTrustOperation(
+            IssuedAmount(99, Asset.createNonNative("ScalaSDKSpec", accnA).get),
+            Some(accnB.asPublicKey)
+          )
       }.awaitFor(10.seconds)
     }
 
