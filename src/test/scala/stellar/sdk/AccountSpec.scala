@@ -6,7 +6,7 @@ class AccountSpec extends Specification with ArbitraryInput {
 
   "an account" should {
     "provide the successive version of itself" >> prop { account: Account =>
-      val next = account.withIncrementedSequentNumber
+      val next = account.withIncSeq
       next.sequenceNumber mustEqual account.sequenceNumber + 1
       next.publicKey mustEqual account.publicKey
     }
