@@ -7,6 +7,7 @@ import com.softwaremill.sttp._
 import com.softwaremill.sttp.akkahttp.AkkaHttpBackend
 import com.softwaremill.sttp.json4s._
 import com.typesafe.config.ConfigFactory
+import com.typesafe.scalalogging.LazyLogging
 import org.json4s.native.Serialization
 import org.json4s.{CustomSerializer, NoTypeHints}
 import stellar.sdk.op.TransactedOperationDeserializer
@@ -19,25 +20,32 @@ import scala.reflect.ClassTag
 import scala.util.Try
 
 
-case class Server(uri: URI, system: ActorSystem = ActorSystem("stellar-sdk", ConfigFactory.load().getConfig("scala-stellar-sdk"))) {
+case class Server(uri: URI,
+                  system: ActorSystem = ActorSystem("stellar-sdk", ConfigFactory.load().getConfig("scala-stellar-sdk")))
+  extends LazyLogging {
+
   implicit val backend = AkkaHttpBackend.usingActorSystem(system)
   implicit val formats = Serialization.formats(NoTypeHints) + AccountRespDeserializer + DataValueRespDeserializer +
     LedgerRespDeserializer + TransactedOperationDeserializer + OrderBookDeserializer + TransactionPostRespDeserializer
 
-  def post(txn: SignedTransaction)(implicit ec: ExecutionContext): Future[TransactionPostResp] = for {
-    envelope <- Future.fromTry(txn.toEnvelopeXDRBase64)
-    requestUri = uri"$uri/transactions"
-    response <- sttp.body(Map("tx" -> envelope)).post(requestUri).response(asJson[TransactionPostResp]).send()
-  } yield {
-    response.body match {
-      case Right(r) => r
-      case Left(s) => throw TxnFailure(requestUri, s).getOrElse(new RuntimeException(s"Unrecognised response: $s"))
+  def post(txn: SignedTransaction)(implicit ec: ExecutionContext): Future[TransactionPostResp] = {
+    logger.debug(s"Posting $txn")
+    for {
+      envelope <- Future.fromTry(txn.toEnvelopeXDRBase64)
+      requestUri = uri"$uri/transactions"
+      response <- sttp.body(Map("tx" -> envelope)).post(requestUri).response(asJson[TransactionPostResp]).send()
+    } yield {
+      response.body match {
+        case Right(r) => r
+        case Left(s) => throw TxnFailure(requestUri, s).getOrElse(new RuntimeException(s"Unrecognised response: $s"))
+      }
     }
   }
 
   def get[T: ClassTag](path: String, params: Map[String, Any] = Map.empty)(implicit ec: ExecutionContext, m: Manifest[T]): Future[T] = {
     val uriPath = s"$uri$path"
     val requestUri = uri"$uriPath?$params"
+    logger.debug(s"Getting $requestUri")
     for {
       resp <- sttp.get(requestUri).response(asJson[T]).send()
     } yield {
@@ -82,6 +90,7 @@ case class Server(uri: URI, system: ActorSystem = ActorSystem("stellar-sdk", Con
 
   private def getPageAbsoluteUri[T: ClassTag](uri: Uri)(implicit ec: ExecutionContext, de: CustomSerializer[T],
                                                         m: Manifest[T]): Future[Page[T]] = {
+    logger.debug(s"Getting $uri")
     for {
       resp <- sttp.get(uri).response(asString).send()
     } yield {
