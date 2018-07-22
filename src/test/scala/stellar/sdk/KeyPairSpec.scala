@@ -46,4 +46,18 @@ class KeyPairSpec extends Specification with ArbitraryInput with DomainMatchers 
       KeyPair.fromAccountId(kp.accountId) must beEquivalentTo(kp.asPublicKey)
     }
   }
+
+  "a public key" should {
+    "have a hashcode equal to the account id" >> prop { pk: PublicKey =>
+      pk.hashCode mustEqual pk.accountId.hashCode
+    }
+
+    "be equal to the keypair it originated from" >> prop { kp: KeyPair =>
+      kp.asPublicKey mustEqual kp
+    }
+
+    "not be equal to non-PublicKeyOps instances" >> prop { pk: PublicKey =>
+      pk must not(beEqualTo(pk.accountId))
+    }
+  }
 }
