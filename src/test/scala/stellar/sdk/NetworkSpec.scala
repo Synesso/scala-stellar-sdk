@@ -181,6 +181,42 @@ class NetworkSpec(implicit ee: ExecutionEnv) extends Specification with Arbitrar
       network.payments() must containTheSameElementsAs(ops).await
     }
 
+    "fetch a stream of payment operations for an account" >> prop { account: PublicKey =>
+      val network = new MockNetwork
+      val ops = Gen.listOf(genTransacted(genPayOperation)).sample.get
+      val expected = Future(ops.map(_.asInstanceOf[Transacted[Operation]]).toStream)
+      network.horizon.getStream[Transacted[Operation]](s"/accounts/${account.accountId}/payments", TransactedOperationDeserializer) returns
+        expected.asInstanceOf[Future[Stream[Transacted[Operation]]]]
+      network.paymentsByAccount(account) must containTheSameElementsAs(ops).await
+    }
+
+    "fetch a stream of payment operations for a ledger" >> prop { ledgerId: Long =>
+      val network = new MockNetwork
+      val ops = Gen.listOf(genTransacted(genPayOperation)).sample.get
+      val expected = Future(ops.map(_.asInstanceOf[Transacted[Operation]]).toStream)
+      network.horizon.getStream[Transacted[Operation]](s"/ledgers/$ledgerId/payments", TransactedOperationDeserializer) returns
+        expected.asInstanceOf[Future[Stream[Transacted[Operation]]]]
+      network.paymentsByLedger(ledgerId) must containTheSameElementsAs(ops).await
+    }
+
+    "fetch a stream of payment operations for a transaction" >> prop { hash: String =>
+      val network = new MockNetwork
+      val ops = Gen.listOf(genTransacted(genPayOperation)).sample.get
+      val expected = Future(ops.map(_.asInstanceOf[Transacted[Operation]]).toStream)
+      network.horizon.getStream[Transacted[Operation]](s"/transactions/$hash/payments", TransactedOperationDeserializer) returns
+        expected.asInstanceOf[Future[Stream[Transacted[Operation]]]]
+      network.paymentsByTransaction(hash) must containTheSameElementsAs(ops).await
+    }.setGen(genHash)
+
+    "fetch a stream of trades" >> {
+      val network = new MockNetwork
+      val response = mock[Stream[Trade]]
+      val expected = Future(response)
+      network.horizon.getStream[Trade]("/trades", TradeDeserializer) returns expected
+      network.trades() mustEqual expected
+
+    }
+
   }
 
   class MockNetwork extends Network {

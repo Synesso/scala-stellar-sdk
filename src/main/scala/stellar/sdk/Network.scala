@@ -141,18 +141,34 @@ trait Network extends LazyLogging {
     horizon.getStream[Transacted[Operation]](s"/payments", TransactedOperationDeserializer)
       .map(_.map(_.asInstanceOf[Transacted[PayOperation]]))
 
+  /**
+    * Fetch a stream of payment operations filtered by account.
+    * @see https://www.stellar.org/developers/horizon/reference/endpoints/payments-for-account.html
+    */
   def paymentsByAccount(pubKey: PublicKeyOps)(implicit ex: ExecutionContext): Future[Stream[Transacted[PayOperation]]] =
     horizon.getStream[Transacted[Operation]](s"/accounts/${pubKey.accountId}/payments", TransactedOperationDeserializer)
       .map(_.map(_.asInstanceOf[Transacted[PayOperation]]))
 
+  /**
+    * Fetch a stream of payment operations filtered by ledger id.
+    * @see https://www.stellar.org/developers/horizon/reference/endpoints/payments-for-ledger.html
+    */
   def paymentsByLedger(ledgerId: Long)(implicit ex: ExecutionContext): Future[Stream[Transacted[PayOperation]]] =
     horizon.getStream[Transacted[Operation]](s"/ledgers/$ledgerId/payments", TransactedOperationDeserializer)
       .map(_.map(_.asInstanceOf[Transacted[PayOperation]]))
 
+  /**
+    * Fetch a stream of payment operations filtered by transaction hash.
+    * @see https://www.stellar.org/developers/horizon/reference/endpoints/operations-for-transaction.html
+    */
   def paymentsByTransaction(txnHash: String)(implicit ex: ExecutionContext): Future[Stream[Transacted[PayOperation]]] =
     horizon.getStream[Transacted[Operation]](s"/transactions/$txnHash/payments", TransactedOperationDeserializer)
       .map(_.map(_.asInstanceOf[Transacted[PayOperation]]))
 
+  /**
+    * Fetch a stream of trades
+    * @see https://www.stellar.org/developers/horizon/reference/endpoints/trades.html
+    */
   def trades()(implicit ex: ExecutionContext): Future[Stream[Trade]] =
     horizon.getStream[Trade]("/trades", TradeDeserializer)
 
