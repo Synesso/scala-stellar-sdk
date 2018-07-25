@@ -1,14 +1,14 @@
 package stellar.sdk
 
-import org.json4s.CustomSerializer
+import org.scalacheck.Gen
 import org.specs2.concurrent.ExecutionEnv
 import org.specs2.mock.Mockito
 import org.specs2.mutable.Specification
-import stellar.sdk.inet.{HorizonAccess, Page}
-import stellar.sdk.resp.{AccountResp, DataValueResp, TransactionPostResp}
+import stellar.sdk.inet.HorizonAccess
+import stellar.sdk.op._
+import stellar.sdk.resp._
 
-import scala.concurrent.{ExecutionContext, Future}
-import scala.reflect.ClassTag
+import scala.concurrent.Future
 
 class NetworkSpec(implicit ee: ExecutionEnv) extends Specification with ArbitraryInput with Mockito {
 
@@ -51,6 +51,136 @@ class NetworkSpec(implicit ee: ExecutionEnv) extends Specification with Arbitrar
       network.horizon.get[DataValueResp](s"/accounts/${pk.accountId}/data/$key") returns expected
       network.accountData(pk, key) must beEqualTo(value).await
     }
+
+    "fetch assets by code and/or issuer" >> prop { (code: Option[String], issuer: Option[PublicKey]) =>
+      val network = new MockNetwork
+      val response = mock[Stream[AssetResp]]
+      val expected = Future(response)
+      val params = Seq(code.map("asset_code" -> _), issuer.map("asset_issuer" -> _.accountId)).flatten.toMap
+      network.horizon.getStream[AssetResp](s"/assets", AssetRespDeserializer, params) returns expected
+      network.assets(code, issuer) mustEqual expected
+    }
+
+    "fetch all effects" >> {
+      val network = new MockNetwork
+      val response = mock[Stream[EffectResp]]
+      val expected = Future(response)
+      network.horizon.getStream[EffectResp](s"/effects", EffectRespDeserializer) returns expected
+      network.effects() mustEqual expected
+    }
+
+    "fetch effects by account" >> prop { account: PublicKey =>
+      val network = new MockNetwork
+      val response = mock[Stream[EffectResp]]
+      val expected = Future(response)
+      network.horizon.getStream[EffectResp](s"/accounts/${account.accountId}/effects", EffectRespDeserializer) returns expected
+      network.effectsByAccount(account) mustEqual expected
+    }
+
+    "fetch effects by ledger" >> prop { ledgerId: Long =>
+      val network = new MockNetwork
+      val response = mock[Stream[EffectResp]]
+      val expected = Future(response)
+      network.horizon.getStream[EffectResp](s"/ledgers/$ledgerId/effects", EffectRespDeserializer) returns expected
+      network.effectsByLedger(ledgerId) mustEqual expected
+    }.setGen(Gen.posNum[Long])
+
+    "fetch stream of ledgers" >> {
+      val network = new MockNetwork
+      val response = mock[Stream[LedgerResp]]
+      val expected = Future(response)
+      network.horizon.getStream[LedgerResp](s"/ledgers", LedgerRespDeserializer) returns expected
+      network.ledgers() mustEqual expected
+    }
+
+    "fetch details of a single ledger" >> prop { ledgerId: Long =>
+      val network = new MockNetwork
+      val response = mock[LedgerResp]
+      val expected = Future(response)
+      network.horizon.get[LedgerResp](s"/ledgers/$ledgerId") returns expected
+      network.ledger(ledgerId) mustEqual expected
+    }.setGen(Gen.posNum[Long])
+
+    "fetch offers for an account" >> prop { account: PublicKey =>
+      val network = new MockNetwork
+      val response = mock[Stream[OfferResp]]
+      val expected = Future(response)
+      network.horizon.getStream[OfferResp](s"/accounts/${account.accountId}/offers", OfferRespDeserializer) returns expected
+      network.offersByAccount(account) mustEqual expected
+    }
+
+    "fetch details of a single operation" >> prop { id: Long =>
+      val network = new MockNetwork
+      val response = mock[Transacted[Operation]]
+      val expected = Future(response)
+      network.horizon.get[Transacted[Operation]](s"/operations/$id") returns expected
+      network.operation(id) mustEqual expected
+    }
+
+    "fetch a stream of operations" >> {
+      val network = new MockNetwork
+      val response = mock[Stream[Transacted[Operation]]]
+      val expected = Future(response)
+      network.horizon.getStream[Transacted[Operation]](s"/operations", TransactedOperationDeserializer) returns expected
+      network.operations() mustEqual expected
+    }
+
+    "fetch a stream of operations filtered by account" >> prop { account: PublicKey =>
+      val network = new MockNetwork
+      val response = mock[Stream[Transacted[Operation]]]
+      val expected = Future(response)
+      network.horizon.getStream[Transacted[Operation]](s"/accounts/${account.accountId}/operations", TransactedOperationDeserializer) returns expected
+      network.operationsByAccount(account) mustEqual expected
+    }
+
+    "fetch a stream of operations filtered by ledger" >> prop { id: Long =>
+      val network = new MockNetwork
+      val response = mock[Stream[Transacted[Operation]]]
+      val expected = Future(response)
+      network.horizon.getStream[Transacted[Operation]](s"/ledgers/$id/operations", TransactedOperationDeserializer) returns expected
+      network.operationsByLedger(id) mustEqual expected
+    }
+
+    "fetch a stream of operations filtered by transaction" >> prop { hash: String =>
+      val network = new MockNetwork
+      val response = mock[Stream[Transacted[Operation]]]
+      val expected = Future(response)
+      network.horizon.getStream[Transacted[Operation]](s"/transactions/$hash/operations", TransactedOperationDeserializer) returns expected
+      network.operationsByTransaction(hash) mustEqual expected
+    }.setGen(genHash)
+
+    "fetch the details of the orderbook for an asset pair" >> prop { (buying: Asset, selling: Asset, limit: Int) =>
+      val network = new MockNetwork
+      val response = mock[OrderBook]
+      val expected = Future(response)
+      val buyingMap = buying match {
+        case NativeAsset => Map("buying_asset_type" -> "native")
+        case nna: NonNativeAsset => Map(
+          "buying_asset_type" -> nna.typeString,
+          "buying_asset_code" -> nna.code,
+          "buying_asset_issuer" -> nna.issuer.accountId)
+      }
+      val sellingMap = selling match {
+        case NativeAsset => Map("selling_asset_type" -> "native")
+        case nna: NonNativeAsset => Map(
+          "selling_asset_type" -> nna.typeString,
+          "selling_asset_code" -> nna.code,
+          "selling_asset_issuer" -> nna.issuer.accountId)
+      }
+      val params = Map("limit" -> limit) ++ buyingMap ++ sellingMap
+      network.horizon.get[OrderBook]("/order_book", params) returns expected
+      network.orderBook(selling, buying, limit) mustEqual expected
+    }.setGen3(Gen.posNum[Int])
+
+    "fetch a stream of payment operations" >> {
+      val network = new MockNetwork
+      val ops = Gen.listOf(genTransacted(genPayOperation)).sample.get
+      val expected = Future(ops.map(_.asInstanceOf[Transacted[Operation]]).toStream)
+      network.horizon.getStream[Transacted[Operation]](s"/payments", TransactedOperationDeserializer) returns
+        expected.asInstanceOf[Future[Stream[Transacted[Operation]]]]
+      network.payments() must containTheSameElementsAs(ops).await
+    }
+
   }
 
   class MockNetwork extends Network {

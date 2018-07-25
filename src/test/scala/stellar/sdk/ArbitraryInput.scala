@@ -260,6 +260,8 @@ trait ArbitraryInput extends ScalaCheck {
     PaymentOperation(destAccount, amount, sourceAccount)
   }
 
+  def genPayOperation: Gen[PayOperation] = Gen.oneOf(genPaymentOperation, genCreateAccountOperation)
+
   def genSetOptionsOperation: Gen[SetOptionsOperation] = for {
     inflationDestination <- Gen.option(genPublicKey)
     clearFlags <- Gen.option(Gen.nonEmptyContainerOf[Set, IssuerFlag](genIssuerFlag))

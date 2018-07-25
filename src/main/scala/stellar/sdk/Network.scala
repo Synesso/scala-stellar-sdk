@@ -36,49 +36,107 @@ trait Network extends LazyLogging {
   def accountData(pubKey: PublicKeyOps, dataKey: String)(implicit ec: ExecutionContext): Future[String] =
     horizon.get[DataValueResp](s"/accounts/${pubKey.accountId}/data/$dataKey").map(_.v).map(base64).map(new String(_))
 
-  def assets(code: Option[String] = None, issuer: Option[String] = None)(implicit ec: ExecutionContext): Future[Stream[AssetResp]] = {
-    val params = Seq(code.map("asset_code" -> _), issuer.map("asset_issuer" -> _)).flatten.toMap
+  /**
+    * Fetch a stream of assets, optionally filtered by code, issuer or neither
+    * @param code optional code to filter by
+    * @param issuer optional issuer account to filter by
+    * @see https://www.stellar.org/developers/horizon/reference/endpoints/assets-all.html
+    */
+  def assets(code: Option[String] = None, issuer: Option[PublicKeyOps] = None)(implicit ec: ExecutionContext): Future[Stream[AssetResp]] = {
+    val params = Seq(code.map("asset_code" -> _), issuer.map("asset_issuer" -> _.accountId)).flatten.toMap
     horizon.getStream[AssetResp](s"/assets", AssetRespDeserializer, params)
   }
 
+  /**
+    * Fetch a stream of effects.
+    * @see https://www.stellar.org/developers/horizon/reference/endpoints/effects-all.html
+    */
   def effects()(implicit ec: ExecutionContext): Future[Stream[EffectResp]] =
     horizon.getStream[EffectResp]("/effects", EffectRespDeserializer)
 
+  /**
+    * Fetch a stream of effects for a given account.
+    * @see https://www.stellar.org/developers/horizon/reference/endpoints/effects-for-account.html
+    */
   def effectsByAccount(account: PublicKeyOps)(implicit ec: ExecutionContext): Future[Stream[EffectResp]] =
     horizon.getStream[EffectResp](s"/accounts/${account.accountId}/effects", EffectRespDeserializer)
 
-  def effectsByLedger(sequenceId: Long)(implicit ec: ExecutionContext): Future[Stream[EffectResp]] =
-    horizon.getStream[EffectResp](s"/ledgers/$sequenceId/effects", EffectRespDeserializer)
+  /**
+    * Fetch a stream of effects for a given ledger.
+    * @see https://www.stellar.org/developers/horizon/reference/endpoints/effects-for-ledger.html
+    */
+  def effectsByLedger(ledgerId: Long)(implicit ec: ExecutionContext): Future[Stream[EffectResp]] =
+    horizon.getStream[EffectResp](s"/ledgers/$ledgerId/effects", EffectRespDeserializer)
 
+  /**
+    * Fetch a stream of details about ledgers.
+    * @see https://www.stellar.org/developers/horizon/reference/endpoints/ledgers-all.html
+    */
   def ledgers()(implicit ec: ExecutionContext): Future[Stream[LedgerResp]] =
     horizon.getStream[LedgerResp](s"/ledgers", LedgerRespDeserializer)
 
-  def ledger(sequenceId: Long)(implicit ex: ExecutionContext): Future[LedgerResp] =
-    horizon.get[LedgerResp](s"/ledgers/$sequenceId")
+  /**
+    * Fetch details of a ledger by its id
+    * @see https://www.stellar.org/developers/horizon/reference/endpoints/ledgers-single.html
+    */
+  def ledger(ledgerId: Long)(implicit ex: ExecutionContext): Future[LedgerResp] =
+    horizon.get[LedgerResp](s"/ledgers/$ledgerId")
 
-  def offersByAccount(pubKey: PublicKeyOps)(implicit ex: ExecutionContext): Future[Stream[OfferResp]] =
-    horizon.getStream[OfferResp](s"/accounts/${pubKey.accountId}/offers", OfferRespDeserializer)
+  /**
+    * Fetch a stream of offers for an account.
+    * @see https://www.stellar.org/developers/horizon/reference/endpoints/offers-for-account.html
+    */
+  def offersByAccount(account: PublicKeyOps)(implicit ex: ExecutionContext): Future[Stream[OfferResp]] =
+    horizon.getStream[OfferResp](s"/accounts/${account.accountId}/offers", OfferRespDeserializer)
 
+  /**
+    * Fetch operation details by its id
+    * @see https://www.stellar.org/developers/horizon/reference/endpoints/operations-single.html
+    */
   def operation(operationId: Long)(implicit ex: ExecutionContext): Future[Transacted[Operation]] =
     horizon.get[Transacted[Operation]](s"/operations/$operationId")
 
+  /**
+    * Fetch a stream of operations.
+    * @see https://www.stellar.org/developers/horizon/reference/endpoints/operations-all.html
+    */
   def operations()(implicit ex: ExecutionContext): Future[Stream[Transacted[Operation]]] =
     horizon.getStream[Transacted[Operation]](s"/operations", TransactedOperationDeserializer)
 
+  /**
+    * Fetch a stream of operations, filtered by account.
+    * @see https://www.stellar.org/developers/horizon/reference/endpoints/operations-for-account.html
+    */
   def operationsByAccount(pubKey: PublicKeyOps)(implicit ex: ExecutionContext): Future[Stream[Transacted[Operation]]] =
     horizon.getStream[Transacted[Operation]](s"/accounts/${pubKey.accountId}/operations", TransactedOperationDeserializer)
 
+  /**
+    * Fetch a stream of operations, filtered by ledger id.
+    * @see https://www.stellar.org/developers/horizon/reference/endpoints/operations-for-ledger.html
+    */
   def operationsByLedger(ledgerId: Long)(implicit ex: ExecutionContext): Future[Stream[Transacted[Operation]]] =
     horizon.getStream[Transacted[Operation]](s"/ledgers/$ledgerId/operations", TransactedOperationDeserializer)
 
+  /**
+    * Fetch a stream of operations, filtered by transaction hash.
+    * @see https://www.stellar.org/developers/horizon/reference/endpoints/operations-for-transaction.html
+    */
   def operationsByTransaction(txnHash: String)(implicit ex: ExecutionContext): Future[Stream[Transacted[Operation]]] =
     horizon.getStream[Transacted[Operation]](s"/transactions/$txnHash/operations", TransactedOperationDeserializer)
 
+  /**
+    * Fetch details of the current orderbook for the given asset pairs
+    * @see https://www.stellar.org/developers/horizon/reference/endpoints/orderbook-details.html
+    */
   def orderBook(selling: Asset, buying: Asset, limit: Int = 20)(implicit ex: ExecutionContext): Future[OrderBook] = {
     val params = assetParams("selling", selling) ++ assetParams("buying", buying).updated("limit", limit)
     horizon.get[OrderBook]("/order_book", params)
   }
 
+  /**
+    * Fetch a stream of payment operations.
+    * @see https://www.stellar.org/developers/horizon/reference/endpoints/payments-all.html
+    */
   def payments()(implicit ex: ExecutionContext): Future[Stream[Transacted[PayOperation]]] =
     horizon.getStream[Transacted[Operation]](s"/payments", TransactedOperationDeserializer)
       .map(_.map(_.asInstanceOf[Transacted[PayOperation]]))
