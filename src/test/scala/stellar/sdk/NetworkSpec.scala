@@ -214,7 +214,57 @@ class NetworkSpec(implicit ee: ExecutionEnv) extends Specification with Arbitrar
       val expected = Future(response)
       network.horizon.getStream[Trade]("/trades", TradeDeserializer) returns expected
       network.trades() mustEqual expected
+    }
 
+    "fetch a stream of trades filtered by orderbook" >> prop { (base: Asset, counter: Asset) =>
+      val network = new MockNetwork
+      val expected = Future(mock[Stream[Trade]])
+      val buyingMap = base match {
+        case NativeAsset => Map("base_asset_type" -> "native")
+        case nna: NonNativeAsset => Map(
+          "base_asset_type" -> nna.typeString,
+          "base_asset_code" -> nna.code,
+          "base_asset_issuer" -> nna.issuer.accountId)
+      }
+      val sellingMap = counter match {
+        case NativeAsset => Map("counter_asset_type" -> "native")
+        case nna: NonNativeAsset => Map(
+          "counter_asset_type" -> nna.typeString,
+          "counter_asset_code" -> nna.code,
+          "counter_asset_issuer" -> nna.issuer.accountId)
+      }
+      val params = buyingMap ++ sellingMap
+      network.horizon.getStream[Trade]("/trades", TradeDeserializer, params) returns expected
+      network.tradesByOrderBook(base, counter) mustEqual expected
+    }
+
+    "fetch a stream of trades filtered by offer id" >> prop { offerId: Long =>
+      val network = new MockNetwork
+      val expected = Future(mock[Stream[Trade]])
+      val params = Map("offer_id" -> s"$offerId")
+      network.horizon.getStream[Trade]("/trades", TradeDeserializer, params) returns expected
+      network.tradesByOfferId(offerId) mustEqual expected
+    }
+
+    "fetch a stream of transactions" >> {
+      val network = new MockNetwork
+      val expected = Future(mock[Stream[TransactionHistoryResp]])
+      network.horizon.getStream[TransactionHistoryResp]("/transactions", TransactionHistoryRespDeserializer) returns expected
+      network.transactions() mustEqual expected
+    }
+
+    "fetch a stream of transactions for a given account" >> prop { account: PublicKey =>
+      val network = new MockNetwork
+      val expected = Future(mock[Stream[TransactionHistoryResp]])
+      network.horizon.getStream[TransactionHistoryResp](s"/accounts/${account.accountId}/transactions", TransactionHistoryRespDeserializer) returns expected
+      network.transactionsByAccount(account) mustEqual expected
+    }
+
+    "fetch a stream of transactions for a given ledger" >> prop { ledgeId: Long =>
+      val network = new MockNetwork
+      val expected = Future(mock[Stream[TransactionHistoryResp]])
+      network.horizon.getStream[TransactionHistoryResp](s"/ledgers/$ledgeId/transactions", TransactionHistoryRespDeserializer) returns expected
+      network.transactionsByLedger(ledgeId) mustEqual expected
     }
 
   }

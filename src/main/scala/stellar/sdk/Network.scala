@@ -172,24 +172,44 @@ trait Network extends LazyLogging {
   def trades()(implicit ex: ExecutionContext): Future[Stream[Trade]] =
     horizon.getStream[Trade]("/trades", TradeDeserializer)
 
+  /**
+    * Fetch a stream of trades filtered by orderbook
+    * @see https://www.stellar.org/developers/horizon/reference/endpoints/trades.html
+    */
   def tradesByOrderBook(base: Asset, counter: Asset)(implicit ex: ExecutionContext): Future[Stream[Trade]] = {
     val params = assetParams("base", base) ++ assetParams("counter", counter)
     horizon.getStream[Trade]("/trades", TradeDeserializer, params)
   }
 
+  /**
+    * Fetch a stream of trades filtered by offer id
+    * @see https://www.stellar.org/developers/horizon/reference/endpoints/trades.html
+    */
   def tradesByOfferId(offerId: Long)(implicit ex: ExecutionContext): Future[Stream[Trade]] = {
-    val params = Map("offerid" -> s"$offerId")
+    val params = Map("offer_id" -> s"$offerId")
     horizon.getStream[Trade]("/trades", TradeDeserializer, params)
   }
 
+  /**
+    * Fetch a stream of transactions
+    * @see https://www.stellar.org/developers/horizon/reference/endpoints/transactions-all.html
+    */
   def transactions()(implicit ex: ExecutionContext): Future[Stream[TransactionHistoryResp]] = {
     horizon.getStream[TransactionHistoryResp]("/transactions", TransactionHistoryRespDeserializer)
   }
 
+  /**
+    * Fetch a stream of transactions for a given account
+    * @see https://www.stellar.org/developers/horizon/reference/endpoints/transactions-for-account.html
+    */
   def transactionsByAccount(pubKey: PublicKeyOps)(implicit ex: ExecutionContext): Future[Stream[TransactionHistoryResp]] = {
     horizon.getStream[TransactionHistoryResp](s"/accounts/${pubKey.accountId}/transactions", TransactionHistoryRespDeserializer)
   }
 
+  /**
+    * Fetch a stream of transactions for a given ledger
+    * @see https://www.stellar.org/developers/horizon/reference/endpoints/transactions-for-ledger.html
+    */
   def transactionsByLedger(sequenceId: Long)(implicit ex: ExecutionContext): Future[Stream[TransactionHistoryResp]] = {
     horizon.getStream[TransactionHistoryResp](s"/ledgers/$sequenceId/transactions", TransactionHistoryRespDeserializer)
   }
