@@ -186,7 +186,7 @@ trait Network extends LazyLogging {
     * @see https://www.stellar.org/developers/horizon/reference/endpoints/trades.html
     */
   def tradesByOfferId(offerId: Long)(implicit ex: ExecutionContext): Future[Stream[Trade]] = {
-    val params = Map("offer_id" -> s"$offerId")
+    val params = Map("offerid" -> s"$offerId")
     horizon.getStream[Trade]("/trades", TradeDeserializer, params)
   }
 

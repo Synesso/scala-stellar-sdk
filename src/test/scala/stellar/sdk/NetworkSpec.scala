@@ -241,7 +241,7 @@ class NetworkSpec(implicit ee: ExecutionEnv) extends Specification with Arbitrar
     "fetch a stream of trades filtered by offer id" >> prop { offerId: Long =>
       val network = new MockNetwork
       val expected = Future(mock[Stream[Trade]])
-      val params = Map("offer_id" -> s"$offerId")
+      val params = Map("offerid" -> s"$offerId")
       network.horizon.getStream[Trade]("/trades", TradeDeserializer, params) returns expected
       network.tradesByOfferId(offerId) mustEqual expected
     }
