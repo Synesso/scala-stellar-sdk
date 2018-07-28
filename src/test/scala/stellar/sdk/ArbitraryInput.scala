@@ -71,6 +71,8 @@ trait ArbitraryInput extends ScalaCheck {
 
   implicit def arbTransaction = Arbitrary(genTransaction)
 
+  implicit def arbSignedTransaction = Arbitrary(genSignedTransaction)
+
   implicit def arbSignature = Arbitrary(genSignature)
 
   implicit def arbThreshold = Arbitrary(genThresholds)
@@ -258,6 +260,8 @@ trait ArbitraryInput extends ScalaCheck {
     PaymentOperation(destAccount, amount, sourceAccount)
   }
 
+  def genPayOperation: Gen[PayOperation] = Gen.oneOf(genPaymentOperation, genCreateAccountOperation)
+
   def genSetOptionsOperation: Gen[SetOptionsOperation] = for {
     inflationDestination <- Gen.option(genPublicKey)
     clearFlags <- Gen.option(Gen.nonEmptyContainerOf[Set, IssuerFlag](genIssuerFlag))
@@ -339,6 +343,11 @@ trait ArbitraryInput extends ScalaCheck {
       s.setSignature(bs)
       s
     }
+
+  def genSignedTransaction: Gen[SignedTransaction] = for {
+    txn <- genTransaction
+    signer <- genKeyPair
+  } yield txn.sign(signer).get
 
   def genThresholds: Gen[Thresholds] = for {
     low <- Gen.choose(0, 255)

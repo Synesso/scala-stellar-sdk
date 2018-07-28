@@ -41,7 +41,8 @@ lazy val root = (project in file("."))
       "com.softwaremill.sttp" %% "json4s" % "1.1.5",
       "com.typesafe.scala-logging" %% "scala-logging" % "3.9.0",
       "ch.qos.logback" % "logback-classic" % "1.2.3",
-      "org.specs2" %% "specs2-core" % "4.0.0" % "test,it",
-      "org.specs2" %% "specs2-scalacheck" % "4.0.0" % "test"
+      "org.specs2" %% "specs2-core" % "4.3.2" % "test,it",
+      "org.specs2" %% "specs2-mock" % "4.3.2" % "test",
+      "org.specs2" %% "specs2-scalacheck" % "4.3.2" % "test"
     )
   )

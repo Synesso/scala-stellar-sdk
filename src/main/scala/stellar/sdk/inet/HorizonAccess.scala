@@ -20,9 +20,22 @@ import scala.reflect.ClassTag
 import scala.util.Try
 
 
-case class Server(uri: URI,
-                  system: ActorSystem = ActorSystem("stellar-sdk", ConfigFactory.load().getConfig("scala-stellar-sdk")))
-  extends LazyLogging {
+trait HorizonAccess {
+  def post(txn: SignedTransaction)(implicit ec: ExecutionContext): Future[TransactionPostResp]
+
+  def get[T: ClassTag](path: String, params: Map[String, Any] = Map.empty)
+                      (implicit ec: ExecutionContext, m: Manifest[T]): Future[T]
+
+  def getStream[T: ClassTag](path: String, de: CustomSerializer[T], params: Map[String, String] = Map.empty)
+                            (implicit ec: ExecutionContext, m: Manifest[T]): Future[Stream[T]]
+
+  def getPage[T: ClassTag](path: String, params: Map[String, String])
+                          (implicit ec: ExecutionContext, de: CustomSerializer[T], m: Manifest[T]): Future[Page[T]]
+}
+
+class Horizon(uri: URI,
+              system: ActorSystem = ActorSystem("stellar-sdk", ConfigFactory.load().getConfig("scala-stellar-sdk")))
+  extends HorizonAccess with LazyLogging {
 
   implicit val backend = AkkaHttpBackend.usingActorSystem(system)
   implicit val formats = Serialization.formats(NoTypeHints) + AccountRespDeserializer + DataValueRespDeserializer +
@@ -102,8 +115,6 @@ case class Server(uri: URI,
   }
 }
 
-object Server {
-  def apply(uri: String): Try[Server] = Try {
-    Server(URI.create(uri))
-  }
+object HorizonAccess {
+  def apply(uri: String): Try[HorizonAccess] = Try(new Horizon(URI.create(uri)))
 }

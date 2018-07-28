@@ -68,13 +68,13 @@ class SequentialIntegrationSpec(implicit ee: ExecutionEnv) extends Specification
     }
 
     "filter assets by issuer" >> {
-      val byIssuer = TestNetwork.assets(issuer = Some(accnA.accountId)).map(_.take(10).toList)
+      val byIssuer = TestNetwork.assets(issuer = Some(accnA)).map(_.take(10).toList)
       byIssuer.map(_.isEmpty) must beFalse.awaitFor(10 seconds)
       byIssuer.map(_.map(_.asset.issuer.accountId).toSet) must beEqualTo(Set(accnA.accountId)).awaitFor(10 seconds)
     }
 
     "filter assets by code and issuer" >> {
-      val byCodeAndIssuer = TestNetwork.assets(code = Some(assetCode), issuer = Some(accnA.accountId)).map(_.toList)
+      val byCodeAndIssuer = TestNetwork.assets(code = Some(assetCode), issuer = Some(accnA)).map(_.toList)
       byCodeAndIssuer.map(_.map(_.asset)) must beLike[Seq[NonNativeAsset]] {
         case Seq(asset) => asset must beEquivalentTo(IssuedAsset12(assetCode, KeyPair.fromAccountId(accnA.accountId)))
       }.awaitFor(10 seconds)

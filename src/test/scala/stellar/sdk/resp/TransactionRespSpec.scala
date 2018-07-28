@@ -4,7 +4,7 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
 import org.specs2.mutable.Specification
-import org.stellar.sdk.xdr.{OperationType, TransactionResult, TransactionResultCode}
+import org.stellar.sdk.xdr.{OperationType, TransactionMeta, TransactionResult, TransactionResultCode}
 import stellar.sdk.ByteArrays.{base64, bytesToHex}
 import stellar.sdk._
 import stellar.sdk.op.CreateAccountOperation
@@ -49,6 +49,17 @@ class TransactionRespSpec extends Specification with ArbitraryInput with DomainM
           tr.getResult.getResults must haveSize(2)
           tr.getResult.getResults.head.getTr.getDiscriminant mustEqual OperationType.CREATE_ACCOUNT
           tr.getResult.getResults.last.getTr.getDiscriminant mustEqual OperationType.PAYMENT
+        }
+    }
+
+    "provide access to the XDR Transaction Result Meta" >> {
+      TransactionPostResp("", 1, "", "", "AAAAAAAAAAEAAAACAAAAAAAACVIAAAAAAAAAAPV0vlN3VR04WFNx2dsyXUyxlcIhv99+eHwdMjqmf" +
+        "MHaAAAAF0h26AAAAAlSAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAQAACVIAAAAAAAAAAGXNhLrhGtltTwCpmqlarh7" +
+        "s1DB2hIkbP//jgzn4Fos/AAHGqAnsV5wAAAk9AAAAAQAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAA").resultMeta must
+        beSuccessfulTry[TransactionMeta].like { case tm: TransactionMeta =>
+          tm.getDiscriminant mustEqual 0
+          tm.getOperations must haveSize(1)
+          tm.getOperations.head.getChanges.getLedgerEntryChanges must haveSize(2)
         }
     }
 
