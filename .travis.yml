@@ -16,8 +16,14 @@ cache:
 after_success:
   - bash <(curl -s https://codecov.io/bash)
 
+before_deploy:
+  - openssl aes-256-cbc -K $encrypted_e8a2d5297a89_key -iv $encrypted_e8a2d5297a89_iv
+    -in project/.gnupg/keyring.tgz.enc -out project/.gnupg/keyring.tgz -d
+  - (cd project/.gnupg/ && tar zxf keyring.tgz)
+
 deploy:
   provider: script
-  script: sbt -Dbintray.user=$BINTRAY_USER -Dbintray.pass=$BINTRAY_PASS publish
+  script: sbt -Dbintray.user=$BINTRAY_USER -Dbintray.pass=$BINTRAY_PASS publishSigned
   on:
     tags: true
+

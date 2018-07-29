@@ -15,6 +15,8 @@ case class AccountResp(id: PublicKey,
                        signers: List[Signer]) {
 
   def toAccount: Account = Account(id, lastSequence + 1)
+
+  //  def balance(asset: Asset): Option[Long] = ??? - todo
 }
 
 object AccountRespDeserializer extends CustomSerializer[AccountResp](format => ( {
