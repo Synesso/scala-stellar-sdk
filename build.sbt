@@ -7,6 +7,9 @@ lazy val commonSettings = Seq(
   organization := "stellar.scala.sdk",
   scalaVersion := "2.12.4",
   homepage := Some(url("https://github.com/synesso/scala-stellar-sdk")),
+  developers := List(
+    Developer("jem", "Jem Mawson", "jem@loftinspace.com.au", url = url("https://keybase.io/jem"))
+  ),
   crossScalaVersions := Seq("2.11.12", "2.12.4"),
   scalacOptions ++= Seq(
     "-Yrangepos",
