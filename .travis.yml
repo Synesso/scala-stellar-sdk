@@ -27,4 +27,3 @@ deploy:
   script: sbt -Dbintray.user=$BINTRAY_USER -Dbintray.pass=$BINTRAY_PASS publishSigned
   on:
     tags: true
-
