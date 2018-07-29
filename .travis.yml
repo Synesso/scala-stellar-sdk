@@ -22,6 +22,7 @@ before_deploy:
   - (cd project/.gnupg/ && tar zxf keyring.tgz)
 
 deploy:
+  skip_cleanup: true
   provider: script
   script: sbt -Dbintray.user=$BINTRAY_USER -Dbintray.pass=$BINTRAY_PASS publishSigned
   on:
