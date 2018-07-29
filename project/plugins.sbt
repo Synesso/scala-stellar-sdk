@@ -1,7 +1,7 @@
 addSbtPlugin("org.scoverage" % "sbt-scoverage" % "1.5.1")
-
-addSbtPlugin("org.foundweekends" % "sbt-bintray" % "0.5.2")
-
+addSbtPlugin("org.foundweekends" % "sbt-bintray" % "0.5.4")
 addSbtPlugin("com.typesafe.sbt" % "sbt-git" % "0.9.3")
-
 addSbtPlugin("net.virtual-void" % "sbt-dependency-graph" % "0.9.0")
+addSbtPlugin("com.lightbend.paradox" % "sbt-paradox" % "0.3.5")
+addSbtPlugin("io.github.jonas" % "sbt-paradox-material-theme" % "0.4.0")
+addSbtPlugin("com.jsuereth" % "sbt-pgp" % "1.1.1")

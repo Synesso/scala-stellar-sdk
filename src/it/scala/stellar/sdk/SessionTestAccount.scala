@@ -9,9 +9,12 @@ object SessionTestAccount {
   val accnA = newAccount
   val accnB = newAccount
 
-  def newAccount = {
+  def newAccount: KeyPair = {
+    // #friendbot_example
     val kp = KeyPair.random
-    Await.result(TestNetwork.fund(kp), 30 seconds)
+    val response = TestNetwork.fund(kp)
+    // #friendbot_example
+    Await.result(response, 30 seconds)
     kp
   }
 

@@ -33,12 +33,22 @@ class SequentialIntegrationSpec(implicit ee: ExecutionEnv) extends Specification
   } yield response, 10 seconds)
 
   "account endpoint" >> {
-    "fetch account details" >> {
+    "fetch account response details" >> {
       TestNetwork.account(accnA) must beLike[AccountResp] {
         case AccountResp(id, _, _, _, _, _, List(lumens), _) =>
           id mustEqual accnA
           lumens mustEqual Amount.lumens(10000)
       }.awaitFor(30.seconds)
+    }
+
+    "fetch account details from response" >> {
+      val kp = newAccount
+      // #account_details_example
+      val account: Future[Account] = TestNetwork.account(kp).map(_.toAccount)
+      val nextSeqNo: Future[Long] = account.map(_.sequenceNumber)
+      // #account_details_example
+      account.map(_.publicKey) must beEqualTo(kp.asPublicKey).awaitFor(30.seconds)
+      nextSeqNo must beGreaterThanOrEqualTo(0L).awaitFor(30.seconds)
     }
 
     "fetch nothing if no account exists" >> {
