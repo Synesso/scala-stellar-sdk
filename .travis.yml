@@ -19,7 +19,7 @@ after_success:
 before_install:
   - openssl aes-256-cbc -K $encrypted_e8a2d5297a89_key -iv $encrypted_e8a2d5297a89_iv
     -in project/.gnupg/keyring.tgz.enc -out project/.gnupg/keyring.tgz -d
-  - tar zxf keyring.tgz
+  - (cd project/.gnupg/ && tar zxf keyring.tgz)
 
 deploy:
   provider: script
