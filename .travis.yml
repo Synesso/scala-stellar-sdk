@@ -3,10 +3,6 @@ language: scala
 scala:
   - 2.12.6
 
-before_install:
-  - openssl aes-256-cbc -K $encrypted_b8d1eb460fee_key -iv $encrypted_b8d1eb460fee_iv -in project/.gnupg/pubring.gpg.enc -out project/.gnupg/pubring.gpg -d
-  - openssl aes-256-cbc -K $encrypted_b8d1eb460fee_key -iv $encrypted_b8d1eb460fee_iv -in project/.gnupg/secring.gpg.enc -out project/.gnupg/secring.gpg -d
-
 script:
   - sbt coverage test 'it:testOnly -- timefactor 5' coverageReport
 
@@ -25,3 +21,9 @@ deploy:
   script: sbt -Dbintray.user=$BINTRAY_USER -Dbintray.pass=$BINTRAY_PASS publishSigned
   on:
     tags: true
+
+before_install:
+  - openssl aes-256-cbc -K $encrypted_e8a2d5297a89_key -iv $encrypted_e8a2d5297a89_iv
+    -in project/.gnupg/secring.gpg.enc -out project/.gnupg/secring.gpg -d
+  - openssl aes-256-cbc -K $encrypted_e8a2d5297a89_key -iv $encrypted_e8a2d5297a89_iv
+    -in project/.gnupg/pubring.gpg.enc -out project/.gnupg/pubring.gpg -d
