@@ -4,7 +4,7 @@ import scoverage.ScoverageKeys.coverageMinimum
 // format: off
 lazy val commonSettings = Seq(
   name := "scala-stellar-sdk",
-  organization := "stellar.scala.sdk",
+  organization := "io.github.synesso",
   scalaVersion := "2.12.4",
   homepage := Some(url("https://github.com/synesso/scala-stellar-sdk")),
   developers := List(
