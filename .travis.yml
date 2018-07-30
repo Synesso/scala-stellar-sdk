@@ -24,6 +24,6 @@ before_deploy:
 deploy:
   skip_cleanup: true
   provider: script
-  script: sbt -Dbintray.user=$BINTRAY_USER -Dbintray.pass=$BINTRAY_PASS publishSigned
+  script: sbt -Dbintray.user=$BINTRAY_USER -Dbintray.pass=$BINTRAY_PASS +publishSigned
   on:
     tags: true
