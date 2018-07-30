@@ -347,7 +347,7 @@ trait ArbitraryInput extends ScalaCheck {
   def genSignedTransaction: Gen[SignedTransaction] = for {
     txn <- genTransaction
     signer <- genKeyPair
-  } yield txn.sign(signer).get
+  } yield txn.sign(signer)
 
   def genThresholds: Gen[Thresholds] = for {
     low <- Gen.choose(0, 255)

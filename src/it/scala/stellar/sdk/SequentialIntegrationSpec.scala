@@ -25,7 +25,7 @@ class SequentialIntegrationSpec(implicit ee: ExecutionEnv) extends Specification
   val createTrustOpResponse: TransactionPostResp = Await.result(for {
     account <- TestNetwork.account(accnB)
     asset <- Future.fromTry(Asset.createNonNative("ScalaSDKSpec", accnA))
-    txn <- Future.fromTry(Transaction(
+    txn <- Future(Transaction(
       Account(accnB, account.lastSequence + 1),
       Seq(ChangeTrustOperation(IssuedAmount(99, asset)))
     ).sign(accnB))
@@ -383,7 +383,7 @@ class SequentialIntegrationSpec(implicit ee: ExecutionEnv) extends Specification
       val newAccount = KeyPair.random
       val balance = for {
         sequence <- network.account(accnA).map(_.lastSequence + 1)
-        txn <- Future.fromTry {
+        txn <- Future {
           Transaction(Account(accnA, sequence))
             .add(CreateAccountOperation(newAccount))
             .sign(accnA)
@@ -395,6 +395,22 @@ class SequentialIntegrationSpec(implicit ee: ExecutionEnv) extends Specification
       }
 
       balance must beEqualTo(Seq(Amount.lumens(1))).awaitFor(10.seconds)
+    }
+
+    "example of creating and submitting a payment transaction" >> {
+      val (payerKeyPair, payeePublicKey) = (accnA, accnB)
+      val response =
+        // #payment_example
+        for {
+          sourceAccount <- TestNetwork.account(payerKeyPair)
+          response <- Transaction(sourceAccount)
+            .add(PaymentOperation(payeePublicKey, Amount.lumens(5000)))
+            .sign(payerKeyPair)
+            .submit()
+        } yield response
+        // #payment_example
+
+      response must haveClass[TransactionPostResp].awaitFor(10.seconds)
     }
   }
 

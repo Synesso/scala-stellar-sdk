@@ -35,9 +35,19 @@ resolvers += "scala-stellar-sdk-repo" at "https://dl.bintray.com/synesso/mvn"
 
 lazy val root = (project in file("."))
   .enablePlugins(GitVersioning)
-  .enablePlugins(ParadoxPlugin)
-  .enablePlugins(ParadoxMaterialThemePlugin)
-  .configs(IntegrationTest)
+  .enablePlugins(ParadoxPlugin).settings(
+    paradoxProperties ++= Map(
+      "name" -> name.value,
+      "organization" -> organization.value,
+      "version" -> version.value,
+      "scalaBinaryVersion" -> scalaBinaryVersion.value
+    )
+  )
+  .enablePlugins(ParadoxMaterialThemePlugin).settings(
+    paradoxMaterialTheme in Compile ~= {
+      _.withRepository(url("https://github.com/synesso/scala-stellar-sdk").toURI)
+    }
+  ).configs(IntegrationTest)
   .settings(
     commonSettings,
     Defaults.itSettings,
@@ -52,11 +62,6 @@ lazy val root = (project in file("."))
       "org.specs2" %% "specs2-core" % "4.3.2" % "test,it",
       "org.specs2" %% "specs2-mock" % "4.3.2" % "test",
       "org.specs2" %% "specs2-scalacheck" % "4.3.2" % "test"
-    ),
-    paradoxProperties ++= Map(
-      "name" -> name.value,
-      "organization" -> organization.value,
-      "version" -> version.value,
-      "scalaBinaryVersion" -> scalaBinaryVersion.value
     )
   )
+

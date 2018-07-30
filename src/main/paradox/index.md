@@ -8,7 +8,7 @@ material.copyright: © Jem Mawson. Licensed under Apache 2.0
 # Stellar SDK for Scala
 
 This is the SDK for performing [Stellar](https://www.stellar.org/) operations via Scala. It provides the ability to
-access Stellar networks via Horizon instances to build and submit transactions, query the state of the network and
+access the Stellar network via Horizon instances to build and submit transactions, query the state of the network and
 stream updates.
 
 Scala developers may prefer to use this SDK because:
@@ -18,8 +18,7 @@ Scala developers may prefer to use this SDK because:
 * it uses explicit type hierarchies instead of primitives
 * it is tested to near 100% coverage with generative testing
 
-The code throughout this documentation is compiled against Scala $scalaBinaryVersion$. (The library also supports
-Scala 2.11).
+The code throughout this documentation is compiled against Scala $scalaBinaryVersion$.
 
 
 ## Quick-start
@@ -42,27 +41,26 @@ Fetching the details of an account.
 
 Submitting a payment.
 
-
+@@snip [NetworkSpec.scala](../../it/scala/stellar/sdk/SequentialIntegrationSpec.scala) { #payment_example }
 
 
 
 ## Deprecation warning
 
-At this stage, some classes and interfaces are likely to be refined. Minor releases may break backwards compatibility
+At this stage, classes and interfaces are likely to be refined. Minor releases may break backwards compatibility
 with minimal notice until v1.0.0.
-
-
--- todo --
-
-Release notes are found at [Github releases](https://github.com/akka/alpakka/releases).
 
 
 ## Contributing
 
-Please feel free to contribute to Alpakka by reporting issues you identify, or by suggesting changes to the code. Please refer to our [contributing instructions](https://github.com/akka/alpakka/blob/master/CONTRIBUTING.md) and our [contributor advice](https://github.com/akka/alpakka/blob/master/contributor-advice.md) to learn how it can be done.
 
-We want Akka and Alpakka to strive in a welcoming and open atmosphere and expect all contributors to respect our [code of conduct](https://github.com/akka/alpakka/blob/master/CODE_OF_CONDUCT.md).
 
+Contributions are warmly welcomed. Please feel free to contribute by reporting [issues](https://github.com/Synesso/scala-stellar-sdk/issues)
+you find, or by suggesting changes to the code. Or feel free to add your own features/issues to that list.
+
+## Contact
+
+Let's chat about this on the [Stellar-public Slack](https://stellar-public.slack.com/) #dev channel. My username is [@jem](https://keybase.io/jem).
 
 
 @@ toc { .main depth=2 }
