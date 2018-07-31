@@ -266,13 +266,6 @@ class NetworkSpec(implicit ee: ExecutionEnv) extends Specification with Arbitrar
       network.horizon.getStream[TransactionHistoryResp](s"/ledgers/$ledgeId/transactions", TransactionHistoryRespDeserializer) returns expected
       network.transactionsByLedger(ledgeId) mustEqual expected
     }
-
-//    "example of creating and submitting a payment transaction" >> {
-//      val secretSeed = "".getBytes()
-//      val transactionSource = KeyPair.fromSecretSeed(seed)
-//      val txn = Transaction()
-//    }
-
   }
 
   class MockNetwork extends Network {

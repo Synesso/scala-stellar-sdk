@@ -1,15 +1,15 @@
 package stellar.sdk
 
-import java.io.{ByteArrayInputStream, ByteArrayOutputStream}
+import java.io.ByteArrayOutputStream
 import java.nio.ByteBuffer
 
 import org.stellar.sdk.xdr.Transaction.TransactionExt
-import org.stellar.sdk.xdr.{DecoratedSignature, EnvelopeType, TransactionEnvelope, XdrDataInputStream, XdrDataOutputStream, Transaction => XDRTransaction}
+import org.stellar.sdk.xdr.{DecoratedSignature, EnvelopeType, TransactionEnvelope, XdrDataOutputStream, Transaction => XDRTransaction}
 import stellar.sdk.ByteArrays._
 import stellar.sdk.TrySeq._
 import stellar.sdk.XDRPrimitives._
 import stellar.sdk.op.Operation
-import stellar.sdk.resp.TransactionPostResp
+import stellar.sdk.resp.{AccountResp, TransactionPostResp}
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
@@ -35,10 +35,12 @@ case class Transaction(source: Account,
     NativeAmount(math.max(minFee, fee.map(_.units).getOrElse(minFee)))
   }
 
-  def sign(key: KeyPair, otherKeys: KeyPair*): Try[SignedTransaction] = for {
-    h <- hash
-    signatures <- sequence((key +: otherKeys).map(_.signToXDR(h)))
-  } yield SignedTransaction(this, signatures, h)
+  def sign(key: KeyPair, otherKeys: KeyPair*): SignedTransaction = {
+    for {
+      h <- hash
+      signatures <- sequence((key +: otherKeys).map(_.signToXDR(h)))
+    } yield SignedTransaction(this, signatures, h)
+  }.get
 
   def hash: Try[Array[Byte]] = sha256 {
     val os = new ByteArrayOutputStream
@@ -67,6 +69,14 @@ case class Transaction(source: Account,
 }
 
 object Transaction {
+
+//  def apply(resp: AccountResp,
+//            operations: Seq[Operation] = Nil,
+//            memo: Memo = NoMemo,
+//            timeBounds: Option[TimeBounds] = None,
+//            fee: Option[NativeAmount] = None)(implicit network: Network): Transaction =
+//    Transaction(resp.toAccount, operations, memo, timeBounds, fee)
+
   def fromXDR(txn: XDRTransaction)(implicit network: Network): Try[Transaction] = {
     val account = Account(
       KeyPair.fromXDRPublicKey(txn.getSourceAccount.getAccountID),

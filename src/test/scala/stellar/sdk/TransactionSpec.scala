@@ -25,10 +25,10 @@ class TransactionSpec extends Specification with ArbitraryInput with DomainMatch
     }
 
     "allow signing of the transaction one signature at a time" >> prop { (transaction: Transaction, signers: Seq[KeyPair]) =>
-      val expected = transaction.sign(signers.head, signers.tail: _*).get
+      val expected = transaction.sign(signers.head, signers.tail: _*)
       val actual: SignedTransaction = signers match {
-        case Seq(only) => transaction.sign(only).get
-        case h +: t => t.foldLeft(transaction.sign(h).get) { case (txn, kp) => txn.sign(kp).get }
+        case Seq(only) => transaction.sign(only)
+        case h +: t => t.foldLeft(transaction.sign(h)) { case (txn, kp) => txn.sign(kp).get }
       }
       actual must beEquivalentTo(expected)
     }.setGen2(Gen.nonEmptyListOf(genKeyPair))
@@ -45,22 +45,22 @@ class TransactionSpec extends Specification with ArbitraryInput with DomainMatch
         operations = Seq(CreateAccountOperation(dest, NativeAmount(20000000000L)))
       ).sign(source)
 
-      txn.flatMap(_.toEnvelopeXDRBase64) must beSuccessfulTry("AAAAAF7FIiDToW1fOYUFBC0dmyufJbFTOa2GQESGz+S2h5ViAAAAZAAKVaMAAAABAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAA7eBSYbzcL5UKo7oXO24y1ckX+XuCtkDsyNHOp1n1bxAAAAAEqBfIAAAAAAAAAAABtoeVYgAAAEDLki9Oi700N60Lo8gUmEFHbKvYG4QSqXiLIt9T0ru2O5BphVl/jR9tYtHAD+UeDYhgXNgwUxqTEu1WukvEyYcD")
-      txn.map(_.transaction.source) must beSuccessfulTry[Account].like { case accn => accn must beEquivalentTo(account) }
-      txn.map(_.transaction.calculatedFee) must beSuccessfulTry(NativeAmount(100))
+      txn.toEnvelopeXDRBase64 must beSuccessfulTry("AAAAAF7FIiDToW1fOYUFBC0dmyufJbFTOa2GQESGz+S2h5ViAAAAZAAKVaMAAAABAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAA7eBSYbzcL5UKo7oXO24y1ckX+XuCtkDsyNHOp1n1bxAAAAAEqBfIAAAAAAAAAAABtoeVYgAAAEDLki9Oi700N60Lo8gUmEFHbKvYG4QSqXiLIt9T0ru2O5BphVl/jR9tYtHAD+UeDYhgXNgwUxqTEu1WukvEyYcD")
+      txn.transaction.source must beEquivalentTo(account)
+      txn.transaction.calculatedFee mustEqual NativeAmount(100)
     }
   }
 
   "signing a transaction" should {
     "add a signature to that transaction" >> prop { (source: Account, op: Operation, signers: Seq[KeyPair]) =>
-      val signatures = Transaction(source, Seq(op), NoMemo).sign(signers.head, signers.tail: _*).get.signatures
+      val signatures = Transaction(source, Seq(op), NoMemo).sign(signers.head, signers.tail: _*).signatures
       signatures must haveSize(signers.length)
     }.setGen3(Gen.nonEmptyListOf(genKeyPair))
   }
 
   "a signed transaction" should {
     "serialise to xdr" >> prop { (t: Transaction, signer: KeyPair) =>
-      t.sign(signer).map(_.toEnvelopeXDR) must beSuccessfulTry[TransactionEnvelope]
+      t.sign(signer).toEnvelopeXDR must haveClass[TransactionEnvelope]
     }
   }
 
