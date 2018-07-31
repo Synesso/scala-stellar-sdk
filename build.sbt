@@ -35,6 +35,12 @@ resolvers += "scala-stellar-sdk-repo" at "https://dl.bintray.com/synesso/mvn"
 
 lazy val root = (project in file("."))
   .enablePlugins(GitVersioning)
+  .enablePlugins(SitePlugin).settings(
+    siteSourceDirectory := target.value / "paradox" / "site" / "main"
+  )
+  .enablePlugins(GhpagesPlugin).settings(
+    git.remoteRepo := "git@github.com:synesso/scala-stellar-sdk.git"
+  )
   .enablePlugins(ParadoxPlugin).settings(
     paradoxProperties ++= Map(
       "name" -> name.value,
@@ -44,8 +50,10 @@ lazy val root = (project in file("."))
     )
   )
   .enablePlugins(ParadoxMaterialThemePlugin).settings(
-    paradoxMaterialTheme in Compile ~= {
-      _.withRepository(url("https://github.com/synesso/scala-stellar-sdk").toURI)
+    paradoxMaterialTheme in Compile ~= { _
+      .withRepository(url("https://github.com/synesso/scala-stellar-sdk").toURI)
+      .withSocial(uri("https://github.com/synesso"), uri("https://keybase.io/jem"))
+//      .withGoogleAnalytics() // todo
     }
   ).configs(IntegrationTest)
   .settings(
