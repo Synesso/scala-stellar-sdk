@@ -11,20 +11,20 @@ sealed trait Asset {
 }
 
 object Asset {
-  def createNonNative(code: String, issuer: PublicKeyOps): Try[NonNativeAsset] =
+  def apply(code: String, issuer: PublicKeyOps): NonNativeAsset =
     if (code.length <= 4) IssuedAsset4.of(code, issuer) else IssuedAsset12.of(code, issuer)
 
-  def fromXDR(xdr: XDRAsset): Try[Asset] = Try{
+  def fromXDR(xdr: XDRAsset): Try[Asset] = Try {
     xdr.getDiscriminant match {
       case ASSET_TYPE_NATIVE => NativeAsset
       case ASSET_TYPE_CREDIT_ALPHANUM4 =>
         val code = paddedByteArrayToString(xdr.getAlphaNum4.getAssetCode)
         val issuer = KeyPair.fromXDRPublicKey(xdr.getAlphaNum4.getIssuer.getAccountID)
-        IssuedAsset4.of(code, issuer).get
+        IssuedAsset4.of(code, issuer)
       case ASSET_TYPE_CREDIT_ALPHANUM12 =>
         val code = paddedByteArrayToString(xdr.getAlphaNum12.getAssetCode)
         val issuer = KeyPair.fromXDRPublicKey(xdr.getAlphaNum12.getIssuer.getAccountID)
-        IssuedAsset12.of(code, issuer).get
+        IssuedAsset12.of(code, issuer)
     }
   }
 }
@@ -68,8 +68,7 @@ case class IssuedAsset4 private(code: String, issuer: PublicKey) extends NonNati
 }
 
 object IssuedAsset4 {
-  def of(code: String, issuer: PublicKeyOps): Try[IssuedAsset4] =
-    Try(IssuedAsset4(code, issuer.asPublicKey))
+  def of(code: String, issuer: PublicKeyOps): IssuedAsset4 = IssuedAsset4(code, issuer.asPublicKey)
 }
 
 
@@ -97,6 +96,5 @@ case class IssuedAsset12 private (code: String, issuer: PublicKey) extends NonNa
 }
 
 object IssuedAsset12 {
-  def of(code: String, keyPair: PublicKeyOps): Try[IssuedAsset12] =
-    Try(IssuedAsset12(code, keyPair.asPublicKey))
+  def of(code: String, keyPair: PublicKeyOps): IssuedAsset12 = IssuedAsset12(code, keyPair.asPublicKey)
 }

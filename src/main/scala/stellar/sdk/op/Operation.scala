@@ -10,6 +10,9 @@ import stellar.sdk._
 
 import scala.util.{Success, Try}
 
+/**
+  * An Operation represents a change to the ledger. It is the action, as opposed to the effects resulting from that action.
+  */
 trait Operation {
   val sourceAccount: Option[PublicKeyOps]
 

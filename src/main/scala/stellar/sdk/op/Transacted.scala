@@ -5,6 +5,9 @@ import java.time.ZonedDateTime
 import org.json4s.JsonAST.JObject
 import org.json4s.{CustomSerializer, DefaultFormats}
 
+/**
+  * Provides access to additional information related to an operation after it has been transacted in the network.
+  */
 case class Transacted[O <: Operation](id: Long,
                                       txnHash: String,
                                       createdAt: ZonedDateTime,

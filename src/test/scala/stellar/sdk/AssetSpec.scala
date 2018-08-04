@@ -2,6 +2,8 @@ package stellar.sdk
 
 import org.specs2.mutable.Specification
 
+import scala.util.Try
+
 class AssetSpec extends Specification with ArbitraryInput {
 
   "the native asset type" should {
@@ -13,7 +15,7 @@ class AssetSpec extends Specification with ArbitraryInput {
   "non-native asset types" should {
     "serde correctly" >> prop { code: String =>
       val issuer = KeyPair.random
-      val asset = Asset.createNonNative(code, issuer).get
+      val asset = Asset(code, issuer)
       Asset.fromXDR(asset.toXDR) must beSuccessfulTry[Asset].like {
         case a: IssuedAsset4 if code.length <= 4 =>
           a.code mustEqual code
@@ -28,16 +30,16 @@ class AssetSpec extends Specification with ArbitraryInput {
   "an empty code" should {
     "not allow non-native asset construction" >> {
       val issuer = KeyPair.random
-      Asset.createNonNative("", issuer) must beFailedTry[Asset]
-      IssuedAsset4.of("", issuer) must beFailedTry[Asset]
-      IssuedAsset12.of("", issuer) must beFailedTry[Asset]
+      Try(Asset("", issuer)) must beFailedTry[Asset]
+      Try(IssuedAsset4.of("", issuer)) must beFailedTry[Asset]
+      Try(IssuedAsset12.of("", issuer)) must beFailedTry[Asset]
     }
   }
 
   "an up-to-4-char code" should {
     "result in a 4-char non-native asset" >> prop { code: String =>
       val issuer = KeyPair.random
-      Asset.createNonNative(code, issuer) must beSuccessfulTry[Asset].like {
+      Asset(code, issuer) must beLike {
         case a: IssuedAsset4 =>
           a.code mustEqual code
           a.issuer.accountId mustEqual issuer.accountId
@@ -48,7 +50,7 @@ class AssetSpec extends Specification with ArbitraryInput {
   "an 5-to-12-char code" should {
     "result in a 12-char non-native asset" >> prop { code: String =>
       val issuer = KeyPair.random
-      Asset.createNonNative(code, issuer) must beSuccessfulTry[Asset].like {
+      Asset(code, issuer) must beLike {
         case a: IssuedAsset12 =>
           a.code mustEqual code
           a.issuer.accountId mustEqual issuer.accountId
@@ -59,9 +61,9 @@ class AssetSpec extends Specification with ArbitraryInput {
   "a greater than 12 character code" should {
     "not allow non-native asset construction" >> prop { code: String =>
       val issuer = KeyPair.random
-      Asset.createNonNative(code, issuer) must beFailedTry[Asset]
-      IssuedAsset4.of(code, issuer) must beFailedTry[Asset]
-      IssuedAsset12.of(code, issuer) must beFailedTry[Asset]
+      Try(Asset(code, issuer)) must beFailedTry[Asset]
+      Try(IssuedAsset4.of(code, issuer)) must beFailedTry[Asset]
+      Try(IssuedAsset12.of(code, issuer)) must beFailedTry[Asset]
     }.setGen(genCode(13, 1000))
   }
 

@@ -24,7 +24,7 @@ class SequentialIntegrationSpec(implicit ee: ExecutionEnv) extends Specification
   // issue an asset from test account accnA, by trusting from accnB
   val createTrustOpResponse: TransactionPostResp = Await.result(for {
     account <- TestNetwork.account(accnB)
-    asset <- Future.fromTry(Asset.createNonNative("ScalaSDKSpec", accnA))
+    asset = Asset("ScalaSDKSpec", accnA)
     txn <- Future(Transaction(
       Account(accnB, account.lastSequence + 1),
       Seq(ChangeTrustOperation(IssuedAmount(99, asset)))
@@ -56,7 +56,8 @@ class SequentialIntegrationSpec(implicit ee: ExecutionEnv) extends Specification
     }
 
     "return the data for an account" >> {
-      TestNetwork.accountData(accWithData, "life_universe_everything") must beEqualTo("42").awaitFor(5.seconds)
+      val answer: Future[String] = TestNetwork.accountData(accWithData, "life_universe_everything")
+      answer must beEqualTo("42").awaitFor(5.seconds)
     }
 
     "fetch nothing if no data exists for the account" >> {
@@ -166,7 +167,7 @@ class SequentialIntegrationSpec(implicit ee: ExecutionEnv) extends Specification
       TestNetwork.operationsByAccount(accnB).map(_.drop(1).head) must beLike[Transacted[Operation]] {
         case op =>
           op.operation mustEqual ChangeTrustOperation(
-            IssuedAmount(99, Asset.createNonNative("ScalaSDKSpec", accnA).get),
+            IssuedAmount(99, Asset("ScalaSDKSpec", accnA)),
             Some(accnB.asPublicKey)
           )
       }.awaitFor(10.seconds)

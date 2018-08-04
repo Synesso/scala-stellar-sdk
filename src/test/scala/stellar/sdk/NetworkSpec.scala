@@ -1,14 +1,16 @@
 package stellar.sdk
 
+import org.json4s.CustomSerializer
 import org.scalacheck.Gen
 import org.specs2.concurrent.ExecutionEnv
 import org.specs2.mock.Mockito
 import org.specs2.mutable.Specification
-import stellar.sdk.inet.HorizonAccess
+import stellar.sdk.inet.{HorizonAccess, Page}
 import stellar.sdk.op._
 import stellar.sdk.resp._
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
+import scala.reflect.ClassTag
 
 class NetworkSpec(implicit ee: ExecutionEnv) extends Specification with ArbitraryInput with Mockito {
 
@@ -268,9 +270,186 @@ class NetworkSpec(implicit ee: ExecutionEnv) extends Specification with Arbitrar
     }
   }
 
+  //noinspection ScalaUnusedSymbol
+  // $COVERAGE-OFF$
+  "query documentation" should {
+    val TestNetwork = new DoNothingNetwork
+    val accountId = "GCXYKQF35XWATRB6AWDDV2Y322IFU2ACYYN5M2YB44IBWAIITQ4RYPXK"
+    val publicKey = KeyPair.fromAccountId(accountId)
+
+    "be present for accounts" >> {
+      // #account_query_examples
+      val accountId = "GCXYKQF35XWATRB6AWDDV2Y322IFU2ACYYN5M2YB44IBWAIITQ4RYPXK"
+      val publicKey = KeyPair.fromAccountId(accountId)
+
+      // account details
+      val accountDetails: Future[AccountResp] = TestNetwork.account(publicKey)
+
+      // account datum value
+      val accountData: Future[String] = TestNetwork.accountData(publicKey, "data_key")
+      // #account_query_examples
+
+      ok
+    }
+
+    "be present for assets" >> {
+      // #asset_query_examples
+      // stream of all assets from all issuers
+      val allAssets: Future[Stream[AssetResp]] = TestNetwork.assets()
+
+      // stream of assets with the code HUG
+      val hugAssets: Future[Stream[AssetResp]] = TestNetwork.assets(code = Some("HUG"))
+
+      // stream of assets from the specified issuer
+      val issuerAssets: Future[Stream[AssetResp]] =
+        TestNetwork.assets(issuer = Some(publicKey))
+
+      // Stream (of max length 1) of HUG assets from the issuer
+      val issuersHugAsset: Future[Stream[AssetResp]] =
+        TestNetwork.assets(code = Some("HUG"), issuer = Some(publicKey))
+      // #asset_query_examples
+      ok
+    }
+
+    "be present for ledgers" >> {
+      // #ledger_query_examples
+      // details of a specific ledger
+      val ledger: Future[LedgerResp] = TestNetwork.ledger(1234)
+
+      // stream of all ledgers
+      val ledgers: Future[Stream[LedgerResp]] = TestNetwork.ledgers()
+      // #ledger_query_examples
+      ok
+    }
+
+    "be present for offers" >> {
+      // #offer_query_examples
+      val offersByAccount: Future[Stream[OfferResp]] =
+        TestNetwork.offersByAccount(publicKey)
+      // #offer_query_examples
+      ok
+    }
+
+    "be present for operations" >> {
+      // #operation_query_examples
+      // details of a specific operation
+      val operation: Future[Transacted[Operation]] = TestNetwork.operation(1234)
+
+      // stream of all operations
+      val operations: Future[Stream[Transacted[Operation]]] = TestNetwork.operations()
+
+      // stream of operations from a specified account
+      val opsForAccount: Future[Stream[Transacted[Operation]]] =
+        TestNetwork.operationsByAccount(publicKey)
+
+      // stream of operations from a specified ledger
+      val opsForLedger: Future[Stream[Transacted[Operation]]] =
+        TestNetwork.operationsByLedger(1234)
+
+      // stream of operations from a transaction specified by its hash
+      val opsForTxn: Future[Stream[Transacted[Operation]]] =
+        TestNetwork.operationsByTransaction("f00cafe...")
+      // #operation_query_examples
+
+      ok
+    }
+
+    "be present for orderbooks" >> {
+      // #orderbook_query_examples
+      // the XLM/HUG orderbook with up to 20 offers
+      val hugOrderBook: Future[OrderBook] = TestNetwork.orderBook(
+        selling = NativeAsset,
+        buying = Asset("HUG", publicKey)
+      )
+
+      // the FabulousBeer/HUG orderbook with up to 100 offers
+      val beerForHugsBigOrderBook: Future[OrderBook] = TestNetwork.orderBook(
+        selling = Asset("FabulousBeer", publicKey),
+        buying = Asset("HUG", publicKey),
+        limit = 100
+      )
+      // #orderbook_query_examples
+      ok
+    }
+
+    "be present for payments" >> {
+      // #payment_query_examples
+      // stream of all payment operations
+      val payments: Future[Stream[Transacted[PayOperation]]] = TestNetwork.payments()
+
+      // stream of payment operations involving a specified account
+      val accountPayments = TestNetwork.paymentsByAccount(publicKey)
+
+      // stream of payment operations in a specified ledger
+      val ledgerPayments = TestNetwork.paymentsByLedger(1234)
+
+      // stream of payment operations in a specified transaction
+      val transactionPayments = TestNetwork.paymentsByTransaction("bee042...")
+      // #payment_query_examples
+      ok
+    }
+
+    "be present for trades" >> {
+      // #trade_query_examples
+      // stream of all trades
+      val trades: Future[Stream[Trade]] = TestNetwork.trades()
+
+      // stream of trades belonging to a specified orderbook
+      val orderBookTrades: Future[Stream[Trade]] = TestNetwork.tradesByOrderBook(
+        base = NativeAsset,
+        counter = Asset("HUG", publicKey)
+      )
+
+      // stream of trades that are created as a result of the specified offer
+      val offerBookTrades: Future[Stream[Trade]] = TestNetwork.tradesByOfferId(1234)
+      // #trade_query_examples
+      ok
+    }
+
+    "be present for transactions" >> {
+      // #transaction_query_examples
+      // stream of all transactions
+      val transactions: Future[Stream[TransactionHistoryResp]] =
+        TestNetwork.transactions()
+
+      // stream of transactions affecting the specified account
+      val accountTxns = TestNetwork.transactionsByAccount(publicKey)
+
+      // stream of transactions within the specified ledger
+      val ledgerTxns = TestNetwork.transactionsByLedger(1234)
+      // #transaction_query_examples
+      ok
+    }
+  }
+  // $COVERAGE-ON$
+
   class MockNetwork extends Network {
     override val passphrase: String = "Scala SDK mock network"
     override val horizon: HorizonAccess = mock[HorizonAccess]
+  }
+
+  class DoNothingNetwork extends Network {
+    override val passphrase: String = "Scala SDK do-nothing network"
+    override val horizon: HorizonAccess = new HorizonAccess {
+      override def post(txn: SignedTransaction)(implicit ec: ExecutionContext): Future[TransactionPostResp] =
+        mock[Future[TransactionPostResp]]
+
+      override def get[T: ClassTag](path: String, params: Map[String, Any])
+                                   (implicit ec: ExecutionContext, m: Manifest[T]): Future[T] =
+        if (path.endsWith("data/data_key")) {
+          Future(DataValueResp("00").asInstanceOf[T])(ec)
+        } else {
+          mock[Future[T]]
+        }
+
+      override def getStream[T: ClassTag](path: String, de: CustomSerializer[T], params: Map[String, String])
+                                         (implicit ec: ExecutionContext, m: Manifest[T]): Future[Stream[T]] =
+        mock[Future[Stream[T]]]
+
+      override def getPage[T: ClassTag](path: String, params: Map[String, String])
+                                       (implicit ec: ExecutionContext, de: CustomSerializer[T], m: Manifest[T]): Future[Page[T]] =
+        mock[Future[Page[T]]]
+    }
   }
 }
 

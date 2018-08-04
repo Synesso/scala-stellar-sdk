@@ -46,19 +46,21 @@ lazy val root = (project in file("."))
       "name" -> name.value,
       "organization" -> organization.value,
       "version" -> version.value,
-      "scalaBinaryVersion" -> scalaBinaryVersion.value
+      "scalaBinaryVersion" -> scalaBinaryVersion.value,
+      "scaladoc.stellar.base_url" -> "/api"
     )
   )
   .enablePlugins(ParadoxMaterialThemePlugin).settings(
     paradoxMaterialTheme in Compile ~= { _
       .withRepository(url("https://github.com/synesso/scala-stellar-sdk").toURI)
       .withSocial(uri("https://github.com/synesso"), uri("https://keybase.io/jem"))
-//      .withGoogleAnalytics() // todo
+      // .withGoogleAnalytics() // todo
     }
   ).configs(IntegrationTest)
   .settings(
     commonSettings,
     Defaults.itSettings,
+    target in Compile in doc := target.value / "paradox" / "site" / "main" / "api",
     libraryDependencies ++= List(
       "commons-codec" % "commons-codec" % "1.11",
       "net.i2p.crypto" % "eddsa" % "4.0.0",

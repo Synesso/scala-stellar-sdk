@@ -18,20 +18,20 @@ trait Network extends LazyLogging {
 
   /**
     * Submit the SignedTransaction to the network and eventually receive a TransactionPostResp with the results.
-    * @see https://www.stellar.org/developers/horizon/reference/endpoints/transactions-create.html
+    * @see [[https://www.stellar.org/developers/horizon/reference/endpoints/transactions-create.html endpoint doc]]
     */
   def submit(txn: SignedTransaction)(implicit ec: ExecutionContext): Future[TransactionPostResp] = horizon.post(txn)
 
   /**
     * Fetch details regarding the account identified by `pubKey`.
-    * @see https://www.stellar.org/developers/horizon/reference/endpoints/accounts-single.html
+    * @see [[https://www.stellar.org/developers/horizon/reference/endpoints/accounts-single.html endpoint doc]]
     */
   def account(pubKey: PublicKeyOps)(implicit ec: ExecutionContext): Future[AccountResp] =
     horizon.get[AccountResp](s"/accounts/${pubKey.accountId}")
 
   /**
     * Fetch value for single data field associated with an account.
-    * @see https://www.stellar.org/developers/horizon/reference/endpoints/data-for-account.html
+    * @see [[https://www.stellar.org/developers/horizon/reference/endpoints/data-for-account.html endpoint doc]]
     */
   def accountData(pubKey: PublicKeyOps, dataKey: String)(implicit ec: ExecutionContext): Future[String] =
     horizon.get[DataValueResp](s"/accounts/${pubKey.accountId}/data/$dataKey").map(_.v).map(base64).map(new String(_))
@@ -40,7 +40,7 @@ trait Network extends LazyLogging {
     * Fetch a stream of assets, optionally filtered by code, issuer or neither
     * @param code optional code to filter by
     * @param issuer optional issuer account to filter by
-    * @see https://www.stellar.org/developers/horizon/reference/endpoints/assets-all.html
+    * @see [[https://www.stellar.org/developers/horizon/reference/endpoints/assets-all.html endpoint doc]]
     */
   def assets(code: Option[String] = None, issuer: Option[PublicKeyOps] = None)(implicit ec: ExecutionContext): Future[Stream[AssetResp]] = {
     val params = Seq(code.map("asset_code" -> _), issuer.map("asset_issuer" -> _.accountId)).flatten.toMap
@@ -49,84 +49,85 @@ trait Network extends LazyLogging {
 
   /**
     * Fetch a stream of effects.
-    * @see https://www.stellar.org/developers/horizon/reference/endpoints/effects-all.html
+    * @see [[https://www.stellar.org/developers/horizon/reference/endpoints/effects-all.html endpoint doc]]
     */
   def effects()(implicit ec: ExecutionContext): Future[Stream[EffectResp]] =
     horizon.getStream[EffectResp]("/effects", EffectRespDeserializer)
 
   /**
     * Fetch a stream of effects for a given account.
-    * @see https://www.stellar.org/developers/horizon/reference/endpoints/effects-for-account.html
+    * @see [[https://www.stellar.org/developers/horizon/reference/endpoints/effects-for-account.html endpoint doc]]
     */
   def effectsByAccount(account: PublicKeyOps)(implicit ec: ExecutionContext): Future[Stream[EffectResp]] =
     horizon.getStream[EffectResp](s"/accounts/${account.accountId}/effects", EffectRespDeserializer)
 
   /**
     * Fetch a stream of effects for a given ledger.
-    * @see https://www.stellar.org/developers/horizon/reference/endpoints/effects-for-ledger.html
+    * @see [[https://www.stellar.org/developers/horizon/reference/endpoints/effects-for-ledger.html endpoint doc]]
     */
   def effectsByLedger(ledgerId: Long)(implicit ec: ExecutionContext): Future[Stream[EffectResp]] =
     horizon.getStream[EffectResp](s"/ledgers/$ledgerId/effects", EffectRespDeserializer)
 
   /**
     * Fetch a stream of details about ledgers.
-    * @see https://www.stellar.org/developers/horizon/reference/endpoints/ledgers-all.html
+    * @see [[https://www.stellar.org/developers/horizon/reference/endpoints/ledgers-all.html endpoint doc]]
     */
   def ledgers()(implicit ec: ExecutionContext): Future[Stream[LedgerResp]] =
     horizon.getStream[LedgerResp](s"/ledgers", LedgerRespDeserializer)
 
   /**
     * Fetch details of a ledger by its id
-    * @see https://www.stellar.org/developers/horizon/reference/endpoints/ledgers-single.html
+    * @see [[https://www.stellar.org/developers/horizon/reference/endpoints/ledgers-single.html endpoint doc]]
     */
   def ledger(ledgerId: Long)(implicit ex: ExecutionContext): Future[LedgerResp] =
     horizon.get[LedgerResp](s"/ledgers/$ledgerId")
 
   /**
     * Fetch a stream of offers for an account.
-    * @see https://www.stellar.org/developers/horizon/reference/endpoints/offers-for-account.html
+    * @see [[https://www.stellar.org/developers/horizon/reference/endpoints/offers-for-account.html endpoint doc]]
     */
   def offersByAccount(account: PublicKeyOps)(implicit ex: ExecutionContext): Future[Stream[OfferResp]] =
     horizon.getStream[OfferResp](s"/accounts/${account.accountId}/offers", OfferRespDeserializer)
 
   /**
     * Fetch operation details by its id
-    * @see https://www.stellar.org/developers/horizon/reference/endpoints/operations-single.html
+    * @see [[https://www.stellar.org/developers/horizon/reference/endpoints/operations-single.html endpoint doc]]
     */
   def operation(operationId: Long)(implicit ex: ExecutionContext): Future[Transacted[Operation]] =
     horizon.get[Transacted[Operation]](s"/operations/$operationId")
 
   /**
     * Fetch a stream of operations.
-    * @see https://www.stellar.org/developers/horizon/reference/endpoints/operations-all.html
+    * @see [[https://www.stellar.org/developers/horizon/reference/endpoints/operations-all.html endpoint doc]]
     */
   def operations()(implicit ex: ExecutionContext): Future[Stream[Transacted[Operation]]] =
     horizon.getStream[Transacted[Operation]](s"/operations", TransactedOperationDeserializer)
 
   /**
     * Fetch a stream of operations, filtered by account.
-    * @see https://www.stellar.org/developers/horizon/reference/endpoints/operations-for-account.html
+    * @see [[https://www.stellar.org/developers/horizon/reference/endpoints/operations-for-account.html endpoint doc]]
     */
   def operationsByAccount(pubKey: PublicKeyOps)(implicit ex: ExecutionContext): Future[Stream[Transacted[Operation]]] =
     horizon.getStream[Transacted[Operation]](s"/accounts/${pubKey.accountId}/operations", TransactedOperationDeserializer)
 
   /**
     * Fetch a stream of operations, filtered by ledger id.
-    * @see https://www.stellar.org/developers/horizon/reference/endpoints/operations-for-ledger.html
+    * @see [[https://www.stellar.org/developers/horizon/reference/endpoints/operations-for-ledger.html endpoint doc]]
     */
   def operationsByLedger(ledgerId: Long)(implicit ex: ExecutionContext): Future[Stream[Transacted[Operation]]] =
     horizon.getStream[Transacted[Operation]](s"/ledgers/$ledgerId/operations", TransactedOperationDeserializer)
 
   /**
     * Fetch a stream of operations, filtered by transaction hash.
-    * @see https://www.stellar.org/developers/horizon/reference/endpoints/operations-for-transaction.html
+    * @see [[https://www.stellar.org/developers/horizon/reference/endpoints/operations-for-transaction.html endpoint doc]]
     */
   def operationsByTransaction(txnHash: String)(implicit ex: ExecutionContext): Future[Stream[Transacted[Operation]]] =
     horizon.getStream[Transacted[Operation]](s"/transactions/$txnHash/operations", TransactedOperationDeserializer)
 
   /**
-    * Fetch details of the current orderbook for the given asset pairs
-    * @see https://www.stellar.org/developers/horizon/reference/endpoints/orderbook-details.html
+    * Fetch details of the current orderbook for the given asset pairs.
+    * @param limit the maximun quantity of offers to return, should the order book depth exceed this value.
+    * @see [[https://www.stellar.org/developers/horizon/reference/endpoints/orderbook-details.html endpoint doc]]
     */
   def orderBook(selling: Asset, buying: Asset, limit: Int = 20)(implicit ex: ExecutionContext): Future[OrderBook] = {
     val params = assetParams("selling", selling) ++ assetParams("buying", buying).updated("limit", limit)
@@ -135,7 +136,7 @@ trait Network extends LazyLogging {
 
   /**
     * Fetch a stream of payment operations.
-    * @see https://www.stellar.org/developers/horizon/reference/endpoints/payments-all.html
+    * @see [[https://www.stellar.org/developers/horizon/reference/endpoints/payments-all.html endpoint doc]]
     */
   def payments()(implicit ex: ExecutionContext): Future[Stream[Transacted[PayOperation]]] =
     horizon.getStream[Transacted[Operation]](s"/payments", TransactedOperationDeserializer)
@@ -143,7 +144,7 @@ trait Network extends LazyLogging {
 
   /**
     * Fetch a stream of payment operations filtered by account.
-    * @see https://www.stellar.org/developers/horizon/reference/endpoints/payments-for-account.html
+    * @see [[https://www.stellar.org/developers/horizon/reference/endpoints/payments-for-account.html endpoint doc]]
     */
   def paymentsByAccount(pubKey: PublicKeyOps)(implicit ex: ExecutionContext): Future[Stream[Transacted[PayOperation]]] =
     horizon.getStream[Transacted[Operation]](s"/accounts/${pubKey.accountId}/payments", TransactedOperationDeserializer)
@@ -151,7 +152,7 @@ trait Network extends LazyLogging {
 
   /**
     * Fetch a stream of payment operations filtered by ledger id.
-    * @see https://www.stellar.org/developers/horizon/reference/endpoints/payments-for-ledger.html
+    * @see [[https://www.stellar.org/developers/horizon/reference/endpoints/payments-for-ledger.html endpoint doc]]
     */
   def paymentsByLedger(ledgerId: Long)(implicit ex: ExecutionContext): Future[Stream[Transacted[PayOperation]]] =
     horizon.getStream[Transacted[Operation]](s"/ledgers/$ledgerId/payments", TransactedOperationDeserializer)
@@ -159,7 +160,7 @@ trait Network extends LazyLogging {
 
   /**
     * Fetch a stream of payment operations filtered by transaction hash.
-    * @see https://www.stellar.org/developers/horizon/reference/endpoints/operations-for-transaction.html
+    * @see [[https://www.stellar.org/developers/horizon/reference/endpoints/operations-for-transaction.html endpoint doc]]
     */
   def paymentsByTransaction(txnHash: String)(implicit ex: ExecutionContext): Future[Stream[Transacted[PayOperation]]] =
     horizon.getStream[Transacted[Operation]](s"/transactions/$txnHash/payments", TransactedOperationDeserializer)
@@ -167,14 +168,14 @@ trait Network extends LazyLogging {
 
   /**
     * Fetch a stream of trades
-    * @see https://www.stellar.org/developers/horizon/reference/endpoints/trades.html
+    * @see [[https://www.stellar.org/developers/horizon/reference/endpoints/trades.html endpoint doc]]
     */
   def trades()(implicit ex: ExecutionContext): Future[Stream[Trade]] =
     horizon.getStream[Trade]("/trades", TradeDeserializer)
 
   /**
     * Fetch a stream of trades filtered by orderbook
-    * @see https://www.stellar.org/developers/horizon/reference/endpoints/trades.html
+    * @see [[https://www.stellar.org/developers/horizon/reference/endpoints/trades.html endpoint doc]]
     */
   def tradesByOrderBook(base: Asset, counter: Asset)(implicit ex: ExecutionContext): Future[Stream[Trade]] = {
     val params = assetParams("base", base) ++ assetParams("counter", counter)
@@ -183,7 +184,7 @@ trait Network extends LazyLogging {
 
   /**
     * Fetch a stream of trades filtered by offer id
-    * @see https://www.stellar.org/developers/horizon/reference/endpoints/trades.html
+    * @see [[https://www.stellar.org/developers/horizon/reference/endpoints/trades.html endpoint doc]]
     */
   def tradesByOfferId(offerId: Long)(implicit ex: ExecutionContext): Future[Stream[Trade]] = {
     val params = Map("offerid" -> s"$offerId")
@@ -192,15 +193,15 @@ trait Network extends LazyLogging {
 
   /**
     * Fetch a stream of transactions
-    * @see https://www.stellar.org/developers/horizon/reference/endpoints/transactions-all.html
+    * @see [[https://www.stellar.org/developers/horizon/reference/endpoints/transactions-all.html endpoint doc]]
     */
   def transactions()(implicit ex: ExecutionContext): Future[Stream[TransactionHistoryResp]] = {
     horizon.getStream[TransactionHistoryResp]("/transactions", TransactionHistoryRespDeserializer)
   }
 
   /**
-    * Fetch a stream of transactions for a given account
-    * @see https://www.stellar.org/developers/horizon/reference/endpoints/transactions-for-account.html
+    * Fetch a stream of transactions affecting a given account
+    * @see [[https://www.stellar.org/developers/horizon/reference/endpoints/transactions-for-account.html endpoint doc]]
     */
   def transactionsByAccount(pubKey: PublicKeyOps)(implicit ex: ExecutionContext): Future[Stream[TransactionHistoryResp]] = {
     horizon.getStream[TransactionHistoryResp](s"/accounts/${pubKey.accountId}/transactions", TransactionHistoryRespDeserializer)
@@ -208,7 +209,7 @@ trait Network extends LazyLogging {
 
   /**
     * Fetch a stream of transactions for a given ledger
-    * @see https://www.stellar.org/developers/horizon/reference/endpoints/transactions-for-ledger.html
+    * @see [[https://www.stellar.org/developers/horizon/reference/endpoints/transactions-for-ledger.html endpoint doc]]
     */
   def transactionsByLedger(sequenceId: Long)(implicit ex: ExecutionContext): Future[Stream[TransactionHistoryResp]] = {
     horizon.getStream[TransactionHistoryResp](s"/ledgers/$sequenceId/transactions", TransactionHistoryRespDeserializer)
