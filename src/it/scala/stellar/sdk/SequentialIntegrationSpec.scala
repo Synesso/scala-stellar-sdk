@@ -379,13 +379,16 @@ class SequentialIntegrationSpec(implicit ee: ExecutionEnv) extends Specification
 
   "transaction" should {
     "be accepted when posted to the network" >> {
-      implicit val network = TestNetwork
 
       val newAccount = KeyPair.random
       val balance = for {
         sequence <- network.account(accnA).map(_.lastSequence + 1)
         txn <- Future {
-          Transaction(Account(accnA, sequence))
+          // #new_transaction_example
+          implicit val network = TestNetwork
+          val account = Account(accnA, sequence)
+          Transaction(account)
+          // #new_transaction_example
             .add(CreateAccountOperation(newAccount))
             .sign(accnA)
         }

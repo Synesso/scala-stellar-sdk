@@ -421,6 +421,81 @@ class NetworkSpec(implicit ee: ExecutionEnv) extends Specification with Arbitrar
       ok
     }
   }
+
+  //noinspection ScalaUnusedSymbol
+  "transaction documentation" should {
+    val Array(sourceKey, aliceKey, bobKey, charlieKey) = Array.fill(4)(KeyPair.random)
+    val nextSequenceNumber = 1234
+
+    "show how to create a transaction with operations" >> {
+      // #transaction_createwithops_example
+      val account = Account(sourceKey, nextSequenceNumber)
+      val txn = Transaction(account, Seq(
+        CreateAccountOperation(aliceKey),
+        CreateAccountOperation(bobKey),
+        PaymentOperation(charlieKey, Amount.lumens(42))
+      ))
+      // #transaction_createwithops_example
+      ok
+    }
+
+    "show how to add operations afterwards" >> {
+      val account = Account(sourceKey, nextSequenceNumber)
+      // #transaction_addops_example
+      val txn = Transaction(account)
+        .add(PaymentOperation(aliceKey, Amount.lumens(100)))
+        .add(PaymentOperation(bobKey, Amount.lumens(77)))
+        .add(PaymentOperation(charlieKey, Amount.lumens(4.08)))
+        .add(CreateOfferOperation(
+          selling = Amount.lumens(100),
+          buying = Asset("FRUITCAKE42", aliceKey),
+          price = Price(100, 1)
+        ))
+      // #transaction_addops_example
+      ok
+    }
+
+    "show signing" >> {
+      val account = Account(sourceKey, nextSequenceNumber)
+      val operation = PaymentOperation(aliceKey, Amount.lumens(100))
+      // #transaction_signing_example
+      val transaction = Transaction(account).add(operation)
+      val signedTransaction: SignedTransaction = transaction.sign(sourceKey)
+      // #transaction_signing_example
+      ok
+    }
+
+    "show signing of a joint account" >> {
+      val jointAccount = Account(sourceKey, nextSequenceNumber)
+      val operation = PaymentOperation(aliceKey, Amount.lumens(100))
+      // #joint_transaction_signing_example
+      val transaction = Transaction(jointAccount).add(operation)
+      val signedTransaction: SignedTransaction = transaction.sign(aliceKey, bobKey)
+      // #joint_transaction_signing_example
+      ok
+    }
+
+    "show submitting" >> {
+      val account = Account(sourceKey, nextSequenceNumber)
+      val operation = PaymentOperation(aliceKey, Amount.lumens(100))
+      // #transaction_submit_example
+      val transaction = Transaction(account).add(operation).sign(sourceKey)
+      val response: Future[TransactionPostResp] = transaction.submit()
+      // #transaction_submit_example
+      ok
+    }
+
+    "show checking of response" >> {
+      val account = Account(sourceKey, nextSequenceNumber)
+      val operation = PaymentOperation(aliceKey, Amount.lumens(100))
+      // #transaction_response_example
+      Transaction(account).add(operation).sign(sourceKey).submit().foreach {
+        response => println(response.result.getFeeCharged)
+      }
+      // #transaction_response_example
+      ok
+    }
+  }
   // $COVERAGE-ON$
 
   class MockNetwork extends Network {

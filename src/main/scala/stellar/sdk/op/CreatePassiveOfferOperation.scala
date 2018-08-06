@@ -8,6 +8,9 @@ import stellar.sdk.{Amount, Asset, _}
 
 import scala.util.Try
 
+/**
+  * Creates an offer that won’t consume a counter offer that exactly matches this offer.
+  */
 case class CreatePassiveOfferOperation(selling: Amount, buying: Asset, price: Price,
                                        sourceAccount: Option[PublicKeyOps] = None) extends Operation {
 

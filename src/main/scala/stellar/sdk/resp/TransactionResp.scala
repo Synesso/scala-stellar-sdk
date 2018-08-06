@@ -8,8 +8,6 @@ import org.stellar.sdk.xdr.{TransactionMeta, TransactionResult}
 import stellar.sdk.ByteArrays.base64
 import stellar.sdk._
 
-import scala.util.Try
-
 sealed trait TransactionResp {
   val hash: String
   val ledger: Long
@@ -26,13 +24,13 @@ sealed trait TransactionResp {
     * The transaction result as reported in the XDR returned from Horizon.
     * Note: This response provided is the native Java XDR type.
     */
-  def result: Try[TransactionResult] = TxResult.decodeXDR(resultXDR)
+  def result: TransactionResult = TxResult.decodeXDR(resultXDR)
 
   /**
     * The transaction meta info as reported in the XDR returned from Horizon.
     * Note: This response provided is the native Java XDR type.
     */
-  def resultMeta: Try[TransactionMeta] = TxResult.decodeMetaXDR(resultMetaXDR)
+  def resultMeta: TransactionMeta = TxResult.decodeMetaXDR(resultMetaXDR)
 }
 
 /**

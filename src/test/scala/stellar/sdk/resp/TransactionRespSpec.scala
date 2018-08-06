@@ -42,7 +42,7 @@ class TransactionRespSpec extends Specification with ArbitraryInput with DomainM
 
     "provide access to the XDR Transaction Result" >> {
       TransactionPostResp("", 1, "", "AAAAAAAAAGQAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAB////+wAAAAA=", "").result must
-        beSuccessfulTry[TransactionResult].like { case tr: TransactionResult =>
+        beLike { case tr: TransactionResult =>
           tr.getFeeCharged.getInt64 mustEqual 100
           tr.getExt.getDiscriminant mustEqual 0
           tr.getResult.getDiscriminant mustEqual TransactionResultCode.txSUCCESS
@@ -56,7 +56,7 @@ class TransactionRespSpec extends Specification with ArbitraryInput with DomainM
       TransactionPostResp("", 1, "", "", "AAAAAAAAAAEAAAACAAAAAAAACVIAAAAAAAAAAPV0vlN3VR04WFNx2dsyXUyxlcIhv99+eHwdMjqmf" +
         "MHaAAAAF0h26AAAAAlSAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAQAACVIAAAAAAAAAAGXNhLrhGtltTwCpmqlarh7" +
         "s1DB2hIkbP//jgzn4Fos/AAHGqAnsV5wAAAk9AAAAAQAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAA").resultMeta must
-        beSuccessfulTry[TransactionMeta].like { case tm: TransactionMeta =>
+        beLike { case tm: TransactionMeta =>
           tm.getDiscriminant mustEqual 0
           tm.getOperations must haveSize(1)
           tm.getOperations.head.getChanges.getLedgerEntryChanges must haveSize(2)

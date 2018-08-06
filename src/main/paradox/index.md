@@ -43,17 +43,15 @@ Submitting a payment.
 
 @@snip [NetworkSpec.scala](../../it/scala/stellar/sdk/SequentialIntegrationSpec.scala) { #payment_example }
 
-For more detailed coverage, continue by reading about @ref:[Queries](queries.md).
-
 
 ## API
 
 Please enjoy the [scaladoc](/api/stellar/sdk) for this release.
 
 
-### Deprecation warning
+> ### Deprecation warning
 
-At this stage, classes and interfaces are likely to be refined. Minor releases may break backwards compatibility
+> At this stage, classes and interfaces are likely to be refined. Minor releases may break backwards compatibility
 with minimal notice until v1.0.0.
 
 
@@ -62,14 +60,13 @@ with minimal notice until v1.0.0.
 Contributions are warmly welcomed. Please feel free to contribute by reporting [issues](https://github.com/Synesso/scala-stellar-sdk/issues)
 you find, or by suggesting changes to the code. Or feel free to add your own features/issues to that list.
 
-## Contact
-
-Let's chat about this on the [Stellar-public Slack](https://stellar-public.slack.com/) #dev channel. My username is [@jem](https://keybase.io/jem).
+Let's chat about any of this on the [Stellar-public Slack](https://stellar-public.slack.com/) #dev channel. My username
+is [@jem](https://keybase.io/jem).
 
 
 @@@ index
 
-* [Queries](queries.md)
 * [Transacting](transacting.md)
+* [Queries](queries.md)
 
 @@@

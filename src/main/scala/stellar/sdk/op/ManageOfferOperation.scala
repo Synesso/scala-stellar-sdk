@@ -12,6 +12,9 @@ sealed trait ManageOfferOperation extends Operation {
   val offerId: Long = 0
 }
 
+/**
+  * Creates an offer in the Stellar network.
+  */
 case class CreateOfferOperation(selling: Amount, buying: Asset, price: Price,
                                 sourceAccount: Option[PublicKeyOps] = None) extends ManageOfferOperation {
 
@@ -30,6 +33,9 @@ case class CreateOfferOperation(selling: Amount, buying: Asset, price: Price,
 
 }
 
+/**
+  * Deletes an offer in the Stellar network.
+  */
 case class DeleteOfferOperation(override val offerId: Long,
                                 selling: Asset, buying: Asset, price: Price,
                                 sourceAccount: Option[PublicKeyOps] = None) extends ManageOfferOperation {
@@ -48,6 +54,9 @@ case class DeleteOfferOperation(override val offerId: Long,
   }
 }
 
+/**
+  * Updates an offer in the Stellar network.
+  */
 case class UpdateOfferOperation(override val offerId: Long,
                                 selling: Amount, buying: Asset, price: Price,
                                 sourceAccount: Option[PublicKeyOps] = None) extends ManageOfferOperation {

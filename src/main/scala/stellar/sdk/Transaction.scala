@@ -9,7 +9,7 @@ import stellar.sdk.ByteArrays._
 import stellar.sdk.TrySeq._
 import stellar.sdk.XDRPrimitives._
 import stellar.sdk.op.Operation
-import stellar.sdk.resp.{AccountResp, TransactionPostResp}
+import stellar.sdk.resp.TransactionPostResp
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
@@ -69,13 +69,6 @@ case class Transaction(source: Account,
 }
 
 object Transaction {
-
-//  def apply(resp: AccountResp,
-//            operations: Seq[Operation] = Nil,
-//            memo: Memo = NoMemo,
-//            timeBounds: Option[TimeBounds] = None,
-//            fee: Option[NativeAmount] = None)(implicit network: Network): Transaction =
-//    Transaction(resp.toAccount, operations, memo, timeBounds, fee)
 
   def fromXDR(txn: XDRTransaction)(implicit network: Network): Try[Transaction] = {
     val account = Account(

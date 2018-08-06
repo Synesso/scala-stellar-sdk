@@ -21,8 +21,14 @@ sealed trait ManageDataOperation extends Operation {
   }
 }
 
+/**
+  * Deletes a Data Entry (name/value pair) for an account.
+  */
 case class DeleteDataOperation(name: String, sourceAccount: Option[PublicKeyOps] = None) extends ManageDataOperation
 
+/**
+  * Creates or updates a Data Entry (name/value pair) for an account.
+  */
 case class WriteDataOperation(name: String, value: String, sourceAccount: Option[PublicKeyOps] = None) extends ManageDataOperation {
   override def toOperationBody: OperationBody = {
     val body = super.toOperationBody

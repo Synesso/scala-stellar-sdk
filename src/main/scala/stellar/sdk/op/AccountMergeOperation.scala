@@ -7,6 +7,9 @@ import stellar.sdk.{KeyPair, PublicKey, PublicKeyOps}
 
 import scala.util.Try
 
+/**
+  * Deletes account and transfers remaining balance to destination account.
+  */
 case class AccountMergeOperation(destination: PublicKeyOps, sourceAccount: Option[PublicKeyOps] = None) extends Operation {
   override def toOperationBody: OperationBody = {
     val body = new OperationBody

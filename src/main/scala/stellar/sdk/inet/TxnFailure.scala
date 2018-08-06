@@ -15,7 +15,7 @@ case class TxnFailure(uri: Uri, status: Int, detail: String, resultCode: Option[
     operationResultCodes.map(_.mkString(",")).map(" - " + _).getOrElse("")
   }") {
 
-  def result: Option[TransactionResult] = resultXDR.map(TxResult.decodeXDR).flatMap(_.toOption)
+  def result: Option[TransactionResult] = resultXDR.map(TxResult.decodeXDR)
 }
 
 object TxnFailure {
