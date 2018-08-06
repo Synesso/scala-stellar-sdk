@@ -130,6 +130,8 @@ synesso/scala-stellar-sdk
 
 </div>
 <ul>
+  <li><a href="transacting.html" class="page">Transacting</a></li>
+  <li><a href="queries.html" class="page">Queries</a></li>
 </ul>
 <nav class="md-nav md-nav--secondary">
 <label class="md-nav__title" for="toc">Table of contents</label>
@@ -137,15 +139,14 @@ synesso/scala-stellar-sdk
   <li><a href="index.html#stellar-sdk-for-scala" class="header">Stellar SDK for Scala</a>
   <ul>
     <li><a href="index.html#quick-start" class="header">Quick-start</a></li>
-    <li><a href="index.html#deprecation-warning" class="header">Deprecation warning</a></li>
+    <li><a href="index.html#api" class="header">API</a></li>
     <li><a href="index.html#contributing" class="header">Contributing</a></li>
-    <li><a href="index.html#contact" class="header">Contact</a></li>
   </ul></li>
 </ul>
 </nav>
 
 <div class="md-nav__title--site md-version" title="Version">
-<i class="md-icon">label_outline</i> 0.1.5.5
+<i class="md-icon">label_outline</i> 0.1.6
 </div>
 </nav>
 
@@ -161,9 +162,8 @@ synesso/scala-stellar-sdk
   <li><a href="index.html#stellar-sdk-for-scala" class="header">Stellar SDK for Scala</a>
   <ul>
     <li><a href="index.html#quick-start" class="header">Quick-start</a></li>
-    <li><a href="index.html#deprecation-warning" class="header">Deprecation warning</a></li>
+    <li><a href="index.html#api" class="header">API</a></li>
     <li><a href="index.html#contributing" class="header">Contributing</a></li>
-    <li><a href="index.html#contact" class="header">Contact</a></li>
   </ul></li>
 </ul>
 </nav>
@@ -185,12 +185,12 @@ synesso/scala-stellar-sdk
 </ul>
 <p>The code throughout this documentation is compiled against Scala 2.12.</p>
 <h2><a href="#quick-start" name="quick-start" class="anchor"><span class="anchor-link"></span></a>Quick-start</h2>
-<p>Add the SDK via your dependency management tool.</p><dl class="dependency"><dt>sbt</dt><dd><pre class="prettyprint"><code class="language-scala">libraryDependencies += "io.github.synesso" % "scala-stellar-sdk" % "0.1.5.5"</code></pre></dd><dt>Maven</dt><dd><pre class="prettyprint"><code class="language-xml">&lt;dependency&gt;
+<p>Add the SDK via your dependency management tool.</p><dl class="dependency"><dt>sbt</dt><dd><pre class="prettyprint"><code class="language-scala">libraryDependencies += "io.github.synesso" % "scala-stellar-sdk" % "0.1.6"</code></pre></dd><dt>Maven</dt><dd><pre class="prettyprint"><code class="language-xml">&lt;dependency&gt;
   &lt;groupId&gt;io.github.synesso&lt;/groupId&gt;
   &lt;artifactId&gt;scala-stellar-sdk&lt;/artifactId&gt;
-  &lt;version&gt;0.1.5.5&lt;/version&gt;
+  &lt;version&gt;0.1.6&lt;/version&gt;
 &lt;/dependency&gt;</code></pre></dd><dt>Gradle</dt><dd><pre class="prettyprint"><code class="language-gradle">dependencies {
-  compile group: 'io.github.synesso', name: 'scala-stellar-sdk', version: '0.1.5.5'
+  compile group: 'io.github.synesso', name: 'scala-stellar-sdk', version: '0.1.6'
 }</code></pre></dd></dl>
 <p>Creating an account on the public test network.</p>
 <pre class="prettyprint"><code class="language-scala">val kp = KeyPair.random
@@ -205,17 +205,16 @@ val nextSeqNo: Future[Long] = account.map(_.sequenceNumber)</code></pre><a href=
     .add(PaymentOperation(payeePublicKey, Amount.lumens(5000)))
     .sign(payerKeyPair)
     .submit()
-} yield response</code></pre><a href="https://github.com/Synesso/scala-stellar-sdk/tree/master/src/it/scala/stellar/sdk/SequentialIntegrationSpec.scala#L404-L410">Full source at GitHub</a>
-<h2><a href="#deprecation-warning" name="deprecation-warning" class="anchor"><span class="anchor-link"></span></a>Deprecation warning</h2>
-<p>At this stage, classes and interfaces are likely to be refined. Minor releases may break backwards compatibility with minimal notice until v1.0.0.</p>
+} yield response</code></pre><a href="https://github.com/Synesso/scala-stellar-sdk/tree/master/src/it/scala/stellar/sdk/SequentialIntegrationSpec.scala#L408-L414">Full source at GitHub</a>
+<h2><a href="#api" name="api" class="anchor"><span class="anchor-link"></span></a>API</h2>
+<p>Please enjoy the <a href="/api/stellar/sdk">scaladoc</a> for this release.</p>
+<blockquote>
+  <h3><a href="#deprecation-warning" name="deprecation-warning" class="anchor"><span class="anchor-link"></span></a>Deprecation warning</h3>
+  <p>At this stage, classes and interfaces are likely to be refined. Minor releases may break backwards compatibility with minimal notice until v1.0.0.</p>
+</blockquote>
 <h2><a href="#contributing" name="contributing" class="anchor"><span class="anchor-link"></span></a>Contributing</h2>
 <p>Contributions are warmly welcomed. Please feel free to contribute by reporting <a href="https://github.com/Synesso/scala-stellar-sdk/issues">issues</a> you find, or by suggesting changes to the code. Or feel free to add your own features/issues to that list.</p>
-<h2><a href="#contact" name="contact" class="anchor"><span class="anchor-link"></span></a>Contact</h2>
-<p>Let&rsquo;s chat about this on the <a href="https://stellar-public.slack.com/">Stellar-public Slack</a> #dev channel. My username is <a href="https://keybase.io/jem">@jem</a>.</p>
-<div class="toc main">
-<ul>
-</ul>
-</div>
+<p>Let&rsquo;s chat about any of this on the <a href="https://stellar-public.slack.com/">Stellar-public Slack</a> #dev channel. My username is <a href="https://keybase.io/jem">@jem</a>.</p>
 </div>
 <div>
 <a href="https://github.com/Synesso/scala-stellar-sdk/tree/master/src/main/paradox/index.md" title="Edit this page" class="md-source-file md-edit">
@@ -224,7 +223,7 @@ Edit this page
 </div>
 <div class="print-only">
 <span class="md-source-file md-version">
-0.1.5.5
+0.1.6
 </span>
 </div>
 </article>
@@ -232,6 +231,23 @@ Edit this page
 </div>
 </main>
 <footer class="md-footer">
+<div class="md-footer-nav">
+<nav class="md-footer-nav__inner md-grid">
+<a href="transacting.html" title="Transacting" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
+<div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
+<span class="md-flex__ellipsis">
+<span class="md-footer-nav__direction">
+Next
+</span>
+Transacting
+</span>
+</div>
+<div class="md-flex__cell md-flex__cell--shrink">
+<i class="md-icon md-icon--arrow-forward md-footer-nav__button"></i>
+</div>
+</a>
+</nav>
+</div>
 <div class="md-footer-meta md-typeset">
 <div class="md-footer-meta__inner md-grid">
 <div class="md-footer-copyright">
