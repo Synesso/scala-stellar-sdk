@@ -133,7 +133,7 @@ trait PublicKeyOps {
 
 object KeyPair {
 
-  private val ed25519 = EdDSANamedCurveTable.getByName("ed25519-sha-512")
+  private val ed25519 = EdDSANamedCurveTable.getByName("ed25519")
 
   /**
     * Creates a new Stellar KeyPair from a strkey encoded Stellar secret seed.

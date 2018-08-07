@@ -8,7 +8,7 @@ lazy val commonSettings = Seq(
   scalaVersion := "2.12.6",
   homepage := Some(url("https://github.com/synesso/scala-stellar-sdk")),
   developers := List(
-    Developer("jem", "Jem Mawson", "jem@loftinspace.com.au", url = url("https://keybase.io/jem"))
+    Developer("jem", "Jem Mawson", "jem.mawson@gmail.com", url = url("https://keybase.io/jem"))
   ),
   crossScalaVersions := Seq("2.12.6"),
   scalacOptions ++= Seq(
@@ -30,8 +30,6 @@ lazy val commonSettings = Seq(
   pgpSecretRing := baseDirectory.value / "project" / ".gnupg" / "secring.gpg",
   pgpPassphrase := sys.env.get("PGP_PASS").map(_.toArray)
 )
-
-resolvers += "scala-stellar-sdk-repo" at "https://dl.bintray.com/synesso/mvn"
 
 lazy val root = (project in file("."))
   .enablePlugins(GitVersioning)
@@ -55,7 +53,6 @@ lazy val root = (project in file("."))
       .withRepository(url("https://github.com/synesso/scala-stellar-sdk").toURI)
       .withSocial(uri("https://github.com/synesso"), uri("https://keybase.io/jem"))
       .withoutSearch()
-      // .withGoogleAnalytics() // todo
     }
   ).configs(IntegrationTest)
   .settings(
@@ -64,7 +61,7 @@ lazy val root = (project in file("."))
     target in Compile in doc := target.value / "paradox" / "site" / "main" / "api",
     libraryDependencies ++= List(
       "commons-codec" % "commons-codec" % "1.11",
-      "net.i2p.crypto" % "eddsa" % "4.0.0",
+      "net.i2p.crypto" % "eddsa" % "0.3.0",
       "com.softwaremill.sttp" %% "akka-http-backend" % "1.1.5",
       "com.softwaremill.sttp" %% "core" % "1.1.5",
       "com.softwaremill.sttp" %% "json4s" % "1.1.5",
