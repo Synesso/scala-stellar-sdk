@@ -43,6 +43,7 @@ Submitting a payment.
 
 @@snip [NetworkSpec.scala](../../it/scala/stellar/sdk/SequentialIntegrationSpec.scala) { #payment_example }
 
+For more detailed coverage, continue by reading about @ref:[Transacting](transacting.md).
 
 ## API
 

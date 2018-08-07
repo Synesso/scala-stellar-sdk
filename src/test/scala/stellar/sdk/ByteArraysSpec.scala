@@ -6,6 +6,8 @@ import org.scalacheck.Gen
 import org.specs2.mutable.Specification
 import stellar.sdk.ByteArrays._
 
+import scala.util.Try
+
 class ByteArraysSpec extends Specification with ArbitraryInput {
 
   "padding a byte array" should {
@@ -33,11 +35,12 @@ class ByteArraysSpec extends Specification with ArbitraryInput {
 
   "sha256" should {
     "hash correctly" >> {
-      sha256("今日は世界".getBytes).map(new BigInteger(1, _).toString(16).toUpperCase) must
-        beSuccessfulTry("72C2CC3C678D77939435E5AE0A0EF2B83D6A42AFB221EA15CD736CB122B23989")
+      val hash = sha256("今日は世界".getBytes)
+      new BigInteger(1, hash).toString(16).toUpperCase mustEqual
+        "72C2CC3C678D77939435E5AE0A0EF2B83D6A42AFB221EA15CD736CB122B23989"
     }
     "hash anything" >> prop { bs: Array[Byte] =>
-      sha256(bs) must beSuccessfulTry[Array[Byte]]
+      Try(sha256(bs)) must beSuccessfulTry[Array[Byte]]
     }
   }
 

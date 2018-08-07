@@ -211,7 +211,7 @@ trait DomainMatchers extends AnyMatchers with MustExpectations with SequenceMatc
   def beEquivalentTo(other: Transaction): Matcher[Transaction] = beLike {
     case txn =>
       txn.source must beEquivalentTo(other.source)
-      txn.memo mustEqual other.memo
+      txn.memo must beEquivalentTo(other.memo)
       txn.timeBounds mustEqual other.timeBounds
       forall(txn.operations.zip(other.operations)) {
         case (txnOp: Operation, otherOp: Operation) =>

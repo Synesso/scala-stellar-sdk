@@ -13,7 +13,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 trait Network extends LazyLogging {
   val passphrase: String
-  lazy val networkId: Array[Byte] = sha256(passphrase.getBytes(UTF_8)).get
+  lazy val networkId: Array[Byte] = sha256(passphrase.getBytes(UTF_8))
   val horizon: HorizonAccess
 
   /**

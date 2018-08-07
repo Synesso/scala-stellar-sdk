@@ -6,13 +6,11 @@ import java.nio.ByteBuffer
 import org.stellar.sdk.xdr.Transaction.TransactionExt
 import org.stellar.sdk.xdr.{DecoratedSignature, EnvelopeType, TransactionEnvelope, XdrDataOutputStream, Transaction => XDRTransaction}
 import stellar.sdk.ByteArrays._
-import stellar.sdk.TrySeq._
 import stellar.sdk.XDRPrimitives._
 import stellar.sdk.op.Operation
 import stellar.sdk.resp.TransactionPostResp
 
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.Try
 
 case class Transaction(source: Account,
                        operations: Seq[Operation] = Nil,
@@ -36,13 +34,12 @@ case class Transaction(source: Account,
   }
 
   def sign(key: KeyPair, otherKeys: KeyPair*): SignedTransaction = {
-    for {
-      h <- hash
-      signatures <- sequence((key +: otherKeys).map(_.signToXDR(h)))
-    } yield SignedTransaction(this, signatures, h)
-  }.get
+    val h = hash
+    val signatures = (key +: otherKeys).map(_.signToXDR(h))
+    SignedTransaction(this, signatures, h)
+  }
 
-  def hash: Try[Array[Byte]] = sha256 {
+  def hash: Array[Byte] = sha256 {
     val os = new ByteArrayOutputStream
     os.write(network.networkId)
     os.write(EnvelopeTypeTx)
@@ -66,21 +63,36 @@ case class Transaction(source: Account,
     timeBounds.map(_.toXDR).foreach(txn.setTimeBounds)
     txn
   }
+
+  def encodeXDR: String = {
+    val baos = new ByteArrayOutputStream
+    val os = new XdrDataOutputStream(baos)
+    org.stellar.sdk.xdr.Transaction.encode(os, toXDR)
+    base64(baos.toByteArray)
+  }
+
 }
 
 object Transaction {
 
-  def fromXDR(txn: XDRTransaction)(implicit network: Network): Try[Transaction] = {
+  def fromXDR(txn: XDRTransaction)(implicit network: Network): Transaction = {
     val account = Account(
       KeyPair.fromXDRPublicKey(txn.getSourceAccount.getAccountID),
       txn.getSeqNum.getSequenceNumber.getUint64
     )
-    for {
-      operations <- TrySeq.sequence(txn.getOperations.map(Operation.fromXDR))
-      memo = Memo.fromXDR(txn.getMemo)
-      timeBounds = Option(txn.getTimeBounds).map(TimeBounds.fromXDR)
-      fee = Some(NativeAmount(txn.getFee.getUint32.longValue.toInt))
-    } yield Transaction(account, operations, memo, timeBounds, fee)
+    val operations = TrySeq.sequence(txn.getOperations.map(Operation.fromXDR)).get
+    val memo = Memo.fromXDR(txn.getMemo)
+    val timeBounds = Option(txn.getTimeBounds).map(TimeBounds.fromXDR)
+    val fee = Some(NativeAmount(txn.getFee.getUint32.longValue.toInt))
+    Transaction(account, operations, memo, timeBounds, fee)
+  }
+
+  /**
+    * Decodes an unsigned transaction from base64-encoded XDR.
+    */
+  def decodeXDR(base64: String)(implicit network: Network): Transaction = {
+    val xdrIn = XDRPrimitives.inputStream(base64)
+    fromXDR(org.stellar.sdk.xdr.Transaction.decode(xdrIn))
   }
 }
 
@@ -90,35 +102,36 @@ case class SignedTransaction(transaction: Transaction, signatures: Seq[Decorated
     transaction.network.submit(this)
   }
 
-  def sign(key: KeyPair): Try[SignedTransaction] = key.signToXDR(hash).map(sig =>
-    this.copy(signatures = sig +: signatures)
-  )
+  def sign(key: KeyPair): SignedTransaction =
+    this.copy(signatures = key.signToXDR(hash) +: signatures)
 
-  def toEnvelopeXDR: TransactionEnvelope = {
+  def toXDR: TransactionEnvelope = {
     val xdr = new TransactionEnvelope
     xdr.setTx(transaction.toXDR)
     xdr.setSignatures(signatures.toArray)
     xdr
   }
 
-  def toEnvelopeXDRBase64: Try[String] = Try {
+  def encodeXDR: String = {
     val baos = new ByteArrayOutputStream
     val os = new XdrDataOutputStream(baos)
-    TransactionEnvelope.encode(os, toEnvelopeXDR)
+    TransactionEnvelope.encode(os, toXDR)
     base64(baos.toByteArray)
   }
 }
 
 object SignedTransaction {
 
-  def decodeXDR(base64: String)(implicit network: Network): Try[SignedTransaction] = {
+  /**
+    * Decodes a signed transaction (aka envelope) from base64-encoded XDR.
+    */
+  def decodeXDR(base64: String)(implicit network: Network): SignedTransaction = {
     val xdrIn = XDRPrimitives.inputStream(base64)
-    for {
-      envelope <- Try(TransactionEnvelope.decode(xdrIn))
-      txn <- Transaction.fromXDR(envelope.getTx)
-      signatures = envelope.getSignatures
-      hash <- txn.hash
-    } yield SignedTransaction(txn, signatures, hash)
+    val envelope = TransactionEnvelope.decode(xdrIn)
+    val txn = Transaction.fromXDR(envelope.getTx)
+    val signatures = envelope.getSignatures
+    val hash = txn.hash
+    SignedTransaction(txn, signatures, hash)
   }
 
 }

@@ -43,9 +43,9 @@ class Horizon(uri: URI,
 
   def post(txn: SignedTransaction)(implicit ec: ExecutionContext): Future[TransactionPostResp] = {
     logger.debug(s"Posting $txn")
+    val requestUri = uri"$uri/transactions"
     for {
-      envelope <- Future.fromTry(txn.toEnvelopeXDRBase64)
-      requestUri = uri"$uri/transactions"
+      envelope <- Future(txn.encodeXDR)
       response <- sttp.body(Map("tx" -> envelope)).post(requestUri).response(asJson[TransactionPostResp]).send()
     } yield {
       response.body match {

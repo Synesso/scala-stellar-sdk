@@ -3,7 +3,7 @@
 [Transactions](https://www.stellar.org/developers/guides/concepts/transactions.html) are how changes such as payments,
 offers to trade or account creation are made to the network's ledger.
 
-## Creating a Transaction
+## Creating
 
 Every transaction must originate from an existing account on the network and correctly specify the next
 [sequence number](https://www.stellar.org/developers/guides/concepts/accounts.html#sequence-number).
@@ -85,7 +85,17 @@ Additionally, the XDR can be decoded on the fly by calling the relevant convenie
 
 @@snip [NetworkSpec.scala](../../test/scala/stellar/sdk/NetworkSpec.scala) { #transaction_response_example }
 
+## XDR
 
+Transactions can be serialized to a base64-encoding of their XDR form. This is a strictly-defined format for transactions
+that is compatible across all supporting Stellar libraries and tooling. Given this, it is possible to save and load
+transaction state via XDR strings.
 
-## Restoring a Transaction from XDR
+@@snip [NetworkSpec.scala](../../test/scala/stellar/sdk/TransactionSpec.scala) { #xdr_serde_example }
+
+Transactions with signatures are a different data structure (signatures are included in an envelope along with the transaction)
+and need to be decoded via a similar method on `SignedTransaction`.
+
+@@snip [NetworkSpec.scala](../../test/scala/stellar/sdk/TransactionSpec.scala) { #xdr_signed_serde_example }
+
 

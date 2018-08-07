@@ -28,7 +28,7 @@ class TransactionSpec extends Specification with ArbitraryInput with DomainMatch
       val expected = transaction.sign(signers.head, signers.tail: _*)
       val actual: SignedTransaction = signers match {
         case Seq(only) => transaction.sign(only)
-        case h +: t => t.foldLeft(transaction.sign(h)) { case (txn, kp) => txn.sign(kp).get }
+        case h +: t => t.foldLeft(transaction.sign(h)) { case (txn, kp) => txn.sign(kp) }
       }
       actual must beEquivalentTo(expected)
     }.setGen2(Gen.nonEmptyListOf(genKeyPair))
@@ -45,7 +45,7 @@ class TransactionSpec extends Specification with ArbitraryInput with DomainMatch
         operations = Seq(CreateAccountOperation(dest, NativeAmount(20000000000L)))
       ).sign(source)
 
-      txn.toEnvelopeXDRBase64 must beSuccessfulTry("AAAAAF7FIiDToW1fOYUFBC0dmyufJbFTOa2GQESGz+S2h5ViAAAAZAAKVaMAAAABAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAA7eBSYbzcL5UKo7oXO24y1ckX+XuCtkDsyNHOp1n1bxAAAAAEqBfIAAAAAAAAAAABtoeVYgAAAEDLki9Oi700N60Lo8gUmEFHbKvYG4QSqXiLIt9T0ru2O5BphVl/jR9tYtHAD+UeDYhgXNgwUxqTEu1WukvEyYcD")
+      txn.encodeXDR mustEqual "AAAAAF7FIiDToW1fOYUFBC0dmyufJbFTOa2GQESGz+S2h5ViAAAAZAAKVaMAAAABAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAA7eBSYbzcL5UKo7oXO24y1ckX+XuCtkDsyNHOp1n1bxAAAAAEqBfIAAAAAAAAAAABtoeVYgAAAEDLki9Oi700N60Lo8gUmEFHbKvYG4QSqXiLIt9T0ru2O5BphVl/jR9tYtHAD+UeDYhgXNgwUxqTEu1WukvEyYcD"
       txn.transaction.source must beEquivalentTo(account)
       txn.transaction.calculatedFee mustEqual NativeAmount(100)
     }
@@ -60,7 +60,7 @@ class TransactionSpec extends Specification with ArbitraryInput with DomainMatch
 
   "a signed transaction" should {
     "serialise to xdr" >> prop { (t: Transaction, signer: KeyPair) =>
-      t.sign(signer).toEnvelopeXDR must haveClass[TransactionEnvelope]
+      t.sign(signer).toXDR must haveClass[TransactionEnvelope]
     }
   }
 
@@ -90,7 +90,7 @@ class TransactionSpec extends Specification with ArbitraryInput with DomainMatch
     }
 
     "ser/de to/from xdr" >> prop { txn: Transaction =>
-      Transaction.fromXDR(txn.toXDR) must beSuccessfulTry[Transaction].like {
+      Transaction.fromXDR(txn.toXDR) must beLike {
         case Transaction(source, ops, memo, timeBounds, fee) =>
           source.publicKey.accountId mustEqual txn.source.publicKey.accountId
           source.sequenceNumber mustEqual txn.source.sequenceNumber
@@ -102,13 +102,29 @@ class TransactionSpec extends Specification with ArbitraryInput with DomainMatch
     }
   }
 
-  "decoding signed transaction from xdr string" should {
-    "be successful using sample data" >> {
+  "decoding transaction from xdr string" should {
+    "be successful for unsigned transactions" >> prop { txn: Transaction =>
+      // #xdr_serde_example
+      val encoded: String = txn.encodeXDR
+      val decoded: Transaction = Transaction.decodeXDR(encoded)
+      decoded must beEquivalentTo(txn)
+      // #xdr_serde_example
+    }
+
+    "be successful for signed transactions" >> prop { signedTxn: SignedTransaction =>
+      // #xdr_signed_serde_example
+      val encoded: String = signedTxn.encodeXDR
+      val decoded: SignedTransaction = SignedTransaction.decodeXDR(encoded)
+      decoded must beEquivalentTo(signedTxn)
+      // #xdr_signed_serde_example
+    }
+
+    "be successful using sample signed data" >> {
       val sample = "AAAAAAEMy3/N735+S8/jcLYweVCmRxnN2QqWCvGGbxlhX5v3AAAAZAB4Dl4AAAADAAAAAAAAAAEAAAAXSGkgWnksIGhlcmVzI" +
         "GFuIGFuZ3BhbyEAAAAAAQAAAAAAAAABAAAAAK5TNRH+gV9qHLIuWk99Epe7OYH6l7cSXKW18R9DFoIDAAAAAAAAAAAAmJaAAAAAAAAAAAFhX" +
         "5v3AAAAQHx9LVy0EsDozAxndsy+D6E2bWmTAMmnhLoFqf2FfoRAMXjC9BW16ZQlOR+wWH5PSKnz22QpAxY4gMkJvH8LCwQ="
 
-      SignedTransaction.decodeXDR(sample) must beSuccessfulTry[SignedTransaction].like {
+      SignedTransaction.decodeXDR(sample) must beLike {
         case SignedTransaction(txn, signatures, hash) =>
           txn mustEqual Transaction(
             Account(

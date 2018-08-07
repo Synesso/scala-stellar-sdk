@@ -54,6 +54,7 @@ lazy val root = (project in file("."))
     paradoxMaterialTheme in Compile ~= { _
       .withRepository(url("https://github.com/synesso/scala-stellar-sdk").toURI)
       .withSocial(uri("https://github.com/synesso"), uri("https://keybase.io/jem"))
+      .withoutSearch()
       // .withGoogleAnalytics() // todo
     }
   ).configs(IntegrationTest)

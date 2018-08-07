@@ -19,7 +19,7 @@ class TransactionRespSpec extends Specification with ArbitraryInput with DomainM
       TransactionPostResp("", 1, "AAAAAJYHU4BtUa8ACOZZzHII4+FtEgRa9lBknmI+jQ8MmbfYAAAAZAB16IkAAAABAAAAAAAAAAAAAAABAAAAA" +
         "AAAAAAAAAAAuRsw+AoWiSHa1TWuxE8O0ve5Ytj2JJE1sDrLNJspsxsAAAAAAJiWgAAAAAAAAAABDJm32AAAAEDnDn8POBeTu0v5Hj6VCVB" +
         "KABHtap9ut+HH0+taBQsDPNLA+WXfiwrq1hG5cEQP0qTHG59vkmyjxcejqjz7dPwO", "", "").transaction must
-        beSuccessfulTry[SignedTransaction].like {
+        beLike {
           case SignedTransaction(txn, signatures, hash) =>
             txn.source.publicKey.accountId mustEqual "GCLAOU4ANVI26AAI4ZM4Y4QI4PQW2EQELL3FAZE6MI7I2DYMTG35R35E"
             txn.source.sequenceNumber mustEqual 33188247383310337L

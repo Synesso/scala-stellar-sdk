@@ -12,12 +12,12 @@ class KeyPairSpec extends Specification with ArbitraryInput with DomainMatchers 
 
   "signed data" should {
     "be verified by the signing key" >> prop { msg: String =>
-      keyPair.verify(msg.getBytes, keyPair.sign(msg.getBytes).get) must beTrue
+      keyPair.verify(msg.getBytes, keyPair.sign(msg.getBytes)) must beTrue
     }
 
     "be correct for concrete example" >> {
       val data = "hello world"
-      val actual = keyPair.sign(data.getBytes).get
+      val actual = keyPair.sign(data.getBytes)
       Hex.encodeHex(actual).mkString mustEqual sig
     }
 

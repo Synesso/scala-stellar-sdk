@@ -23,7 +23,7 @@ case class KeyPair(pk: EdDSAPublicKey, sk: EdDSAPrivateKey) extends PublicKeyOps
     * @param data The data to sign.
     * @return signed bytes.
     */
-  def sign(data: Array[Byte]): Try[Array[Byte]] = Try {
+  def sign(data: Array[Byte]): Array[Byte] = {
     val sig = new EdDSAEngine(MessageDigest.getInstance("SHA-512"))
     sig.initSign(sk)
     sig.update(data)
@@ -36,10 +36,9 @@ case class KeyPair(pk: EdDSAPublicKey, sk: EdDSAPrivateKey) extends PublicKeyOps
     * @param data The data to sign.
     * @return signed data in XDR format
     */
-  def signToXDR(data: Array[Byte]): Try[DecoratedSignature] = for {
-    hint <- signatureHint
-    signedData <- sign(data)
-  } yield {
+  def signToXDR(data: Array[Byte]): DecoratedSignature =  {
+    val hint = signatureHint
+    val signedData = sign(data)
     val signature = new org.stellar.sdk.xdr.Signature
     signature.setSignature(signedData)
     val xdr = new DecoratedSignature
@@ -120,7 +119,7 @@ trait PublicKeyOps {
   /**
     * XDR entity derived from this public key for use in signatures
     */
-  val signatureHint: Try[SignatureHint] = Try {
+  val signatureHint: SignatureHint = {
     val pkStream = new ByteArrayOutputStream
     val os = new XdrDataOutputStream(pkStream)
     XDRPublicKey.encode(os, getXDRPublicKey)

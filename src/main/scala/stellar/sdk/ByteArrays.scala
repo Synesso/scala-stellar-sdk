@@ -20,7 +20,7 @@ object ByteArrays {
 
   def trimmedByteArray(bs: Array[Byte]): Array[Byte] = bs.reverse.dropWhile(_ == 0).reverse
 
-  def sha256(bs: Array[Byte]): Try[Array[Byte]] = Try {
+  def sha256(bs: Array[Byte]): Array[Byte] = {
     val md = MessageDigest.getInstance("SHA-256")
     md.update(bs)
     md.digest
