@@ -5,4 +5,8 @@
 
 # Stellar SDK for Scala
 
-Please see the [documentation](https://synesso.github.io/scala-stellar-sdk).
+Please see the [SDK documentation](https://synesso.github.io/scala-stellar-sdk) for details.
+
+## License
+
+This software is licensed under the Apache 2 license.
