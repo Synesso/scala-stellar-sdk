@@ -27,7 +27,7 @@ Add the SDK via your dependency management tool.
 
 @@dependency[sbt,Maven,Gradle] {
   group="$organization$"
-  artifact="$name$"
+  artifact="$name$_2.12"
   version="$version$"
 }
 

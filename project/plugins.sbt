@@ -1,4 +1,4 @@
-addSbtPlugin("com.lightbend.paradox" % "sbt-paradox" % "0.3.5")
+addSbtPlugin("com.lightbend.paradox" % "sbt-paradox" % "0.3.6")
 addSbtPlugin("com.jsuereth" % "sbt-pgp" % "1.1.1")
 addSbtPlugin("com.typesafe.sbt" % "sbt-ghpages" % "0.6.2")
 addSbtPlugin("com.typesafe.sbt" % "sbt-git" % "0.9.3")
