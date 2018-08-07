@@ -47,7 +47,7 @@ For more detailed coverage, continue by reading about @ref:[Transacting](transac
 
 ## API
 
-Please enjoy the [scaladoc](/api/stellar/sdk) for this release.
+Please enjoy the [scaladoc](api/stellar/sdk) for this release.
 
 
 > ### Deprecation warning

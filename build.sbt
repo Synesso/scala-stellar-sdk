@@ -47,7 +47,7 @@ lazy val root = (project in file("."))
       "organization" -> organization.value,
       "version" -> version.value,
       "scalaBinaryVersion" -> scalaBinaryVersion.value,
-      "scaladoc.stellar.base_url" -> "/api"
+      "scaladoc.stellar.base_url" -> "https://synesso.github.io/scala-stellar-sdk/api"
     )
   )
   .enablePlugins(ParadoxMaterialThemePlugin).settings(
