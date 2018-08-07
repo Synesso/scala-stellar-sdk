@@ -748,9 +748,9 @@
       
       <p class="shortcomment cmt">Returns the human readable secret seed encoded in strkey.</p>
     </li><li name="stellar.sdk.KeyPair#sign" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="sign(data:Array[Byte]):scala.util.Try[Array[Byte]]"></a><a id="sign(Array[Byte]):Try[Array[Byte]]"></a>
+      <a id="sign(data:Array[Byte]):Array[Byte]"></a><a id="sign(Array[Byte]):Array[Byte]"></a>
       <span class="permalink">
-      <a href="../../stellar/sdk/KeyPair.html#sign(data:Array[Byte]):scala.util.Try[Array[Byte]]" title="Permalink">
+      <a href="../../stellar/sdk/KeyPair.html#sign(data:Array[Byte]):Array[Byte]" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -759,15 +759,15 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">sign</span><span class="params">(<span name="data">data: <span class="extype" name="scala.Array">Array</span>[<span class="extype" name="scala.Byte">Byte</span>]</span>)</span><span class="result">: <span class="extype" name="scala.util.Try">Try</span>[<span class="extype" name="scala.Array">Array</span>[<span class="extype" name="scala.Byte">Byte</span>]]</span>
+        <span class="name">sign</span><span class="params">(<span name="data">data: <span class="extype" name="scala.Array">Array</span>[<span class="extype" name="scala.Byte">Byte</span>]</span>)</span><span class="result">: <span class="extype" name="scala.Array">Array</span>[<span class="extype" name="scala.Byte">Byte</span>]</span>
       </span>
       
       <p class="shortcomment cmt">Sign the provided data with the private key.</p><div class="fullcomment"><div class="comment cmt"><p>Sign the provided data with the private key.
 </p></div><dl class="paramcmts block"><dt class="param">data</dt><dd class="cmt"><p>The data to sign.</p></dd><dt>returns</dt><dd class="cmt"><p>signed bytes.</p></dd></dl></div>
     </li><li name="stellar.sdk.KeyPair#signToXDR" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="signToXDR(data:Array[Byte]):scala.util.Try[org.stellar.sdk.xdr.DecoratedSignature]"></a><a id="signToXDR(Array[Byte]):Try[DecoratedSignature]"></a>
+      <a id="signToXDR(data:Array[Byte]):org.stellar.sdk.xdr.DecoratedSignature"></a><a id="signToXDR(Array[Byte]):DecoratedSignature"></a>
       <span class="permalink">
-      <a href="../../stellar/sdk/KeyPair.html#signToXDR(data:Array[Byte]):scala.util.Try[org.stellar.sdk.xdr.DecoratedSignature]" title="Permalink">
+      <a href="../../stellar/sdk/KeyPair.html#signToXDR(data:Array[Byte]):org.stellar.sdk.xdr.DecoratedSignature" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -776,15 +776,15 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">signToXDR</span><span class="params">(<span name="data">data: <span class="extype" name="scala.Array">Array</span>[<span class="extype" name="scala.Byte">Byte</span>]</span>)</span><span class="result">: <span class="extype" name="scala.util.Try">Try</span>[<a href="../../org/stellar/sdk/xdr/DecoratedSignature.html" class="extype" name="org.stellar.sdk.xdr.DecoratedSignature">DecoratedSignature</a>]</span>
+        <span class="name">signToXDR</span><span class="params">(<span name="data">data: <span class="extype" name="scala.Array">Array</span>[<span class="extype" name="scala.Byte">Byte</span>]</span>)</span><span class="result">: <a href="../../org/stellar/sdk/xdr/DecoratedSignature.html" class="extype" name="org.stellar.sdk.xdr.DecoratedSignature">DecoratedSignature</a></span>
       </span>
       
       <p class="shortcomment cmt">Sign the provided data with the private key.</p><div class="fullcomment"><div class="comment cmt"><p>Sign the provided data with the private key.
 </p></div><dl class="paramcmts block"><dt class="param">data</dt><dd class="cmt"><p>The data to sign.</p></dd><dt>returns</dt><dd class="cmt"><p>signed data in XDR format</p></dd></dl></div>
     </li><li name="stellar.sdk.PublicKeyOps#signatureHint" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="signatureHint:scala.util.Try[org.stellar.sdk.xdr.SignatureHint]"></a><a id="signatureHint:Try[SignatureHint]"></a>
+      <a id="signatureHint:org.stellar.sdk.xdr.SignatureHint"></a><a id="signatureHint:SignatureHint"></a>
       <span class="permalink">
-      <a href="../../stellar/sdk/KeyPair.html#signatureHint:scala.util.Try[org.stellar.sdk.xdr.SignatureHint]" title="Permalink">
+      <a href="../../stellar/sdk/KeyPair.html#signatureHint:org.stellar.sdk.xdr.SignatureHint" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -793,7 +793,7 @@
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">signatureHint</span><span class="result">: <span class="extype" name="scala.util.Try">Try</span>[<a href="../../org/stellar/sdk/xdr/SignatureHint.html" class="extype" name="org.stellar.sdk.xdr.SignatureHint">SignatureHint</a>]</span>
+        <span class="name">signatureHint</span><span class="result">: <a href="../../org/stellar/sdk/xdr/SignatureHint.html" class="extype" name="org.stellar.sdk.xdr.SignatureHint">SignatureHint</a></span>
       </span>
       
       <p class="shortcomment cmt">XDR entity derived from this public key for use in signatures

@@ -13,7 +13,7 @@
 <meta name="lang:search.result.one" content="1 matching document">
 <meta name="lang:search.result.other" content="# matching documents">
 <meta name="lang:search.language" content="">
-<meta name="lang:search.tokenizer" content="[\s\-]+">
+<meta name="lang:search.tokenizer" content="">
 
 
 <meta name="description" content="scala-stellar-sdk">
@@ -56,30 +56,9 @@ data-md-color-accent="blue"
 Stellar SDK for Scala
 </div>
 </div>
-<div class="md-flex__cell md-flex__cell--shrink">
-<label class="md-icon md-icon--search md-header-nav__button" for="search"></label>
-<div class="md-search" data-md-component="search" role="dialog">
-<label class="md-search__overlay" for="search"></label>
-<div class="md-search__inner">
-<form class="md-search__form" name="search">
-<input type="text" class="md-search__input" name="query" required placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="query">
-<label class="md-icon md-search__icon" for="search"></label>
-<button type="reset" class="md-icon md-search__icon" data-md-component="reset">&#xE5CD;</button>
+<form name="search" style="display: none">
+<input type="text" name="query">
 </form>
-<div class="md-search__output">
-<div class="md-search__scrollwrap" data-md-scrollfix>
-<div class="md-search-result" data-md-component="result">
-<div class="md-search-result__meta">
-Type to start searching
-</div>
-<ol class="md-search-result__list"></ol>
-</div>
-</div>
-</div>
-</div>
-</div>
-
-</div>
 <div class="md-flex__cell md-flex__cell--shrink">
 <div class="md-header-nav__source">
 <a href="https://github.com/synesso/scala-stellar-sdk"
@@ -146,7 +125,7 @@ synesso/scala-stellar-sdk
 </nav>
 
 <div class="md-nav__title--site md-version" title="Version">
-<i class="md-icon">label_outline</i> 0.1.6
+<i class="md-icon">label_outline</i> 0.1.6.1
 </div>
 </nav>
 
@@ -185,12 +164,12 @@ synesso/scala-stellar-sdk
 </ul>
 <p>The code throughout this documentation is compiled against Scala 2.12.</p>
 <h2><a href="#quick-start" name="quick-start" class="anchor"><span class="anchor-link"></span></a>Quick-start</h2>
-<p>Add the SDK via your dependency management tool.</p><dl class="dependency"><dt>sbt</dt><dd><pre class="prettyprint"><code class="language-scala">libraryDependencies += "io.github.synesso" % "scala-stellar-sdk" % "0.1.6"</code></pre></dd><dt>Maven</dt><dd><pre class="prettyprint"><code class="language-xml">&lt;dependency&gt;
+<p>Add the SDK via your dependency management tool.</p><dl class="dependency"><dt>sbt</dt><dd><pre class="prettyprint"><code class="language-scala">libraryDependencies += "io.github.synesso" % "scala-stellar-sdk" % "0.1.6.1"</code></pre></dd><dt>Maven</dt><dd><pre class="prettyprint"><code class="language-xml">&lt;dependency&gt;
   &lt;groupId&gt;io.github.synesso&lt;/groupId&gt;
   &lt;artifactId&gt;scala-stellar-sdk&lt;/artifactId&gt;
-  &lt;version&gt;0.1.6&lt;/version&gt;
+  &lt;version&gt;0.1.6.1&lt;/version&gt;
 &lt;/dependency&gt;</code></pre></dd><dt>Gradle</dt><dd><pre class="prettyprint"><code class="language-gradle">dependencies {
-  compile group: 'io.github.synesso', name: 'scala-stellar-sdk', version: '0.1.6'
+  compile group: 'io.github.synesso', name: 'scala-stellar-sdk', version: '0.1.6.1'
 }</code></pre></dd></dl>
 <p>Creating an account on the public test network.</p>
 <pre class="prettyprint"><code class="language-scala">val kp = KeyPair.random
@@ -206,8 +185,9 @@ val nextSeqNo: Future[Long] = account.map(_.sequenceNumber)</code></pre><a href=
     .sign(payerKeyPair)
     .submit()
 } yield response</code></pre><a href="https://github.com/Synesso/scala-stellar-sdk/tree/master/src/it/scala/stellar/sdk/SequentialIntegrationSpec.scala#L408-L414">Full source at GitHub</a>
+<p>For more detailed coverage, continue by reading about <a href="transacting.html">Transacting</a>.</p>
 <h2><a href="#api" name="api" class="anchor"><span class="anchor-link"></span></a>API</h2>
-<p>Please enjoy the <a href="/api/stellar/sdk">scaladoc</a> for this release.</p>
+<p>Please enjoy the <a href="api/stellar/sdk">scaladoc</a> for this release.</p>
 <blockquote>
   <h3><a href="#deprecation-warning" name="deprecation-warning" class="anchor"><span class="anchor-link"></span></a>Deprecation warning</h3>
   <p>At this stage, classes and interfaces are likely to be refined. Minor releases may break backwards compatibility with minimal notice until v1.0.0.</p>
@@ -223,7 +203,7 @@ Edit this page
 </div>
 <div class="print-only">
 <span class="md-source-file md-version">
-0.1.6
+0.1.6.1
 </span>
 </div>
 </article>
