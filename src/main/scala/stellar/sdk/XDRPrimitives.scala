@@ -50,7 +50,7 @@ object XDRPrimitives {
 
   def seqNum(n: Long): SequenceNumber = {
     val sn = new SequenceNumber
-    sn.setSequenceNumber(uint64(n))
+    sn.setSequenceNumber(int64(n))
     sn
   }
 

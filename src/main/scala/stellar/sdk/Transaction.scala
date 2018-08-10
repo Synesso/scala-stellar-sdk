@@ -78,7 +78,7 @@ object Transaction {
   def fromXDR(txn: XDRTransaction)(implicit network: Network): Transaction = {
     val account = Account(
       KeyPair.fromXDRPublicKey(txn.getSourceAccount.getAccountID),
-      txn.getSeqNum.getSequenceNumber.getUint64
+      txn.getSeqNum.getSequenceNumber.getInt64
     )
     val operations = TrySeq.sequence(txn.getOperations.map(Operation.fromXDR)).get
     val memo = Memo.fromXDR(txn.getMemo)

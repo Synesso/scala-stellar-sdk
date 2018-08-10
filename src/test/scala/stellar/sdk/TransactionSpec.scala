@@ -69,7 +69,7 @@ class TransactionSpec extends Specification with ArbitraryInput with DomainMatch
       val xdr = txn.toXDR
       xdr.getExt.getDiscriminant mustEqual 0
       xdr.getFee.getUint32 mustEqual txn.calculatedFee.units
-      xdr.getSeqNum.getSequenceNumber.getUint64 mustEqual txn.source.sequenceNumber
+      xdr.getSeqNum.getSequenceNumber.getInt64 mustEqual txn.source.sequenceNumber
       xdr.getSourceAccount.getAccountID must beEquivalentTo(txn.source.publicKey.getXDRPublicKey)
       xdr.getMemo must beEquivalentTo(txn.memo.toXDR)
       Option(xdr.getTimeBounds) must beLike {
