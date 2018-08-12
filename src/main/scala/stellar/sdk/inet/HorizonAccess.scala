@@ -26,7 +26,7 @@ trait HorizonAccess {
   def get[T: ClassTag](path: String, params: Map[String, Any] = Map.empty)
                       (implicit ec: ExecutionContext, m: Manifest[T]): Future[T]
 
-  def getStream[T: ClassTag](path: String, de: CustomSerializer[T], params: Map[String, String] = Map.empty)
+  def getStream[T: ClassTag](path: String, de: CustomSerializer[T], cursor: HorizonCursor, order: HorizonOrder, params: Map[String, String] = Map.empty)
                             (implicit ec: ExecutionContext, m: Manifest[T]): Future[Stream[T]]
 
   def getPage[T: ClassTag](path: String, params: Map[String, String])
@@ -69,8 +69,18 @@ class Horizon(uri: URI,
     }
   }
 
-  def getStream[T: ClassTag](path: String, de: CustomSerializer[T], params: Map[String, String] = Map.empty)
+  def getStream[T: ClassTag](path: String, de: CustomSerializer[T], cursor: HorizonCursor, order: HorizonOrder, params: Map[String, String] = Map.empty)
                             (implicit ec: ExecutionContext, m: Manifest[T]): Future[Stream[T]] = {
+
+    val cursorParam = cursor match {
+      case Now => "now"
+      case Record(r) => r.toString
+    }
+    val orderParam = order match {
+      case Asc => "asc"
+      case Desc => "desc"
+    }
+    val allParams = params ++ Map("cursor" -> cursorParam) ++ Map("order" -> orderParam)
 
     implicit val inner = de
 
@@ -92,7 +102,7 @@ class Horizon(uri: URI,
       }
     }
 
-    (getPage(path, params): Future[Page[T]]).map { p0: Page[T] => stream(p0.xs, next(p0)) }
+    (getPage(path, allParams): Future[Page[T]]).map { p0: Page[T] => stream(p0.xs, next(p0)) }
   }
 
   def getPage[T: ClassTag](path: String, params: Map[String, String])
