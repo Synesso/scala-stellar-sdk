@@ -119,6 +119,14 @@
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../index.html" class="extype" name="stellar.sdk">sdk</a></dd></dl></div>
     </li><li class="current-entities indented3">
                         <span class="separator"></span>
+                        <a class="object" href="Asc$.html" title=""></a>
+                        <a href="Asc$.html" title="">Asc</a>
+                      </li><li class="current-entities indented3">
+                        <span class="separator"></span>
+                        <a class="object" href="Desc$.html" title=""></a>
+                        <a href="Desc$.html" title="">Desc</a>
+                      </li><li class="current-entities indented3">
+                        <span class="separator"></span>
                         <a class="class" href="Horizon.html" title=""></a>
                         <a href="Horizon.html" title="">Horizon</a>
                       </li><li class="current-entities indented3">
@@ -126,9 +134,25 @@
                         <a class="trait" href="HorizonAccess.html" title=""></a>
                         <a href="HorizonAccess.html" title="">HorizonAccess</a>
                       </li><li class="current-entities indented3">
+                        <span class="separator"></span>
+                        <a class="trait" href="HorizonCursor.html" title=""></a>
+                        <a href="HorizonCursor.html" title="">HorizonCursor</a>
+                      </li><li class="current-entities indented3">
+                        <span class="separator"></span>
+                        <a class="trait" href="HorizonOrder.html" title=""></a>
+                        <a href="HorizonOrder.html" title="">HorizonOrder</a>
+                      </li><li class="current-entities indented3">
+                        <span class="separator"></span>
+                        <a class="object" href="Now$.html" title=""></a>
+                        <a href="Now$.html" title="">Now</a>
+                      </li><li class="current-entities indented3">
                         <a class="object" href="Page$.html" title=""></a>
                         <a class="class" href="Page.html" title="A page of results"></a>
                         <a href="Page.html" title="A page of results">Page</a>
+                      </li><li class="current-entities indented3">
+                        <span class="separator"></span>
+                        <a class="class" href="Record.html" title=""></a>
+                        <a href="Record.html" title="">Record</a>
                       </li><li class="current-entities indented3">
                         <a class="object" href="TxnFailure$.html" title=""></a>
                         <a class="class" href="TxnFailure.html" title=""></a>
@@ -260,6 +284,38 @@
       </span>
       
       
+    </li><li name="stellar.sdk.inet.HorizonCursor" visbl="pub" class="indented0 " data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="HorizonCursorextendsAnyRef"></a><a id="HorizonCursor:HorizonCursor"></a>
+      <span class="permalink">
+      <a href="../../../stellar/sdk/inet/index.html#HorizonCursorextendsAnyRef" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier">sealed </span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a title="" href="HorizonCursor.html"><span class="name">HorizonCursor</span></a><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+      </span>
+      
+      
+    </li><li name="stellar.sdk.inet.HorizonOrder" visbl="pub" class="indented0 " data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="HorizonOrderextendsAnyRef"></a><a id="HorizonOrder:HorizonOrder"></a>
+      <span class="permalink">
+      <a href="../../../stellar/sdk/inet/index.html#HorizonOrderextendsAnyRef" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier">sealed </span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a title="" href="HorizonOrder.html"><span class="name">HorizonOrder</span></a><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+      </span>
+      
+      
     </li><li name="stellar.sdk.inet.Page" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="Page[T]extendsProductwithSerializable"></a><a id="Page[T]:Page[T]"></a>
       <span class="permalink">
@@ -277,6 +333,22 @@
       
       <p class="shortcomment cmt">A page of results
 </p>
+    </li><li name="stellar.sdk.inet.Record" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="RecordextendsHorizonCursorwithProductwithSerializable"></a><a id="Record:Record"></a>
+      <span class="permalink">
+      <a href="../../../stellar/sdk/inet/index.html#RecordextendsHorizonCursorwithProductwithSerializable" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a title="" href="Record.html"><span class="name">Record</span></a><span class="params">(<span name="value">value: <span class="extype" name="scala.Long">Long</span></span>)</span><span class="result"> extends <a href="HorizonCursor.html" class="extype" name="stellar.sdk.inet.HorizonCursor">HorizonCursor</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      
+      
     </li><li name="stellar.sdk.inet.TxnFailure" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="TxnFailureextendsExceptionwithProductwithSerializable"></a><a id="TxnFailure:TxnFailure"></a>
       <span class="permalink">
@@ -301,7 +373,39 @@
         <div class="values members">
               <h3>Value Members</h3>
               <ol>
-                <li name="stellar.sdk.inet.HorizonAccess" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+                <li name="stellar.sdk.inet.Asc" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="Asc"></a><a id="Asc:Asc"></a>
+      <span class="permalink">
+      <a href="../../../stellar/sdk/inet/index.html#Asc" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a title="" href="Asc$.html"><span class="name">Asc</span></a><span class="result"> extends <a href="HorizonOrder.html" class="extype" name="stellar.sdk.inet.HorizonOrder">HorizonOrder</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      
+      
+    </li><li name="stellar.sdk.inet.Desc" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="Desc"></a><a id="Desc:Desc"></a>
+      <span class="permalink">
+      <a href="../../../stellar/sdk/inet/index.html#Desc" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a title="" href="Desc$.html"><span class="name">Desc</span></a><span class="result"> extends <a href="HorizonOrder.html" class="extype" name="stellar.sdk.inet.HorizonOrder">HorizonOrder</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      
+      
+    </li><li name="stellar.sdk.inet.HorizonAccess" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="HorizonAccess"></a><a id="HorizonAccess:HorizonAccess"></a>
       <span class="permalink">
       <a href="../../../stellar/sdk/inet/index.html#HorizonAccess" title="Permalink">
@@ -314,6 +418,22 @@
       </span>
       <span class="symbol">
         <a title="" href="HorizonAccess$.html"><span class="name">HorizonAccess</span></a>
+      </span>
+      
+      
+    </li><li name="stellar.sdk.inet.Now" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="Now"></a><a id="Now:Now"></a>
+      <span class="permalink">
+      <a href="../../../stellar/sdk/inet/index.html#Now" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a title="" href="Now$.html"><span class="name">Now</span></a><span class="result"> extends <a href="HorizonCursor.html" class="extype" name="stellar.sdk.inet.HorizonCursor">HorizonCursor</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       
       

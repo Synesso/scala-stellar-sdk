@@ -119,6 +119,14 @@
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../index.html" class="extype" name="stellar.sdk">sdk</a></dd></dl></div>
     </li><li class="current-entities indented3">
                         <span class="separator"></span>
+                        <a class="object" href="Asc$.html" title=""></a>
+                        <a href="Asc$.html" title="">Asc</a>
+                      </li><li class="current-entities indented3">
+                        <span class="separator"></span>
+                        <a class="object" href="Desc$.html" title=""></a>
+                        <a href="Desc$.html" title="">Desc</a>
+                      </li><li class="current-entities indented3">
+                        <span class="separator"></span>
                         <a class="class" href="Horizon.html" title=""></a>
                         <a href="Horizon.html" title="">Horizon</a>
                       </li><li class="current-entities indented3">
@@ -126,9 +134,25 @@
                         <a class="trait" href="" title=""></a>
                         <a href="" title="">HorizonAccess</a>
                       </li><li class="current-entities indented3">
+                        <span class="separator"></span>
+                        <a class="trait" href="HorizonCursor.html" title=""></a>
+                        <a href="HorizonCursor.html" title="">HorizonCursor</a>
+                      </li><li class="current-entities indented3">
+                        <span class="separator"></span>
+                        <a class="trait" href="HorizonOrder.html" title=""></a>
+                        <a href="HorizonOrder.html" title="">HorizonOrder</a>
+                      </li><li class="current-entities indented3">
+                        <span class="separator"></span>
+                        <a class="object" href="Now$.html" title=""></a>
+                        <a href="Now$.html" title="">Now</a>
+                      </li><li class="current-entities indented3">
                         <a class="object" href="Page$.html" title=""></a>
                         <a class="class" href="Page.html" title="A page of results"></a>
                         <a href="Page.html" title="A page of results">Page</a>
+                      </li><li class="current-entities indented3">
+                        <span class="separator"></span>
+                        <a class="class" href="Record.html" title=""></a>
+                        <a href="Record.html" title="">Record</a>
                       </li><li class="current-entities indented3">
                         <a class="object" href="TxnFailure$.html" title=""></a>
                         <a class="class" href="TxnFailure.html" title=""></a>
@@ -255,9 +279,9 @@
       
       
     </li><li name="stellar.sdk.inet.HorizonAccess#getStream" visbl="pub" class="indented0 " data-isabs="true" fullComment="no" group="Ungrouped">
-      <a id="getStream[T](path:String,de:org.json4s.CustomSerializer[T],params:Map[String,String])(implicitevidence$2:scala.reflect.ClassTag[T],implicitec:scala.concurrent.ExecutionContext,implicitm:Manifest[T]):scala.concurrent.Future[Stream[T]]"></a><a id="getStream[T](String,CustomSerializer[T],Map[String,String])(ClassTag[T],ExecutionContext,Manifest[T]):Future[Stream[T]]"></a>
+      <a id="getStream[T](path:String,de:org.json4s.CustomSerializer[T],cursor:stellar.sdk.inet.HorizonCursor,order:stellar.sdk.inet.HorizonOrder,params:Map[String,String])(implicitevidence$2:scala.reflect.ClassTag[T],implicitec:scala.concurrent.ExecutionContext,implicitm:Manifest[T]):scala.concurrent.Future[Stream[T]]"></a><a id="getStream[T](String,CustomSerializer[T],HorizonCursor,HorizonOrder,Map[String,String])(ClassTag[T],ExecutionContext,Manifest[T]):Future[Stream[T]]"></a>
       <span class="permalink">
-      <a href="../../../stellar/sdk/inet/HorizonAccess.html#getStream[T](path:String,de:org.json4s.CustomSerializer[T],params:Map[String,String])(implicitevidence$2:scala.reflect.ClassTag[T],implicitec:scala.concurrent.ExecutionContext,implicitm:Manifest[T]):scala.concurrent.Future[Stream[T]]" title="Permalink">
+      <a href="../../../stellar/sdk/inet/HorizonAccess.html#getStream[T](path:String,de:org.json4s.CustomSerializer[T],cursor:stellar.sdk.inet.HorizonCursor,order:stellar.sdk.inet.HorizonOrder,params:Map[String,String])(implicitevidence$2:scala.reflect.ClassTag[T],implicitec:scala.concurrent.ExecutionContext,implicitm:Manifest[T]):scala.concurrent.Future[Stream[T]]" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -266,7 +290,7 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">getStream</span><span class="tparams">[<span name="T">T</span>]</span><span class="params">(<span name="path">path: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="de">de: <span class="extype" name="org.json4s.CustomSerializer">CustomSerializer</span>[<span class="extype" name="stellar.sdk.inet.HorizonAccess.getStream.T">T</span>]</span>, <span name="params">params: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Predef.String">String</span>] = <span class="symbol">Map.empty</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="arg0">arg0: <span class="extype" name="scala.reflect.ClassTag">ClassTag</span>[<span class="extype" name="stellar.sdk.inet.HorizonAccess.getStream.T">T</span>]</span>, <span name="ec">ec: <span class="extype" name="scala.concurrent.ExecutionContext">ExecutionContext</span></span>, <span name="m">m: <span class="extype" name="scala.Predef.Manifest">Manifest</span>[<span class="extype" name="stellar.sdk.inet.HorizonAccess.getStream.T">T</span>]</span>)</span><span class="result">: <span class="extype" name="scala.concurrent.Future">Future</span>[<span class="extype" name="scala.Stream">Stream</span>[<span class="extype" name="stellar.sdk.inet.HorizonAccess.getStream.T">T</span>]]</span>
+        <span class="name">getStream</span><span class="tparams">[<span name="T">T</span>]</span><span class="params">(<span name="path">path: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="de">de: <span class="extype" name="org.json4s.CustomSerializer">CustomSerializer</span>[<span class="extype" name="stellar.sdk.inet.HorizonAccess.getStream.T">T</span>]</span>, <span name="cursor">cursor: <a href="HorizonCursor.html" class="extype" name="stellar.sdk.inet.HorizonCursor">HorizonCursor</a></span>, <span name="order">order: <a href="HorizonOrder.html" class="extype" name="stellar.sdk.inet.HorizonOrder">HorizonOrder</a></span>, <span name="params">params: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Predef.String">String</span>] = <span class="symbol">Map.empty</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="arg0">arg0: <span class="extype" name="scala.reflect.ClassTag">ClassTag</span>[<span class="extype" name="stellar.sdk.inet.HorizonAccess.getStream.T">T</span>]</span>, <span name="ec">ec: <span class="extype" name="scala.concurrent.ExecutionContext">ExecutionContext</span></span>, <span name="m">m: <span class="extype" name="scala.Predef.Manifest">Manifest</span>[<span class="extype" name="stellar.sdk.inet.HorizonAccess.getStream.T">T</span>]</span>)</span><span class="result">: <span class="extype" name="scala.concurrent.Future">Future</span>[<span class="extype" name="scala.Stream">Stream</span>[<span class="extype" name="stellar.sdk.inet.HorizonAccess.getStream.T">T</span>]]</span>
       </span>
       
       

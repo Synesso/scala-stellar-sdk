@@ -125,7 +125,7 @@ synesso/scala-stellar-sdk
 </nav>
 
 <div class="md-nav__title--site md-version" title="Version">
-<i class="md-icon">label_outline</i> 0.1.6.1
+<i class="md-icon">label_outline</i> 0.1.7
 </div>
 </nav>
 
@@ -164,19 +164,19 @@ synesso/scala-stellar-sdk
 </ul>
 <p>The code throughout this documentation is compiled against Scala 2.12.</p>
 <h2><a href="#quick-start" name="quick-start" class="anchor"><span class="anchor-link"></span></a>Quick-start</h2>
-<p>Add the SDK via your dependency management tool.</p><dl class="dependency"><dt>sbt</dt><dd><pre class="prettyprint"><code class="language-scala">libraryDependencies += "io.github.synesso" %% "scala-stellar-sdk" % "0.1.6.1"</code></pre></dd><dt>Maven</dt><dd><pre class="prettyprint"><code class="language-xml">&lt;dependency&gt;
+<p>Add the SDK via your dependency management tool.</p><dl class="dependency"><dt>sbt</dt><dd><pre class="prettyprint"><code class="language-scala">libraryDependencies += "io.github.synesso" %% "scala-stellar-sdk" % "0.1.7"</code></pre></dd><dt>Maven</dt><dd><pre class="prettyprint"><code class="language-xml">&lt;dependency&gt;
   &lt;groupId&gt;io.github.synesso&lt;/groupId&gt;
-  &lt;artifactId&gt;scala-stellar-sdk&lt;/artifactId&gt;
-  &lt;version&gt;0.1.6.1&lt;/version&gt;
+  &lt;artifactId&gt;scala-stellar-sdk_2.12&lt;/artifactId&gt;
+  &lt;version&gt;0.1.7&lt;/version&gt;
 &lt;/dependency&gt;</code></pre></dd><dt>Gradle</dt><dd><pre class="prettyprint"><code class="language-gradle">dependencies {
-  compile group: 'io.github.synesso', name: 'scala-stellar-sdk', version: '0.1.6.1'
+  compile group: 'io.github.synesso', name: 'scala-stellar-sdk_2.12', version: '0.1.7'
 }</code></pre></dd></dl>
 <p>Creating an account on the public test network.</p>
 <pre class="prettyprint"><code class="language-scala">val kp = KeyPair.random
-val response = TestNetwork.fund(kp)</code></pre><a href="https://github.com/Synesso/scala-stellar-sdk/tree/master/src/it/scala/stellar/sdk/SessionTestAccount.scala#L14-L15">Full source at GitHub</a>
+val response = TestNetwork.fund(kp)</code></pre><a href="https://github.com/Synesso/scala-stellar-sdk/tree/v0.1.7/src/it/scala/stellar/sdk/SessionTestAccount.scala#L14-L15">Full source at GitHub</a>
 <p>Fetching the details of an account.</p>
 <pre class="prettyprint"><code class="language-scala">val account: Future[Account] = TestNetwork.account(kp).map(_.toAccount)
-val nextSeqNo: Future[Long] = account.map(_.sequenceNumber)</code></pre><a href="https://github.com/Synesso/scala-stellar-sdk/tree/master/src/it/scala/stellar/sdk/SequentialIntegrationSpec.scala#L47-L48">Full source at GitHub</a>
+val nextSeqNo: Future[Long] = account.map(_.sequenceNumber)</code></pre><a href="https://github.com/Synesso/scala-stellar-sdk/tree/v0.1.7/src/it/scala/stellar/sdk/SequentialIntegrationSpec.scala#L47-L48">Full source at GitHub</a>
 <p>Submitting a payment.</p>
 <pre class="prettyprint"><code class="language-scala">for {
   sourceAccount &lt;- TestNetwork.account(payerKeyPair)
@@ -184,7 +184,7 @@ val nextSeqNo: Future[Long] = account.map(_.sequenceNumber)</code></pre><a href=
     .add(PaymentOperation(payeePublicKey, Amount.lumens(5000)))
     .sign(payerKeyPair)
     .submit()
-} yield response</code></pre><a href="https://github.com/Synesso/scala-stellar-sdk/tree/master/src/it/scala/stellar/sdk/SequentialIntegrationSpec.scala#L408-L414">Full source at GitHub</a>
+} yield response</code></pre><a href="https://github.com/Synesso/scala-stellar-sdk/tree/v0.1.7/src/it/scala/stellar/sdk/SequentialIntegrationSpec.scala#L408-L414">Full source at GitHub</a>
 <p>For more detailed coverage, continue by reading about <a href="transacting.html">Transacting</a>.</p>
 <h2><a href="#api" name="api" class="anchor"><span class="anchor-link"></span></a>API</h2>
 <p>Please enjoy the <a href="api/stellar/sdk">scaladoc</a> for this release.</p>
@@ -203,7 +203,7 @@ Edit this page
 </div>
 <div class="print-only">
 <span class="md-source-file md-version">
-0.1.6.1
+0.1.7
 </span>
 </div>
 </article>
