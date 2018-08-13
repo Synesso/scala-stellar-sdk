@@ -426,6 +426,10 @@ class NetworkSpec(implicit ee: ExecutionEnv) extends Specification with Arbitrar
       // stream of all assets from all issuers
       val allAssets: Future[Stream[AssetResp]] = TestNetwork.assets()
 
+      // stream of the last 20 assets created
+      val last20Assets =
+        TestNetwork.assets(cursor = Now, order = Desc).map(_.take(20))
+
       // stream of assets with the code HUG
       val hugAssets: Future[Stream[AssetResp]] = TestNetwork.assets(code = Some("HUG"))
 
@@ -440,6 +444,24 @@ class NetworkSpec(implicit ee: ExecutionEnv) extends Specification with Arbitrar
       ok
     }
 
+    "be present for effects" >> {
+      // #effect_query_examples
+      // stream of all effects
+      val allEffects: Future[Stream[EffectResp]] = TestNetwork.effects()
+
+      // stream of the last 20 effects
+      val last20Effects =
+        TestNetwork.effects(cursor = Now, order = Desc).map(_.take(20))
+
+      // stream of effects related to a specific account
+      val effectsForAccount = TestNetwork.effectsByAccount(publicKey)
+
+      // stream of effects for a specific ledger
+      val effectsForLedger = TestNetwork.effectsByLedger(1234)
+      // #effect_query_examples
+      ok
+    }
+
     "be present for ledgers" >> {
       // #ledger_query_examples
       // details of a specific ledger
@@ -447,14 +469,23 @@ class NetworkSpec(implicit ee: ExecutionEnv) extends Specification with Arbitrar
 
       // stream of all ledgers
       val ledgers: Future[Stream[LedgerResp]] = TestNetwork.ledgers()
+
+      // stream of the last 20 ledgers
+      val last20Ledgers =
+        TestNetwork.ledgers(cursor = Now, order = Desc).map(_.take(20))
       // #ledger_query_examples
       ok
     }
 
     "be present for offers" >> {
       // #offer_query_examples
+      // all offers for a specified account
       val offersByAccount: Future[Stream[OfferResp]] =
         TestNetwork.offersByAccount(publicKey)
+
+      // most recent offers from a specified account
+      val last20Offers = TestNetwork
+        .offersByAccount(publicKey, order = Desc, cursor = Now).map(_.take(20))
       // #offer_query_examples
       ok
     }

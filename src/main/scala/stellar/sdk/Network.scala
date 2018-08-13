@@ -38,8 +38,10 @@ trait Network extends LazyLogging {
 
   /**
     * Fetch a stream of assets, optionally filtered by code, issuer or neither
-    * @param code optional code to filter by
-    * @param issuer optional issuer account to filter by
+    * @param code optional code to filter by (defaults to `None`)
+    * @param issuer optional issuer account to filter by (defaults to `None`)
+    * @param cursor optional record id to start results from (defaults to `0`)
+    * @param order  optional order to sort results by (defaults to `Asc`)
     * @see [[https://www.stellar.org/developers/horizon/reference/endpoints/assets-all.html endpoint doc]]
     */
   def assets(code: Option[String] = None, issuer: Option[PublicKeyOps] = None, cursor: HorizonCursor = Record(0), order: HorizonOrder = Asc)(implicit ec: ExecutionContext):
@@ -50,6 +52,8 @@ trait Network extends LazyLogging {
 
   /**
     * Fetch a stream of effects.
+    * @param cursor optional record id to start results from (defaults to `0`)
+    * @param order  optional order to sort results by (defaults to `Asc`)
     * @see [[https://www.stellar.org/developers/horizon/reference/endpoints/effects-all.html endpoint doc]]
     */
   def effects(cursor: HorizonCursor = Record(0), order: HorizonOrder = Asc)(implicit ec: ExecutionContext): Future[Stream[EffectResp]] =
@@ -57,6 +61,8 @@ trait Network extends LazyLogging {
 
   /**
     * Fetch a stream of effects for a given account.
+    * @param cursor optional record id to start results from (defaults to `0`)
+    * @param order  optional order to sort results by (defaults to `Asc`)
     * @see [[https://www.stellar.org/developers/horizon/reference/endpoints/effects-for-account.html endpoint doc]]
     */
   def effectsByAccount(account: PublicKeyOps, cursor: HorizonCursor = Record(0), order: HorizonOrder = Asc)(implicit ec: ExecutionContext):
@@ -65,6 +71,8 @@ trait Network extends LazyLogging {
 
   /**
     * Fetch a stream of effects for a given ledger.
+    * @param cursor optional record id to start results from (defaults to `0`)
+    * @param order  optional order to sort results by (defaults to `Asc`)
     * @see [[https://www.stellar.org/developers/horizon/reference/endpoints/effects-for-ledger.html endpoint doc]]
     */
   def effectsByLedger(ledgerId: Long, cursor: HorizonCursor = Record(0), order: HorizonOrder = Asc)(implicit ec: ExecutionContext):
@@ -73,6 +81,8 @@ trait Network extends LazyLogging {
 
   /**
     * Fetch a stream of details about ledgers.
+    * @param cursor optional record id to start results from (defaults to `0`)
+    * @param order  optional order to sort results by (defaults to `Asc`)
     * @see [[https://www.stellar.org/developers/horizon/reference/endpoints/ledgers-all.html endpoint doc]]
     */
   def ledgers(cursor: HorizonCursor = Record(0), order: HorizonOrder = Asc)(implicit ec: ExecutionContext): Future[Stream[LedgerResp]] =
@@ -87,6 +97,8 @@ trait Network extends LazyLogging {
 
   /**
     * Fetch a stream of offers for an account.
+    * @param cursor optional record id to start results from (defaults to `0`)
+    * @param order  optional order to sort results by (defaults to `Asc`)
     * @see [[https://www.stellar.org/developers/horizon/reference/endpoints/offers-for-account.html endpoint doc]]
     */
   def offersByAccount(account: PublicKeyOps, cursor: HorizonCursor = Record(0), order: HorizonOrder = Asc)(implicit ex: ExecutionContext):
@@ -102,6 +114,8 @@ trait Network extends LazyLogging {
 
   /**
     * Fetch a stream of operations.
+    * @param cursor optional record id to start results from (defaults to `0`)
+    * @param order  optional order to sort results by (defaults to `Asc`)
     * @see [[https://www.stellar.org/developers/horizon/reference/endpoints/operations-all.html endpoint doc]]
     */
   def operations(cursor: HorizonCursor = Record(0), order: HorizonOrder = Asc)(implicit ex: ExecutionContext): Future[Stream[Transacted[Operation]]] =
@@ -109,6 +123,8 @@ trait Network extends LazyLogging {
 
   /**
     * Fetch a stream of operations, filtered by account.
+    * @param cursor optional record id to start results from (defaults to `0`)
+    * @param order  optional order to sort results by (defaults to `Asc`)
     * @see [[https://www.stellar.org/developers/horizon/reference/endpoints/operations-for-account.html endpoint doc]]
     */
   def operationsByAccount(pubKey: PublicKeyOps, cursor: HorizonCursor = Record(0), order: HorizonOrder = Asc)(implicit ex: ExecutionContext):
@@ -117,6 +133,8 @@ trait Network extends LazyLogging {
 
   /**
     * Fetch a stream of operations, filtered by ledger id.
+    * @param cursor optional record id to start results from (defaults to `0`)
+    * @param order  optional order to sort results by (defaults to `Asc`)
     * @see [[https://www.stellar.org/developers/horizon/reference/endpoints/operations-for-ledger.html endpoint doc]]
     */
   def operationsByLedger(ledgerId: Long, cursor: HorizonCursor = Record(0), order: HorizonOrder = Asc)(implicit ex: ExecutionContext):
@@ -125,6 +143,8 @@ trait Network extends LazyLogging {
 
   /**
     * Fetch a stream of operations, filtered by transaction hash.
+    * @param cursor optional record id to start results from (defaults to `0`)
+    * @param order  optional order to sort results by (defaults to `Asc`)
     * @see [[https://www.stellar.org/developers/horizon/reference/endpoints/operations-for-transaction.html endpoint doc]]
     */
   def operationsByTransaction(txnHash: String, cursor: HorizonCursor = Record(0), order: HorizonOrder = Asc)(implicit ex: ExecutionContext):
@@ -143,6 +163,8 @@ trait Network extends LazyLogging {
 
   /**
     * Fetch a stream of payment operations.
+    * @param cursor optional record id to start results from (defaults to `0`)
+    * @param order  optional order to sort results by (defaults to `Asc`)
     * @see [[https://www.stellar.org/developers/horizon/reference/endpoints/payments-all.html endpoint doc]]
     */
   def payments(cursor: HorizonCursor = Record(0), order: HorizonOrder = Asc)(implicit ex: ExecutionContext):
@@ -152,6 +174,8 @@ trait Network extends LazyLogging {
 
   /**
     * Fetch a stream of payment operations filtered by account.
+    * @param cursor optional record id to start results from (defaults to `0`)
+    * @param order  optional order to sort results by (defaults to `Asc`)
     * @see [[https://www.stellar.org/developers/horizon/reference/endpoints/payments-for-account.html endpoint doc]]
     */
   def paymentsByAccount(pubKey: PublicKeyOps, cursor: HorizonCursor = Record(0), order: HorizonOrder = Asc)(implicit ex: ExecutionContext):
@@ -161,6 +185,8 @@ trait Network extends LazyLogging {
 
   /**
     * Fetch a stream of payment operations filtered by ledger id.
+    * @param cursor optional record id to start results from (defaults to `0`)
+    * @param order  optional order to sort results by (defaults to `Asc`)
     * @see [[https://www.stellar.org/developers/horizon/reference/endpoints/payments-for-ledger.html endpoint doc]]
     */
   def paymentsByLedger(ledgerId: Long, cursor: HorizonCursor = Record(0), order: HorizonOrder = Asc)(implicit ex: ExecutionContext):
@@ -170,6 +196,8 @@ trait Network extends LazyLogging {
 
   /**
     * Fetch a stream of payment operations filtered by transaction hash.
+    * @param cursor optional record id to start results from (defaults to `0`)
+    * @param order  optional order to sort results by (defaults to `Asc`)
     * @see [[https://www.stellar.org/developers/horizon/reference/endpoints/operations-for-transaction.html endpoint doc]]
     */
   def paymentsByTransaction(txnHash: String, cursor: HorizonCursor = Record(0), order: HorizonOrder = Asc)(implicit ex: ExecutionContext):
@@ -179,6 +207,8 @@ trait Network extends LazyLogging {
 
   /**
     * Fetch a stream of trades
+    * @param cursor optional record id to start results from (defaults to `0`)
+    * @param order  optional order to sort results by (defaults to `Asc`)
     * @see [[https://www.stellar.org/developers/horizon/reference/endpoints/trades.html endpoint doc]]
     */
   def trades(cursor: HorizonCursor = Record(0), order: HorizonOrder = Asc)(implicit ex: ExecutionContext): Future[Stream[Trade]] =
@@ -186,6 +216,8 @@ trait Network extends LazyLogging {
 
   /**
     * Fetch a stream of trades filtered by orderbook
+    * @param cursor optional record id to start results from (defaults to `0`)
+    * @param order  optional order to sort results by (defaults to `Asc`)
     * @see [[https://www.stellar.org/developers/horizon/reference/endpoints/trades.html endpoint doc]]
     */
   def tradesByOrderBook(base: Asset, counter: Asset, cursor: HorizonCursor = Record(0), order: HorizonOrder = Asc)(implicit ex: ExecutionContext):
@@ -196,6 +228,8 @@ trait Network extends LazyLogging {
 
   /**
     * Fetch a stream of trades filtered by offer id
+    * @param cursor optional record id to start results from (defaults to `0`)
+    * @param order  optional order to sort results by (defaults to `Asc`)
     * @see [[https://www.stellar.org/developers/horizon/reference/endpoints/trades.html endpoint doc]]
     */
   def tradesByOfferId(offerId: Long, cursor: HorizonCursor = Record(0), order: HorizonOrder = Asc)(implicit ex: ExecutionContext):
@@ -206,6 +240,8 @@ trait Network extends LazyLogging {
 
   /**
     * Fetch a stream of transactions
+    * @param cursor optional record id to start results from (defaults to `0`)
+    * @param order  optional order to sort results by (defaults to `Asc`)
     * @see [[https://www.stellar.org/developers/horizon/reference/endpoints/transactions-all.html endpoint doc]]
     */
   def transactions(cursor: HorizonCursor = Record(0), order: HorizonOrder = Asc)(implicit ex: ExecutionContext): Future[Stream[TransactionHistoryResp]] = {
@@ -214,6 +250,8 @@ trait Network extends LazyLogging {
 
   /**
     * Fetch a stream of transactions affecting a given account
+    * @param cursor optional record id to start results from (defaults to `0`)
+    * @param order  optional order to sort results by (defaults to `Asc`)
     * @see [[https://www.stellar.org/developers/horizon/reference/endpoints/transactions-for-account.html endpoint doc]]
     */
   def transactionsByAccount(pubKey: PublicKeyOps, cursor: HorizonCursor = Record(0), order: HorizonOrder = Asc)(implicit ex: ExecutionContext):
@@ -223,6 +261,8 @@ trait Network extends LazyLogging {
 
   /**
     * Fetch a stream of transactions for a given ledger
+    * @param cursor optional record id to start results from (defaults to `0`)
+    * @param order  optional order to sort results by (defaults to `Asc`)
     * @see [[https://www.stellar.org/developers/horizon/reference/endpoints/transactions-for-ledger.html endpoint doc]]
     */
   def transactionsByLedger(sequenceId: Long, cursor: HorizonCursor = Record(0), order: HorizonOrder = Asc)(implicit ex: ExecutionContext):
