@@ -120,6 +120,14 @@ class NetworkSpec(implicit ee: ExecutionEnv) extends Specification with Arbitrar
       network.effectsByAccount(account, Now, Desc) mustEqual expected
     }
 
+    "fetch effects by operation" >> prop { operationId: Long =>
+      val network = new MockNetwork
+      val response = mock[Stream[EffectResp]]
+      val expected = Future(response)
+      network.horizon.getStream[EffectResp](s"/operations/$operationId/effects", EffectRespDeserializer, Record(0), Asc) returns expected
+      network.effectsByOperation(operationId) mustEqual expected
+    }.setGen(Gen.posNum[Long])
+
     "fetch effects by ledger" >> prop { ledgerId: Long =>
       val network = new MockNetwork
       val response = mock[Stream[EffectResp]]
@@ -455,6 +463,10 @@ class NetworkSpec(implicit ee: ExecutionEnv) extends Specification with Arbitrar
 
       // stream of effects related to a specific account
       val effectsForAccount = TestNetwork.effectsByAccount(publicKey)
+
+      // stream of effects related to a specific operation id
+      val effectsForOperationId: Future[Stream[EffectResp]] =
+        TestNetwork.effectsByOperation(123L)
 
       // stream of effects for a specific ledger
       val effectsForLedger = TestNetwork.effectsByLedger(1234)
