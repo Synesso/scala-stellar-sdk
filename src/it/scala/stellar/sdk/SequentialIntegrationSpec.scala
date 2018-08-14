@@ -123,6 +123,18 @@ class SequentialIntegrationSpec(implicit ee: ExecutionEnv) extends Specification
         )
       )).awaitFor(10.seconds)
     }
+
+    "filter effects by transaction hash" >> {
+      val byTransaction = PublicNetwork.effectsByTransaction("233ce5d17477706e097f72ae1c46241f4586ad1476d191119d46a93e88b9d3fa").map(_.toList)
+      byTransaction must beEqualTo(Seq(
+        EffectAccountCredited("0070009259709968385-0000000001", KeyPair.fromAccountId("GCT4TTKW2HPCMHM6PJHQ33FIIDCVKIJXLXDHMKQEC7DKHPPGLUKCHKY7"),
+          Amount(28553980000000L, IssuedAsset4("KIN", KeyPair.fromAccountId("GBDEVU63Y6NTHJQQZIKVTC23NWLQVP3WJ2RI2OTSJTNYOIGICST6DUXR")))
+        ),
+        EffectAccountDebited("0070009259709968385-0000000002", KeyPair.fromAccountId("GDBWXSZDYO4C3EHYXRLCGU3NP55LUBEQO5K2RWIWWMXWVI57L7VUWSZA"),
+          Amount(28553980000000L, IssuedAsset4("KIN", KeyPair.fromAccountId("GBDEVU63Y6NTHJQQZIKVTC23NWLQVP3WJ2RI2OTSJTNYOIGICST6DUXR"))),
+        )
+      )).awaitFor(10.seconds)
+    }
   }
 
   "ledger endpoint" should {
