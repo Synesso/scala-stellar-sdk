@@ -152,6 +152,14 @@ class NetworkSpec(implicit ee: ExecutionEnv) extends Specification with Arbitrar
       network.ledger(ledgerId) mustEqual expected
     }.setGen(Gen.posNum[Long])
 
+    "fetch effects by transaction hash" >> prop { txnHash: String =>
+      val network = new MockNetwork
+      val response = mock[Stream[EffectResp]]
+      val expected = Future(response)
+      network.horizon.getStream[EffectResp](s"/transactions/$txnHash/effects", EffectRespDeserializer, Record(0), Asc) returns expected
+      network.effectsByTransaction(txnHash) mustEqual expected
+    }.setGen(genHash)
+
     "fetch offers for an account" >> prop { account: PublicKey =>
       val network = new MockNetwork
       val response = mock[Stream[OfferResp]]
@@ -463,6 +471,10 @@ class NetworkSpec(implicit ee: ExecutionEnv) extends Specification with Arbitrar
 
       // stream of effects related to a specific account
       val effectsForAccount = TestNetwork.effectsByAccount(publicKey)
+
+      // stream of effects related to a specific transaction hash
+      val effectsForTxn: Future[Stream[EffectResp]] =
+        TestNetwork.effectsByTransaction("f00cafe...")
 
       // stream of effects related to a specific operation id
       val effectsForOperationId: Future[Stream[EffectResp]] =
