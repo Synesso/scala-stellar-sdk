@@ -582,6 +582,38 @@
       </span>
       
       <p class="shortcomment cmt">Fetch a stream of effects for a given ledger.</p><div class="fullcomment"><div class="comment cmt"><p>Fetch a stream of effects for a given ledger.</p></div><dl class="paramcmts block"><dt class="param">cursor</dt><dd class="cmt"><p>optional record id to start results from (defaults to <code>0</code>)</p></dd><dt class="param">order</dt><dd class="cmt"><p>optional order to sort results by (defaults to <code>Asc</code>)</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="Network.html" class="extype" name="stellar.sdk.Network">Network</a></dd><dt>See also</dt><dd><span class="cmt"><p><a href="https://www.stellar.org/developers/horizon/reference/endpoints/effects-for-ledger.html" target="_blank">endpoint doc</a></p></span></dd></dl></div>
+    </li><li name="stellar.sdk.Network#effectsByOperation" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="effectsByOperation(operationId:Long,cursor:stellar.sdk.inet.HorizonCursor,order:stellar.sdk.inet.HorizonOrder)(implicitec:scala.concurrent.ExecutionContext):scala.concurrent.Future[Stream[stellar.sdk.resp.EffectResp]]"></a><a id="effectsByOperation(Long,HorizonCursor,HorizonOrder)(ExecutionContext):Future[Stream[EffectResp]]"></a>
+      <span class="permalink">
+      <a href="../../stellar/sdk/TestNetwork$.html#effectsByOperation(operationId:Long,cursor:stellar.sdk.inet.HorizonCursor,order:stellar.sdk.inet.HorizonOrder)(implicitec:scala.concurrent.ExecutionContext):scala.concurrent.Future[Stream[stellar.sdk.resp.EffectResp]]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">effectsByOperation</span><span class="params">(<span name="operationId">operationId: <span class="extype" name="scala.Long">Long</span></span>, <span name="cursor">cursor: <a href="inet/HorizonCursor.html" class="extype" name="stellar.sdk.inet.HorizonCursor">HorizonCursor</a> = <span class="symbol"><span class="name"><a href="../index.html">Record(0)</a></span></span></span>, <span name="order">order: <a href="inet/HorizonOrder.html" class="extype" name="stellar.sdk.inet.HorizonOrder">HorizonOrder</a> = <span class="symbol"><span class="name"><a href="../index.html">Asc</a></span></span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ec">ec: <span class="extype" name="scala.concurrent.ExecutionContext">ExecutionContext</span></span>)</span><span class="result">: <span class="extype" name="scala.concurrent.Future">Future</span>[<span class="extype" name="scala.Stream">Stream</span>[<a href="resp/EffectResp.html" class="extype" name="stellar.sdk.resp.EffectResp">EffectResp</a>]]</span>
+      </span>
+      
+      <p class="shortcomment cmt">Fetch a stream of effects for a given operation.</p><div class="fullcomment"><div class="comment cmt"><p>Fetch a stream of effects for a given operation.</p></div><dl class="paramcmts block"><dt class="param">cursor</dt><dd class="cmt"><p>optional record id to start results from (defaults to <code>0</code>)</p></dd><dt class="param">order</dt><dd class="cmt"><p>optional order to sort results by (defaults to <code>Asc</code>)</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="Network.html" class="extype" name="stellar.sdk.Network">Network</a></dd><dt>See also</dt><dd><span class="cmt"><p><a href="https://www.stellar.org/developers/horizon/reference/endpoints/effects-for-operation.html" target="_blank">endpoint doc</a></p></span></dd></dl></div>
+    </li><li name="stellar.sdk.Network#effectsByTransaction" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="effectsByTransaction(txnHash:String,cursor:stellar.sdk.inet.HorizonCursor,order:stellar.sdk.inet.HorizonOrder)(implicitec:scala.concurrent.ExecutionContext):scala.concurrent.Future[Stream[stellar.sdk.resp.EffectResp]]"></a><a id="effectsByTransaction(String,HorizonCursor,HorizonOrder)(ExecutionContext):Future[Stream[EffectResp]]"></a>
+      <span class="permalink">
+      <a href="../../stellar/sdk/TestNetwork$.html#effectsByTransaction(txnHash:String,cursor:stellar.sdk.inet.HorizonCursor,order:stellar.sdk.inet.HorizonOrder)(implicitec:scala.concurrent.ExecutionContext):scala.concurrent.Future[Stream[stellar.sdk.resp.EffectResp]]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">effectsByTransaction</span><span class="params">(<span name="txnHash">txnHash: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="cursor">cursor: <a href="inet/HorizonCursor.html" class="extype" name="stellar.sdk.inet.HorizonCursor">HorizonCursor</a> = <span class="symbol"><span class="name"><a href="../index.html">Record(0)</a></span></span></span>, <span name="order">order: <a href="inet/HorizonOrder.html" class="extype" name="stellar.sdk.inet.HorizonOrder">HorizonOrder</a> = <span class="symbol"><span class="name"><a href="../index.html">Asc</a></span></span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ec">ec: <span class="extype" name="scala.concurrent.ExecutionContext">ExecutionContext</span></span>)</span><span class="result">: <span class="extype" name="scala.concurrent.Future">Future</span>[<span class="extype" name="scala.Stream">Stream</span>[<a href="resp/EffectResp.html" class="extype" name="stellar.sdk.resp.EffectResp">EffectResp</a>]]</span>
+      </span>
+      
+      <p class="shortcomment cmt">Fetch a stream of effects for a given transaction hash.</p><div class="fullcomment"><div class="comment cmt"><p>Fetch a stream of effects for a given transaction hash.</p></div><dl class="paramcmts block"><dt class="param">cursor</dt><dd class="cmt"><p>optional record id to start results from (defaults to <code>0</code>)</p></dd><dt class="param">order</dt><dd class="cmt"><p>optional order to sort results by (defaults to <code>Asc</code>)</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="Network.html" class="extype" name="stellar.sdk.Network">Network</a></dd><dt>See also</dt><dd><span class="cmt"><p><a href="https://www.stellar.org/developers/horizon/reference/endpoints/effects-for-transaction.html" target="_blank">endpoint doc</a></p></span></dd></dl></div>
     </li><li name="scala.AnyRef#eq" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="eq(x$1:AnyRef):Boolean"></a><a id="eq(AnyRef):Boolean"></a>
       <span class="permalink">
