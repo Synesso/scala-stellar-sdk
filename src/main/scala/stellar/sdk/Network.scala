@@ -87,7 +87,17 @@ trait Network extends LazyLogging {
     */
   def effectsByTransaction(txnHash: String, cursor: HorizonCursor = Record(0), order: HorizonOrder = Asc)(implicit ec: ExecutionContext):
                           Future[Stream[EffectResp]] =
-    horizon.getStream[EffectResp](s"/transactions/${txnHash}/effects", EffectRespDeserializer, cursor, order)
+    horizon.getStream[EffectResp](s"/transactions/$txnHash/effects", EffectRespDeserializer, cursor, order)
+
+
+  /** Fetch a stream of effects for a given operation.
+    * @param cursor optional record id to start results from (defaults to `0`)
+    * @param order  optional order to sort results by (defaults to `Asc`)
+    * @see [[https://www.stellar.org/developers/horizon/reference/endpoints/effects-for-operation.html endpoint doc]]
+    */
+  def effectsByOperation(operationId: Long, cursor: HorizonCursor = Record(0), order: HorizonOrder = Asc)(implicit ec: ExecutionContext):
+                     Future[Stream[EffectResp]] =
+    horizon.getStream[EffectResp](s"/operations/$operationId/effects", EffectRespDeserializer, cursor, order)
 
   /**
     * Fetch a stream of details about ledgers.
