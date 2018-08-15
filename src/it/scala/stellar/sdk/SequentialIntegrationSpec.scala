@@ -131,11 +131,10 @@ class SequentialIntegrationSpec(implicit ee: ExecutionEnv) extends Specification
           Amount(28553980000000L, IssuedAsset4("KIN", KeyPair.fromAccountId("GBDEVU63Y6NTHJQQZIKVTC23NWLQVP3WJ2RI2OTSJTNYOIGICST6DUXR")))
         ),
         EffectAccountDebited("0070009259709968385-0000000002", KeyPair.fromAccountId("GDBWXSZDYO4C3EHYXRLCGU3NP55LUBEQO5K2RWIWWMXWVI57L7VUWSZA"),
-          Amount(28553980000000L, IssuedAsset4("KIN", KeyPair.fromAccountId("GBDEVU63Y6NTHJQQZIKVTC23NWLQVP3WJ2RI2OTSJTNYOIGICST6DUXR"))),
+          Amount(28553980000000L, IssuedAsset4("KIN", KeyPair.fromAccountId("GBDEVU63Y6NTHJQQZIKVTC23NWLQVP3WJ2RI2OTSJTNYOIGICST6DUXR")))
         )
       )).awaitFor(10.seconds)
     }
-  }
 
     "filter effects by operation" >> {
       val byOperation = PublicNetwork.effectsByOperation(70009259709968385L).map(_.toList)
