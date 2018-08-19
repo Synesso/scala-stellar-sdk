@@ -39,18 +39,20 @@ class SequentialIntegrationSpec(implicit ee: ExecutionEnv) extends Specification
             WriteDataOperation("life_universe_everything", "42", Some(accnB)),
             WriteDataOperation("fenton", "FENTON!", Some(accnC)),
             DeleteDataOperation("fenton", Some(accnC)),
-            ChangeTrustOperation(IssuedAmount(1000, Asset("Aardvark", accnA)), Some(accnB)),
-            ChangeTrustOperation(IssuedAmount(1000, Asset("Beaver", accnA)), Some(accnB)),
-            ChangeTrustOperation(IssuedAmount(1000, Asset("Chinchilla", accnA)), Some(accnB)),
-            ChangeTrustOperation(IssuedAmount(1000, Asset("Chinchilla", masterAccountKey)), Some(accnA)),
-            SetOptionsOperation(setFlags = Some(Set(AuthorizationRevocableFlag)), sourceAccount = Some(accnA))
-//            AllowTrustOperation(accnB, "Aardvark", authorize = false, Some(accnA)) // wip
+            SetOptionsOperation(setFlags = Some(Set(AuthorizationRequiredFlag, AuthorizationRevocableFlag)), sourceAccount = Some(accnA)),
+            ChangeTrustOperation(IssuedAmount(100000000, Asset("Aardvark", accnA)), Some(accnB)),
+            ChangeTrustOperation(IssuedAmount(100000000, Asset("Beaver", accnA)), Some(accnB)),
+            ChangeTrustOperation(IssuedAmount(100000000, Asset("Chinchilla", accnA)), Some(accnB)),
+            ChangeTrustOperation(IssuedAmount(100000000, Asset("Chinchilla", masterAccountKey)), Some(accnA)),
+            AllowTrustOperation(accnB, "Aardvark", authorize = true, Some(accnA)),
+            PaymentOperation(accnB, IssuedAmount(555, Asset("Aardvark", accnA)), Some(accnA))
           )).sign(masterAccountKey, accnA, accnB, accnC).submit()
 
-          _ <- Transaction(masterAccount.withIncSeq)
-            .add(AccountMergeOperation(accnB, Some(accnC)))
-            .sign(masterAccountKey, accnC)
-            .submit()
+          _ <- Transaction(masterAccount.withIncSeq, Seq(
+              AccountMergeOperation(accnB, Some(accnC)),
+              CreateOfferOperation(Amount.lumens(3), Asset("Aardvark", accnA), Price(3, 100), Some(accnB)),
+              AllowTrustOperation(accnB, "Aardvark", authorize = false, Some(accnA)) // wip
+            )).sign(masterAccountKey, accnA, accnB, accnC).submit()
 
           accounts <- setupFixtures
 
@@ -100,13 +102,12 @@ class SequentialIntegrationSpec(implicit ee: ExecutionEnv) extends Specification
   }
 
   "asset endpoint" should {
-
     "list all assets" >> {
       val eventualResps = network.assets().map(_.toSeq)
       eventualResps must containTheSameElementsAs(Seq(
-        AssetResp(Asset("Aardvark", accnA), 0, 1, authRequired = false, authRevocable = true),
-        AssetResp(Asset("Beaver", accnA), 0, 1, authRequired = false, authRevocable = true),
-        AssetResp(Asset("Chinchilla", accnA), 0, 1, authRequired = false, authRevocable = true),
+        AssetResp(Asset("Aardvark", accnA), 0, 0, authRequired = true, authRevocable = true),
+        AssetResp(Asset("Beaver", accnA), 0, 0, authRequired = true, authRevocable = true),
+        AssetResp(Asset("Chinchilla", accnA), 0, 0, authRequired = true, authRevocable = true),
         AssetResp(Asset("Chinchilla", masterAccountKey), 0, 1, authRequired = false, authRevocable = false)
       )).awaitFor(10 seconds)
     }
@@ -134,7 +135,7 @@ class SequentialIntegrationSpec(implicit ee: ExecutionEnv) extends Specification
   "effect endpoint" should {
     "parse all effects" >> {
       val effects = network.effects()
-      effects.map(_.size) must beEqualTo(20).awaitFor(10 seconds)
+      effects.map(_.size) must beEqualTo(24).awaitFor(10 seconds)
     }
   }
 

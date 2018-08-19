@@ -51,7 +51,8 @@ trait Network extends LazyLogging {
     * @param order  optional order to sort results by (defaults to `Asc`)
     * @see [[https://www.stellar.org/developers/horizon/reference/endpoints/assets-all.html endpoint doc]]
     */
-  def assets(code: Option[String] = None, issuer: Option[PublicKeyOps] = None, cursor: HorizonCursor = Record(0), order: HorizonOrder = Asc)(implicit ec: ExecutionContext):
+  def assets(code: Option[String] = None, issuer: Option[PublicKeyOps] = None,
+             cursor: HorizonCursor = Record(0), order: HorizonOrder = Asc)(implicit ec: ExecutionContext):
             Future[Stream[AssetResp]] = {
     val params = Seq(code.map("asset_code" -> _), issuer.map("asset_issuer" -> _.accountId)).flatten.toMap
     horizon.getStream[AssetResp](s"/assets", AssetRespDeserializer, cursor, order, params)
