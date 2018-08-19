@@ -60,7 +60,7 @@ class SequentialIntegrationSpec(implicit ee: ExecutionEnv) extends Specification
     }
   }
 
-  val (accountA, accountB) = Await.result(setupFixtures, 1.minute)
+  val (accountA, accountB) = Await.result(setupFixtures, 5 minutes /* for travis */)
 
   "account endpoint" should {
     "fetch account response details" >> {
