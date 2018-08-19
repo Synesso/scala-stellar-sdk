@@ -20,7 +20,11 @@ case class EffectAccountThresholdsUpdated(id: String, account: PublicKeyOps, thr
 
 case class EffectAccountHomeDomainUpdated(id: String, account: PublicKeyOps, domain: String) extends EffectResp
 
-case class EffectAccountFlagsUpdated(id: String, account: PublicKeyOps, authRequiredFlag: Boolean) extends EffectResp
+case class EffectAccountFlagsUpdated(id: String, account: PublicKeyOps) extends EffectResp
+
+case class EffectDataCreated(id: String, account: PublicKeyOps) extends EffectResp
+
+case class EffectDataRemoved(id: String, account: PublicKeyOps) extends EffectResp
 
 case class EffectSignerCreated(id: String, account: PublicKeyOps, weight: Short, publicKey: String) extends EffectResp
 
@@ -87,7 +91,9 @@ object EffectRespDeserializer extends CustomSerializer[EffectResp](format => ( {
         )
         EffectAccountThresholdsUpdated(id, account(), thresholds)
       case "account_home_domain_updated" => EffectAccountHomeDomainUpdated(id, account(), (o \ "home_domain").extract[String])
-      case "account_flags_updated" => EffectAccountFlagsUpdated(id, account(), (o \ "auth_required_flag").extract[Boolean])
+      case "account_flags_updated" => EffectAccountFlagsUpdated(id, account())
+      case "data_created" => EffectDataCreated(id, account())
+      case "data_removed" => EffectDataRemoved(id, account())
       case "signer_created" => EffectSignerCreated(id, account(), weight, (o \ "public_key").extract[String])
       case "signer_updated" => EffectSignerUpdated(id, account(), weight, (o \ "public_key").extract[String])
       case "signer_removed" => EffectSignerRemoved(id, account(), (o \ "public_key").extract[String])

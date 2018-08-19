@@ -67,6 +67,13 @@ class AssetSpec extends Specification with ArbitraryInput {
     }.setGen(genCode(13, 1000))
   }
 
+  "a code with invalid characters" should {
+    "not result in an asset" >> {
+      Try(Asset("Why_Under", KeyPair.random)) must beFailedTry[Asset]
+      Try(Asset("Hi!", KeyPair.random)) must beFailedTry[Asset]
+    }
+  }
+
   "creating an amount with a non-native asset" should {
     "use the specified asset" >> prop { (bal: Long, asset: NonNativeAsset) =>
       Amount(bal, asset).asset mustEqual asset

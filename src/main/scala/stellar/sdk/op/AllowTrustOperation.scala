@@ -10,9 +10,9 @@ import stellar.sdk.{KeyPair, PublicKey, _}
 import scala.util.Try
 
 /**
-  * Updates the “authorized” flag of an existing trust line this is called by the issuer of the related asset.
+  * Updates the “authorized” flag of an existing trust line. This is called by the issuer of the related asset.
   */
-case class AllowTrustOperation(trustor: PublicKey,
+case class AllowTrustOperation(trustor: PublicKeyOps,
                                assetCode: String,
                                authorize: Boolean,
                                sourceAccount: Option[PublicKeyOps] = None) extends Operation {

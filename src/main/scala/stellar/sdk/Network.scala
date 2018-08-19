@@ -10,11 +10,18 @@ import stellar.sdk.op.{Operation, PayOperation, Transacted, TransactedOperationD
 import stellar.sdk.resp._
 
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.{Failure, Success}
 
 trait Network extends LazyLogging {
   val passphrase: String
   lazy val networkId: Array[Byte] = sha256(passphrase.getBytes(UTF_8))
   val horizon: HorizonAccess
+
+  /**
+    * The keypair for the master account for this network
+    */
+  lazy val masterAccount: KeyPair =
+    KeyPair.fromSecretSeed(ByteArrays.sha256(passphrase.getBytes("UTF-8")))
 
   /**
     * Submit the SignedTransaction to the network and eventually receive a TransactionPostResp with the results.
@@ -303,15 +310,21 @@ trait Network extends LazyLogging {
 
 }
 
+/**
+  * A feature on certain networks (notably TestNet) for funding new accounts.
+  */
+trait FriendBot {
+  val horizon: HorizonAccess
+  def fund(pk: PublicKeyOps)(implicit ec: ExecutionContext): Future[TransactionPostResp] =
+    horizon.get[TransactionPostResp]("/friendbot", Map("addr" -> pk.accountId))
+}
+
 case object PublicNetwork extends Network {
   override val passphrase = "Public Global Stellar Network ; September 2015"
   val horizon = new Horizon(URI.create("https://horizon.stellar.org"))
 }
 
-case object TestNetwork extends Network {
+case object TestNetwork extends Network with FriendBot {
   override val passphrase = "Test SDF Network ; September 2015"
   val horizon = new Horizon(URI.create("https://horizon-testnet.stellar.org"))
-
-  def fund(pk: PublicKeyOps)(implicit ec: ExecutionContext): Future[TransactionPostResp] =
-    horizon.get[TransactionPostResp]("/friendbot", Map("addr" -> pk.accountId))
 }

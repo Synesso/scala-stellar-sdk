@@ -13,7 +13,7 @@ case class TxnFailure(uri: Uri, status: Int, detail: String, resultCode: Option[
                       operationResultCodes: Option[Array[String]], resultXDR: Option[String])
   extends Exception(s"Uri: $uri - $detail${resultCode.map(": " + _).getOrElse("")}${
     operationResultCodes.map(_.mkString(",")).map(" - " + _).getOrElse("")
-  }") {
+  }. Result XDR = $resultXDR") {
 
   def result: Option[TransactionResult] = resultXDR.map(TxResult.decodeXDR)
 }

@@ -11,8 +11,10 @@ sealed trait Asset {
 }
 
 object Asset {
-  def apply(code: String, issuer: PublicKeyOps): NonNativeAsset =
+  def apply(code: String, issuer: PublicKeyOps): NonNativeAsset = {
+    require(code.matches("[a-zA-Z0-9]+"), s"Asset code $code does not match [a-zA-Z0-9]+")
     if (code.length <= 4) IssuedAsset4.of(code, issuer) else IssuedAsset12.of(code, issuer)
+  }
 
   def fromXDR(xdr: XDRAsset): Try[Asset] = Try {
     xdr.getDiscriminant match {
@@ -39,7 +41,7 @@ case object NativeAsset extends Asset {
 
 trait NonNativeAsset extends Asset {
   val code: String
-  val issuer: PublicKey
+  val issuer: PublicKeyOps
   val typeString: String
 }
 
@@ -48,7 +50,7 @@ trait NonNativeAsset extends Asset {
   *
   * @see <a href="https://www.stellar.org/developers/learn/concepts/assets.html" target="_blank">Assets</a>
   */
-case class IssuedAsset4 private(code: String, issuer: PublicKey) extends NonNativeAsset {
+case class IssuedAsset4 private(code: String, issuer: PublicKeyOps) extends NonNativeAsset {
   assert(code.nonEmpty, s"Asset's code '$code' cannot be empty")
   assert(code.length <= 4, s"Asset's code '$code' should have length no greater than 4")
 
@@ -77,7 +79,7 @@ object IssuedAsset4 {
   *
   * @see <a href="https://www.stellar.org/developers/learn/concepts/assets.html" target="_blank">Assets</a>
   */
-case class IssuedAsset12 private (code: String, issuer: PublicKey) extends NonNativeAsset {
+case class IssuedAsset12 private (code: String, issuer: PublicKeyOps) extends NonNativeAsset {
   assert(code.length >= 5 && code.length <= 12, s"Asset's code '$code' should have length between 5 & 12 inclusive")
 
   override def toXDR: XDRAsset = {

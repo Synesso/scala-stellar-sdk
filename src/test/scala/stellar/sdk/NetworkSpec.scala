@@ -31,6 +31,12 @@ class NetworkSpec(implicit ee: ExecutionEnv) extends Specification with Arbitrar
   }
 
   "any network" should {
+    "provide access to the master account" >> {
+      val standaloneNetworkAccountId = "GBZXN7PIRZGNMHGA7MUUUF4GWPY5AYPV6LY4UV2GL6VJGIQRXFDNMADI"
+      StandaloneNetwork.masterAccount.accountId mustEqual standaloneNetworkAccountId
+      KeyPair.fromSecretSeed(StandaloneNetwork.masterAccount.secretSeed).accountId  mustEqual standaloneNetworkAccountId
+    }
+
     "submit a signed transaction" >> prop { txn: SignedTransaction =>
       val network = new MockNetwork
       val expected = Future(TransactionPostResp("hash", 1L, "envelopeXDR", "resultXDR", "resultMetaXDR"))
@@ -711,4 +717,3 @@ class NetworkSpec(implicit ee: ExecutionEnv) extends Specification with Arbitrar
     }
   }
 }
-

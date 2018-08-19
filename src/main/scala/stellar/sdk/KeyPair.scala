@@ -47,7 +47,6 @@ case class KeyPair(pk: EdDSAPublicKey, sk: EdDSAPrivateKey) extends PublicKeyOps
     xdr
   }
 
-
   override def toString: String = {
     s"""KeyPair("$accountId", "S...")"""
   }

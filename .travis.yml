@@ -3,7 +3,11 @@ language: scala
 scala:
   - 2.12.6
 
+before_install:
+- sudo apt install -y jq
+
 script:
+  - src/it/bin/stellar_standalone.sh
   - sbt coverage test 'it:testOnly -- timefactor 5' coverageReport
 
 cache:

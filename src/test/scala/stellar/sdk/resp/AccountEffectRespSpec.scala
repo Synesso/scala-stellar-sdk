@@ -86,10 +86,9 @@ class AccountEffectRespSpec extends Specification with ArbitraryInput {
   }
 
   "an account flags updated effect document" should {
-    "parse to an account flags updated effect" >> prop { (id: String, accn: KeyPair, authRequired: Boolean) =>
-      // todo - support all 3 flags, when behaviour is known.  https://stellar.stackexchange.com/questions/429/confusing-effects-after-set-options-transaction
-      val json = doc(id, accn, "account_flags_updated", "auth_required_flag" -> authRequired)
-      parse(json).extract[EffectResp] mustEqual EffectAccountFlagsUpdated(id, accn.asPublicKey, authRequired)
+    "parse to an account flags updated effect" >> prop { (id: String, accn: KeyPair) =>
+      val json = doc(id, accn, "account_flags_updated")
+      parse(json).extract[EffectResp] mustEqual EffectAccountFlagsUpdated(id, accn.asPublicKey)
     }.setGen1(Gen.identifier)
   }
 

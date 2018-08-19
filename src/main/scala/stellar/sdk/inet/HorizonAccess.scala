@@ -17,7 +17,7 @@ import stellar.sdk.{OrderBookDeserializer, SignedTransaction}
 import scala.concurrent.duration._
 import scala.concurrent.{Await, ExecutionContext, Future}
 import scala.reflect.ClassTag
-import scala.util.Try
+import scala.util.{Failure, Success, Try}
 
 
 trait HorizonAccess {
@@ -42,7 +42,7 @@ class Horizon(uri: URI,
     LedgerRespDeserializer + TransactedOperationDeserializer + OrderBookDeserializer + TransactionPostRespDeserializer
 
   def post(txn: SignedTransaction)(implicit ec: ExecutionContext): Future[TransactionPostResp] = {
-    logger.debug(s"Posting $txn")
+    logger.debug(s"Posting {} {}", txn, txn.encodeXDR)
     val requestUri = uri"$uri/transactions"
     for {
       envelope <- Future(txn.encodeXDR)
@@ -58,15 +58,12 @@ class Horizon(uri: URI,
   def get[T: ClassTag](path: String, params: Map[String, Any] = Map.empty)(implicit ec: ExecutionContext, m: Manifest[T]): Future[T] = {
     val uriPath = s"$uri$path"
     val requestUri = uri"$uriPath?$params"
-    logger.debug(s"Getting $requestUri")
-    for {
-      resp <- sttp.get(requestUri).response(asJson[T]).send()
-    } yield {
-      resp.body match {
-        case Right(r) => r
-        case Left(s) => throw TxnFailure(requestUri, s).getOrElse(new RuntimeException(s"Unrecognised response: $s"))
-      }
-    }
+    logger.debug(s"Getting {}", requestUri)
+
+    sttp.get(requestUri).response(asJson[T]).send().map(_.body match {
+      case Left(s) => throw TxnFailure(requestUri, s).getOrElse(new RuntimeException(s"Unrecognised response: $s"))
+      case Right(r) => r
+    })
   }
 
   def getStream[T: ClassTag](path: String, de: CustomSerializer[T], cursor: HorizonCursor, order: HorizonOrder, params: Map[String, String] = Map.empty)
