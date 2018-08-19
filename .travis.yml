@@ -3,13 +3,15 @@ language: scala
 scala:
   - 2.12.6
 
+services:
+  - docker
+
 before_install:
-- sudo apt install -y jq
+  - sudo apt install -y jq
+  - src/it/bin/stellar_standalone.sh
 
 script:
-  - sbt coverage test
-  - src/it/bin/stellar_standalone.sh
-  - sbt 'it:testOnly -- timefactor 10' coverageReport
+  - sbt coverage test 'it:testOnly -- timefactor 10' coverageReport
 
 cache:
   directories:
