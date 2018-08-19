@@ -7,8 +7,9 @@ before_install:
 - sudo apt install -y jq
 
 script:
+  - sbt coverage test
   - src/it/bin/stellar_standalone.sh
-  - sbt coverage test 'it:testOnly -- timefactor 5' coverageReport
+  - sbt 'it:testOnly -- timefactor 10' coverageReport
 
 cache:
   directories:
