@@ -17,7 +17,7 @@ function service_upgraded {
 }
 
 docker stop stellar
-docker run --rm -d -p "5432:5432" -p "8000:8000" -p "11626:11626" --name stellar stellar:v10 --standalone
+docker run --rm -d -p "5432:5432" -p "8000:8000" -p "11626:11626" --name stellar synesso/stellar:v10 --standalone
 while ! container_started; do
   sleep 1
 done
@@ -28,5 +28,3 @@ while ! service_upgraded; do
   sleep 1
 done
 echo "Protocol upgraded"
-
-
