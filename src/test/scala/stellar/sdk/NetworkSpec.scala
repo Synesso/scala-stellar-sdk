@@ -32,7 +32,7 @@ class NetworkSpec(implicit ee: ExecutionEnv) extends Specification with Arbitrar
 
   "any network" should {
     "provide access to the master account" >> {
-      val networkAccountId = "GBZXN7PIRZGNMHGA7MUUUF4GWPY5AYPV6LY4UV2GL6VJGIQRXFDNMADI"
+      val networkAccountId = "GBRPYHIL2CI3FNQ4BXLFMNDLFJUNPU2HY3ZMFSHONUCEOASW7QC7OX2H"
       TestNetwork.masterAccount.accountId mustEqual networkAccountId
       KeyPair.fromSecretSeed(TestNetwork.masterAccount.secretSeed).accountId  mustEqual networkAccountId
     }
