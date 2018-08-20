@@ -4,11 +4,10 @@ import org.specs2.concurrent.ExecutionEnv
 import org.specs2.mutable.Specification
 import stellar.sdk.inet.TxnFailure
 import stellar.sdk.op._
-import stellar.sdk.resp.{AccountResp, AssetResp}
+import stellar.sdk.resp.{AccountResp, AssetResp, TransactionPostResp}
 
 import scala.concurrent.duration._
 import scala.concurrent.{Await, Future}
-import scala.util.Try
 
 /**
   * Requires a newly launched stand-alone instance of stellar.
@@ -24,40 +23,56 @@ class SequentialIntegrationSpec(implicit ee: ExecutionEnv) extends Specification
   val accnB = KeyPair.fromSecretSeed(ByteArrays.sha256("account b".getBytes("UTF-8")))
   val accnC = KeyPair.fromSecretSeed(ByteArrays.sha256("account c".getBytes("UTF-8")))
 
+  val accounts = Set(accnA, accnB, accnC)
+
+  private def transact(ops: Operation*): TransactionPostResp = {
+    val opAccountIds = ops.flatMap(_.sourceAccount).map(_.accountId).toSet
+    val signatories = accounts.filter(a => opAccountIds.contains(a.accountId))
+    val trp = signatories.foldLeft(ops.foldLeft(Transaction(masterAccount))(_ add _).sign(masterAccountKey))(_ sign _)
+        .submit()
+    masterAccount = masterAccount.withIncSeq
+    Await.result(trp, 1 minute)
+  }
+
   private def setupFixtures: Future[(Account, Account)] = {
     val futureAccountA = network.account(accnA).map(_.toAccount)
     val futureAccountB = network.account(accnB).map(_.toAccount)
     futureAccountA.flatMap(a => futureAccountB.map(b => (a, b))).recoverWith {
       // todo - fixtures should include every kind of operation
       case _ => // account details not found, assume fixture setup is required then try again
-        for {
+        // docker container running inside travis has trouble processing non-trivial transactions within timeout.
+        // so, group the operations into smaller transactions.
+        transact(
+          CreateAccountOperation(accnA, Amount.lumens(1000)),
+          CreateAccountOperation(accnB, Amount.lumens(1000)),
+          CreateAccountOperation(accnC, Amount.lumens(1000)),
+          WriteDataOperation("life_universe_everything", "42", Some(accnB)),
+          WriteDataOperation("fenton", "FENTON!", Some(accnC))
+        )
 
-          _ <- Transaction(masterAccount, Seq(
-            CreateAccountOperation(accnA, Amount.lumens(1000)),
-            CreateAccountOperation(accnB, Amount.lumens(1000)),
-            CreateAccountOperation(accnC, Amount.lumens(1000)),
-            WriteDataOperation("life_universe_everything", "42", Some(accnB)),
-            WriteDataOperation("fenton", "FENTON!", Some(accnC)),
-            DeleteDataOperation("fenton", Some(accnC)),
-            SetOptionsOperation(setFlags = Some(Set(AuthorizationRequiredFlag, AuthorizationRevocableFlag)), sourceAccount = Some(accnA)),
-            ChangeTrustOperation(IssuedAmount(100000000, Asset("Aardvark", accnA)), Some(accnB)),
-            ChangeTrustOperation(IssuedAmount(100000000, Asset("Beaver", accnA)), Some(accnB)),
-            ChangeTrustOperation(IssuedAmount(100000000, Asset("Chinchilla", accnA)), Some(accnB)),
-            ChangeTrustOperation(IssuedAmount(100000000, Asset("Chinchilla", masterAccountKey)), Some(accnA)),
-            AllowTrustOperation(accnB, "Aardvark", authorize = true, Some(accnA)),
-            PaymentOperation(accnB, IssuedAmount(555, Asset("Aardvark", accnA)), Some(accnA))
-          )).sign(masterAccountKey, accnA, accnB, accnC).submit()
+        transact(
+          DeleteDataOperation("fenton", Some(accnC)),
+          SetOptionsOperation(setFlags = Some(Set(AuthorizationRequiredFlag, AuthorizationRevocableFlag)), sourceAccount = Some(accnA)),
+          ChangeTrustOperation(IssuedAmount(100000000, Asset("Aardvark", accnA)), Some(accnB)),
+          ChangeTrustOperation(IssuedAmount(100000000, Asset("Beaver", accnA)), Some(accnB)),
+          ChangeTrustOperation(IssuedAmount(100000000, Asset("Chinchilla", accnA)), Some(accnB))
+        )
 
-          _ <- Transaction(masterAccount.withIncSeq, Seq(
-              AccountMergeOperation(accnB, Some(accnC)),
-              CreateOfferOperation(Amount.lumens(3), Asset("Aardvark", accnA), Price(3, 100), Some(accnB)),
-              AllowTrustOperation(accnB, "Aardvark", authorize = false, Some(accnA)) // wip
-            )).sign(masterAccountKey, accnA, accnB, accnC).submit()
+        transact(
+          ChangeTrustOperation(IssuedAmount(100000000, Asset("Chinchilla", masterAccountKey)), Some(accnA)),
+          AllowTrustOperation(accnB, "Aardvark", authorize = true, Some(accnA)),
+          PaymentOperation(accnB, IssuedAmount(555, Asset("Aardvark", accnA)), Some(accnA))
+        )
 
-          accounts <- setupFixtures
+        transact(
+          AccountMergeOperation(accnB, Some(accnC)),
+          CreateOfferOperation(Amount.lumens(3), Asset("Aardvark", accnA), Price(3, 100), Some(accnB)),
+          AllowTrustOperation(accnB, "Aardvark", authorize = false, Some(accnA))
+        )
 
-        } yield accounts
+        setupFixtures
     }
+
   }
 
   val (accountA, accountB) = Await.result(setupFixtures, 5 minutes /* for travis */)

@@ -46,7 +46,9 @@ class Horizon(uri: URI,
     val requestUri = uri"$uri/transactions"
     for {
       envelope <- Future(txn.encodeXDR)
-      response <- sttp.body(Map("tx" -> envelope)).post(requestUri).response(asJson[TransactionPostResp]).send()
+      response <- sttp.body(Map("tx" -> envelope)).post(requestUri)
+        .readTimeout(5 minutes)
+        .response(asJson[TransactionPostResp]).send()
     } yield {
       response.body match {
         case Right(r) => r

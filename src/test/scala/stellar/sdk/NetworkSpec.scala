@@ -32,9 +32,9 @@ class NetworkSpec(implicit ee: ExecutionEnv) extends Specification with Arbitrar
 
   "any network" should {
     "provide access to the master account" >> {
-      val standaloneNetworkAccountId = "GBZXN7PIRZGNMHGA7MUUUF4GWPY5AYPV6LY4UV2GL6VJGIQRXFDNMADI"
-      StandaloneNetwork.masterAccount.accountId mustEqual standaloneNetworkAccountId
-      KeyPair.fromSecretSeed(StandaloneNetwork.masterAccount.secretSeed).accountId  mustEqual standaloneNetworkAccountId
+      val networkAccountId = "GBZXN7PIRZGNMHGA7MUUUF4GWPY5AYPV6LY4UV2GL6VJGIQRXFDNMADI"
+      TestNetwork.masterAccount.accountId mustEqual networkAccountId
+      KeyPair.fromSecretSeed(TestNetwork.masterAccount.secretSeed).accountId  mustEqual networkAccountId
     }
 
     "submit a signed transaction" >> prop { txn: SignedTransaction =>
