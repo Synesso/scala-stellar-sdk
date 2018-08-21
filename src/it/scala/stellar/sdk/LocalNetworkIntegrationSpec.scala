@@ -4,7 +4,7 @@ import org.specs2.concurrent.ExecutionEnv
 import org.specs2.mutable.Specification
 import stellar.sdk.inet.TxnFailure
 import stellar.sdk.op._
-import stellar.sdk.resp.{AccountResp, AssetResp, TransactionPostResp}
+import stellar.sdk.resp.{AccountResp, AssetResp}
 
 import scala.concurrent.duration._
 import scala.concurrent.{Await, Future}
@@ -13,7 +13,9 @@ import scala.concurrent.{Await, Future}
   * Requires a newly launched stand-alone instance of stellar.
   * @see src/it/bin/stellar_standalone.sh
   */
-class SequentialIntegrationSpec(implicit ee: ExecutionEnv) extends Specification with DomainMatchersIT {
+class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specification with DomainMatchersIT {
+
+  private val travis = sys.env.get("TRAVIS").contains("true")
 
   private implicit val network = StandaloneNetwork
   val masterAccountKey = network.masterAccount
@@ -25,13 +27,22 @@ class SequentialIntegrationSpec(implicit ee: ExecutionEnv) extends Specification
 
   val accounts = Set(accnA, accnB, accnC)
 
-  private def transact(ops: Operation*): TransactionPostResp = {
-    val opAccountIds = ops.flatMap(_.sourceAccount).map(_.accountId).toSet
-    val signatories = accounts.filter(a => opAccountIds.contains(a.accountId))
-    val trp = signatories.foldLeft(ops.foldLeft(Transaction(masterAccount))(_ add _).sign(masterAccountKey))(_ sign _)
-        .submit()
-    masterAccount = masterAccount.withIncSeq
-    Await.result(trp, 5 minutes)
+  private def transact(ops: Operation*): Unit = {
+    val batchSize = if (travis) 4 else 100
+    def forReal(batch: Seq[Operation], remaining: Seq[Operation]): Unit = {
+      batch match {
+        case Nil =>
+        case xs =>
+          val opAccountIds = xs.flatMap(_.sourceAccount).map(_.accountId).toSet
+          val signatories = accounts.filter(a => opAccountIds.contains(a.accountId))
+          val signedTransaction = xs.foldLeft(Transaction(masterAccount))(_ add _).sign(masterAccountKey)
+          val trp = signatories.foldLeft(signedTransaction)(_ sign _).submit()
+          Await.result(trp, 5 minutes)
+          masterAccount = masterAccount.withIncSeq
+          forReal(remaining.take(batchSize), remaining.drop(batchSize))
+      }
+    }
+    forReal(ops.take(batchSize), ops.drop(batchSize))
   }
 
   private def setupFixtures: Future[(Account, Account)] = {
@@ -47,18 +58,12 @@ class SequentialIntegrationSpec(implicit ee: ExecutionEnv) extends Specification
           CreateAccountOperation(accnB, Amount.lumens(1000)),
           CreateAccountOperation(accnC, Amount.lumens(1000)),
           WriteDataOperation("life_universe_everything", "42", Some(accnB)),
-          WriteDataOperation("fenton", "FENTON!", Some(accnC))
-        )
-
-        transact(
+          WriteDataOperation("fenton", "FENTON!", Some(accnC)),
           DeleteDataOperation("fenton", Some(accnC)),
           SetOptionsOperation(setFlags = Some(Set(AuthorizationRequiredFlag, AuthorizationRevocableFlag)), sourceAccount = Some(accnA)),
           ChangeTrustOperation(IssuedAmount(100000000, Asset("Aardvark", accnA)), Some(accnB)),
           ChangeTrustOperation(IssuedAmount(100000000, Asset("Beaver", accnA)), Some(accnB)),
-          ChangeTrustOperation(IssuedAmount(100000000, Asset("Chinchilla", accnA)), Some(accnB))
-        )
-
-        transact(
+          ChangeTrustOperation(IssuedAmount(100000000, Asset("Chinchilla", accnA)), Some(accnB)),
           ChangeTrustOperation(IssuedAmount(100000000, Asset("Chinchilla", masterAccountKey)), Some(accnA)),
           AllowTrustOperation(accnB, "Aardvark", authorize = true, Some(accnA)),
           PaymentOperation(accnB, IssuedAmount(555, Asset("Aardvark", accnA)), Some(accnA))
