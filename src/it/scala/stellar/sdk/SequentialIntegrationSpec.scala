@@ -31,7 +31,7 @@ class SequentialIntegrationSpec(implicit ee: ExecutionEnv) extends Specification
     val trp = signatories.foldLeft(ops.foldLeft(Transaction(masterAccount))(_ add _).sign(masterAccountKey))(_ sign _)
         .submit()
     masterAccount = masterAccount.withIncSeq
-    Await.result(trp, 1 minute)
+    Await.result(trp, 5 minutes)
   }
 
   private def setupFixtures: Future[(Account, Account)] = {
