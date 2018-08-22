@@ -1,21 +1,35 @@
 package stellar.sdk
 
+import java.io.File
+
+import com.github.tomakehurst.wiremock.WireMockServer
 import org.specs2.concurrent.ExecutionEnv
 import org.specs2.mutable.Specification
 import stellar.sdk.inet.TxnFailure
 import stellar.sdk.op._
 import stellar.sdk.resp.{AccountResp, AssetResp}
 
+import scala.collection.JavaConverters._
 import scala.concurrent.duration._
 import scala.concurrent.{Await, Future}
+import scala.util.Try
 
 /**
   * Requires a newly launched stand-alone instance of stellar.
   * @see src/it/bin/stellar_standalone.sh
   */
 class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specification with DomainMatchersIT {
+  sequential
 
-  private val travis = sys.env.get("TRAVIS").contains("true")
+  val recordMode = false
+
+  val wiremock = new WireMockServer(8080)
+  wiremock.start()
+  if (recordMode) {
+    require(new File("src/test/resources/mappings").listFiles().isEmpty,
+      "When recording wiremock responses, the old responses must be deleted first.")
+    wiremock.startRecording("http://localhost:8000/")
+  }
 
   private implicit val network = StandaloneNetwork
   val masterAccountKey = network.masterAccount
@@ -28,7 +42,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
   val accounts = Set(accnA, accnB, accnC)
 
   private def transact(ops: Operation*): Unit = {
-    val batchSize = if (travis) 4 else 100
+    val batchSize = 100
     def forReal(batch: Seq[Operation], remaining: Seq[Operation]): Unit = {
       batch match {
         case Nil =>
@@ -66,14 +80,26 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
           ChangeTrustOperation(IssuedAmount(100000000, Asset("Chinchilla", accnA)), Some(accnB)),
           ChangeTrustOperation(IssuedAmount(100000000, Asset("Chinchilla", masterAccountKey)), Some(accnA)),
           AllowTrustOperation(accnB, "Aardvark", authorize = true, Some(accnA)),
+          AllowTrustOperation(accnB, "Beaver", authorize = true, Some(accnA)),
           PaymentOperation(accnB, IssuedAmount(555, Asset("Aardvark", accnA)), Some(accnA))
         )
 
+        // force a transaction boundary between CreateAccount and AccountMerge
         transact(
           AccountMergeOperation(accnB, Some(accnC)),
           CreateOfferOperation(Amount.lumens(3), Asset("Aardvark", accnA), Price(3, 100), Some(accnB)),
+          CreateOfferOperation(Amount.lumens(5), Asset("Beaver", accnA), Price(5, 100), Some(accnB)),
+          CreatePassiveOfferOperation(IssuedAmount(10, Asset("Chinchilla", accnA)), NativeAsset, Price(1, 3), Some(accnA)),
           AllowTrustOperation(accnB, "Aardvark", authorize = false, Some(accnA))
         )
+
+        // force a transaction boundary between Create*Offer and Update/DeleteOffer
+/*
+        transact(
+          UpdateOfferOperation(2, Amount.lumens(5), Asset("Beaver", accnA), Price(1, 5), Some(accnA)),
+          DeleteOfferOperation(3, Asset("Chinchilla", accnA), NativeAsset, Price(1, 3), Some(accnA))
+        )
+*/
 
         setupFixtures
     }
@@ -109,7 +135,8 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
     }
 
     "fetch nothing if no account exists" >> {
-      network.account(KeyPair.random) must throwA[TxnFailure].awaitFor(5.seconds)
+      val kp = KeyPair.fromSecretSeed(ByteArrays.sha256("何物".getBytes("UTF-8")))
+      network.account(kp) must throwA[TxnFailure].awaitFor(5.seconds)
     }
 
     "return the data for an account" >> {
@@ -126,7 +153,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
       val eventualResps = network.assets().map(_.toSeq)
       eventualResps must containTheSameElementsAs(Seq(
         AssetResp(Asset("Aardvark", accnA), 0, 0, authRequired = true, authRevocable = true),
-        AssetResp(Asset("Beaver", accnA), 0, 0, authRequired = true, authRevocable = true),
+        AssetResp(Asset("Beaver", accnA), 0, 1, authRequired = true, authRevocable = true),
         AssetResp(Asset("Chinchilla", accnA), 0, 0, authRequired = true, authRevocable = true),
         AssetResp(Asset("Chinchilla", masterAccountKey), 0, 1, authRequired = false, authRevocable = false)
       )).awaitFor(10 seconds)
@@ -155,7 +182,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
   "effect endpoint" should {
     "parse all effects" >> {
       val effects = network.effects()
-      effects.map(_.size) must beEqualTo(24).awaitFor(10 seconds)
+      effects.map(_.size) must beEqualTo(25).awaitFor(10 seconds)
     }
   }
 
@@ -504,4 +531,21 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
   }
 */
 
+  step {
+    if (recordMode) Try(wiremock.stopRecording.getStubMappings)
+  }
+
 }
+
+/*
+object RewritePortTransformer extends ResponseDefinitionTransformer {
+  override def transform(req: Request, respDef: ResponseDefinition , files: FileSource, params: Parameters) = {
+    ResponseDefinitionBuilder.like(respDef)
+      .withBody{
+        if (respDef.getBody == null) null else respDef.getBody.replaceAll("localhost:8000", "localhost:8080")
+      }.build()
+  }
+
+  override def getName: String = "rewrite_port"
+}
+*/

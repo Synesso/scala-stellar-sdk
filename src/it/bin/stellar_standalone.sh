@@ -16,8 +16,12 @@ function service_upgraded {
     return 1
 }
 
+if [[ "$1" == true ]]; then
+  db_port='-p 5432:5432'
+fi
+
 docker stop stellar
-docker run --rm -d -p "8000:8000" -p "11626:11626" --name stellar synesso/stellar:v10 --standalone
+docker run --rm -d -p "8000:8000" -p "11626:11626" $db_port --name stellar synesso/stellar:v10 --standalone
 while ! container_started; do
   sleep 1
 done
@@ -28,3 +32,4 @@ while ! service_upgraded; do
   sleep 1
 done
 echo "Protocol upgraded"
+docker logs stellar

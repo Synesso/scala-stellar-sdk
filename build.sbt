@@ -69,7 +69,8 @@ lazy val root = (project in file("."))
       "ch.qos.logback" % "logback-classic" % "1.2.3",
       "org.specs2" %% "specs2-core" % "4.3.2" % "test,it",
       "org.specs2" %% "specs2-mock" % "4.3.2" % "test",
-      "org.specs2" %% "specs2-scalacheck" % "4.3.2" % "test"
+      "org.specs2" %% "specs2-scalacheck" % "4.3.2" % "test",
+      "com.github.tomakehurst" % "wiremock" % "2.18.0" % "it"
     )
   )
 

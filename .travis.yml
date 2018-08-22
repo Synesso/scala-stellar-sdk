@@ -6,10 +6,6 @@ scala:
 services:
   - docker
 
-before_install:
-  - sudo apt install -y jq
-  - src/it/bin/stellar_standalone.sh
-
 script:
   - sbt coverage test 'it:testOnly -- timefactor 10' coverageReport
 

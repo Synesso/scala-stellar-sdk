@@ -10,5 +10,5 @@ import stellar.sdk.inet.{Horizon, HorizonAccess}
   */
 object StandaloneNetwork extends Network with FriendBot {
   override val passphrase: String = "Standalone Network ; February 2017"
-  override val horizon: HorizonAccess = new Horizon(URI.create("http://localhost:8000"))
+  override val horizon: HorizonAccess = new Horizon(URI.create("http://localhost:8080")) // actually the address of wiremock
 }

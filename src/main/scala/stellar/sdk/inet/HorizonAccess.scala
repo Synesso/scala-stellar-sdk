@@ -84,7 +84,8 @@ class Horizon(uri: URI,
     implicit val inner = de
 
     def next(p: Page[T]): Future[Option[Page[T]]] =
-      (getPageAbsoluteUri(uri"${p.nextLink}"): Future[Page[T]]).map(Some(_)).recover { case e: TxnFailure => None }
+      (getPageAbsoluteUri(uri"${p.nextLink}".copy(port = Some(uri.getPort))): Future[Page[T]]).map(Some(_))
+        .recover { case e: TxnFailure => None }
 
     def stream(ts: Seq[T], maybeNextPage: Future[Option[Page[T]]]): Stream[T] = {
       ts match {

@@ -1,0 +1,20 @@
+{
+  "id" : "17ee7a59-c672-405d-9af5-249a0a249dcb",
+  "name" : "assets",
+  "request" : {
+    "url" : "/%2Fassets?asset_code=Chinchilla&cursor=0&order=asc&limit=100",
+    "method" : "GET"
+  },
+  "response" : {
+    "status" : 301,
+    "body" : "<a href=\"/assets?asset_code=Chinchilla&amp;cursor=0&amp;order=asc&amp;limit=100\">Moved Permanently</a>.\n\n",
+    "headers" : {
+      "Location" : "/assets?asset_code=Chinchilla&cursor=0&order=asc&limit=100",
+      "Date" : "Wed, 22 Aug 2018 11:33:53 GMT",
+      "Content-Type" : "text/html; charset=utf-8"
+    }
+  },
+  "uuid" : "17ee7a59-c672-405d-9af5-249a0a249dcb",
+  "persistent" : true,
+  "insertionIndex" : 17
+}
