@@ -1,0 +1,25 @@
+{
+  "id" : "47f25446-37f3-4ce2-b813-7a284524bf34",
+  "name" : "ledgers_0_effects",
+  "request" : {
+    "url" : "/ledgers/0/effects?cursor=21474840581-1&limit=100&order=asc",
+    "method" : "GET"
+  },
+  "response" : {
+    "status" : 200,
+    "body" : "{\n  \"_links\": {\n    \"self\": {\n      \"href\": \"http://localhost:8000/ledgers/0/effects?cursor=21474840581-1\\u0026limit=100\\u0026order=asc\"\n    },\n    \"next\": {\n      \"href\": \"http://localhost:8000/ledgers/0/effects?cursor=21474840581-1\\u0026limit=100\\u0026order=asc\"\n    },\n    \"prev\": {\n      \"href\": \"http://localhost:8000/ledgers/0/effects?cursor=21474840581-1\\u0026limit=100\\u0026order=desc\"\n    }\n  },\n  \"_embedded\": {\n    \"records\": []\n  }\n}",
+    "headers" : {
+      "Cache-Control" : "no-cache, no-store, max-age=0",
+      "Content-Disposition" : "inline",
+      "Content-Type" : "application/hal+json; charset=utf-8",
+      "Vary" : "Origin",
+      "X-Ratelimit-Limit" : "72000",
+      "X-Ratelimit-Remaining" : "71966",
+      "X-Ratelimit-Reset" : "3578",
+      "Date" : "Thu, 23 Aug 2018 10:21:34 GMT"
+    }
+  },
+  "uuid" : "47f25446-37f3-4ce2-b813-7a284524bf34",
+  "persistent" : true,
+  "insertionIndex" : 35
+}

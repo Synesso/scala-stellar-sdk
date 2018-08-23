@@ -1,5 +1,5 @@
 {
-  "id" : "7c8eb4ff-66f9-4e80-a420-a4de53942433",
+  "id" : "1e89d0c9-b223-4abb-9814-952228a8dfd5",
   "name" : "accounts_gbzxn7pirzgnmhga7muuuf4gwpy5aypv6ly4uv2gl6vjgiqrxfdnmadi",
   "request" : {
     "url" : "/accounts/GBZXN7PIRZGNMHGA7MUUUF4GWPY5AYPV6LY4UV2GL6VJGIQRXFDNMADI",
@@ -14,12 +14,12 @@
       "Content-Type" : "application/hal+json; charset=utf-8",
       "Vary" : "Origin",
       "X-Ratelimit-Limit" : "72000",
-      "X-Ratelimit-Remaining" : "71992",
-      "X-Ratelimit-Reset" : "3591",
-      "Date" : "Thu, 23 Aug 2018 07:58:56 GMT"
+      "X-Ratelimit-Remaining" : "71993",
+      "X-Ratelimit-Reset" : "3592",
+      "Date" : "Thu, 23 Aug 2018 10:21:20 GMT"
     }
   },
-  "uuid" : "7c8eb4ff-66f9-4e80-a420-a4de53942433",
+  "uuid" : "1e89d0c9-b223-4abb-9814-952228a8dfd5",
   "persistent" : true,
   "insertionIndex" : 1
 }

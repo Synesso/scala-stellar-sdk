@@ -1,0 +1,20 @@
+{
+  "id" : "02089f4b-22e8-4713-9e52-4905c4a79352",
+  "name" : "effects",
+  "request" : {
+    "url" : "/%2Feffects?cursor=0&order=asc&limit=100",
+    "method" : "GET"
+  },
+  "response" : {
+    "status" : 301,
+    "body" : "<a href=\"/effects?cursor=0&amp;order=asc&amp;limit=100\">Moved Permanently</a>.\n\n",
+    "headers" : {
+      "Location" : "/effects?cursor=0&order=asc&limit=100",
+      "Date" : "Thu, 23 Aug 2018 10:21:33 GMT",
+      "Content-Type" : "text/html; charset=utf-8"
+    }
+  },
+  "uuid" : "02089f4b-22e8-4713-9e52-4905c4a79352",
+  "persistent" : true,
+  "insertionIndex" : 27
+}

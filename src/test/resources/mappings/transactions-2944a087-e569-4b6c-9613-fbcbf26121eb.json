@@ -1,5 +1,5 @@
 {
-  "id" : "f688500c-cc83-48fd-8bac-ba3dfb4ffc68",
+  "id" : "2944a087-e569-4b6c-9613-fbcbf26121eb",
   "name" : "transactions",
   "request" : {
     "url" : "/transactions",
@@ -18,12 +18,12 @@
       "Content-Type" : "application/hal+json; charset=utf-8",
       "Vary" : "Origin",
       "X-Ratelimit-Limit" : "72000",
-      "X-Ratelimit-Remaining" : "71989",
-      "X-Ratelimit-Reset" : "3591",
-      "Date" : "Thu, 23 Aug 2018 07:58:59 GMT"
+      "X-Ratelimit-Remaining" : "71990",
+      "X-Ratelimit-Reset" : "3592",
+      "Date" : "Thu, 23 Aug 2018 10:21:22 GMT"
     }
   },
-  "uuid" : "f688500c-cc83-48fd-8bac-ba3dfb4ffc68",
+  "uuid" : "2944a087-e569-4b6c-9613-fbcbf26121eb",
   "persistent" : true,
   "insertionIndex" : 4
 }
