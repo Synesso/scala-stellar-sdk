@@ -1,5 +1,5 @@
 {
-  "id" : "0652af4c-d9b0-4185-9589-c0fa26caf9df",
+  "id" : "e71470f9-9fe0-4640-a193-4cafcabcbe3e",
   "name" : "assets",
   "request" : {
     "url" : "/assets?asset_code=Chinchilla&cursor=Chinchilla_GBZXN7PIRZGNMHGA7MUUUF4GWPY5AYPV6LY4UV2GL6VJGIQRXFDNMADI_credit_alphanum12&limit=100&order=asc",
@@ -14,12 +14,12 @@
       "Content-Type" : "application/hal+json; charset=utf-8",
       "Vary" : "Origin",
       "X-Ratelimit-Limit" : "72000",
-      "X-Ratelimit-Remaining" : "71977",
+      "X-Ratelimit-Remaining" : "71976",
       "X-Ratelimit-Reset" : "3579",
-      "Date" : "Wed, 22 Aug 2018 11:33:53 GMT"
+      "Date" : "Thu, 23 Aug 2018 07:20:27 GMT"
     }
   },
-  "uuid" : "0652af4c-d9b0-4185-9589-c0fa26caf9df",
+  "uuid" : "e71470f9-9fe0-4640-a193-4cafcabcbe3e",
   "persistent" : true,
-  "insertionIndex" : 19
+  "insertionIndex" : 49
 }

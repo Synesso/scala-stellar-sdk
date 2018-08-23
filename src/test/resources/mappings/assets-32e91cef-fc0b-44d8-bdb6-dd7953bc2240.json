@@ -1,5 +1,5 @@
 {
-  "id" : "7792ee08-6635-437a-bd5a-e7db2cb63ef6",
+  "id" : "32e91cef-fc0b-44d8-bdb6-dd7953bc2240",
   "name" : "assets",
   "request" : {
     "url" : "/%2Fassets?cursor=0&order=asc&limit=100",
@@ -10,11 +10,11 @@
     "body" : "<a href=\"/assets?cursor=0&amp;order=asc&amp;limit=100\">Moved Permanently</a>.\n\n",
     "headers" : {
       "Location" : "/assets?cursor=0&order=asc&limit=100",
-      "Date" : "Wed, 22 Aug 2018 11:33:52 GMT",
+      "Date" : "Thu, 23 Aug 2018 07:20:27 GMT",
       "Content-Type" : "text/html; charset=utf-8"
     }
   },
-  "uuid" : "7792ee08-6635-437a-bd5a-e7db2cb63ef6",
+  "uuid" : "32e91cef-fc0b-44d8-bdb6-dd7953bc2240",
   "persistent" : true,
-  "insertionIndex" : 14
+  "insertionIndex" : 44
 }

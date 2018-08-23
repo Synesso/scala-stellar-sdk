@@ -1,5 +1,5 @@
 {
-  "id" : "a527c0be-3ecb-46e3-9143-ff860aa9c6da",
+  "id" : "24bac4c3-f0c2-4696-8022-18e83e1e1291",
   "name" : "assets",
   "request" : {
     "url" : "/assets?cursor=Chinchilla_GBZXN7PIRZGNMHGA7MUUUF4GWPY5AYPV6LY4UV2GL6VJGIQRXFDNMADI_credit_alphanum12&limit=100&order=asc",
@@ -14,12 +14,12 @@
       "Content-Type" : "application/hal+json; charset=utf-8",
       "Vary" : "Origin",
       "X-Ratelimit-Limit" : "72000",
-      "X-Ratelimit-Remaining" : "71979",
+      "X-Ratelimit-Remaining" : "71978",
       "X-Ratelimit-Reset" : "3579",
-      "Date" : "Wed, 22 Aug 2018 11:33:52 GMT"
+      "Date" : "Thu, 23 Aug 2018 07:20:27 GMT"
     }
   },
-  "uuid" : "a527c0be-3ecb-46e3-9143-ff860aa9c6da",
+  "uuid" : "24bac4c3-f0c2-4696-8022-18e83e1e1291",
   "persistent" : true,
-  "insertionIndex" : 16
+  "insertionIndex" : 46
 }

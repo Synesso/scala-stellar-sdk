@@ -1,5 +1,5 @@
 {
-  "id" : "35ee9925-293f-401c-859f-212f39ce51d4",
+  "id" : "cb95e1ed-17d8-43f5-80e8-cc661c0b2be5",
   "name" : "assets",
   "request" : {
     "url" : "/assets?asset_issuer=GAAYHQF2PNZ3H6LE5AX3UJSGUR2DQXHHGXYMHF32TDYF2FFPTTOFI3PA&cursor=0&order=asc&limit=100",
@@ -14,12 +14,12 @@
       "Content-Type" : "application/hal+json; charset=utf-8",
       "Vary" : "Origin",
       "X-Ratelimit-Limit" : "72000",
-      "X-Ratelimit-Remaining" : "71976",
+      "X-Ratelimit-Remaining" : "71975",
       "X-Ratelimit-Reset" : "3579",
-      "Date" : "Wed, 22 Aug 2018 11:33:53 GMT"
+      "Date" : "Thu, 23 Aug 2018 07:20:27 GMT"
     }
   },
-  "uuid" : "35ee9925-293f-401c-859f-212f39ce51d4",
+  "uuid" : "cb95e1ed-17d8-43f5-80e8-cc661c0b2be5",
   "persistent" : true,
-  "insertionIndex" : 21
+  "insertionIndex" : 51
 }

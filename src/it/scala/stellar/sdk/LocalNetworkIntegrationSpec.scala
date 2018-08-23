@@ -13,6 +13,7 @@ import scala.collection.JavaConverters._
 import scala.concurrent.duration._
 import scala.concurrent.{Await, Future}
 import scala.util.Try
+import sys.process._
 
 /**
   * Requires a newly launched stand-alone instance of stellar.
@@ -24,10 +25,10 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
   val recordMode = false
 
   val wiremock = new WireMockServer(8080)
+  if (recordMode) require(new File("src/test/resources/mappings").listFiles().forall(_.delete))
   wiremock.start()
   if (recordMode) {
-    require(new File("src/test/resources/mappings").listFiles().isEmpty,
-      "When recording wiremock responses, the old responses must be deleted first.")
+    Seq("src/it/bin/stellar_standalone.sh", "true").!
     wiremock.startRecording("http://localhost:8000/")
   }
 
@@ -94,12 +95,10 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
         )
 
         // force a transaction boundary between Create*Offer and Update/DeleteOffer
-/*
         transact(
-          UpdateOfferOperation(2, Amount.lumens(5), Asset("Beaver", accnA), Price(1, 5), Some(accnA)),
+          UpdateOfferOperation(2, Amount.lumens(5), Asset("Beaver", accnA), Price(1, 5), Some(accnB)),
           DeleteOfferOperation(3, Asset("Chinchilla", accnA), NativeAsset, Price(1, 3), Some(accnA))
         )
-*/
 
         setupFixtures
     }
