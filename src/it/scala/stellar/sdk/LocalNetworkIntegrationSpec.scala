@@ -37,7 +37,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
     case Replay =>
       val s = new WireMockServer(8080)
       s.start()
-      Some(s)
+      None
   }
 
   private implicit val network = StandaloneNetwork(if (recordMode == NoProxy) 8000 else 8080)
