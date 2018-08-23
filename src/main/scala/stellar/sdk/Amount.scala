@@ -13,6 +13,7 @@ trait Amount {
 
 case class NativeAmount(units: Long) extends Amount {
   override val asset: Asset = NativeAsset
+  override def toString: String = s"$toHumanValue XLM"
 }
 
 case class IssuedAmount(units: Long, asset: NonNativeAsset) extends Amount

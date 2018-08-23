@@ -5,15 +5,15 @@ import java.io.File
 import com.github.tomakehurst.wiremock.WireMockServer
 import org.specs2.concurrent.ExecutionEnv
 import org.specs2.mutable.Specification
+import stellar.sdk.Amount.lumens
+import stellar.sdk.ProxyMode.{NoProxy, Record, Replay}
 import stellar.sdk.inet.TxnFailure
 import stellar.sdk.op._
-import stellar.sdk.resp.{AccountResp, AssetResp}
+import stellar.sdk.resp._
 
-import scala.collection.JavaConverters._
 import scala.concurrent.duration._
 import scala.concurrent.{Await, Future}
-import scala.util.Try
-import sys.process._
+import scala.sys.process._
 
 /**
   * Requires a newly launched stand-alone instance of stellar.
@@ -22,17 +22,25 @@ import sys.process._
 class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specification with DomainMatchersIT {
   sequential
 
-  val recordMode = false
+  // Set to NoProxy when writing tests; Record when creating stub mappings; Replay for all other times.
+  val recordMode = Replay
 
-  val wiremock = new WireMockServer(8080)
-  if (recordMode) require(new File("src/test/resources/mappings").listFiles().forall(_.delete))
-  wiremock.start()
-  if (recordMode) {
-    Seq("src/it/bin/stellar_standalone.sh", "true").!
-    wiremock.startRecording("http://localhost:8000/")
+  val proxy: Option[WireMockServer] = recordMode match {
+    case NoProxy => None
+    case Record =>
+      require(new File("src/test/resources/mappings").listFiles().forall(_.delete))
+      val s = new WireMockServer(8080)
+      Seq("src/it/bin/stellar_standalone.sh", "true").!
+      s.start()
+      s.startRecording("http://localhost:8000/")
+      Some(s)
+    case Replay =>
+      val s = new WireMockServer(8080)
+      s.start()
+      Some(s)
   }
 
-  private implicit val network = StandaloneNetwork
+  private implicit val network = StandaloneNetwork(if (recordMode == NoProxy) 8000 else 8080)
   val masterAccountKey = network.masterAccount
   var masterAccount = Await.result(network.account(masterAccountKey).map(_.toAccount), 10.seconds)
 
@@ -69,9 +77,9 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
         // docker container running inside travis has trouble processing non-trivial transactions within timeout.
         // so, group the operations into smaller transactions.
         transact(
-          CreateAccountOperation(accnA, Amount.lumens(1000)),
-          CreateAccountOperation(accnB, Amount.lumens(1000)),
-          CreateAccountOperation(accnC, Amount.lumens(1000)),
+          CreateAccountOperation(accnA, lumens(1000)),
+          CreateAccountOperation(accnB, lumens(1000)),
+          CreateAccountOperation(accnC, lumens(1000)),
           WriteDataOperation("life_universe_everything", "42", Some(accnB)),
           WriteDataOperation("fenton", "FENTON!", Some(accnC)),
           DeleteDataOperation("fenton", Some(accnC)),
@@ -88,15 +96,15 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
         // force a transaction boundary between CreateAccount and AccountMerge
         transact(
           AccountMergeOperation(accnB, Some(accnC)),
-          CreateOfferOperation(Amount.lumens(3), Asset("Aardvark", accnA), Price(3, 100), Some(accnB)),
-          CreateOfferOperation(Amount.lumens(5), Asset("Beaver", accnA), Price(5, 100), Some(accnB)),
+          CreateOfferOperation(lumens(3), Asset("Aardvark", accnA), Price(3, 100), Some(accnB)),
+          CreateOfferOperation(lumens(5), Asset("Beaver", accnA), Price(5, 100), Some(accnB)),
           CreatePassiveOfferOperation(IssuedAmount(10, Asset("Chinchilla", accnA)), NativeAsset, Price(1, 3), Some(accnA)),
           AllowTrustOperation(accnB, "Aardvark", authorize = false, Some(accnA))
         )
 
         // force a transaction boundary between Create*Offer and Update/DeleteOffer
         transact(
-          UpdateOfferOperation(2, Amount.lumens(5), Asset("Beaver", accnA), Price(1, 5), Some(accnB)),
+          UpdateOfferOperation(2, lumens(5), Asset("Beaver", accnA), Price(1, 5), Some(accnB)),
           DeleteOfferOperation(3, Asset("Chinchilla", accnA), NativeAsset, Price(1, 3), Some(accnA))
         )
 
@@ -113,7 +121,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
         case AccountResp(id, _, _, _, _, _, balances, _) =>
           id mustEqual accnA
           balances must containTheSameElementsAs(Seq(
-            Amount.lumens(1000),
+            lumens(1000),
             IssuedAmount(0, Asset.apply("Chinchilla", masterAccountKey))
           ))
       }.awaitFor(30 seconds)
@@ -185,46 +193,46 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
     }
   }
 
-  /*
-
   "filter effects by account" >> {
     val byAccount = network.effectsByAccount(accnA).map(_.take(10).toList)
-    byAccount.map(_.isEmpty) must beFalse.awaitFor(10 seconds)
+    byAccount.map(_.size) must beEqualTo(8).awaitFor(10 seconds)
     byAccount.map(_.head) must beLike[EffectResp] {
       case EffectAccountCreated(_, account, startingBalance) =>
         account.accountId mustEqual accnA.accountId
-        startingBalance mustEqual Amount.lumens(10000)
+        startingBalance mustEqual lumens(1000)
     }.awaitFor(10.seconds)
   }
 
   "filter effects by ledger" >> {
-    val byLedger = PublicNetwork.effectsByLedger(16237465).map(_.toList)
-    byLedger must beEqualTo(Seq(
-      EffectTrade("0069739381144948737-0000000001", 747605, KeyPair.fromAccountId("GD3IYBNQ45LXHFABSX4HLGDL7BQA62SVB5NB5O6XMBCITFZOLWLVS22B"),
-        Amount(5484522, IssuedAsset4("XLM", KeyPair.fromAccountId("GBSTRH4QOTWNSVA6E4HFERETX4ZLSR3CIUBLK7AXYII277PFJC4BBYOG"))),
-        KeyPair.fromAccountId("GBBMSYSNV7PC6XAI3JL6F5OWP54TIONGDDTEJ4AQS3YMFUSPDSSSDQVB"),
-        Amount(2445, IssuedAsset4("ETH", KeyPair.fromAccountId("GBSTRH4QOTWNSVA6E4HFERETX4ZLSR3CIUBLK7AXYII277PFJC4BBYOG")))),
-
-      EffectTrade("0069739381144948737-0000000002", 747605, KeyPair.fromAccountId("GBBMSYSNV7PC6XAI3JL6F5OWP54TIONGDDTEJ4AQS3YMFUSPDSSSDQVB"),
-        Amount(2445, IssuedAsset4("ETH", KeyPair.fromAccountId("GBSTRH4QOTWNSVA6E4HFERETX4ZLSR3CIUBLK7AXYII277PFJC4BBYOG"))),
-        KeyPair.fromAccountId("GD3IYBNQ45LXHFABSX4HLGDL7BQA62SVB5NB5O6XMBCITFZOLWLVS22B"),
-        Amount(5484522, IssuedAsset4("XLM", KeyPair.fromAccountId("GBSTRH4QOTWNSVA6E4HFERETX4ZLSR3CIUBLK7AXYII277PFJC4BBYOG")))
-      )
-    )).awaitFor(10.seconds)
+    val byLedger = network.effectsByLedger(0).map(_.toList)
+    byLedger.map(_.head) must beLike[EffectResp] {
+      case EffectAccountCreated(_, account, startingBalance) =>
+        account.accountId mustEqual accnA.accountId
+        startingBalance mustEqual lumens(1000)
+    }.awaitFor(10.seconds)
   }
 
   "filter effects by transaction hash" >> {
-    val byTransaction = PublicNetwork.effectsByTransaction("233ce5d17477706e097f72ae1c46241f4586ad1476d191119d46a93e88b9d3fa").map(_.toList)
-    byTransaction must beEqualTo(Seq(
-      EffectAccountCredited("0070009259709968385-0000000001", KeyPair.fromAccountId("GCT4TTKW2HPCMHM6PJHQ33FIIDCVKIJXLXDHMKQEC7DKHPPGLUKCHKY7"),
-        Amount(28553980000000L, IssuedAsset4("KIN", KeyPair.fromAccountId("GBDEVU63Y6NTHJQQZIKVTC23NWLQVP3WJ2RI2OTSJTNYOIGICST6DUXR")))
-      ),
-      EffectAccountDebited("0070009259709968385-0000000002", KeyPair.fromAccountId("GDBWXSZDYO4C3EHYXRLCGU3NP55LUBEQO5K2RWIWWMXWVI57L7VUWSZA"),
-        Amount(28553980000000L, IssuedAsset4("KIN", KeyPair.fromAccountId("GBDEVU63Y6NTHJQQZIKVTC23NWLQVP3WJ2RI2OTSJTNYOIGICST6DUXR")))
-      )
-    )).awaitFor(10.seconds)
+    val byTransaction = network.effectsByTransaction("5fd3da032c385ff85d8121465f06d143e13a39c9ca9d4c72d1b4282ea29f0569").map(_.toList)
+    byTransaction must beLike[List[EffectResp]] {
+      case List(
+        EffectAccountDebited(_,accn1, amount1),
+        EffectAccountCredited(_,accn2,amount2),
+        EffectAccountRemoved(_,accn3),
+        EffectTrustLineDeauthorized(_,accn4,IssuedAsset12(code, accn5))
+      ) =>
+        accn1 must beEquivalentTo(accnC)
+        accn2 must beEquivalentTo(accnB)
+        accn3 must beEquivalentTo(accnC)
+        accn4 must beEquivalentTo(accnB)
+        accn5 must beEquivalentTo(accnA)
+        amount1 mustEqual lumens(1000)
+        amount2 mustEqual lumens(1000)
+        code mustEqual "Aardvark"
+    }.awaitFor(10.seconds)
   }
 
+  /*
   "filter effects by operation" >> {
     val byOperation = PublicNetwork.effectsByOperation(70009259709968385L).map(_.toList)
     byOperation must beEqualTo(Seq(
@@ -531,7 +539,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
 */
 
   step {
-    if (recordMode) Try(wiremock.stopRecording.getStubMappings)
+    proxy.foreach(_.stopRecording())
   }
 
 }
@@ -548,3 +556,8 @@ object RewritePortTransformer extends ResponseDefinitionTransformer {
   override def getName: String = "rewrite_port"
 }
 */
+
+object ProxyMode extends Enumeration {
+  type RecordMode = Value
+  val NoProxy, Replay, Record = Value
+}
