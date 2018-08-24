@@ -1,0 +1,20 @@
+{
+  "id" : "5827c0d3-7ad0-437c-a766-1cd61a807556",
+  "name" : "operations",
+  "request" : {
+    "url" : "/%2Foperations?cursor=0&order=asc&limit=100",
+    "method" : "GET"
+  },
+  "response" : {
+    "status" : 301,
+    "body" : "<a href=\"/operations?cursor=0&amp;order=asc&amp;limit=100\">Moved Permanently</a>.\n\n",
+    "headers" : {
+      "Location" : "/operations?cursor=0&order=asc&limit=100",
+      "Date" : "Fri, 24 Aug 2018 11:35:55 GMT",
+      "Content-Type" : "text/html; charset=utf-8"
+    }
+  },
+  "uuid" : "5827c0d3-7ad0-437c-a766-1cd61a807556",
+  "persistent" : true,
+  "insertionIndex" : 39
+}

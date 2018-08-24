@@ -1,0 +1,20 @@
+{
+  "id" : "13715bcb-b554-4356-acd2-399b545eb740",
+  "name" : "assets",
+  "request" : {
+    "url" : "/%2Fassets?cursor=0&order=asc&limit=100",
+    "method" : "GET"
+  },
+  "response" : {
+    "status" : 301,
+    "body" : "<a href=\"/assets?cursor=0&amp;order=asc&amp;limit=100\">Moved Permanently</a>.\n\n",
+    "headers" : {
+      "Location" : "/assets?cursor=0&order=asc&limit=100",
+      "Date" : "Fri, 24 Aug 2018 11:35:54 GMT",
+      "Content-Type" : "text/html; charset=utf-8"
+    }
+  },
+  "uuid" : "13715bcb-b554-4356-acd2-399b545eb740",
+  "persistent" : true,
+  "insertionIndex" : 15
+}

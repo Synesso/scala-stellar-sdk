@@ -23,9 +23,9 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
   sequential
 
   // Set to NoProxy when writing tests; Record when creating stub mappings; Replay for all other times.
-  val recordMode = Replay
+  val mode = Replay
 
-  val proxy: Option[WireMockServer] = recordMode match {
+  val proxy: Option[WireMockServer] = mode match {
     case NoProxy => None
     case Record =>
       require(new File("src/test/resources/mappings").listFiles().forall(_.delete))
@@ -40,7 +40,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
       None
   }
 
-  private implicit val network = StandaloneNetwork(if (recordMode == NoProxy) 8000 else 8080)
+  private implicit val network = StandaloneNetwork(if (mode == NoProxy) 8000 else 8080)
   val masterAccountKey = network.masterAccount
   var masterAccount = Await.result(network.account(masterAccountKey).map(_.toAccount), 10.seconds)
 
@@ -89,7 +89,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
           ChangeTrustOperation(IssuedAmount(100000000, Asset("Chinchilla", accnA)), Some(accnB)),
           ChangeTrustOperation(IssuedAmount(100000000, Asset("Chinchilla", masterAccountKey)), Some(accnA)),
           AllowTrustOperation(accnB, "Aardvark", authorize = true, Some(accnA)),
-          AllowTrustOperation(accnB, "Beaver", authorize = true, Some(accnA)),
+          AllowTrustOperation(accnB, "Chinchilla", authorize = true, Some(accnA)),
           PaymentOperation(accnB, IssuedAmount(555, Asset("Aardvark", accnA)), Some(accnA))
         )
 
@@ -97,15 +97,19 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
         transact(
           AccountMergeOperation(accnB, Some(accnC)),
           CreateOfferOperation(lumens(3), Asset("Aardvark", accnA), Price(3, 100), Some(accnB)),
-          CreateOfferOperation(lumens(5), Asset("Beaver", accnA), Price(5, 100), Some(accnB)),
-          CreatePassiveOfferOperation(IssuedAmount(10, Asset("Chinchilla", accnA)), NativeAsset, Price(1, 3), Some(accnA)),
+          CreateOfferOperation(lumens(5), Asset("Chinchilla", accnA), Price(5, 100), Some(accnB)),
+          CreatePassiveOfferOperation(IssuedAmount(10, Asset("Beaver", accnA)), NativeAsset, Price(1, 3), Some(accnA)),
           AllowTrustOperation(accnB, "Aardvark", authorize = false, Some(accnA))
         )
 
         // force a transaction boundary between Create*Offer and Update/DeleteOffer
         transact(
-          UpdateOfferOperation(2, lumens(5), Asset("Beaver", accnA), Price(1, 5), Some(accnB)),
-          DeleteOfferOperation(3, Asset("Chinchilla", accnA), NativeAsset, Price(1, 3), Some(accnA))
+          UpdateOfferOperation(2, lumens(5), Asset("Chinchilla", accnA), Price(1, 5), Some(accnB)),
+          DeleteOfferOperation(3, Asset("Beaver", accnA), NativeAsset, Price(1, 3), Some(accnA)),
+          InflationOperation(),
+          // master pays accnB (chinchilla, master) -> (chinchilla accna) because accnA offers chinchilla
+          CreateOfferOperation(IssuedAmount(1, Asset("Chinchilla", accnA)), Asset("Chinchilla", masterAccountKey), Price(1, 1), Some(accnA)),
+          PathPaymentOperation(IssuedAmount(1, Asset("Chinchilla", masterAccountKey)), accnB, IssuedAmount(1, Asset("Chinchilla", accnA)), Nil)
         )
 
         setupFixtures
@@ -122,7 +126,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
           id mustEqual accnA
           balances must containTheSameElementsAs(Seq(
             lumens(1000),
-            IssuedAmount(0, Asset.apply("Chinchilla", masterAccountKey))
+            IssuedAmount(1, Asset.apply("Chinchilla", masterAccountKey))
           ))
       }.awaitFor(30 seconds)
     }
@@ -160,9 +164,9 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
       val eventualResps = network.assets().map(_.toSeq)
       eventualResps must containTheSameElementsAs(Seq(
         AssetResp(Asset("Aardvark", accnA), 0, 0, authRequired = true, authRevocable = true),
-        AssetResp(Asset("Beaver", accnA), 0, 1, authRequired = true, authRevocable = true),
-        AssetResp(Asset("Chinchilla", accnA), 0, 0, authRequired = true, authRevocable = true),
-        AssetResp(Asset("Chinchilla", masterAccountKey), 0, 1, authRequired = false, authRevocable = false)
+        AssetResp(Asset("Beaver", accnA), 0, 0, authRequired = true, authRevocable = true),
+        AssetResp(Asset("Chinchilla", accnA), 1, 1, authRequired = true, authRevocable = true),
+        AssetResp(Asset("Chinchilla", masterAccountKey), 1, 1, authRequired = false, authRevocable = false)
       )).awaitFor(10 seconds)
     }
 
@@ -189,13 +193,13 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
   "effect endpoint" should {
     "parse all effects" >> {
       val effects = network.effects()
-      effects.map(_.size) must beEqualTo(25).awaitFor(10 seconds)
+      effects.map(_.size) must beEqualTo(29).awaitFor(10 seconds)
     }
   }
 
   "filter effects by account" >> {
     val byAccount = network.effectsByAccount(accnA).map(_.take(10).toList)
-    byAccount.map(_.size) must beEqualTo(8).awaitFor(10 seconds)
+    byAccount.map(_.size) must beEqualTo(9).awaitFor(10 seconds)
     byAccount.map(_.head) must beLike[EffectResp] {
       case EffectAccountCreated(_, account, startingBalance) =>
         account.accountId mustEqual accnA.accountId
@@ -213,13 +217,13 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
   }
 
   "filter effects by transaction hash" >> {
-    val byTransaction = network.effectsByTransaction("5fd3da032c385ff85d8121465f06d143e13a39c9ca9d4c72d1b4282ea29f0569").map(_.toList)
+    val byTransaction = network.effectsByTransaction("a631c8617c47b735967352755ac305f4230fdfc4385c2d8815934cdc41877cff").map(_.toList)
     byTransaction must beLike[List[EffectResp]] {
       case List(
-        EffectAccountDebited(_,accn1, amount1),
-        EffectAccountCredited(_,accn2,amount2),
-        EffectAccountRemoved(_,accn3),
-        EffectTrustLineDeauthorized(_,accn4,IssuedAsset12(code, accn5))
+        EffectAccountDebited(_, accn1, amount1),
+        EffectAccountCredited(_, accn2, amount2),
+        EffectAccountRemoved(_, accn3),
+        EffectTrustLineDeauthorized(_, accn4, IssuedAsset12(code, accn5))
       ) =>
         accn1 must beEquivalentTo(accnC)
         accn2 must beEquivalentTo(accnB)
@@ -232,19 +236,23 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
     }.awaitFor(10.seconds)
   }
 
-  /*
   "filter effects by operation" >> {
-    val byOperation = PublicNetwork.effectsByOperation(70009259709968385L).map(_.toList)
-    byOperation must beEqualTo(Seq(
-      EffectAccountCredited("0070009259709968385-0000000001", KeyPair.fromAccountId("GCT4TTKW2HPCMHM6PJHQ33FIIDCVKIJXLXDHMKQEC7DKHPPGLUKCHKY7"),
-        Amount(28553980000000L, IssuedAsset4("KIN", KeyPair.fromAccountId("GBDEVU63Y6NTHJQQZIKVTC23NWLQVP3WJ2RI2OTSJTNYOIGICST6DUXR")))
-      ),
-      EffectAccountDebited("0070009259709968385-0000000002", KeyPair.fromAccountId("GDBWXSZDYO4C3EHYXRLCGU3NP55LUBEQO5K2RWIWWMXWVI57L7VUWSZA"),
-        Amount(28553980000000L, IssuedAsset4("KIN", KeyPair.fromAccountId("GBDEVU63Y6NTHJQQZIKVTC23NWLQVP3WJ2RI2OTSJTNYOIGICST6DUXR"))),
-      )
-    )).awaitFor(10.seconds)
+    (for {
+      operationId <- network.operations().map(_.find(_.operation == AccountMergeOperation(accnB, Some(accnC))).get.id)
+      byOperation <- network.effectsByOperation(operationId).map(_.toSeq)
+    } yield byOperation) must beLike[Seq[EffectResp]] {
+      case Seq(
+        EffectAccountDebited(_, accn1, amount1),
+        EffectAccountCredited(_, accn2, amount2),
+        EffectAccountRemoved(_, accn3)) =>
+        accn1 must beEquivalentTo(accnC)
+        accn2 must beEquivalentTo(accnB)
+        accn3 must beEquivalentTo(accnC)
+        amount1 mustEqual lumens(1000)
+        amount2 mustEqual lumens(1000)
+    }.awaitFor(10.seconds)
   }
-}
+  /*
 
 "ledger endpoint" should {
   "list the details of a given ledger" >> {
