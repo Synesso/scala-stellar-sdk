@@ -1,0 +1,20 @@
+{
+  "id" : "c5d2091f-db97-4985-8f70-026d5c56415e",
+  "name" : "assets",
+  "request" : {
+    "url" : "/%2Fassets?cursor=0&asset_code=Chinchilla&order=asc&asset_issuer=GAAYHQF2PNZ3H6LE5AX3UJSGUR2DQXHHGXYMHF32TDYF2FFPTTOFI3PA&limit=100",
+    "method" : "GET"
+  },
+  "response" : {
+    "status" : 301,
+    "body" : "<a href=\"/assets?cursor=0&amp;asset_code=Chinchilla&amp;order=asc&amp;asset_issuer=GAAYHQF2PNZ3H6LE5AX3UJSGUR2DQXHHGXYMHF32TDYF2FFPTTOFI3PA&amp;limit=100\">Moved Permanently</a>.\n\n",
+    "headers" : {
+      "Location" : "/assets?cursor=0&asset_code=Chinchilla&order=asc&asset_issuer=GAAYHQF2PNZ3H6LE5AX3UJSGUR2DQXHHGXYMHF32TDYF2FFPTTOFI3PA&limit=100",
+      "Date" : "Fri, 24 Aug 2018 12:12:29 GMT",
+      "Content-Type" : "text/html; charset=utf-8"
+    }
+  },
+  "uuid" : "c5d2091f-db97-4985-8f70-026d5c56415e",
+  "persistent" : true,
+  "insertionIndex" : 27
+}

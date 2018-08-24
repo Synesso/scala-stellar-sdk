@@ -16,7 +16,7 @@ import scala.concurrent.{Await, Future}
 import scala.sys.process._
 
 /**
-  * Requires a newly launched stand-alone instance of stellar.
+  * Requires a newly launched stand-alone instance of stellar when running in NoProxy mode.
   * @see src/it/bin/stellar_standalone.sh
   */
 class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specification with DomainMatchersIT {
@@ -252,24 +252,24 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
         amount2 mustEqual lumens(1000)
     }.awaitFor(10.seconds)
   }
-  /*
 
 "ledger endpoint" should {
-  "list the details of a given ledger" >> {
-    PublicNetwork.ledger(16237465) must beEqualTo(
-      LedgerResp("d4a8dae64397e23551a5b57e30ae16d6887b6a49fb9263808878fd6dc71f64be",
-        "d4a8dae64397e23551a5b57e30ae16d6887b6a49fb9263808878fd6dc71f64be",
-        Some("ec7d2a4c064a1f10741b93260fc5b625febdf8cc5a06df8a892396ecab4449d0"), 16237465L, 1, 1,
-        ZonedDateTime.parse("2018-02-13T00:33:53Z"), 1.0368912397155042E11, 1415204.6354335, 100, 5000000, 50)
-    ).awaitFor(10.seconds)
-  }
+  val ledgers = network.ledgers().map(_.filter(_.operationCount > 0))
+  val firstLedger = ledgers.map(_.head)
 
-  "list all ledgers" >> {
-    val oneFifteen = network.ledgers().map(_.take(115))
-    oneFifteen.map(_.distinct.size) must beEqualTo(115).awaitFor(10.seconds)
+  "list the details of a given ledger" >> {
+    val ledger = for {
+      seq <- firstLedger.map(_.sequence)
+      l <- network.ledger(seq)
+    } yield l
+
+    firstLedger.zip(ledger) must beLike[(LedgerResp, LedgerResp)] {
+      case (l, r) => l mustEqual r
+    }.awaitFor(10.seconds)
   }
 }
 
+  /*
 "offer endpoint" should {
   "list offers by account" >> {
     network.offersByAccount(KeyPair.fromAccountId("GCXYKQF35XWATRB6AWDDV2Y322IFU2ACYYN5M2YB44IBWAIITQ4RYPXK"))

@@ -1,0 +1,20 @@
+{
+  "id" : "bad4c13e-f4a2-44ed-abfd-6d894fa4a7b3",
+  "name" : "ledgers_0_effects",
+  "request" : {
+    "url" : "/%2Fledgers%2F0%2Feffects?cursor=0&order=asc&limit=100",
+    "method" : "GET"
+  },
+  "response" : {
+    "status" : 301,
+    "body" : "<a href=\"/ledgers/0/effects?cursor=0&amp;order=asc&amp;limit=100\">Moved Permanently</a>.\n\n",
+    "headers" : {
+      "Location" : "/ledgers/0/effects?cursor=0&order=asc&limit=100",
+      "Date" : "Fri, 24 Aug 2018 12:12:30 GMT",
+      "Content-Type" : "text/html; charset=utf-8"
+    }
+  },
+  "uuid" : "bad4c13e-f4a2-44ed-abfd-6d894fa4a7b3",
+  "persistent" : true,
+  "insertionIndex" : 36
+}

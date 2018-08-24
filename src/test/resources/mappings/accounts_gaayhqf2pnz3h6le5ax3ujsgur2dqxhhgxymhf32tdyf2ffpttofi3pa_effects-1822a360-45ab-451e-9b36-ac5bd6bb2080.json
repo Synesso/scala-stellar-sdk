@@ -1,0 +1,20 @@
+{
+  "id" : "1822a360-45ab-451e-9b36-ac5bd6bb2080",
+  "name" : "accounts_gaayhqf2pnz3h6le5ax3ujsgur2dqxhhgxymhf32tdyf2ffpttofi3pa_effects",
+  "request" : {
+    "url" : "/%2Faccounts%2FGAAYHQF2PNZ3H6LE5AX3UJSGUR2DQXHHGXYMHF32TDYF2FFPTTOFI3PA%2Feffects?cursor=0&order=asc&limit=100",
+    "method" : "GET"
+  },
+  "response" : {
+    "status" : 301,
+    "body" : "<a href=\"/accounts/GAAYHQF2PNZ3H6LE5AX3UJSGUR2DQXHHGXYMHF32TDYF2FFPTTOFI3PA/effects?cursor=0&amp;order=asc&amp;limit=100\">Moved Permanently</a>.\n\n",
+    "headers" : {
+      "Location" : "/accounts/GAAYHQF2PNZ3H6LE5AX3UJSGUR2DQXHHGXYMHF32TDYF2FFPTTOFI3PA/effects?cursor=0&order=asc&limit=100",
+      "Date" : "Fri, 24 Aug 2018 12:12:30 GMT",
+      "Content-Type" : "text/html; charset=utf-8"
+    }
+  },
+  "uuid" : "1822a360-45ab-451e-9b36-ac5bd6bb2080",
+  "persistent" : true,
+  "insertionIndex" : 33
+}

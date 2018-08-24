@@ -1,0 +1,25 @@
+{
+  "id" : "171dc172-728f-4f23-a53e-1e0851d60be7",
+  "name" : "operations",
+  "request" : {
+    "url" : "/operations?cursor=25769807877&limit=100&order=asc",
+    "method" : "GET"
+  },
+  "response" : {
+    "status" : 200,
+    "body" : "{\n  \"_links\": {\n    \"self\": {\n      \"href\": \"http://localhost:8000/operations?cursor=25769807877\\u0026limit=100\\u0026order=asc\"\n    },\n    \"next\": {\n      \"href\": \"http://localhost:8000/operations?cursor=25769807877\\u0026limit=100\\u0026order=asc\"\n    },\n    \"prev\": {\n      \"href\": \"http://localhost:8000/operations?cursor=25769807877\\u0026limit=100\\u0026order=desc\"\n    }\n  },\n  \"_embedded\": {\n    \"records\": []\n  }\n}",
+    "headers" : {
+      "Cache-Control" : "no-cache, no-store, max-age=0",
+      "Content-Disposition" : "inline",
+      "Content-Type" : "application/hal+json; charset=utf-8",
+      "Vary" : "Origin",
+      "X-Ratelimit-Limit" : "72000",
+      "X-Ratelimit-Remaining" : "71960",
+      "X-Ratelimit-Reset" : "3578",
+      "Date" : "Fri, 24 Aug 2018 12:12:30 GMT"
+    }
+  },
+  "uuid" : "171dc172-728f-4f23-a53e-1e0851d60be7",
+  "persistent" : true,
+  "insertionIndex" : 44
+}
