@@ -373,11 +373,18 @@ trait ArbitraryInput extends ScalaCheck {
     thresholds <- genThresholds
     authRequired <- Gen.oneOf(true, false)
     authRevocable <- Gen.oneOf(true, false)
-    balances <- Gen.nonEmptyListOf(genAmount)
+    balances <- Gen.nonEmptyListOf(genBalance)
     signers <- Gen.nonEmptyListOf(genSigner)
   } yield AccountResp(id, lastSequence, subEntryCount, thresholds, authRequired, authRevocable, balances, signers)
 
   def genSigner: Gen[Signer] = Gen.oneOf(genAccountSigner, genHashSigner, genPreAuthTxnSigner)
+
+  def genBalance: Gen[Balance] = for {
+    amount <- genAmount
+    limit <- Gen.choose(amount.units, Long.MaxValue).map(Some(_)).map(_.filterNot(_ => amount.asset == NativeAsset))
+    buyingLiabilities <- Gen.choose(0, amount.units)
+    sellingLiabilities <- Gen.choose(0, amount.units)
+  } yield Balance(amount, limit, buyingLiabilities = buyingLiabilities, sellingLiabilities)
 
   def genAccountSigner: Gen[AccountSigner] = for {
     key <- genPublicKey

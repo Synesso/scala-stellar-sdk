@@ -1,0 +1,22 @@
+{
+  "id" : "822cf932-30d0-4571-b652-67a8d5344c11",
+  "name" : "ledgers",
+  "request" : {
+    "url" : "/%2Fledgers?cursor=0&order=asc&limit=100",
+    "method" : "GET"
+  },
+  "response" : {
+    "status" : 301,
+    "body" : "<a href=\"/ledgers?cursor=0&amp;order=asc&amp;limit=100\">Moved Permanently</a>.\n\n",
+    "headers" : {
+      "Location" : "/ledgers?cursor=0&order=asc&limit=100",
+      "Date" : "Sun, 26 Aug 2018 08:54:55 GMT",
+      "Content-Type" : "text/html; charset=utf-8"
+    }
+  },
+  "uuid" : "822cf932-30d0-4571-b652-67a8d5344c11",
+  "persistent" : true,
+  "scenarioName" : "scenario-ledgers",
+  "requiredScenarioState" : "scenario-ledgers-4",
+  "insertionIndex" : 94
+}

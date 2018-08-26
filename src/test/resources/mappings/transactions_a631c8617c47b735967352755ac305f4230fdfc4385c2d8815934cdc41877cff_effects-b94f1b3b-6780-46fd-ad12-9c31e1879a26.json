@@ -1,0 +1,20 @@
+{
+  "id" : "b94f1b3b-6780-46fd-ad12-9c31e1879a26",
+  "name" : "transactions_a631c8617c47b735967352755ac305f4230fdfc4385c2d8815934cdc41877cff_effects",
+  "request" : {
+    "url" : "/%2Ftransactions%2Fa631c8617c47b735967352755ac305f4230fdfc4385c2d8815934cdc41877cff%2Feffects?cursor=0&order=asc&limit=100",
+    "method" : "GET"
+  },
+  "response" : {
+    "status" : 301,
+    "body" : "<a href=\"/transactions/a631c8617c47b735967352755ac305f4230fdfc4385c2d8815934cdc41877cff/effects?cursor=0&amp;order=asc&amp;limit=100\">Moved Permanently</a>.\n\n",
+    "headers" : {
+      "Location" : "/transactions/a631c8617c47b735967352755ac305f4230fdfc4385c2d8815934cdc41877cff/effects?cursor=0&order=asc&limit=100",
+      "Date" : "Sun, 26 Aug 2018 08:54:54 GMT",
+      "Content-Type" : "text/html; charset=utf-8"
+    }
+  },
+  "uuid" : "b94f1b3b-6780-46fd-ad12-9c31e1879a26",
+  "persistent" : true,
+  "insertionIndex" : 47
+}
