@@ -9,9 +9,13 @@ import stellar.sdk.{Amount, KeyPair, PublicKey, PublicKeyOps}
 import scala.util.Try
 
 /**
-  * Represents <a href="https://www.stellar.org/developers/learn/concepts/list-of-operations.html#payment" target="_blank">Payment</a> operation.
+  * Represents a payment from one account to another. This payment can be either a simple native asset payment or a
+  * fiat asset payment.
   *
-  * @see <a href="https://www.stellar.org/developers/learn/concepts/list-of-operations.html" target="_blank">List of Operations</a>
+  * @param destinationAccount the recipient of the payment
+  * @param amount the amount to be paid
+  * @param sourceAccount the account effecting this operation, if different from the owning account of the transaction
+  * @see [[https://www.stellar.org/developers/horizon/reference/resources/operation.html#payment endpoint doc]]
   */
 case class PaymentOperation(destinationAccount: PublicKeyOps,
                             amount: Amount,

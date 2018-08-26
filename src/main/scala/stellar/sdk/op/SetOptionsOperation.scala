@@ -8,6 +8,21 @@ import stellar.sdk.{PublicKey, _}
 
 import scala.util.Try
 
+/**
+  * Modify an account, setting one or more options.
+  *
+  * @param inflationDestination the account's inflation destination
+  * @param clearFlags issuer flags to be turned off
+  * @param setFlags issuer flags to be turned on
+  * @param masterKeyWeight the weight of the master key
+  * @param lowThreshold the minimum weight required for low threshold operations
+  * @param mediumThreshold the minimum weight required for medium threshold operations
+  * @param highThreshold the minimum weight required for highthreshold operations
+  * @param homeDomain the home domain used for reverse federation lookup
+  * @param signer the key and weight of the signer for this account
+  * @param sourceAccount the account effecting this operation, if different from the owning account of the transaction
+  * @see [[https://www.stellar.org/developers/horizon/reference/resources/operation.html#set-options endpoint doc]]
+  */
 case class SetOptionsOperation(inflationDestination: Option[PublicKeyOps] = None,
                                clearFlags: Option[Set[IssuerFlag]] = None,
                                setFlags: Option[Set[IssuerFlag]] = None,

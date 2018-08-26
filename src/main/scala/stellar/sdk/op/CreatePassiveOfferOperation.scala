@@ -10,6 +10,12 @@ import scala.util.Try
 
 /**
   * Creates an offer that won’t consume a counter offer that exactly matches this offer.
+  *
+  * @param selling the total amount of tokens being offered
+  * @param buying the asset being sought
+  * @param price the price the offerer is willing to accept
+  * @param sourceAccount the account effecting this operation, if different from the owning account of the transaction
+  * @see [[https://www.stellar.org/developers/horizon/reference/resources/operation.html#create-passive-offer endpoint doc]]
   */
 case class CreatePassiveOfferOperation(selling: Amount, buying: Asset, price: Price,
                                        sourceAccount: Option[PublicKeyOps] = None) extends Operation {

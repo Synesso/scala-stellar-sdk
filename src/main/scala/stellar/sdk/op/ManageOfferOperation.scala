@@ -35,6 +35,13 @@ case class CreateOfferOperation(selling: Amount, buying: Asset, price: Price,
 
 /**
   * Deletes an offer in the Stellar network.
+  *
+  * @param offerId the id of the offer to be deleted
+  * @param selling the asset being offered
+  * @param buying the asset previously sought
+  * @param price the price being offered
+  * @param sourceAccount the account effecting this operation, if different from the owning account of the transaction
+  * @see [[https://www.stellar.org/developers/horizon/reference/resources/operation.html#manage-offer endpoint doc]]
   */
 case class DeleteOfferOperation(override val offerId: Long,
                                 selling: Asset, buying: Asset, price: Price,
@@ -56,6 +63,13 @@ case class DeleteOfferOperation(override val offerId: Long,
 
 /**
   * Updates an offer in the Stellar network.
+  *
+  * @param offerId the id of the offer to be modified
+  * @param selling the asset and amount being offered
+  * @param buying the asset sought
+  * @param price the price being offered
+  * @param sourceAccount the account effecting this operation, if different from the owning account of the transaction
+  * @see [[https://www.stellar.org/developers/horizon/reference/resources/operation.html#manage-offer endpoint doc]]
   */
 case class UpdateOfferOperation(override val offerId: Long,
                                 selling: Amount, buying: Asset, price: Price,

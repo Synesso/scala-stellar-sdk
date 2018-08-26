@@ -23,11 +23,17 @@ sealed trait ManageDataOperation extends Operation {
 
 /**
   * Deletes a Data Entry (name/value pair) for an account.
+  *
+  * @param sourceAccount the account effecting this operation, if different from the owning account of the transaction
+  * @see [[https://www.stellar.org/developers/horizon/reference/resources/operation.html#manage-data endpoint doc]]
   */
 case class DeleteDataOperation(name: String, sourceAccount: Option[PublicKeyOps] = None) extends ManageDataOperation
 
 /**
   * Creates or updates a Data Entry (name/value pair) for an account.
+  *
+  * @param sourceAccount the account effecting this operation, if different from the owning account of the transaction
+  * @see [[https://www.stellar.org/developers/horizon/reference/resources/operation.html#manage-data endpoint doc]]
   */
 case class WriteDataOperation(name: String, value: String, sourceAccount: Option[PublicKeyOps] = None) extends ManageDataOperation {
   override def toOperationBody: OperationBody = {

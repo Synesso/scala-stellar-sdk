@@ -7,9 +7,12 @@ import stellar.sdk.{KeyPair, NativeAmount, PublicKey, PublicKeyOps, _}
 import scala.util.Try
 
 /**
-  * Represents <a href="https://www.stellar.org/developers/learn/concepts/list-of-operations.html#create-account" target="_blank">CreateAccount</a> operation.
+  * Funds and creates a new account.
   *
-  * @see <a href="https://www.stellar.org/developers/learn/concepts/list-of-operations.html" target="_blank">List of Operations</a>
+  * @param destinationAccount the account to be created
+  * @param startingBalance the amount of funds to send to it
+  * @param sourceAccount the account effecting this operation, if different from the owning account of the transaction
+  * @see [[https://www.stellar.org/developers/horizon/reference/resources/operation.html#create-account endpoint doc]]
   */
 case class CreateAccountOperation(destinationAccount: PublicKeyOps,
                                   startingBalance: NativeAmount = Amount.lumens(1),
