@@ -44,8 +44,8 @@ trait DomainMatchersIT extends AnyMatchers with MustExpectations with SequenceMa
   }
 
   def beEquivalentTo(other: PublicKeyOps): Matcher[PublicKeyOps] = beLike[PublicKeyOps] {
-    case PublicKey(pk) =>
-      Hex.encodeHex(pk.getAbyte) mustEqual Hex.encodeHex(other.pk.getAbyte)
+    case pk =>
+      pk.accountId mustEqual other.accountId
   }
 
   def beEquivalentTo(other: Hash): Matcher[Hash] = beLike[Hash] {

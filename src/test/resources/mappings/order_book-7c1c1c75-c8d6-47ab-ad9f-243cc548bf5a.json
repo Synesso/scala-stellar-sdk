@@ -1,0 +1,25 @@
+{
+  "id" : "7c1c1c75-c8d6-47ab-ad9f-243cc548bf5a",
+  "name" : "order_book",
+  "request" : {
+    "url" : "/order_book?buying_asset_type=credit_alphanum12&selling_asset_type=native&buying_asset_issuer=GAAYHQF2PNZ3H6LE5AX3UJSGUR2DQXHHGXYMHF32TDYF2FFPTTOFI3PA&buying_asset_code=Chinchilla&limit=20",
+    "method" : "GET"
+  },
+  "response" : {
+    "status" : 200,
+    "body" : "{\n  \"bids\": [\n    {\n      \"price_r\": {\n        \"n\": 4,\n        \"d\": 80\n      },\n      \"price\": \"0.0500000\",\n      \"amount\": \"0.0000080\"\n    }\n  ],\n  \"asks\": [\n    {\n      \"price_r\": {\n        \"n\": 1,\n        \"d\": 5\n      },\n      \"price\": \"0.2000000\",\n      \"amount\": \"5.0000000\"\n    }\n  ],\n  \"base\": {\n    \"asset_type\": \"native\"\n  },\n  \"counter\": {\n    \"asset_type\": \"credit_alphanum12\",\n    \"asset_code\": \"Chinchilla\",\n    \"asset_issuer\": \"GAAYHQF2PNZ3H6LE5AX3UJSGUR2DQXHHGXYMHF32TDYF2FFPTTOFI3PA\"\n  }\n}",
+    "headers" : {
+      "Cache-Control" : "no-cache, no-store, max-age=0",
+      "Content-Disposition" : "inline",
+      "Content-Type" : "application/hal+json; charset=utf-8",
+      "Vary" : "Origin",
+      "X-Ratelimit-Limit" : "72000",
+      "X-Ratelimit-Remaining" : "71940",
+      "X-Ratelimit-Reset" : "3572",
+      "Date" : "Sun, 26 Aug 2018 01:34:06 GMT"
+    }
+  },
+  "uuid" : "7c1c1c75-c8d6-47ab-ad9f-243cc548bf5a",
+  "persistent" : true,
+  "insertionIndex" : 72
+}

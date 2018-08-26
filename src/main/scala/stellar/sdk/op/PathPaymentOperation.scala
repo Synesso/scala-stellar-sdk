@@ -18,7 +18,7 @@ case class PathPaymentOperation(sendMax: Amount,
                                 destinationAccount: PublicKeyOps,
                                 destinationAmount: Amount,
                                 path: Seq[sdk.Asset],
-                                sourceAccount: Option[PublicKeyOps] = None) extends Operation {
+                                sourceAccount: Option[PublicKeyOps] = None) extends PayOperation {
 
   override def toOperationBody: OperationBody = {
     val op = new PathPaymentOp

@@ -1,0 +1,20 @@
+{
+  "id" : "bc8fa56f-c8ca-4f76-861d-2b7869bde9b1",
+  "name" : "operations_21474840577_effects",
+  "request" : {
+    "url" : "/%2Foperations%2F21474840577%2Feffects?cursor=0&order=asc&limit=100",
+    "method" : "GET"
+  },
+  "response" : {
+    "status" : 301,
+    "body" : "<a href=\"/operations/21474840577/effects?cursor=0&amp;order=asc&amp;limit=100\">Moved Permanently</a>.\n\n",
+    "headers" : {
+      "Location" : "/operations/21474840577/effects?cursor=0&order=asc&limit=100",
+      "Date" : "Sun, 26 Aug 2018 01:34:05 GMT",
+      "Content-Type" : "text/html; charset=utf-8"
+    }
+  },
+  "uuid" : "bc8fa56f-c8ca-4f76-861d-2b7869bde9b1",
+  "persistent" : true,
+  "insertionIndex" : 52
+}

@@ -1,0 +1,23 @@
+{
+  "id" : "8206cbfb-4a51-4cf6-955f-aa4325dc1751",
+  "name" : "operations",
+  "request" : {
+    "url" : "/%2Foperations?cursor=0&order=asc&limit=100",
+    "method" : "GET"
+  },
+  "response" : {
+    "status" : 301,
+    "body" : "<a href=\"/operations?cursor=0&amp;order=asc&amp;limit=100\">Moved Permanently</a>.\n\n",
+    "headers" : {
+      "Location" : "/operations?cursor=0&order=asc&limit=100",
+      "Date" : "Sun, 26 Aug 2018 01:34:05 GMT",
+      "Content-Type" : "text/html; charset=utf-8"
+    }
+  },
+  "uuid" : "8206cbfb-4a51-4cf6-955f-aa4325dc1751",
+  "persistent" : true,
+  "scenarioName" : "scenario-operations",
+  "requiredScenarioState" : "Started",
+  "newScenarioState" : "scenario-operations-2",
+  "insertionIndex" : 50
+}

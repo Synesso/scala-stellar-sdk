@@ -1,0 +1,25 @@
+{
+  "id" : "0c74b884-5469-4c4a-a987-efe879b0c0b0",
+  "name" : "ledgers_4",
+  "request" : {
+    "url" : "/ledgers/4",
+    "method" : "GET"
+  },
+  "response" : {
+    "status" : 200,
+    "body" : "{\n  \"_links\": {\n    \"self\": {\n      \"href\": \"http://localhost:8000/ledgers/4\"\n    },\n    \"transactions\": {\n      \"href\": \"http://localhost:8000/ledgers/4/transactions{?cursor,limit,order}\",\n      \"templated\": true\n    },\n    \"operations\": {\n      \"href\": \"http://localhost:8000/ledgers/4/operations{?cursor,limit,order}\",\n      \"templated\": true\n    },\n    \"payments\": {\n      \"href\": \"http://localhost:8000/ledgers/4/payments{?cursor,limit,order}\",\n      \"templated\": true\n    },\n    \"effects\": {\n      \"href\": \"http://localhost:8000/ledgers/4/effects{?cursor,limit,order}\",\n      \"templated\": true\n    }\n  },\n  \"id\": \"b913c1a1f97746c37a64ec89e3b1587094adbb261f1a62270d6e595118af249d\",\n  \"paging_token\": \"17179869184\",\n  \"hash\": \"b913c1a1f97746c37a64ec89e3b1587094adbb261f1a62270d6e595118af249d\",\n  \"prev_hash\": \"0fa51e77a059aa2a4a2d1eab26abf1dcfd6d199107d33e377ad89d341a43b406\",\n  \"sequence\": 4,\n  \"transaction_count\": 1,\n  \"operation_count\": 14,\n  \"closed_at\": \"2018-08-26T01:33:47Z\",\n  \"total_coins\": \"100000000000.0000000\",\n  \"fee_pool\": \"0.0001400\",\n  \"base_fee_in_stroops\": 100,\n  \"base_reserve_in_stroops\": 100000000,\n  \"max_tx_set_size\": 100,\n  \"protocol_version\": 10,\n  \"header_xdr\": \"AAAACg+lHnegWaoqSi0eqyar8dz9bRmRB9M+N3rYnTQaQ7QGPPB+NfMTZou4GASQNfxTF88MtKezvXTVNnGPqHxUibMAAAAAW4IDewAAAAAAAAAAhQwIBHGzG/NPXBzuzggma+lVu3lSFCKBnhGvJvPT5x/QmATzFj2t80KSrc6qv8ES1spwVGaqANhNQtC74CeI6AAAAAQN4Lazp2QAAAAAAAAAAAV4AAAAAAAAAAAAAAAAAAAAZAX14QAAAABkAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"\n}",
+    "headers" : {
+      "Cache-Control" : "no-cache, no-store, max-age=0",
+      "Content-Disposition" : "inline",
+      "Content-Type" : "application/hal+json; charset=utf-8",
+      "Vary" : "Origin",
+      "X-Ratelimit-Limit" : "72000",
+      "X-Ratelimit-Remaining" : "71951",
+      "X-Ratelimit-Reset" : "3572",
+      "Date" : "Sun, 26 Aug 2018 01:34:05 GMT"
+    }
+  },
+  "uuid" : "0c74b884-5469-4c4a-a987-efe879b0c0b0",
+  "persistent" : true,
+  "insertionIndex" : 56
+}

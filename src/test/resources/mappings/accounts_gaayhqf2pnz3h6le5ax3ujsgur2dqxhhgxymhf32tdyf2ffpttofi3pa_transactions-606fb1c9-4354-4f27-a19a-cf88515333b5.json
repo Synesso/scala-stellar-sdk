@@ -1,0 +1,25 @@
+{
+  "id" : "606fb1c9-4354-4f27-a19a-cf88515333b5",
+  "name" : "accounts_gaayhqf2pnz3h6le5ax3ujsgur2dqxhhgxymhf32tdyf2ffpttofi3pa_transactions",
+  "request" : {
+    "url" : "/accounts/GAAYHQF2PNZ3H6LE5AX3UJSGUR2DQXHHGXYMHF32TDYF2FFPTTOFI3PA/transactions?cursor=25769807872&limit=100&order=asc",
+    "method" : "GET"
+  },
+  "response" : {
+    "status" : 200,
+    "body" : "{\n  \"_links\": {\n    \"self\": {\n      \"href\": \"http://localhost:8000/accounts/GAAYHQF2PNZ3H6LE5AX3UJSGUR2DQXHHGXYMHF32TDYF2FFPTTOFI3PA/transactions?cursor=25769807872\\u0026limit=100\\u0026order=asc\"\n    },\n    \"next\": {\n      \"href\": \"http://localhost:8000/accounts/GAAYHQF2PNZ3H6LE5AX3UJSGUR2DQXHHGXYMHF32TDYF2FFPTTOFI3PA/transactions?cursor=25769807872\\u0026limit=100\\u0026order=asc\"\n    },\n    \"prev\": {\n      \"href\": \"http://localhost:8000/accounts/GAAYHQF2PNZ3H6LE5AX3UJSGUR2DQXHHGXYMHF32TDYF2FFPTTOFI3PA/transactions?cursor=25769807872\\u0026limit=100\\u0026order=desc\"\n    }\n  },\n  \"_embedded\": {\n    \"records\": []\n  }\n}",
+    "headers" : {
+      "Cache-Control" : "no-cache, no-store, max-age=0",
+      "Content-Disposition" : "inline",
+      "Content-Type" : "application/hal+json; charset=utf-8",
+      "Vary" : "Origin",
+      "X-Ratelimit-Limit" : "72000",
+      "X-Ratelimit-Remaining" : "71926",
+      "X-Ratelimit-Reset" : "3571",
+      "Date" : "Sun, 26 Aug 2018 01:34:06 GMT"
+    }
+  },
+  "uuid" : "606fb1c9-4354-4f27-a19a-cf88515333b5",
+  "persistent" : true,
+  "insertionIndex" : 93
+}
