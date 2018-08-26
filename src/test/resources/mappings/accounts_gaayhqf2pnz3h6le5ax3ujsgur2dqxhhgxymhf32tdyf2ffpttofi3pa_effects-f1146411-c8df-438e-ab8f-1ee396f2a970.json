@@ -1,0 +1,25 @@
+{
+  "id" : "f1146411-c8df-438e-ab8f-1ee396f2a970",
+  "name" : "accounts_gaayhqf2pnz3h6le5ax3ujsgur2dqxhhgxymhf32tdyf2ffpttofi3pa_effects",
+  "request" : {
+    "url" : "/accounts/GAAYHQF2PNZ3H6LE5AX3UJSGUR2DQXHHGXYMHF32TDYF2FFPTTOFI3PA/effects?cursor=25769807878-4&limit=100&order=asc",
+    "method" : "GET"
+  },
+  "response" : {
+    "status" : 200,
+    "body" : "{\n  \"_links\": {\n    \"self\": {\n      \"href\": \"http://localhost:8000/accounts/GAAYHQF2PNZ3H6LE5AX3UJSGUR2DQXHHGXYMHF32TDYF2FFPTTOFI3PA/effects?cursor=25769807878-4\\u0026limit=100\\u0026order=asc\"\n    },\n    \"next\": {\n      \"href\": \"http://localhost:8000/accounts/GAAYHQF2PNZ3H6LE5AX3UJSGUR2DQXHHGXYMHF32TDYF2FFPTTOFI3PA/effects?cursor=25769807878-4\\u0026limit=100\\u0026order=asc\"\n    },\n    \"prev\": {\n      \"href\": \"http://localhost:8000/accounts/GAAYHQF2PNZ3H6LE5AX3UJSGUR2DQXHHGXYMHF32TDYF2FFPTTOFI3PA/effects?cursor=25769807878-4\\u0026limit=100\\u0026order=desc\"\n    }\n  },\n  \"_embedded\": {\n    \"records\": []\n  }\n}",
+    "headers" : {
+      "Cache-Control" : "no-cache, no-store, max-age=0",
+      "Content-Disposition" : "inline",
+      "Content-Type" : "application/hal+json; charset=utf-8",
+      "Vary" : "Origin",
+      "X-Ratelimit-Limit" : "72000",
+      "X-Ratelimit-Remaining" : "71960",
+      "X-Ratelimit-Reset" : "3573",
+      "Date" : "Sun, 26 Aug 2018 08:54:54 GMT"
+    }
+  },
+  "uuid" : "f1146411-c8df-438e-ab8f-1ee396f2a970",
+  "persistent" : true,
+  "insertionIndex" : 43
+}

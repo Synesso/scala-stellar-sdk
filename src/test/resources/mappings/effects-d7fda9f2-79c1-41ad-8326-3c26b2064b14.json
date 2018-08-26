@@ -1,0 +1,25 @@
+{
+  "id" : "d7fda9f2-79c1-41ad-8326-3c26b2064b14",
+  "name" : "effects",
+  "request" : {
+    "url" : "/effects?cursor=25769807879-1&limit=100&order=asc",
+    "method" : "GET"
+  },
+  "response" : {
+    "status" : 200,
+    "body" : "{\n  \"_links\": {\n    \"self\": {\n      \"href\": \"http://localhost:8000/effects?cursor=25769807879-1\\u0026limit=100\\u0026order=asc\"\n    },\n    \"next\": {\n      \"href\": \"http://localhost:8000/effects?cursor=25769807879-1\\u0026limit=100\\u0026order=asc\"\n    },\n    \"prev\": {\n      \"href\": \"http://localhost:8000/effects?cursor=25769807879-1\\u0026limit=100\\u0026order=desc\"\n    }\n  },\n  \"_embedded\": {\n    \"records\": []\n  }\n}",
+    "headers" : {
+      "Cache-Control" : "no-cache, no-store, max-age=0",
+      "Content-Disposition" : "inline",
+      "Content-Type" : "application/hal+json; charset=utf-8",
+      "Vary" : "Origin",
+      "X-Ratelimit-Limit" : "72000",
+      "X-Ratelimit-Remaining" : "71962",
+      "X-Ratelimit-Reset" : "3573",
+      "Date" : "Sun, 26 Aug 2018 08:54:53 GMT"
+    }
+  },
+  "uuid" : "d7fda9f2-79c1-41ad-8326-3c26b2064b14",
+  "persistent" : true,
+  "insertionIndex" : 40
+}

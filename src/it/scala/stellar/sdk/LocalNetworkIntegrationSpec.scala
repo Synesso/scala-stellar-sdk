@@ -140,8 +140,8 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
         case AccountResp(id, _, _, _, _, _, balances, _) =>
           id mustEqual accnA
           balances must containTheSameElementsAs(Seq(
-            lumens(999.99999),
-            IssuedAmount(1, Asset.apply("Chinchilla", masterAccountKey))
+            Balance(lumens(999.99999), buyingLiabilities = 1600),
+            Balance(IssuedAmount(1, Asset.apply("Chinchilla", masterAccountKey)), limit = Some(100000000))
           ))
       }.awaitFor(30 seconds)
     }

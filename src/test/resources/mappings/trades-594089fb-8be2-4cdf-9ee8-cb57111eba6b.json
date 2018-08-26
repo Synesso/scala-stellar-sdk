@@ -1,0 +1,20 @@
+{
+  "id" : "594089fb-8be2-4cdf-9ee8-cb57111eba6b",
+  "name" : "trades",
+  "request" : {
+    "url" : "/%2Ftrades?counter_asset_type=credit_alphanum12&cursor=0&counter_asset_issuer=GBZXN7PIRZGNMHGA7MUUUF4GWPY5AYPV6LY4UV2GL6VJGIQRXFDNMADI&order=asc&base_asset_code=Chinchilla&base_asset_type=credit_alphanum12&counter_asset_code=Chinchilla&limit=100&base_asset_issuer=GAAYHQF2PNZ3H6LE5AX3UJSGUR2DQXHHGXYMHF32TDYF2FFPTTOFI3PA",
+    "method" : "GET"
+  },
+  "response" : {
+    "status" : 301,
+    "body" : "<a href=\"/trades?counter_asset_type=credit_alphanum12&amp;cursor=0&amp;counter_asset_issuer=GBZXN7PIRZGNMHGA7MUUUF4GWPY5AYPV6LY4UV2GL6VJGIQRXFDNMADI&amp;order=asc&amp;base_asset_code=Chinchilla&amp;base_asset_type=credit_alphanum12&amp;counter_asset_code=Chinchilla&amp;limit=100&amp;base_asset_issuer=GAAYHQF2PNZ3H6LE5AX3UJSGUR2DQXHHGXYMHF32TDYF2FFPTTOFI3PA\">Moved Permanently</a>.\n\n",
+    "headers" : {
+      "Location" : "/trades?counter_asset_type=credit_alphanum12&cursor=0&counter_asset_issuer=GBZXN7PIRZGNMHGA7MUUUF4GWPY5AYPV6LY4UV2GL6VJGIQRXFDNMADI&order=asc&base_asset_code=Chinchilla&base_asset_type=credit_alphanum12&counter_asset_code=Chinchilla&limit=100&base_asset_issuer=GAAYHQF2PNZ3H6LE5AX3UJSGUR2DQXHHGXYMHF32TDYF2FFPTTOFI3PA",
+      "Date" : "Sun, 26 Aug 2018 08:54:55 GMT",
+      "Content-Type" : "text/html; charset=utf-8"
+    }
+  },
+  "uuid" : "594089fb-8be2-4cdf-9ee8-cb57111eba6b",
+  "persistent" : true,
+  "insertionIndex" : 88
+}

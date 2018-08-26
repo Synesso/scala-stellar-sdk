@@ -1,0 +1,20 @@
+{
+  "id" : "81636bfd-6933-4454-998d-388052b7a2d5",
+  "name" : "ledgers_6_payments",
+  "request" : {
+    "url" : "/%2Fledgers%2F6%2Fpayments?cursor=0&order=asc&limit=100",
+    "method" : "GET"
+  },
+  "response" : {
+    "status" : 301,
+    "body" : "<a href=\"/ledgers/6/payments?cursor=0&amp;order=asc&amp;limit=100\">Moved Permanently</a>.\n\n",
+    "headers" : {
+      "Location" : "/ledgers/6/payments?cursor=0&order=asc&limit=100",
+      "Date" : "Sun, 26 Aug 2018 08:54:55 GMT",
+      "Content-Type" : "text/html; charset=utf-8"
+    }
+  },
+  "uuid" : "81636bfd-6933-4454-998d-388052b7a2d5",
+  "persistent" : true,
+  "insertionIndex" : 79
+}
