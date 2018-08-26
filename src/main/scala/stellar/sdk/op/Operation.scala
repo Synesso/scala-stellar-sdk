@@ -48,6 +48,7 @@ object Operation {
       case ACCOUNT_MERGE => AccountMergeOperation.from(op.getBody, source)
       case INFLATION => Success(InflationOperation(source))
       case MANAGE_DATA => ManageDataOperation.from(op.getBody.getManageDataOp, source)
+      case BUMP_SEQUENCE => BumpSequenceOperation.from(op.getBody.getBumpSequenceOp, source)
     }
   }
 }

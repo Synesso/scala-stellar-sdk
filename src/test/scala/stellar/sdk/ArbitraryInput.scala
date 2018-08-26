@@ -59,6 +59,8 @@ trait ArbitraryInput extends ScalaCheck {
 
   implicit def arbSetOptionsOperation: Arbitrary[SetOptionsOperation] = Arbitrary(genSetOptionsOperation)
 
+  implicit def arbBumpSequenceOperation: Arbitrary[BumpSequenceOperation] = Arbitrary(genBumpSequenceOperation)
+
   implicit def arbPrice: Arbitrary[Price] = Arbitrary(genPrice)
 
   implicit def arbOperation: Arbitrary[Operation] = Arbitrary(genOperation)
@@ -285,10 +287,15 @@ trait ArbitraryInput extends ScalaCheck {
       highThreshold, homeDomain, signer, sourceAccount)
   }
 
+  def genBumpSequenceOperation: Gen[BumpSequenceOperation] = for {
+    sequence <- Gen.posNum[Long]
+    sourceAccount <- Gen.option(genPublicKey)
+  } yield BumpSequenceOperation(sequence, sourceAccount)
+
   def genOperation: Gen[Operation] = {
     Gen.oneOf(genAccountMergeOperation, genAllowTrustOperation, genChangeTrustOperation, genCreateAccountOperation,
       genCreatePassiveOfferOperation, genInflationOperation, genManageDataOperation, genManageOfferOperation,
-      genPathPaymentOperation, genPaymentOperation, genSetOptionsOperation)
+      genPathPaymentOperation, genPaymentOperation, genSetOptionsOperation, genBumpSequenceOperation)
   }
 
   def genPrice: Gen[Price] = for {

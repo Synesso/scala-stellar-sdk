@@ -185,6 +185,11 @@ trait DomainMatchers extends AnyMatchers with MustExpectations with SequenceMatc
       op.signer mustEqual other.signer
   }
 
+  def beEquivalentTo(other: BumpSequenceOperation): Matcher[BumpSequenceOperation] = beLike[BumpSequenceOperation] {
+    case op =>
+      op.bumpTo mustEqual other.bumpTo
+  }
+
   def beEquivalentTo[T <: Operation](other: T): Matcher[T] = beLike {
     case op: InflationOperation => other mustEqual op
     case op: AccountMergeOperation => other.asInstanceOf[AccountMergeOperation] must beEquivalentTo(op)
@@ -200,6 +205,7 @@ trait DomainMatchers extends AnyMatchers with MustExpectations with SequenceMatc
     case op: PathPaymentOperation => other.asInstanceOf[PathPaymentOperation] must beEquivalentTo(op)
     case op: PaymentOperation => other.asInstanceOf[PaymentOperation] must beEquivalentTo(op)
     case op: SetOptionsOperation => other.asInstanceOf[SetOptionsOperation] must beEquivalentTo(op)
+    case op: BumpSequenceOperation => other.asInstanceOf[BumpSequenceOperation] must beEquivalentTo(op)
   }
 
   def beEquivalentTo(other: Account): Matcher[Account] = beLike {
