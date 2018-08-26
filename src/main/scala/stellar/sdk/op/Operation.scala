@@ -163,7 +163,7 @@ object OperationDeserializer extends CustomSerializer[Operation](format => ( {
           case _ => WriteDataOperation(name, new String(Base64.decodeBase64(value), "UTF-8"), sourceAccount)
         }
       case "bump_sequence" =>
-        BumpSequenceOperation((o \ "bump_to").extract[Long], sourceAccount)
+        BumpSequenceOperation((o \ "bump_to").extract[String].toLong, sourceAccount)
       case t =>
         throw new RuntimeException(s"Unrecognised operation type '$t'")
     }

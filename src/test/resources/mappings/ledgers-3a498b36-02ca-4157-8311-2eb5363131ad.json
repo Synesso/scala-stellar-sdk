@@ -1,0 +1,28 @@
+{
+  "id" : "3a498b36-02ca-4157-8311-2eb5363131ad",
+  "name" : "ledgers",
+  "request" : {
+    "url" : "/ledgers?cursor=30064771072&limit=100&order=asc",
+    "method" : "GET"
+  },
+  "response" : {
+    "status" : 200,
+    "body" : "{\n  \"_links\": {\n    \"self\": {\n      \"href\": \"http://localhost:8000/ledgers?cursor=30064771072\\u0026limit=100\\u0026order=asc\"\n    },\n    \"next\": {\n      \"href\": \"http://localhost:8000/ledgers?cursor=30064771072\\u0026limit=100\\u0026order=asc\"\n    },\n    \"prev\": {\n      \"href\": \"http://localhost:8000/ledgers?cursor=30064771072\\u0026limit=100\\u0026order=desc\"\n    }\n  },\n  \"_embedded\": {\n    \"records\": []\n  }\n}",
+    "headers" : {
+      "Cache-Control" : "no-cache, no-store, max-age=0",
+      "Content-Disposition" : "inline",
+      "Content-Type" : "application/hal+json; charset=utf-8",
+      "Vary" : "Origin",
+      "X-Ratelimit-Limit" : "72000",
+      "X-Ratelimit-Remaining" : "71981",
+      "X-Ratelimit-Reset" : "3574",
+      "Date" : "Sun, 26 Aug 2018 05:39:34 GMT"
+    }
+  },
+  "uuid" : "3a498b36-02ca-4157-8311-2eb5363131ad",
+  "persistent" : true,
+  "scenarioName" : "scenario-ledgers",
+  "requiredScenarioState" : "scenario-ledgers-2",
+  "newScenarioState" : "scenario-ledgers-3",
+  "insertionIndex" : 16
+}

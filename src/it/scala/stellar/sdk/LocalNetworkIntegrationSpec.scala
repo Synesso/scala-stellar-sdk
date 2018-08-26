@@ -110,6 +110,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
           CreateOfferOperation(IssuedAmount(80, Asset("Chinchilla", accnA)), NativeAsset, Price(80, 4), Some(accnA)),
           CreateOfferOperation(IssuedAmount(1, Asset("Chinchilla", accnA)), Asset("Chinchilla", masterAccountKey), Price(1, 1), Some(accnA)),
           PathPaymentOperation(IssuedAmount(1, Asset("Chinchilla", masterAccountKey)), accnB, IssuedAmount(1, Asset("Chinchilla", accnA)), Nil),
+          BumpSequenceOperation(masterAccount.sequenceNumber + 20)
         )
 
         // example of creating and submitting a payment transaction
@@ -207,7 +208,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
   "effect endpoint" should {
     "parse all effects" >> {
       val effects = network.effects()
-      effects.map(_.size) must beEqualTo(29).awaitFor(10 seconds)
+      effects.map(_.size) must beEqualTo(30).awaitFor(10 seconds)
     }
   }
 
@@ -298,7 +299,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
 
   "operation endpoint" should {
     "list all operations" >> {
-      network.operations().map(_.size) must beEqualTo(25).awaitFor(10.seconds)
+      network.operations().map(_.size) must beEqualTo(26).awaitFor(10.seconds)
     }
 
     "list operations by account" >> {
@@ -316,11 +317,8 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
     } yield operation) must beLike[Transacted[Operation]] {
       case op =>
         op.operation must beLike[Operation] {
-          case PathPaymentOperation(sendMax, destAcc, destAmnt, path, source) =>
-            sendMax mustEqual IssuedAmount(1, Asset("Chinchilla", masterAccountKey.asPublicKey))
-            destAcc mustEqual accnB.asPublicKey
-            destAmnt mustEqual IssuedAmount(1, Asset("Chinchilla", accnA.asPublicKey))
-            path must beEmpty
+          case BumpSequenceOperation(bumpTo, source) =>
+            bumpTo mustEqual 23L
             source must beSome[PublicKeyOps](masterAccountKey.asPublicKey)
         }
     }.awaitFor(10.seconds)
@@ -339,7 +337,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
   }
 
   "list the details of a given operation" >> {
-    network.operationsByTransaction("c903b0b8476214b76347461f88cab574712a036fffc30c7e32d56b8b8329450d")
+    network.operationsByTransaction("c5e29c7d19c8af4fa932e6bd3214397a6f20041bc0234dacaac66bf155c02ae9")
         .map(_.drop(2).head) must beLike[Transacted[Operation]] {
       case op =>
         op.operation must beLike[Operation] {
@@ -383,7 +381,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
 
     "filter payments by transaction" >> {
       Await.result(network.transactions(), Duration.Inf).foreach(println)
-      network.paymentsByTransaction("c903b0b8476214b76347461f88cab574712a036fffc30c7e32d56b8b8329450d") must
+      network.paymentsByTransaction("c5e29c7d19c8af4fa932e6bd3214397a6f20041bc0234dacaac66bf155c02ae9") must
         beLike[Seq[Transacted[PayOperation]]] {
           case Seq(op) =>
             op.operation must beEquivalentTo(PathPaymentOperation(
@@ -429,8 +427,8 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
       } yield operation) must beLike[Seq[TransactionHistoryResp]] {
         case Seq(t) =>
           t.account must beEquivalentTo(masterAccountKey)
-          t.feePaid mustEqual 600
-          t.operationCount mustEqual 6
+          t.feePaid mustEqual 700
+          t.operationCount mustEqual 7
           t.memo mustEqual NoMemo
       }.awaitFor(10.seconds)
     }
