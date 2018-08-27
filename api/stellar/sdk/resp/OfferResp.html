@@ -292,7 +292,7 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <span class="name">OfferResp</span><span class="params">(<span name="id">id: <span class="extype" name="scala.Long">Long</span></span>, <span name="seller">seller: <a href="../PublicKeyOps.html" class="extype" name="stellar.sdk.PublicKeyOps">PublicKeyOps</a></span>, <span name="selling">selling: <a href="../Amount.html" class="extype" name="stellar.sdk.Amount">Amount</a></span>, <span name="buying">buying: <a href="../Asset.html" class="extype" name="stellar.sdk.Asset">Asset</a></span>, <span name="price">price: <a href="../Price.html" class="extype" name="stellar.sdk.Price">Price</a></span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <span class="name">OfferResp</span><span class="params">(<span name="id">id: <span class="extype" name="scala.Long">Long</span></span>, <span name="seller">seller: <a href="../PublicKeyOps.html" class="extype" name="stellar.sdk.PublicKeyOps">PublicKeyOps</a></span>, <span name="selling">selling: <a href="../Amount.html" class="extype" name="stellar.sdk.Amount">Amount</a></span>, <span name="buying">buying: <a href="../Asset.html" class="extype" name="stellar.sdk.Asset">Asset</a></span>, <span name="price">price: <a href="../Price.html" class="extype" name="stellar.sdk.Price">Price</a></span>, <span name="lastModifiedLedger">lastModifiedLedger: <span class="extype" name="scala.Long">Long</span></span>, <span name="lastModifiedTime">lastModifiedTime: <span class="extype" name="java.time.ZonedDateTime">ZonedDateTime</span></span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4>
 
@@ -348,9 +348,9 @@
         <div id="constructors" class="members">
               <h3>Instance Constructors</h3>
               <ol><li name="stellar.sdk.resp.OfferResp#&lt;init&gt;" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="&lt;init&gt;(id:Long,seller:stellar.sdk.PublicKeyOps,selling:stellar.sdk.Amount,buying:stellar.sdk.Asset,price:stellar.sdk.Price):stellar.sdk.resp.OfferResp"></a><a id="&lt;init&gt;:OfferResp"></a>
+      <a id="&lt;init&gt;(id:Long,seller:stellar.sdk.PublicKeyOps,selling:stellar.sdk.Amount,buying:stellar.sdk.Asset,price:stellar.sdk.Price,lastModifiedLedger:Long,lastModifiedTime:java.time.ZonedDateTime):stellar.sdk.resp.OfferResp"></a><a id="&lt;init&gt;:OfferResp"></a>
       <span class="permalink">
-      <a href="../../../stellar/sdk/resp/OfferResp.html#&lt;init&gt;(id:Long,seller:stellar.sdk.PublicKeyOps,selling:stellar.sdk.Amount,buying:stellar.sdk.Asset,price:stellar.sdk.Price):stellar.sdk.resp.OfferResp" title="Permalink">
+      <a href="../../../stellar/sdk/resp/OfferResp.html#&lt;init&gt;(id:Long,seller:stellar.sdk.PublicKeyOps,selling:stellar.sdk.Amount,buying:stellar.sdk.Asset,price:stellar.sdk.Price,lastModifiedLedger:Long,lastModifiedTime:java.time.ZonedDateTime):stellar.sdk.resp.OfferResp" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -359,7 +359,7 @@
         <span class="kind">new</span>
       </span>
       <span class="symbol">
-        <span class="name">OfferResp</span><span class="params">(<span name="id">id: <span class="extype" name="scala.Long">Long</span></span>, <span name="seller">seller: <a href="../PublicKeyOps.html" class="extype" name="stellar.sdk.PublicKeyOps">PublicKeyOps</a></span>, <span name="selling">selling: <a href="../Amount.html" class="extype" name="stellar.sdk.Amount">Amount</a></span>, <span name="buying">buying: <a href="../Asset.html" class="extype" name="stellar.sdk.Asset">Asset</a></span>, <span name="price">price: <a href="../Price.html" class="extype" name="stellar.sdk.Price">Price</a></span>)</span>
+        <span class="name">OfferResp</span><span class="params">(<span name="id">id: <span class="extype" name="scala.Long">Long</span></span>, <span name="seller">seller: <a href="../PublicKeyOps.html" class="extype" name="stellar.sdk.PublicKeyOps">PublicKeyOps</a></span>, <span name="selling">selling: <a href="../Amount.html" class="extype" name="stellar.sdk.Amount">Amount</a></span>, <span name="buying">buying: <a href="../Asset.html" class="extype" name="stellar.sdk.Asset">Asset</a></span>, <span name="price">price: <a href="../Price.html" class="extype" name="stellar.sdk.Price">Price</a></span>, <span name="lastModifiedLedger">lastModifiedLedger: <span class="extype" name="scala.Long">Long</span></span>, <span name="lastModifiedTime">lastModifiedTime: <span class="extype" name="java.time.ZonedDateTime">ZonedDateTime</span></span>)</span>
       </span>
       
       
@@ -566,6 +566,38 @@
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
+    </li><li name="stellar.sdk.resp.OfferResp#lastModifiedLedger" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="lastModifiedLedger:Long"></a>
+      <span class="permalink">
+      <a href="../../../stellar/sdk/resp/OfferResp.html#lastModifiedLedger:Long" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">lastModifiedLedger</span><span class="result">: <span class="extype" name="scala.Long">Long</span></span>
+      </span>
+      
+      
+    </li><li name="stellar.sdk.resp.OfferResp#lastModifiedTime" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="lastModifiedTime:java.time.ZonedDateTime"></a><a id="lastModifiedTime:ZonedDateTime"></a>
+      <span class="permalink">
+      <a href="../../../stellar/sdk/resp/OfferResp.html#lastModifiedTime:java.time.ZonedDateTime" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">lastModifiedTime</span><span class="result">: <span class="extype" name="java.time.ZonedDateTime">ZonedDateTime</span></span>
+      </span>
+      
+      
     </li><li name="scala.AnyRef#ne" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="ne(x$1:AnyRef):Boolean"></a><a id="ne(AnyRef):Boolean"></a>
       <span class="permalink">
