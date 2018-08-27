@@ -1,5 +1,8 @@
 package stellar.sdk.resp
 
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+
 import org.json4s.NoTypeHints
 import org.json4s.native.JsonMethods.parse
 import org.json4s.native.Serialization
@@ -9,6 +12,7 @@ import stellar.sdk.{Amount, ArbitraryInput, Asset, NonNativeAsset}
 class OfferRespSpec extends Specification with ArbitraryInput {
 
   implicit val formats = Serialization.formats(NoTypeHints) + OfferRespDeserializer
+  private val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'").withZone(ZoneId.of("UTC"))
 
   "an offer response document" should {
     "parse to an offer response" >> prop { or: OfferResp =>
@@ -37,7 +41,9 @@ class OfferRespSpec extends Specification with ArbitraryInput {
            |    "n": ${or.price.n},
            |    "d": ${or.price.d}
            |  },
-           |  "price": "3.0300000"
+           |  "price": "3.0300000",
+           |  "last_modified_ledger": ${or.lastModifiedLedger},
+           |  "last_modified_time": "${formatter.format(or.lastModifiedTime)}"
            |}
            |
         """.stripMargin

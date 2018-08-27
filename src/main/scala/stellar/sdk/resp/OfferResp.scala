@@ -1,10 +1,13 @@
 package stellar.sdk.resp
 
+import java.time.ZonedDateTime
+
 import org.json4s.JsonAST.JObject
 import org.json4s.{CustomSerializer, DefaultFormats}
 import stellar.sdk._
 
-case class OfferResp(id: Long, seller: PublicKeyOps, selling: Amount, buying: Asset, price: Price)
+case class OfferResp(id: Long, seller: PublicKeyOps, selling: Amount, buying: Asset, price: Price,
+                    lastModifiedLedger: Long, lastModifiedTime: ZonedDateTime)
 
 object OfferRespDeserializer extends CustomSerializer[OfferResp](format => ( {
   case o: JObject =>
@@ -44,7 +47,11 @@ object OfferRespDeserializer extends CustomSerializer[OfferResp](format => ( {
       )
     }
 
-    OfferResp(id, account("seller"), amount("selling"), asset("buying"), price)
+    def lastModifiedLedger = (o \ "last_modified_ledger").extract[Long]
+
+    def lastModifiedTime = ZonedDateTime.parse((o \ "last_modified_time").extract[String])
+
+    OfferResp(id, account("seller"), amount("selling"), asset("buying"), price, lastModifiedLedger, lastModifiedTime)
 }, PartialFunction.empty)
 )
 
