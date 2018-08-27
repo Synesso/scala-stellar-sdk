@@ -6,6 +6,7 @@ import stellar.sdk.inet.{Horizon, HorizonAccess}
 
 /**
   * A network that represents the stand-alone docker image for Horizon & core.
+ *
   * @see [[https://github.com/stellar/docker-stellar-core-horizon]]
   */
 case class StandaloneNetwork(port: Int = 8000) extends Network with FriendBot {

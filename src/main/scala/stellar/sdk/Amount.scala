@@ -41,7 +41,6 @@ object Amount {
     *
     * @param units quantity of lumens
     * @return NativeAmount of the given quantity
-    * @throws IllegalArgumentException if the fractional portion of the input is more than 7 places.
     */
   def lumens(units: Double): NativeAmount = toBaseUnits(units).map(NativeAmount).getOrElse(
     throw new IllegalArgumentException(s"Too many digits in fractional portion of $units. Limit is $decimalPlaces")
