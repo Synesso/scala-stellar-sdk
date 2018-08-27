@@ -425,8 +425,10 @@ trait ArbitraryInput extends ScalaCheck {
     selling <- genAmount
     buying <- genAsset
     price <- genPrice
+    lastModifiedLedger <- Gen.posNum[Long]
+    lastModifiedTime <- genZonedDateTime
   } yield {
-    OfferResp(id, seller, selling, buying, price)
+    OfferResp(id, seller, selling, buying, price, lastModifiedLedger, lastModifiedTime)
   }
 
   def genTransacted[O <: Operation](genOp: Gen[O]): Gen[Transacted[O]] = for {

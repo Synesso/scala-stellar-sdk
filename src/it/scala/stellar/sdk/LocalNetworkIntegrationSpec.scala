@@ -286,14 +286,14 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
 
   "offer endpoint" should {
     "list offers by account" >> {
-      network.offersByAccount(accnB).map(_.toSeq) must beEqualTo(Seq(
-        OfferResp(id = 2,
-          seller = accnB.asPublicKey,
-          selling = lumens(5),
-          buying = IssuedAsset12("Chinchilla", accnA.asPublicKey),
-          price = Price(1, 5)
-        )
-      )).awaitFor(10.seconds)
+      network.offersByAccount(accnB).map(_.toSeq) must beLike[Seq[OfferResp]] {
+        case Seq(only) =>
+          only.id mustEqual 2
+          only.seller must beEquivalentTo(accnB)
+          only.selling mustEqual lumens(5)
+          only.buying must beEquivalentTo(IssuedAsset12("Chinchilla", accnA))
+          only.price mustEqual Price(1, 5)
+      }.awaitFor(10.seconds)
     }
   }
 
