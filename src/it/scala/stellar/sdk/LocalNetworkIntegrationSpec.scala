@@ -44,9 +44,9 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
   val masterAccountKey = network.masterAccount
   var masterAccount = Await.result(network.account(masterAccountKey).map(_.toAccount), 10.seconds)
 
-  val accnA = KeyPair.fromSecretSeed(ByteArrays.sha256("account a".getBytes("UTF-8")))
-  val accnB = KeyPair.fromSecretSeed(ByteArrays.sha256("account b".getBytes("UTF-8")))
-  val accnC = KeyPair.fromSecretSeed(ByteArrays.sha256("account c".getBytes("UTF-8")))
+  val accnA = KeyPair.fromPassphrase("account a")
+  val accnB = KeyPair.fromPassphrase("account b")
+  val accnC = KeyPair.fromPassphrase("account c")
 
   val accounts = Set(accnA, accnB, accnC)
 

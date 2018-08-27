@@ -33,15 +33,15 @@ Add the SDK via your dependency management tool.
 
 Creating an account on the public test network.
 
-@@snip [SessionTestAccount.scala](../../it/scala/stellar/sdk/SessionTestAccount.scala) { #friendbot_example }
+@@snip [FriendbotSpec.scala](../../it/scala/stellar/sdk/FriendbotSpec.scala) { #friendbot_example }
 
 Fetching the details of an account.
 
-@@snip [SequentialIntegrationSpec.scala](../../it/scala/stellar/sdk/SequentialIntegrationSpec.scala) { #account_details_example }
+@@snip [LocalNetworkIntegrationSpec.scala](../../it/scala/stellar/sdk/LocalNetworkIntegrationSpec.scala) { #account_details_example }
 
 Submitting a payment.
 
-@@snip [NetworkSpec.scala](../../it/scala/stellar/sdk/SequentialIntegrationSpec.scala) { #payment_example }
+@@snip [NetworkSpec.scala](../../it/scala/stellar/sdk/LocalNetworkIntegrationSpec.scala) { #payment_example }
 
 For more detailed coverage, continue by reading about @ref:[Transacting](transacting.md).
 

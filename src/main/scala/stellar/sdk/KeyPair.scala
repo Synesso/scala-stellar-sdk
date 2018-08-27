@@ -176,6 +176,14 @@ object KeyPair {
   }
 
   /**
+    * Creates a new Stellar keypair from a passphrase
+    *
+    * @param passphrase the secret passphrase.
+    * @return ( @link KeyPair }
+    */
+  def fromPassphrase(passphrase: String): KeyPair = fromSecretSeed(ByteArrays.sha256(passphrase.getBytes("UTF-8")))
+
+  /**
     * Creates a new Stellar verifying key from a 32 byte address.
     *
     * @param publicKey The 32 byte public key.

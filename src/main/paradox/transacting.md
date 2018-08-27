@@ -11,7 +11,7 @@ Creating a new `Transaction` instance requires these two values, wrapped in an @
 
 Additionally, a `Network` must be implicit in scope. The choice of network will affect how the transaction is serialised.
 
-@@snip [SequentialIntegrationSpec.scala](../../it/scala/stellar/sdk/SequentialIntegrationSpec.scala) { #new_transaction_example }
+@@snip [FriendbotSpec.scala](../../it/scala/stellar/sdk/FriendbotSpec.scala) { #new_transaction_example }
 
 ### Sequence Number
 
@@ -20,7 +20,7 @@ submitted transaction. In simple architectures, it is possible to keep track of 
 However, if this is not possible, or the number is unknown, you can directly substitute the response from the
 @ref:[account query](queries.md#accounts) into the `Transaction` constructor.
 
-@@snip [SequentialIntegrationSpec.scala](../../it/scala/stellar/sdk/SequentialIntegrationSpec.scala) { #payment_example }
+@@snip [LocalNetworkIntegrationSpec.scala](../../it/scala/stellar/sdk/LocalNetworkIntegrationSpec.scala) { #payment_example }
 
 As this example shows, transactions require additional data before they can be successfully processed.
 
@@ -40,6 +40,7 @@ The available operations are:
 
 * @scaladoc[AccountMerge](stellar.sdk.op.AccountMergeOperation)
 * @scaladoc[AllowTrust](stellar.sdk.op.AllowTrustOperation)
+* @scaladoc[BumpSequence](stellar.sdk.op.BumpSequenceOperation)
 * @scaladoc[ChangeTrust](stellar.sdk.op.ChangeTrustOperation)
 * @scaladoc[CreateAccount](stellar.sdk.op.CreateAccountOperation)
 * @scaladoc[CreateOffer](stellar.sdk.op.CreateOfferOperation)

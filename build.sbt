@@ -57,6 +57,7 @@ lazy val root = (project in file("."))
   ).configs(IntegrationTest)
   .settings(
     commonSettings,
+    compile := ((compile in Compile) dependsOn (paradox in Compile)).value,
     Defaults.itSettings,
     target in Compile in doc := target.value / "paradox" / "site" / "main" / "api",
     libraryDependencies ++= List(
@@ -67,9 +68,9 @@ lazy val root = (project in file("."))
       "com.softwaremill.sttp" %% "json4s" % "1.1.5",
       "com.typesafe.scala-logging" %% "scala-logging" % "3.9.0",
       "ch.qos.logback" % "logback-classic" % "1.2.3",
-      "org.specs2" %% "specs2-core" % "4.3.2" % "test,it",
-      "org.specs2" %% "specs2-mock" % "4.3.2" % "test",
-      "org.specs2" %% "specs2-scalacheck" % "4.3.2" % "test",
+      "org.specs2" %% "specs2-core" % "4.3.4" % "test,it",
+      "org.specs2" %% "specs2-mock" % "4.3.4" % "test",
+      "org.specs2" %% "specs2-scalacheck" % "4.3.4" % "test",
       "com.github.tomakehurst" % "wiremock" % "2.18.0" % "it"
     )
   )

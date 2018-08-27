@@ -64,6 +64,9 @@ case class Transaction(source: Account,
     txn
   }
 
+  /**
+    * The base64 encoding of the XDR form of this unsigned transaction.
+    */
   def encodeXDR: String = {
     val baos = new ByteArrayOutputStream
     val os = new XdrDataOutputStream(baos)
@@ -112,6 +115,9 @@ case class SignedTransaction(transaction: Transaction, signatures: Seq[Decorated
     xdr
   }
 
+  /**
+    * The base64 encoding of the XDR form of this signed transaction.
+    */
   def encodeXDR: String = {
     val baos = new ByteArrayOutputStream
     val os = new XdrDataOutputStream(baos)
