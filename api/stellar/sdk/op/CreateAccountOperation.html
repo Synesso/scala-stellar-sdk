@@ -123,8 +123,8 @@
                         <a href="AccountMergeOperation.html" title="Deletes account and transfers remaining balance to destination account.">AccountMergeOperation</a>
                       </li><li class="current-entities indented3">
                         <a class="object" href="AllowTrustOperation$.html" title=""></a>
-                        <a class="class" href="AllowTrustOperation.html" title="Updates the “authorized” flag of an existing trust line this is called by the issuer of the related asset."></a>
-                        <a href="AllowTrustOperation.html" title="Updates the “authorized” flag of an existing trust line this is called by the issuer of the related asset.">AllowTrustOperation</a>
+                        <a class="class" href="AllowTrustOperation.html" title="Updates the “authorized” flag of an existing trust line."></a>
+                        <a href="AllowTrustOperation.html" title="Updates the “authorized” flag of an existing trust line.">AllowTrustOperation</a>
                       </li><li class="current-entities indented3">
                         <span class="separator"></span>
                         <a class="object" href="AuthorizationImmutableFlag$.html" title=""></a>
@@ -138,13 +138,17 @@
                         <a class="object" href="AuthorizationRevocableFlag$.html" title=""></a>
                         <a href="AuthorizationRevocableFlag$.html" title="">AuthorizationRevocableFlag</a>
                       </li><li class="current-entities indented3">
+                        <a class="object" href="BumpSequenceOperation$.html" title=""></a>
+                        <a class="class" href="BumpSequenceOperation.html" title="Bumps forward the sequence number of the source account of the operation, allowing it to invalidate any transactions with a smaller sequence number."></a>
+                        <a href="BumpSequenceOperation.html" title="Bumps forward the sequence number of the source account of the operation, allowing it to invalidate any transactions with a smaller sequence number.">BumpSequenceOperation</a>
+                      </li><li class="current-entities indented3">
                         <a class="object" href="ChangeTrustOperation$.html" title=""></a>
-                        <a class="class" href="ChangeTrustOperation.html" title="Represents ChangeTrust operation."></a>
-                        <a href="ChangeTrustOperation.html" title="Represents ChangeTrust operation.">ChangeTrustOperation</a>
+                        <a class="class" href="ChangeTrustOperation.html" title="The source account is stating that it will trust the asset of the limit up to the amount of the limit."></a>
+                        <a href="ChangeTrustOperation.html" title="The source account is stating that it will trust the asset of the limit up to the amount of the limit.">ChangeTrustOperation</a>
                       </li><li class="current-entities indented3">
                         <a class="object" href="CreateAccountOperation$.html" title=""></a>
-                        <a class="class" href="" title="Represents CreateAccount operation."></a>
-                        <a href="" title="Represents CreateAccount operation.">CreateAccountOperation</a>
+                        <a class="class" href="" title="Funds and creates a new account."></a>
+                        <a href="" title="Funds and creates a new account.">CreateAccountOperation</a>
                       </li><li class="current-entities indented3">
                         <span class="separator"></span>
                         <a class="class" href="CreateOfferOperation.html" title="Creates an offer in the Stellar network."></a>
@@ -191,20 +195,20 @@
                         <a href="OperationDeserializer$.html" title="">OperationDeserializer</a>
                       </li><li class="current-entities indented3">
                         <a class="object" href="PathPaymentOperation$.html" title=""></a>
-                        <a class="class" href="PathPaymentOperation.html" title="Represents PathPayment operation."></a>
-                        <a href="PathPaymentOperation.html" title="Represents PathPayment operation.">PathPaymentOperation</a>
+                        <a class="class" href="PathPaymentOperation.html" title="Represents a payment from one account to another through a path."></a>
+                        <a href="PathPaymentOperation.html" title="Represents a payment from one account to another through a path.">PathPaymentOperation</a>
                       </li><li class="current-entities indented3">
                         <span class="separator"></span>
                         <a class="trait" href="PayOperation.html" title="Marker trait for any operation that involves a payment (PaymentOperation, CreateAccountOperation)"></a>
                         <a href="PayOperation.html" title="Marker trait for any operation that involves a payment (PaymentOperation, CreateAccountOperation)">PayOperation</a>
                       </li><li class="current-entities indented3">
                         <a class="object" href="PaymentOperation$.html" title=""></a>
-                        <a class="class" href="PaymentOperation.html" title="Represents Payment operation."></a>
-                        <a href="PaymentOperation.html" title="Represents Payment operation.">PaymentOperation</a>
+                        <a class="class" href="PaymentOperation.html" title="Represents a payment from one account to another."></a>
+                        <a href="PaymentOperation.html" title="Represents a payment from one account to another.">PaymentOperation</a>
                       </li><li class="current-entities indented3">
                         <a class="object" href="SetOptionsOperation$.html" title=""></a>
-                        <a class="class" href="SetOptionsOperation.html" title=""></a>
-                        <a href="SetOptionsOperation.html" title="">SetOptionsOperation</a>
+                        <a class="class" href="SetOptionsOperation.html" title="Modify an account, setting one or more options."></a>
+                        <a href="SetOptionsOperation.html" title="Modify an account, setting one or more options.">SetOptionsOperation</a>
                       </li><li class="current-entities indented3">
                         <span class="separator"></span>
                         <a class="class" href="Transacted.html" title="Provides access to additional information related to an operation after it has been transacted in the network."></a>
@@ -251,8 +255,8 @@
       </h4>
 
       
-          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Represents <a href="https://www.stellar.org/developers/learn/concepts/list-of-operations.html#create-account" target="_blank">CreateAccount</a> operation.
-</p></div><dl class="attributes block"> <dt>See also</dt><dd><span class="cmt"><p><a href="https://www.stellar.org/developers/learn/concepts/list-of-operations.html" target="_blank">List of Operations</a></p></span></dd></dl><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Funds and creates a new account.
+</p></div><dl class="paramcmts block"><dt class="param">destinationAccount</dt><dd class="cmt"><p>the account to be created</p></dd><dt class="param">startingBalance</dt><dd class="cmt"><p>the amount of funds to send to it</p></dd><dt class="param">sourceAccount</dt><dd class="cmt"><p>the account effecting this operation, if different from the owning account of the transaction</p></dd></dl><dl class="attributes block"> <dt>See also</dt><dd><span class="cmt"><p><a href="https://www.stellar.org/developers/horizon/reference/resources/operation.html#create-account" target="_blank">endpoint doc</a></p></span></dd></dl><div class="toggleContainer block">
           <span class="toggle">
             Linear Supertypes
           </span>
@@ -302,7 +306,7 @@
         <div id="allMembers">
         <div id="constructors" class="members">
               <h3>Instance Constructors</h3>
-              <ol><li name="stellar.sdk.op.CreateAccountOperation#&lt;init&gt;" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+              <ol><li name="stellar.sdk.op.CreateAccountOperation#&lt;init&gt;" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="&lt;init&gt;(destinationAccount:stellar.sdk.PublicKeyOps,startingBalance:stellar.sdk.NativeAmount,sourceAccount:Option[stellar.sdk.PublicKeyOps]):stellar.sdk.op.CreateAccountOperation"></a><a id="&lt;init&gt;:CreateAccountOperation"></a>
       <span class="permalink">
       <a href="../../../stellar/sdk/op/CreateAccountOperation.html#&lt;init&gt;(destinationAccount:stellar.sdk.PublicKeyOps,startingBalance:stellar.sdk.NativeAmount,sourceAccount:Option[stellar.sdk.PublicKeyOps]):stellar.sdk.op.CreateAccountOperation" title="Permalink">
@@ -317,7 +321,7 @@
         <span class="name">CreateAccountOperation</span><span class="params">(<span name="destinationAccount">destinationAccount: <a href="../PublicKeyOps.html" class="extype" name="stellar.sdk.PublicKeyOps">PublicKeyOps</a></span>, <span name="startingBalance">startingBalance: <a href="../NativeAmount.html" class="extype" name="stellar.sdk.NativeAmount">NativeAmount</a> = <span class="symbol"><span class="name"><a href="../../index.html">Amount.lumens(1)</a></span></span></span>, <span name="sourceAccount">sourceAccount: <span class="extype" name="scala.Option">Option</span>[<a href="../PublicKeyOps.html" class="extype" name="stellar.sdk.PublicKeyOps">PublicKeyOps</a>] = <span class="symbol">None</span></span>)</span>
       </span>
       
-      
+      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt class="param">destinationAccount</dt><dd class="cmt"><p>the account to be created</p></dd><dt class="param">startingBalance</dt><dd class="cmt"><p>the amount of funds to send to it</p></dd><dt class="param">sourceAccount</dt><dd class="cmt"><p>the account effecting this operation, if different from the owning account of the transaction</p></dd></dl></div>
     </li></ol>
             </div>
 

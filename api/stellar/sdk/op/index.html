@@ -139,8 +139,8 @@
                         <a href="AccountMergeOperation.html" title="Deletes account and transfers remaining balance to destination account.">AccountMergeOperation</a>
                       </li><li class="current-entities indented3">
                         <a class="object" href="AllowTrustOperation$.html" title=""></a>
-                        <a class="class" href="AllowTrustOperation.html" title="Updates the “authorized” flag of an existing trust line this is called by the issuer of the related asset."></a>
-                        <a href="AllowTrustOperation.html" title="Updates the “authorized” flag of an existing trust line this is called by the issuer of the related asset.">AllowTrustOperation</a>
+                        <a class="class" href="AllowTrustOperation.html" title="Updates the “authorized” flag of an existing trust line."></a>
+                        <a href="AllowTrustOperation.html" title="Updates the “authorized” flag of an existing trust line.">AllowTrustOperation</a>
                       </li><li class="current-entities indented3">
                         <span class="separator"></span>
                         <a class="object" href="AuthorizationImmutableFlag$.html" title=""></a>
@@ -154,13 +154,17 @@
                         <a class="object" href="AuthorizationRevocableFlag$.html" title=""></a>
                         <a href="AuthorizationRevocableFlag$.html" title="">AuthorizationRevocableFlag</a>
                       </li><li class="current-entities indented3">
+                        <a class="object" href="BumpSequenceOperation$.html" title=""></a>
+                        <a class="class" href="BumpSequenceOperation.html" title="Bumps forward the sequence number of the source account of the operation, allowing it to invalidate any transactions with a smaller sequence number."></a>
+                        <a href="BumpSequenceOperation.html" title="Bumps forward the sequence number of the source account of the operation, allowing it to invalidate any transactions with a smaller sequence number.">BumpSequenceOperation</a>
+                      </li><li class="current-entities indented3">
                         <a class="object" href="ChangeTrustOperation$.html" title=""></a>
-                        <a class="class" href="ChangeTrustOperation.html" title="Represents ChangeTrust operation."></a>
-                        <a href="ChangeTrustOperation.html" title="Represents ChangeTrust operation.">ChangeTrustOperation</a>
+                        <a class="class" href="ChangeTrustOperation.html" title="The source account is stating that it will trust the asset of the limit up to the amount of the limit."></a>
+                        <a href="ChangeTrustOperation.html" title="The source account is stating that it will trust the asset of the limit up to the amount of the limit.">ChangeTrustOperation</a>
                       </li><li class="current-entities indented3">
                         <a class="object" href="CreateAccountOperation$.html" title=""></a>
-                        <a class="class" href="CreateAccountOperation.html" title="Represents CreateAccount operation."></a>
-                        <a href="CreateAccountOperation.html" title="Represents CreateAccount operation.">CreateAccountOperation</a>
+                        <a class="class" href="CreateAccountOperation.html" title="Funds and creates a new account."></a>
+                        <a href="CreateAccountOperation.html" title="Funds and creates a new account.">CreateAccountOperation</a>
                       </li><li class="current-entities indented3">
                         <span class="separator"></span>
                         <a class="class" href="CreateOfferOperation.html" title="Creates an offer in the Stellar network."></a>
@@ -207,20 +211,20 @@
                         <a href="OperationDeserializer$.html" title="">OperationDeserializer</a>
                       </li><li class="current-entities indented3">
                         <a class="object" href="PathPaymentOperation$.html" title=""></a>
-                        <a class="class" href="PathPaymentOperation.html" title="Represents PathPayment operation."></a>
-                        <a href="PathPaymentOperation.html" title="Represents PathPayment operation.">PathPaymentOperation</a>
+                        <a class="class" href="PathPaymentOperation.html" title="Represents a payment from one account to another through a path."></a>
+                        <a href="PathPaymentOperation.html" title="Represents a payment from one account to another through a path.">PathPaymentOperation</a>
                       </li><li class="current-entities indented3">
                         <span class="separator"></span>
                         <a class="trait" href="PayOperation.html" title="Marker trait for any operation that involves a payment (PaymentOperation, CreateAccountOperation)"></a>
                         <a href="PayOperation.html" title="Marker trait for any operation that involves a payment (PaymentOperation, CreateAccountOperation)">PayOperation</a>
                       </li><li class="current-entities indented3">
                         <a class="object" href="PaymentOperation$.html" title=""></a>
-                        <a class="class" href="PaymentOperation.html" title="Represents Payment operation."></a>
-                        <a href="PaymentOperation.html" title="Represents Payment operation.">PaymentOperation</a>
+                        <a class="class" href="PaymentOperation.html" title="Represents a payment from one account to another."></a>
+                        <a href="PaymentOperation.html" title="Represents a payment from one account to another.">PaymentOperation</a>
                       </li><li class="current-entities indented3">
                         <a class="object" href="SetOptionsOperation$.html" title=""></a>
-                        <a class="class" href="SetOptionsOperation.html" title=""></a>
-                        <a href="SetOptionsOperation.html" title="">SetOptionsOperation</a>
+                        <a class="class" href="SetOptionsOperation.html" title="Modify an account, setting one or more options."></a>
+                        <a href="SetOptionsOperation.html" title="Modify an account, setting one or more options.">SetOptionsOperation</a>
                       </li><li class="current-entities indented3">
                         <span class="separator"></span>
                         <a class="class" href="Transacted.html" title="Provides access to additional information related to an operation after it has been transacted in the network."></a>
@@ -316,7 +320,7 @@
 
         <div id="types" class="types members">
               <h3>Type Members</h3>
-              <ol><li name="stellar.sdk.op.AccountMergeOperation" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+              <ol><li name="stellar.sdk.op.AccountMergeOperation" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="AccountMergeOperationextendsOperationwithProductwithSerializable"></a><a id="AccountMergeOperation:AccountMergeOperation"></a>
       <span class="permalink">
       <a href="../../../stellar/sdk/op/index.html#AccountMergeOperationextendsOperationwithProductwithSerializable" title="Permalink">
@@ -331,8 +335,9 @@
         <a title="Deletes account and transfers remaining balance to destination account." href="AccountMergeOperation.html"><span class="name">AccountMergeOperation</span></a><span class="params">(<span name="destination">destination: <a href="../PublicKeyOps.html" class="extype" name="stellar.sdk.PublicKeyOps">PublicKeyOps</a></span>, <span name="sourceAccount">sourceAccount: <span class="extype" name="scala.Option">Option</span>[<a href="../PublicKeyOps.html" class="extype" name="stellar.sdk.PublicKeyOps">PublicKeyOps</a>] = <span class="symbol">None</span></span>)</span><span class="result"> extends <a href="Operation.html" class="extype" name="stellar.sdk.op.Operation">Operation</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       
-      <p class="shortcomment cmt">Deletes account and transfers remaining balance to destination account.</p>
-    </li><li name="stellar.sdk.op.AllowTrustOperation" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <p class="shortcomment cmt">Deletes account and transfers remaining balance to destination account.</p><div class="fullcomment"><div class="comment cmt"><p>Deletes account and transfers remaining balance to destination account.
+</p></div><dl class="paramcmts block"><dt class="param">destination</dt><dd class="cmt"><p>the account to receive the residual balances of the account to be merged</p></dd><dt class="param">sourceAccount</dt><dd class="cmt"><p>the account to be merged, if different from the owning account of the transaction</p></dd></dl><dl class="attributes block"> <dt>See also</dt><dd><span class="cmt"><p><a href="https://www.stellar.org/developers/horizon/reference/resources/operation.html#account-merge" target="_blank">endpoint doc</a></p></span></dd></dl></div>
+    </li><li name="stellar.sdk.op.AllowTrustOperation" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="AllowTrustOperationextendsOperationwithProductwithSerializable"></a><a id="AllowTrustOperation:AllowTrustOperation"></a>
       <span class="permalink">
       <a href="../../../stellar/sdk/op/index.html#AllowTrustOperationextendsOperationwithProductwithSerializable" title="Permalink">
@@ -344,10 +349,30 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a title="Updates the “authorized” flag of an existing trust line this is called by the issuer of the related asset." href="AllowTrustOperation.html"><span class="name">AllowTrustOperation</span></a><span class="params">(<span name="trustor">trustor: <a href="../PublicKey.html" class="extype" name="stellar.sdk.PublicKey">PublicKey</a></span>, <span name="assetCode">assetCode: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="authorize">authorize: <span class="extype" name="scala.Boolean">Boolean</span></span>, <span name="sourceAccount">sourceAccount: <span class="extype" name="scala.Option">Option</span>[<a href="../PublicKeyOps.html" class="extype" name="stellar.sdk.PublicKeyOps">PublicKeyOps</a>] = <span class="symbol">None</span></span>)</span><span class="result"> extends <a href="Operation.html" class="extype" name="stellar.sdk.op.Operation">Operation</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a title="Updates the “authorized” flag of an existing trust line." href="AllowTrustOperation.html"><span class="name">AllowTrustOperation</span></a><span class="params">(<span name="trustor">trustor: <a href="../PublicKeyOps.html" class="extype" name="stellar.sdk.PublicKeyOps">PublicKeyOps</a></span>, <span name="assetCode">assetCode: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="authorize">authorize: <span class="extype" name="scala.Boolean">Boolean</span></span>, <span name="sourceAccount">sourceAccount: <span class="extype" name="scala.Option">Option</span>[<a href="../PublicKeyOps.html" class="extype" name="stellar.sdk.PublicKeyOps">PublicKeyOps</a>] = <span class="symbol">None</span></span>)</span><span class="result"> extends <a href="Operation.html" class="extype" name="stellar.sdk.op.Operation">Operation</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       
-      <p class="shortcomment cmt">Updates the “authorized” flag of an existing trust line this is called by the issuer of the related asset.</p>
+      <p class="shortcomment cmt">Updates the “authorized” flag of an existing trust line.</p><div class="fullcomment"><div class="comment cmt"><p>Updates the “authorized” flag of an existing trust line. This is called by the issuer of the related asset.
+</p></div></div>
+    </li><li name="stellar.sdk.op.BumpSequenceOperation" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="BumpSequenceOperationextendsOperationwithProductwithSerializable"></a><a id="BumpSequenceOperation:BumpSequenceOperation"></a>
+      <span class="permalink">
+      <a href="../../../stellar/sdk/op/index.html#BumpSequenceOperationextendsOperationwithProductwithSerializable" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a title="Bumps forward the sequence number of the source account of the operation, allowing it to invalidate any transactions with a smaller sequence number." href="BumpSequenceOperation.html"><span class="name">BumpSequenceOperation</span></a><span class="params">(<span name="bumpTo">bumpTo: <span class="extype" name="scala.Long">Long</span></span>, <span name="sourceAccount">sourceAccount: <span class="extype" name="scala.Option">Option</span>[<a href="../PublicKeyOps.html" class="extype" name="stellar.sdk.PublicKeyOps">PublicKeyOps</a>] = <span class="symbol">None</span></span>)</span><span class="result"> extends <a href="Operation.html" class="extype" name="stellar.sdk.op.Operation">Operation</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      
+      <p class="shortcomment cmt">Bumps forward the sequence number of the source account of the operation, allowing it to invalidate any transactions
+with a smaller sequence number.</p><div class="fullcomment"><div class="comment cmt"><p>Bumps forward the sequence number of the source account of the operation, allowing it to invalidate any transactions
+with a smaller sequence number.
+</p></div><dl class="paramcmts block"><dt class="param">bumpTo</dt><dd class="cmt"><p>the number to increase the sequence number to</p></dd><dt class="param">sourceAccount</dt><dd class="cmt"><p>the account effecting this operation, if different from the owning account of the transaction</p></dd></dl><dl class="attributes block"> <dt>See also</dt><dd><span class="cmt"><p><a href="https://www.stellar.org/developers/horizon/reference/resources/operation.html#bump-sequence" target="_blank">endpoint doc</a></p></span></dd></dl></div>
     </li><li name="stellar.sdk.op.ChangeTrustOperation" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="ChangeTrustOperationextendsOperationwithProductwithSerializable"></a><a id="ChangeTrustOperation:ChangeTrustOperation"></a>
       <span class="permalink">
@@ -360,11 +385,11 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a title="Represents ChangeTrust operation." href="ChangeTrustOperation.html"><span class="name">ChangeTrustOperation</span></a><span class="params">(<span name="limit">limit: <a href="../IssuedAmount.html" class="extype" name="stellar.sdk.IssuedAmount">IssuedAmount</a></span>, <span name="sourceAccount">sourceAccount: <span class="extype" name="scala.Option">Option</span>[<a href="../PublicKeyOps.html" class="extype" name="stellar.sdk.PublicKeyOps">PublicKeyOps</a>] = <span class="symbol">None</span></span>)</span><span class="result"> extends <a href="Operation.html" class="extype" name="stellar.sdk.op.Operation">Operation</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a title="The source account is stating that it will trust the asset of the limit up to the amount of the limit." href="ChangeTrustOperation.html"><span class="name">ChangeTrustOperation</span></a><span class="params">(<span name="limit">limit: <a href="../IssuedAmount.html" class="extype" name="stellar.sdk.IssuedAmount">IssuedAmount</a></span>, <span name="sourceAccount">sourceAccount: <span class="extype" name="scala.Option">Option</span>[<a href="../PublicKeyOps.html" class="extype" name="stellar.sdk.PublicKeyOps">PublicKeyOps</a>] = <span class="symbol">None</span></span>)</span><span class="result"> extends <a href="Operation.html" class="extype" name="stellar.sdk.op.Operation">Operation</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       
-      <p class="shortcomment cmt">Represents <a href="https://www.stellar.org/developers/learn/concepts/list-of-operations.html#change-trust" target="_blank">ChangeTrust</a> operation.</p><div class="fullcomment"><div class="comment cmt"><p>Represents <a href="https://www.stellar.org/developers/learn/concepts/list-of-operations.html#change-trust" target="_blank">ChangeTrust</a> operation.
-</p></div><dl class="attributes block"> <dt>See also</dt><dd><span class="cmt"><p><a href="https://www.stellar.org/developers/learn/concepts/list-of-operations.html" target="_blank">List of Operations</a></p></span></dd></dl></div>
+      <p class="shortcomment cmt">The source account is stating that it will trust the asset of the limit up to the amount of the limit.</p><div class="fullcomment"><div class="comment cmt"><p>The source account is stating that it will trust the asset of the limit up to the amount of the limit.
+</p></div><dl class="paramcmts block"><dt class="param">limit</dt><dd class="cmt"><p>the asset to be trusted and the limit of that trust</p></dd><dt class="param">sourceAccount</dt><dd class="cmt"><p>the account effecting this operation, if different from the owning account of the transaction</p></dd></dl><dl class="attributes block"> <dt>See also</dt><dd><span class="cmt"><p><a href="https://www.stellar.org/developers/horizon/reference/resources/operation.html#change-trust" target="_blank">endpoint doc</a></p></span></dd></dl></div>
     </li><li name="stellar.sdk.op.CreateAccountOperation" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="CreateAccountOperationextendsPayOperationwithProductwithSerializable"></a><a id="CreateAccountOperation:CreateAccountOperation"></a>
       <span class="permalink">
@@ -377,11 +402,11 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a title="Represents CreateAccount operation." href="CreateAccountOperation.html"><span class="name">CreateAccountOperation</span></a><span class="params">(<span name="destinationAccount">destinationAccount: <a href="../PublicKeyOps.html" class="extype" name="stellar.sdk.PublicKeyOps">PublicKeyOps</a></span>, <span name="startingBalance">startingBalance: <a href="../NativeAmount.html" class="extype" name="stellar.sdk.NativeAmount">NativeAmount</a> = <span class="symbol"><span class="name"><a href="../../index.html">Amount.lumens(1)</a></span></span></span>, <span name="sourceAccount">sourceAccount: <span class="extype" name="scala.Option">Option</span>[<a href="../PublicKeyOps.html" class="extype" name="stellar.sdk.PublicKeyOps">PublicKeyOps</a>] = <span class="symbol">None</span></span>)</span><span class="result"> extends <a href="PayOperation.html" class="extype" name="stellar.sdk.op.PayOperation">PayOperation</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a title="Funds and creates a new account." href="CreateAccountOperation.html"><span class="name">CreateAccountOperation</span></a><span class="params">(<span name="destinationAccount">destinationAccount: <a href="../PublicKeyOps.html" class="extype" name="stellar.sdk.PublicKeyOps">PublicKeyOps</a></span>, <span name="startingBalance">startingBalance: <a href="../NativeAmount.html" class="extype" name="stellar.sdk.NativeAmount">NativeAmount</a> = <span class="symbol"><span class="name"><a href="../../index.html">Amount.lumens(1)</a></span></span></span>, <span name="sourceAccount">sourceAccount: <span class="extype" name="scala.Option">Option</span>[<a href="../PublicKeyOps.html" class="extype" name="stellar.sdk.PublicKeyOps">PublicKeyOps</a>] = <span class="symbol">None</span></span>)</span><span class="result"> extends <a href="PayOperation.html" class="extype" name="stellar.sdk.op.PayOperation">PayOperation</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       
-      <p class="shortcomment cmt">Represents <a href="https://www.stellar.org/developers/learn/concepts/list-of-operations.html#create-account" target="_blank">CreateAccount</a> operation.</p><div class="fullcomment"><div class="comment cmt"><p>Represents <a href="https://www.stellar.org/developers/learn/concepts/list-of-operations.html#create-account" target="_blank">CreateAccount</a> operation.
-</p></div><dl class="attributes block"> <dt>See also</dt><dd><span class="cmt"><p><a href="https://www.stellar.org/developers/learn/concepts/list-of-operations.html" target="_blank">List of Operations</a></p></span></dd></dl></div>
+      <p class="shortcomment cmt">Funds and creates a new account.</p><div class="fullcomment"><div class="comment cmt"><p>Funds and creates a new account.
+</p></div><dl class="paramcmts block"><dt class="param">destinationAccount</dt><dd class="cmt"><p>the account to be created</p></dd><dt class="param">startingBalance</dt><dd class="cmt"><p>the amount of funds to send to it</p></dd><dt class="param">sourceAccount</dt><dd class="cmt"><p>the account effecting this operation, if different from the owning account of the transaction</p></dd></dl><dl class="attributes block"> <dt>See also</dt><dd><span class="cmt"><p><a href="https://www.stellar.org/developers/horizon/reference/resources/operation.html#create-account" target="_blank">endpoint doc</a></p></span></dd></dl></div>
     </li><li name="stellar.sdk.op.CreateOfferOperation" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="CreateOfferOperationextendsManageOfferOperationwithProductwithSerializable"></a><a id="CreateOfferOperation:CreateOfferOperation"></a>
       <span class="permalink">
@@ -398,7 +423,7 @@
       </span>
       
       <p class="shortcomment cmt">Creates an offer in the Stellar network.</p>
-    </li><li name="stellar.sdk.op.CreatePassiveOfferOperation" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+    </li><li name="stellar.sdk.op.CreatePassiveOfferOperation" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="CreatePassiveOfferOperationextendsOperationwithProductwithSerializable"></a><a id="CreatePassiveOfferOperation:CreatePassiveOfferOperation"></a>
       <span class="permalink">
       <a href="../../../stellar/sdk/op/index.html#CreatePassiveOfferOperationextendsOperationwithProductwithSerializable" title="Permalink">
@@ -413,8 +438,9 @@
         <a title="Creates an offer that won’t consume a counter offer that exactly matches this offer." href="CreatePassiveOfferOperation.html"><span class="name">CreatePassiveOfferOperation</span></a><span class="params">(<span name="selling">selling: <a href="../Amount.html" class="extype" name="stellar.sdk.Amount">Amount</a></span>, <span name="buying">buying: <a href="../Asset.html" class="extype" name="stellar.sdk.Asset">Asset</a></span>, <span name="price">price: <a href="../Price.html" class="extype" name="stellar.sdk.Price">Price</a></span>, <span name="sourceAccount">sourceAccount: <span class="extype" name="scala.Option">Option</span>[<a href="../PublicKeyOps.html" class="extype" name="stellar.sdk.PublicKeyOps">PublicKeyOps</a>] = <span class="symbol">None</span></span>)</span><span class="result"> extends <a href="Operation.html" class="extype" name="stellar.sdk.op.Operation">Operation</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       
-      <p class="shortcomment cmt">Creates an offer that won’t consume a counter offer that exactly matches this offer.</p>
-    </li><li name="stellar.sdk.op.DeleteDataOperation" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <p class="shortcomment cmt">Creates an offer that won’t consume a counter offer that exactly matches this offer.</p><div class="fullcomment"><div class="comment cmt"><p>Creates an offer that won’t consume a counter offer that exactly matches this offer.
+</p></div><dl class="paramcmts block"><dt class="param">selling</dt><dd class="cmt"><p>the total amount of tokens being offered</p></dd><dt class="param">buying</dt><dd class="cmt"><p>the asset being sought</p></dd><dt class="param">price</dt><dd class="cmt"><p>the price the offerer is willing to accept</p></dd><dt class="param">sourceAccount</dt><dd class="cmt"><p>the account effecting this operation, if different from the owning account of the transaction</p></dd></dl><dl class="attributes block"> <dt>See also</dt><dd><span class="cmt"><p><a href="https://www.stellar.org/developers/horizon/reference/resources/operation.html#create-passive-offer" target="_blank">endpoint doc</a></p></span></dd></dl></div>
+    </li><li name="stellar.sdk.op.DeleteDataOperation" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="DeleteDataOperationextendsManageDataOperationwithProductwithSerializable"></a><a id="DeleteDataOperation:DeleteDataOperation"></a>
       <span class="permalink">
       <a href="../../../stellar/sdk/op/index.html#DeleteDataOperationextendsManageDataOperationwithProductwithSerializable" title="Permalink">
@@ -429,8 +455,9 @@
         <a title="Deletes a Data Entry (name/value pair) for an account." href="DeleteDataOperation.html"><span class="name">DeleteDataOperation</span></a><span class="params">(<span name="name">name: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="sourceAccount">sourceAccount: <span class="extype" name="scala.Option">Option</span>[<a href="../PublicKeyOps.html" class="extype" name="stellar.sdk.PublicKeyOps">PublicKeyOps</a>] = <span class="symbol">None</span></span>)</span><span class="result"> extends <a href="ManageDataOperation.html" class="extype" name="stellar.sdk.op.ManageDataOperation">ManageDataOperation</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       
-      <p class="shortcomment cmt">Deletes a Data Entry (name/value pair) for an account.</p>
-    </li><li name="stellar.sdk.op.DeleteOfferOperation" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <p class="shortcomment cmt">Deletes a Data Entry (name/value pair) for an account.</p><div class="fullcomment"><div class="comment cmt"><p>Deletes a Data Entry (name/value pair) for an account.
+</p></div><dl class="paramcmts block"><dt class="param">sourceAccount</dt><dd class="cmt"><p>the account effecting this operation, if different from the owning account of the transaction</p></dd></dl><dl class="attributes block"> <dt>See also</dt><dd><span class="cmt"><p><a href="https://www.stellar.org/developers/horizon/reference/resources/operation.html#manage-data" target="_blank">endpoint doc</a></p></span></dd></dl></div>
+    </li><li name="stellar.sdk.op.DeleteOfferOperation" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="DeleteOfferOperationextendsManageOfferOperationwithProductwithSerializable"></a><a id="DeleteOfferOperation:DeleteOfferOperation"></a>
       <span class="permalink">
       <a href="../../../stellar/sdk/op/index.html#DeleteOfferOperationextendsManageOfferOperationwithProductwithSerializable" title="Permalink">
@@ -445,8 +472,9 @@
         <a title="Deletes an offer in the Stellar network." href="DeleteOfferOperation.html"><span class="name">DeleteOfferOperation</span></a><span class="params">(<span name="offerId">offerId: <span class="extype" name="scala.Long">Long</span></span>, <span name="selling">selling: <a href="../Asset.html" class="extype" name="stellar.sdk.Asset">Asset</a></span>, <span name="buying">buying: <a href="../Asset.html" class="extype" name="stellar.sdk.Asset">Asset</a></span>, <span name="price">price: <a href="../Price.html" class="extype" name="stellar.sdk.Price">Price</a></span>, <span name="sourceAccount">sourceAccount: <span class="extype" name="scala.Option">Option</span>[<a href="../PublicKeyOps.html" class="extype" name="stellar.sdk.PublicKeyOps">PublicKeyOps</a>] = <span class="symbol">None</span></span>)</span><span class="result"> extends <a href="ManageOfferOperation.html" class="extype" name="stellar.sdk.op.ManageOfferOperation">ManageOfferOperation</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       
-      <p class="shortcomment cmt">Deletes an offer in the Stellar network.</p>
-    </li><li name="stellar.sdk.op.InflationOperation" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <p class="shortcomment cmt">Deletes an offer in the Stellar network.</p><div class="fullcomment"><div class="comment cmt"><p>Deletes an offer in the Stellar network.
+</p></div><dl class="paramcmts block"><dt class="param">offerId</dt><dd class="cmt"><p>the id of the offer to be deleted</p></dd><dt class="param">selling</dt><dd class="cmt"><p>the asset being offered</p></dd><dt class="param">buying</dt><dd class="cmt"><p>the asset previously sought</p></dd><dt class="param">price</dt><dd class="cmt"><p>the price being offered</p></dd><dt class="param">sourceAccount</dt><dd class="cmt"><p>the account effecting this operation, if different from the owning account of the transaction</p></dd></dl><dl class="attributes block"> <dt>See also</dt><dd><span class="cmt"><p><a href="https://www.stellar.org/developers/horizon/reference/resources/operation.html#manage-offer" target="_blank">endpoint doc</a></p></span></dd></dl></div>
+    </li><li name="stellar.sdk.op.InflationOperation" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="InflationOperationextendsOperationwithProductwithSerializable"></a><a id="InflationOperation:InflationOperation"></a>
       <span class="permalink">
       <a href="../../../stellar/sdk/op/index.html#InflationOperationextendsOperationwithProductwithSerializable" title="Permalink">
@@ -461,7 +489,8 @@
         <a title="Requests that the network runs the inflation process." href="InflationOperation.html"><span class="name">InflationOperation</span></a><span class="params">(<span name="sourceAccount">sourceAccount: <span class="extype" name="scala.Option">Option</span>[<a href="../PublicKeyOps.html" class="extype" name="stellar.sdk.PublicKeyOps">PublicKeyOps</a>] = <span class="symbol">None</span></span>)</span><span class="result"> extends <a href="Operation.html" class="extype" name="stellar.sdk.op.Operation">Operation</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       
-      <p class="shortcomment cmt">Requests that the network runs the inflation process.</p>
+      <p class="shortcomment cmt">Requests that the network runs the inflation process.</p><div class="fullcomment"><div class="comment cmt"><p>Requests that the network runs the inflation process.
+</p></div><dl class="paramcmts block"><dt class="param">sourceAccount</dt><dd class="cmt"><p>the account effecting this operation, if different from the owning account of the transaction</p></dd></dl><dl class="attributes block"> <dt>See also</dt><dd><span class="cmt"><p><a href="https://www.stellar.org/developers/horizon/reference/resources/operation.html#inflation" target="_blank">endpoint doc</a></p></span></dd></dl></div>
     </li><li name="stellar.sdk.op.IssuerFlag" visbl="pub" class="indented0 " data-isabs="true" fullComment="no" group="Ungrouped">
       <a id="IssuerFlagextendsAnyRef"></a><a id="IssuerFlag:IssuerFlag"></a>
       <span class="permalink">
@@ -528,9 +557,9 @@
       <p class="shortcomment cmt">An Operation represents a change to the ledger.</p><div class="fullcomment"><div class="comment cmt"><p>An Operation represents a change to the ledger. It is the action, as opposed to the effects resulting from that action.
 </p></div></div>
     </li><li name="stellar.sdk.op.PathPaymentOperation" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="PathPaymentOperationextendsOperationwithProductwithSerializable"></a><a id="PathPaymentOperation:PathPaymentOperation"></a>
+      <a id="PathPaymentOperationextendsPayOperationwithProductwithSerializable"></a><a id="PathPaymentOperation:PathPaymentOperation"></a>
       <span class="permalink">
-      <a href="../../../stellar/sdk/op/index.html#PathPaymentOperationextendsOperationwithProductwithSerializable" title="Permalink">
+      <a href="../../../stellar/sdk/op/index.html#PathPaymentOperationextendsPayOperationwithProductwithSerializable" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -539,11 +568,13 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a title="Represents PathPayment operation." href="PathPaymentOperation.html"><span class="name">PathPaymentOperation</span></a><span class="params">(<span name="sendMax">sendMax: <a href="../Amount.html" class="extype" name="stellar.sdk.Amount">Amount</a></span>, <span name="destinationAccount">destinationAccount: <a href="../PublicKeyOps.html" class="extype" name="stellar.sdk.PublicKeyOps">PublicKeyOps</a></span>, <span name="destinationAmount">destinationAmount: <a href="../Amount.html" class="extype" name="stellar.sdk.Amount">Amount</a></span>, <span name="path">path: <span class="extype" name="scala.Seq">Seq</span>[<a href="../Asset.html" class="extype" name="stellar.sdk.Asset">Asset</a>]</span>, <span name="sourceAccount">sourceAccount: <span class="extype" name="scala.Option">Option</span>[<a href="../PublicKeyOps.html" class="extype" name="stellar.sdk.PublicKeyOps">PublicKeyOps</a>] = <span class="symbol">None</span></span>)</span><span class="result"> extends <a href="Operation.html" class="extype" name="stellar.sdk.op.Operation">Operation</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a title="Represents a payment from one account to another through a path." href="PathPaymentOperation.html"><span class="name">PathPaymentOperation</span></a><span class="params">(<span name="sendMax">sendMax: <a href="../Amount.html" class="extype" name="stellar.sdk.Amount">Amount</a></span>, <span name="destinationAccount">destinationAccount: <a href="../PublicKeyOps.html" class="extype" name="stellar.sdk.PublicKeyOps">PublicKeyOps</a></span>, <span name="destinationAmount">destinationAmount: <a href="../Amount.html" class="extype" name="stellar.sdk.Amount">Amount</a></span>, <span name="path">path: <span class="extype" name="scala.Seq">Seq</span>[<a href="../Asset.html" class="extype" name="stellar.sdk.Asset">Asset</a>] = <span class="symbol">Nil</span></span>, <span name="sourceAccount">sourceAccount: <span class="extype" name="scala.Option">Option</span>[<a href="../PublicKeyOps.html" class="extype" name="stellar.sdk.PublicKeyOps">PublicKeyOps</a>] = <span class="symbol">None</span></span>)</span><span class="result"> extends <a href="PayOperation.html" class="extype" name="stellar.sdk.op.PayOperation">PayOperation</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       
-      <p class="shortcomment cmt">Represents <a href="https://www.stellar.org/developers/learn/concepts/list-of-operations.html#path-payment" target="_blank">PathPayment</a> operation.</p><div class="fullcomment"><div class="comment cmt"><p>Represents <a href="https://www.stellar.org/developers/learn/concepts/list-of-operations.html#path-payment" target="_blank">PathPayment</a> operation.
-</p></div><dl class="attributes block"> <dt>See also</dt><dd><span class="cmt"><p><a href="https://www.stellar.org/developers/learn/concepts/list-of-operations.html" target="_blank">List of Operations</a></p></span></dd></dl></div>
+      <p class="shortcomment cmt">Represents a payment from one account to another through a path.</p><div class="fullcomment"><div class="comment cmt"><p>Represents a payment from one account to another through a path. This type of payment starts as one type of asset
+and ends as another type of asset. There can be other assets that are traded into and out of along the path.
+Suitable orders must exist on the relevant order books for this operation to be successful.
+</p></div><dl class="paramcmts block"><dt class="param">sendMax</dt><dd class="cmt"><p>the maximum amount willing to be spent to effect the payment</p></dd><dt class="param">destinationAccount</dt><dd class="cmt"><p>the payment recipient</p></dd><dt class="param">destinationAmount</dt><dd class="cmt"><p>the exact amount to be received</p></dd><dt class="param">path</dt><dd class="cmt"><p>the intermediate assets to traverse (may be empty)</p></dd><dt class="param">sourceAccount</dt><dd class="cmt"><p>the account effecting this operation, if different from the owning account of the transaction</p></dd></dl><dl class="attributes block"> <dt>See also</dt><dd><span class="cmt"><p><a href="https://www.stellar.org/developers/horizon/reference/resources/operation.html#path-payment" target="_blank">endpoint doc</a></p></span></dd></dl></div>
     </li><li name="stellar.sdk.op.PayOperation" visbl="pub" class="indented0 " data-isabs="true" fullComment="no" group="Ungrouped">
       <a id="PayOperationextendsOperation"></a><a id="PayOperation:PayOperation"></a>
       <span class="permalink">
@@ -573,12 +604,13 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a title="Represents Payment operation." href="PaymentOperation.html"><span class="name">PaymentOperation</span></a><span class="params">(<span name="destinationAccount">destinationAccount: <a href="../PublicKeyOps.html" class="extype" name="stellar.sdk.PublicKeyOps">PublicKeyOps</a></span>, <span name="amount">amount: <a href="../Amount.html" class="extype" name="stellar.sdk.Amount">Amount</a></span>, <span name="sourceAccount">sourceAccount: <span class="extype" name="scala.Option">Option</span>[<a href="../PublicKeyOps.html" class="extype" name="stellar.sdk.PublicKeyOps">PublicKeyOps</a>] = <span class="symbol">None</span></span>)</span><span class="result"> extends <a href="PayOperation.html" class="extype" name="stellar.sdk.op.PayOperation">PayOperation</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a title="Represents a payment from one account to another." href="PaymentOperation.html"><span class="name">PaymentOperation</span></a><span class="params">(<span name="destinationAccount">destinationAccount: <a href="../PublicKeyOps.html" class="extype" name="stellar.sdk.PublicKeyOps">PublicKeyOps</a></span>, <span name="amount">amount: <a href="../Amount.html" class="extype" name="stellar.sdk.Amount">Amount</a></span>, <span name="sourceAccount">sourceAccount: <span class="extype" name="scala.Option">Option</span>[<a href="../PublicKeyOps.html" class="extype" name="stellar.sdk.PublicKeyOps">PublicKeyOps</a>] = <span class="symbol">None</span></span>)</span><span class="result"> extends <a href="PayOperation.html" class="extype" name="stellar.sdk.op.PayOperation">PayOperation</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       
-      <p class="shortcomment cmt">Represents <a href="https://www.stellar.org/developers/learn/concepts/list-of-operations.html#payment" target="_blank">Payment</a> operation.</p><div class="fullcomment"><div class="comment cmt"><p>Represents <a href="https://www.stellar.org/developers/learn/concepts/list-of-operations.html#payment" target="_blank">Payment</a> operation.
-</p></div><dl class="attributes block"> <dt>See also</dt><dd><span class="cmt"><p><a href="https://www.stellar.org/developers/learn/concepts/list-of-operations.html" target="_blank">List of Operations</a></p></span></dd></dl></div>
-    </li><li name="stellar.sdk.op.SetOptionsOperation" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <p class="shortcomment cmt">Represents a payment from one account to another.</p><div class="fullcomment"><div class="comment cmt"><p>Represents a payment from one account to another. This payment can be either a simple native asset payment or a
+fiat asset payment.
+</p></div><dl class="paramcmts block"><dt class="param">destinationAccount</dt><dd class="cmt"><p>the recipient of the payment</p></dd><dt class="param">amount</dt><dd class="cmt"><p>the amount to be paid</p></dd><dt class="param">sourceAccount</dt><dd class="cmt"><p>the account effecting this operation, if different from the owning account of the transaction</p></dd></dl><dl class="attributes block"> <dt>See also</dt><dd><span class="cmt"><p><a href="https://www.stellar.org/developers/horizon/reference/resources/operation.html#payment" target="_blank">endpoint doc</a></p></span></dd></dl></div>
+    </li><li name="stellar.sdk.op.SetOptionsOperation" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="SetOptionsOperationextendsOperationwithProductwithSerializable"></a><a id="SetOptionsOperation:SetOptionsOperation"></a>
       <span class="permalink">
       <a href="../../../stellar/sdk/op/index.html#SetOptionsOperationextendsOperationwithProductwithSerializable" title="Permalink">
@@ -590,10 +622,11 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a title="" href="SetOptionsOperation.html"><span class="name">SetOptionsOperation</span></a><span class="params">(<span name="inflationDestination">inflationDestination: <span class="extype" name="scala.Option">Option</span>[<a href="../PublicKeyOps.html" class="extype" name="stellar.sdk.PublicKeyOps">PublicKeyOps</a>] = <span class="symbol">None</span></span>, <span name="clearFlags">clearFlags: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.Set">Set</span>[<a href="IssuerFlag.html" class="extype" name="stellar.sdk.op.IssuerFlag">IssuerFlag</a>]] = <span class="symbol">None</span></span>, <span name="setFlags">setFlags: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.Set">Set</span>[<a href="IssuerFlag.html" class="extype" name="stellar.sdk.op.IssuerFlag">IssuerFlag</a>]] = <span class="symbol">None</span></span>, <span name="masterKeyWeight">masterKeyWeight: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Int">Int</span>] = <span class="symbol">None</span></span>, <span name="lowThreshold">lowThreshold: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Int">Int</span>] = <span class="symbol">None</span></span>, <span name="mediumThreshold">mediumThreshold: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Int">Int</span>] = <span class="symbol">None</span></span>, <span name="highThreshold">highThreshold: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Int">Int</span>] = <span class="symbol">None</span></span>, <span name="homeDomain">homeDomain: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>] = <span class="symbol">None</span></span>, <span name="signer">signer: <span class="extype" name="scala.Option">Option</span>[<a href="../Signer.html" class="extype" name="stellar.sdk.Signer">Signer</a>] = <span class="symbol">None</span></span>, <span name="sourceAccount">sourceAccount: <span class="extype" name="scala.Option">Option</span>[<a href="../PublicKeyOps.html" class="extype" name="stellar.sdk.PublicKeyOps">PublicKeyOps</a>] = <span class="symbol">None</span></span>)</span><span class="result"> extends <a href="Operation.html" class="extype" name="stellar.sdk.op.Operation">Operation</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a title="Modify an account, setting one or more options." href="SetOptionsOperation.html"><span class="name">SetOptionsOperation</span></a><span class="params">(<span name="inflationDestination">inflationDestination: <span class="extype" name="scala.Option">Option</span>[<a href="../PublicKeyOps.html" class="extype" name="stellar.sdk.PublicKeyOps">PublicKeyOps</a>] = <span class="symbol">None</span></span>, <span name="clearFlags">clearFlags: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.Set">Set</span>[<a href="IssuerFlag.html" class="extype" name="stellar.sdk.op.IssuerFlag">IssuerFlag</a>]] = <span class="symbol">None</span></span>, <span name="setFlags">setFlags: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.Set">Set</span>[<a href="IssuerFlag.html" class="extype" name="stellar.sdk.op.IssuerFlag">IssuerFlag</a>]] = <span class="symbol">None</span></span>, <span name="masterKeyWeight">masterKeyWeight: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Int">Int</span>] = <span class="symbol">None</span></span>, <span name="lowThreshold">lowThreshold: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Int">Int</span>] = <span class="symbol">None</span></span>, <span name="mediumThreshold">mediumThreshold: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Int">Int</span>] = <span class="symbol">None</span></span>, <span name="highThreshold">highThreshold: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Int">Int</span>] = <span class="symbol">None</span></span>, <span name="homeDomain">homeDomain: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>] = <span class="symbol">None</span></span>, <span name="signer">signer: <span class="extype" name="scala.Option">Option</span>[<a href="../Signer.html" class="extype" name="stellar.sdk.Signer">Signer</a>] = <span class="symbol">None</span></span>, <span name="sourceAccount">sourceAccount: <span class="extype" name="scala.Option">Option</span>[<a href="../PublicKeyOps.html" class="extype" name="stellar.sdk.PublicKeyOps">PublicKeyOps</a>] = <span class="symbol">None</span></span>)</span><span class="result"> extends <a href="Operation.html" class="extype" name="stellar.sdk.op.Operation">Operation</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       
-      
+      <p class="shortcomment cmt">Modify an account, setting one or more options.</p><div class="fullcomment"><div class="comment cmt"><p>Modify an account, setting one or more options.
+</p></div><dl class="paramcmts block"><dt class="param">inflationDestination</dt><dd class="cmt"><p>the account's inflation destination</p></dd><dt class="param">clearFlags</dt><dd class="cmt"><p>issuer flags to be turned off</p></dd><dt class="param">setFlags</dt><dd class="cmt"><p>issuer flags to be turned on</p></dd><dt class="param">masterKeyWeight</dt><dd class="cmt"><p>the weight of the master key</p></dd><dt class="param">lowThreshold</dt><dd class="cmt"><p>the minimum weight required for low threshold operations</p></dd><dt class="param">mediumThreshold</dt><dd class="cmt"><p>the minimum weight required for medium threshold operations</p></dd><dt class="param">highThreshold</dt><dd class="cmt"><p>the minimum weight required for highthreshold operations</p></dd><dt class="param">homeDomain</dt><dd class="cmt"><p>the home domain used for reverse federation lookup</p></dd><dt class="param">signer</dt><dd class="cmt"><p>the key and weight of the signer for this account</p></dd><dt class="param">sourceAccount</dt><dd class="cmt"><p>the account effecting this operation, if different from the owning account of the transaction</p></dd></dl><dl class="attributes block"> <dt>See also</dt><dd><span class="cmt"><p><a href="https://www.stellar.org/developers/horizon/reference/resources/operation.html#set-options" target="_blank">endpoint doc</a></p></span></dd></dl></div>
     </li><li name="stellar.sdk.op.Transacted" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="Transacted[O&lt;:stellar.sdk.op.Operation]extendsProductwithSerializable"></a><a id="Transacted[O&lt;:Operation]:Transacted[O]"></a>
       <span class="permalink">
@@ -610,7 +643,7 @@
       </span>
       
       <p class="shortcomment cmt">Provides access to additional information related to an operation after it has been transacted in the network.</p>
-    </li><li name="stellar.sdk.op.UpdateOfferOperation" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+    </li><li name="stellar.sdk.op.UpdateOfferOperation" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="UpdateOfferOperationextendsManageOfferOperationwithProductwithSerializable"></a><a id="UpdateOfferOperation:UpdateOfferOperation"></a>
       <span class="permalink">
       <a href="../../../stellar/sdk/op/index.html#UpdateOfferOperationextendsManageOfferOperationwithProductwithSerializable" title="Permalink">
@@ -625,8 +658,9 @@
         <a title="Updates an offer in the Stellar network." href="UpdateOfferOperation.html"><span class="name">UpdateOfferOperation</span></a><span class="params">(<span name="offerId">offerId: <span class="extype" name="scala.Long">Long</span></span>, <span name="selling">selling: <a href="../Amount.html" class="extype" name="stellar.sdk.Amount">Amount</a></span>, <span name="buying">buying: <a href="../Asset.html" class="extype" name="stellar.sdk.Asset">Asset</a></span>, <span name="price">price: <a href="../Price.html" class="extype" name="stellar.sdk.Price">Price</a></span>, <span name="sourceAccount">sourceAccount: <span class="extype" name="scala.Option">Option</span>[<a href="../PublicKeyOps.html" class="extype" name="stellar.sdk.PublicKeyOps">PublicKeyOps</a>] = <span class="symbol">None</span></span>)</span><span class="result"> extends <a href="ManageOfferOperation.html" class="extype" name="stellar.sdk.op.ManageOfferOperation">ManageOfferOperation</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       
-      <p class="shortcomment cmt">Updates an offer in the Stellar network.</p>
-    </li><li name="stellar.sdk.op.WriteDataOperation" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <p class="shortcomment cmt">Updates an offer in the Stellar network.</p><div class="fullcomment"><div class="comment cmt"><p>Updates an offer in the Stellar network.
+</p></div><dl class="paramcmts block"><dt class="param">offerId</dt><dd class="cmt"><p>the id of the offer to be modified</p></dd><dt class="param">selling</dt><dd class="cmt"><p>the asset and amount being offered</p></dd><dt class="param">buying</dt><dd class="cmt"><p>the asset sought</p></dd><dt class="param">price</dt><dd class="cmt"><p>the price being offered</p></dd><dt class="param">sourceAccount</dt><dd class="cmt"><p>the account effecting this operation, if different from the owning account of the transaction</p></dd></dl><dl class="attributes block"> <dt>See also</dt><dd><span class="cmt"><p><a href="https://www.stellar.org/developers/horizon/reference/resources/operation.html#manage-offer" target="_blank">endpoint doc</a></p></span></dd></dl></div>
+    </li><li name="stellar.sdk.op.WriteDataOperation" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="WriteDataOperationextendsManageDataOperationwithProductwithSerializable"></a><a id="WriteDataOperation:WriteDataOperation"></a>
       <span class="permalink">
       <a href="../../../stellar/sdk/op/index.html#WriteDataOperationextendsManageDataOperationwithProductwithSerializable" title="Permalink">
@@ -641,7 +675,8 @@
         <a title="Creates or updates a Data Entry (name/value pair) for an account." href="WriteDataOperation.html"><span class="name">WriteDataOperation</span></a><span class="params">(<span name="name">name: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="value">value: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="sourceAccount">sourceAccount: <span class="extype" name="scala.Option">Option</span>[<a href="../PublicKeyOps.html" class="extype" name="stellar.sdk.PublicKeyOps">PublicKeyOps</a>] = <span class="symbol">None</span></span>)</span><span class="result"> extends <a href="ManageDataOperation.html" class="extype" name="stellar.sdk.op.ManageDataOperation">ManageDataOperation</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       
-      <p class="shortcomment cmt">Creates or updates a Data Entry (name/value pair) for an account.</p>
+      <p class="shortcomment cmt">Creates or updates a Data Entry (name/value pair) for an account.</p><div class="fullcomment"><div class="comment cmt"><p>Creates or updates a Data Entry (name/value pair) for an account.
+</p></div><dl class="paramcmts block"><dt class="param">sourceAccount</dt><dd class="cmt"><p>the account effecting this operation, if different from the owning account of the transaction</p></dd></dl><dl class="attributes block"> <dt>See also</dt><dd><span class="cmt"><p><a href="https://www.stellar.org/developers/horizon/reference/resources/operation.html#manage-data" target="_blank">endpoint doc</a></p></span></dd></dl></div>
     </li></ol>
             </div>
 
@@ -727,6 +762,22 @@
       </span>
       <span class="symbol">
         <a title="" href="AuthorizationRevocableFlag$.html"><span class="name">AuthorizationRevocableFlag</span></a><span class="result"> extends <a href="IssuerFlag.html" class="extype" name="stellar.sdk.op.IssuerFlag">IssuerFlag</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      
+      
+    </li><li name="stellar.sdk.op.BumpSequenceOperation" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="BumpSequenceOperation"></a><a id="BumpSequenceOperation:BumpSequenceOperation"></a>
+      <span class="permalink">
+      <a href="../../../stellar/sdk/op/index.html#BumpSequenceOperation" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a title="" href="BumpSequenceOperation$.html"><span class="name">BumpSequenceOperation</span></a><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       
       

@@ -203,12 +203,24 @@
                         <a href="EffectAccountThresholdsUpdated.html" title="">EffectAccountThresholdsUpdated</a>
                       </li><li class="current-entities indented3">
                         <span class="separator"></span>
+                        <a class="class" href="EffectDataCreated.html" title=""></a>
+                        <a href="EffectDataCreated.html" title="">EffectDataCreated</a>
+                      </li><li class="current-entities indented3">
+                        <span class="separator"></span>
+                        <a class="class" href="EffectDataRemoved.html" title=""></a>
+                        <a href="EffectDataRemoved.html" title="">EffectDataRemoved</a>
+                      </li><li class="current-entities indented3">
+                        <span class="separator"></span>
                         <a class="trait" href="EffectResp.html" title=""></a>
                         <a href="EffectResp.html" title="">EffectResp</a>
                       </li><li class="current-entities indented3">
                         <span class="separator"></span>
                         <a class="object" href="EffectRespDeserializer$.html" title=""></a>
                         <a href="EffectRespDeserializer$.html" title="">EffectRespDeserializer</a>
+                      </li><li class="current-entities indented3">
+                        <span class="separator"></span>
+                        <a class="class" href="EffectSequenceBumped.html" title=""></a>
+                        <a href="EffectSequenceBumped.html" title="">EffectSequenceBumped</a>
                       </li><li class="current-entities indented3">
                         <span class="separator"></span>
                         <a class="class" href="EffectSignerCreated.html" title=""></a>
@@ -364,7 +376,7 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a title="" href="AccountResp.html"><span class="name">AccountResp</span></a><span class="params">(<span name="id">id: <a href="../PublicKey.html" class="extype" name="stellar.sdk.PublicKey">PublicKey</a></span>, <span name="lastSequence">lastSequence: <span class="extype" name="scala.Long">Long</span></span>, <span name="subEntryCount">subEntryCount: <span class="extype" name="scala.Int">Int</span></span>, <span name="thresholds">thresholds: <a href="../Thresholds.html" class="extype" name="stellar.sdk.Thresholds">Thresholds</a></span>, <span name="authRequired">authRequired: <span class="extype" name="scala.Boolean">Boolean</span></span>, <span name="authRevocable">authRevocable: <span class="extype" name="scala.Boolean">Boolean</span></span>, <span name="balances">balances: <span class="extype" name="scala.List">List</span>[<a href="../Amount.html" class="extype" name="stellar.sdk.Amount">Amount</a>]</span>, <span name="signers">signers: <span class="extype" name="scala.List">List</span>[<a href="../Signer.html" class="extype" name="stellar.sdk.Signer">Signer</a>]</span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a title="" href="AccountResp.html"><span class="name">AccountResp</span></a><span class="params">(<span name="id">id: <a href="../PublicKey.html" class="extype" name="stellar.sdk.PublicKey">PublicKey</a></span>, <span name="lastSequence">lastSequence: <span class="extype" name="scala.Long">Long</span></span>, <span name="subEntryCount">subEntryCount: <span class="extype" name="scala.Int">Int</span></span>, <span name="thresholds">thresholds: <a href="../Thresholds.html" class="extype" name="stellar.sdk.Thresholds">Thresholds</a></span>, <span name="authRequired">authRequired: <span class="extype" name="scala.Boolean">Boolean</span></span>, <span name="authRevocable">authRevocable: <span class="extype" name="scala.Boolean">Boolean</span></span>, <span name="balances">balances: <span class="extype" name="scala.List">List</span>[<a href="../Balance.html" class="extype" name="stellar.sdk.Balance">Balance</a>]</span>, <span name="signers">signers: <span class="extype" name="scala.List">List</span>[<a href="../Signer.html" class="extype" name="stellar.sdk.Signer">Signer</a>]</span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       
       
@@ -460,7 +472,7 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a title="" href="EffectAccountFlagsUpdated.html"><span class="name">EffectAccountFlagsUpdated</span></a><span class="params">(<span name="id">id: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="account">account: <a href="../PublicKeyOps.html" class="extype" name="stellar.sdk.PublicKeyOps">PublicKeyOps</a></span>, <span name="authRequiredFlag">authRequiredFlag: <span class="extype" name="scala.Boolean">Boolean</span></span>)</span><span class="result"> extends <a href="EffectResp.html" class="extype" name="stellar.sdk.resp.EffectResp">EffectResp</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a title="" href="EffectAccountFlagsUpdated.html"><span class="name">EffectAccountFlagsUpdated</span></a><span class="params">(<span name="id">id: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="account">account: <a href="../PublicKeyOps.html" class="extype" name="stellar.sdk.PublicKeyOps">PublicKeyOps</a></span>)</span><span class="result"> extends <a href="EffectResp.html" class="extype" name="stellar.sdk.resp.EffectResp">EffectResp</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       
       
@@ -512,6 +524,38 @@
       </span>
       
       
+    </li><li name="stellar.sdk.resp.EffectDataCreated" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="EffectDataCreatedextendsEffectRespwithProductwithSerializable"></a><a id="EffectDataCreated:EffectDataCreated"></a>
+      <span class="permalink">
+      <a href="../../../stellar/sdk/resp/index.html#EffectDataCreatedextendsEffectRespwithProductwithSerializable" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a title="" href="EffectDataCreated.html"><span class="name">EffectDataCreated</span></a><span class="params">(<span name="id">id: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="account">account: <a href="../PublicKeyOps.html" class="extype" name="stellar.sdk.PublicKeyOps">PublicKeyOps</a></span>)</span><span class="result"> extends <a href="EffectResp.html" class="extype" name="stellar.sdk.resp.EffectResp">EffectResp</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      
+      
+    </li><li name="stellar.sdk.resp.EffectDataRemoved" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="EffectDataRemovedextendsEffectRespwithProductwithSerializable"></a><a id="EffectDataRemoved:EffectDataRemoved"></a>
+      <span class="permalink">
+      <a href="../../../stellar/sdk/resp/index.html#EffectDataRemovedextendsEffectRespwithProductwithSerializable" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a title="" href="EffectDataRemoved.html"><span class="name">EffectDataRemoved</span></a><span class="params">(<span name="id">id: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="account">account: <a href="../PublicKeyOps.html" class="extype" name="stellar.sdk.PublicKeyOps">PublicKeyOps</a></span>)</span><span class="result"> extends <a href="EffectResp.html" class="extype" name="stellar.sdk.resp.EffectResp">EffectResp</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      
+      
     </li><li name="stellar.sdk.resp.EffectResp" visbl="pub" class="indented0 " data-isabs="true" fullComment="no" group="Ungrouped">
       <a id="EffectRespextendsAnyRef"></a><a id="EffectResp:EffectResp"></a>
       <span class="permalink">
@@ -525,6 +569,22 @@
       </span>
       <span class="symbol">
         <a title="" href="EffectResp.html"><span class="name">EffectResp</span></a><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+      </span>
+      
+      
+    </li><li name="stellar.sdk.resp.EffectSequenceBumped" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="EffectSequenceBumpedextendsEffectRespwithProductwithSerializable"></a><a id="EffectSequenceBumped:EffectSequenceBumped"></a>
+      <span class="permalink">
+      <a href="../../../stellar/sdk/resp/index.html#EffectSequenceBumpedextendsEffectRespwithProductwithSerializable" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a title="" href="EffectSequenceBumped.html"><span class="name">EffectSequenceBumped</span></a><span class="params">(<span name="id">id: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="account">account: <a href="../PublicKeyOps.html" class="extype" name="stellar.sdk.PublicKeyOps">PublicKeyOps</a></span>, <span name="newSeq">newSeq: <span class="extype" name="scala.Long">Long</span></span>)</span><span class="result"> extends <a href="EffectResp.html" class="extype" name="stellar.sdk.resp.EffectResp">EffectResp</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       
       

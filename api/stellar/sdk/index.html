@@ -167,12 +167,20 @@
                         <a href="Asset.html" title="">Asset</a>
                       </li><li class="current-entities indented2">
                         <span class="separator"></span>
+                        <a class="class" href="Balance.html" title=""></a>
+                        <a href="Balance.html" title="">Balance</a>
+                      </li><li class="current-entities indented2">
+                        <span class="separator"></span>
                         <a class="object" href="ByteArrays$.html" title=""></a>
                         <a href="ByteArrays$.html" title="">ByteArrays</a>
                       </li><li class="current-entities indented2">
                         <span class="separator"></span>
                         <a class="class" href="FormatException.html" title=""></a>
                         <a href="FormatException.html" title="">FormatException</a>
+                      </li><li class="current-entities indented2">
+                        <span class="separator"></span>
+                        <a class="trait" href="FriendBot.html" title="A feature on certain networks (notably TestNet) for funding new accounts."></a>
+                        <a href="FriendBot.html" title="A feature on certain networks (notably TestNet) for funding new accounts.">FriendBot</a>
                       </li><li class="current-entities indented2">
                         <span class="separator"></span>
                         <a class="class" href="HashSigner.html" title=""></a>
@@ -457,6 +465,22 @@
       </span>
       
       
+    </li><li name="stellar.sdk.Balance" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="BalanceextendsProductwithSerializable"></a><a id="Balance:Balance"></a>
+      <span class="permalink">
+      <a href="../../stellar/sdk/index.html#BalanceextendsProductwithSerializable" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a title="" href="Balance.html"><span class="name">Balance</span></a><span class="params">(<span name="amount">amount: <a href="Amount.html" class="extype" name="stellar.sdk.Amount">Amount</a></span>, <span name="limit">limit: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Long">Long</span>] = <span class="symbol">None</span></span>, <span name="buyingLiabilities">buyingLiabilities: <span class="extype" name="scala.Long">Long</span> = <span class="symbol">0</span></span>, <span name="sellingLiabilities">sellingLiabilities: <span class="extype" name="scala.Long">Long</span> = <span class="symbol">0</span></span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      
+      
     </li><li name="stellar.sdk.FormatException" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="FormatExceptionextendsRuntimeException"></a><a id="FormatException:FormatException"></a>
       <span class="permalink">
@@ -473,6 +497,22 @@
       </span>
       
       
+    </li><li name="stellar.sdk.FriendBot" visbl="pub" class="indented0 " data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="FriendBotextendsAnyRef"></a><a id="FriendBot:FriendBot"></a>
+      <span class="permalink">
+      <a href="../../stellar/sdk/index.html#FriendBotextendsAnyRef" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a title="A feature on certain networks (notably TestNet) for funding new accounts." href="FriendBot.html"><span class="name">FriendBot</span></a><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+      </span>
+      
+      <p class="shortcomment cmt">A feature on certain networks (notably TestNet) for funding new accounts.</p>
     </li><li name="stellar.sdk.HashSigner" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="HashSignerextendsSignerwithProductwithSerializable"></a><a id="HashSigner:HashSigner"></a>
       <span class="permalink">
@@ -1167,7 +1207,7 @@
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a title="" href="TestNetwork$.html"><span class="name">TestNetwork</span></a><span class="result"> extends <a href="Network.html" class="extype" name="stellar.sdk.Network">Network</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a title="" href="TestNetwork$.html"><span class="name">TestNetwork</span></a><span class="result"> extends <a href="Network.html" class="extype" name="stellar.sdk.Network">Network</a> with <a href="FriendBot.html" class="extype" name="stellar.sdk.FriendBot">FriendBot</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       
       

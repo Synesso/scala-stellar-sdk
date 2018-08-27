@@ -167,12 +167,20 @@
                         <a href="Asset.html" title="">Asset</a>
                       </li><li class="current-entities indented2">
                         <span class="separator"></span>
+                        <a class="class" href="Balance.html" title=""></a>
+                        <a href="Balance.html" title="">Balance</a>
+                      </li><li class="current-entities indented2">
+                        <span class="separator"></span>
                         <a class="object" href="ByteArrays$.html" title=""></a>
                         <a href="ByteArrays$.html" title="">ByteArrays</a>
                       </li><li class="current-entities indented2">
                         <span class="separator"></span>
                         <a class="class" href="FormatException.html" title=""></a>
                         <a href="FormatException.html" title="">FormatException</a>
+                      </li><li class="current-entities indented2">
+                        <span class="separator"></span>
+                        <a class="trait" href="FriendBot.html" title="A feature on certain networks (notably TestNet) for funding new accounts."></a>
+                        <a href="FriendBot.html" title="A feature on certain networks (notably TestNet) for funding new accounts.">FriendBot</a>
                       </li><li class="current-entities indented2">
                         <span class="separator"></span>
                         <a class="class" href="HashSigner.html" title=""></a>
@@ -336,7 +344,7 @@
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <span class="name">TestNetwork</span><span class="result"> extends <a href="Network.html" class="extype" name="stellar.sdk.Network">Network</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <span class="name">TestNetwork</span><span class="result"> extends <a href="Network.html" class="extype" name="stellar.sdk.Network">Network</a> with <a href="FriendBot.html" class="extype" name="stellar.sdk.FriendBot">FriendBot</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4>
 
@@ -345,7 +353,7 @@
           <span class="toggle">
             Linear Supertypes
           </span>
-          <div class="superTypes hiddenContent"><span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <span class="extype" name="scala.Product">Product</span>, <span class="extype" name="scala.Equals">Equals</span>, <a href="Network.html" class="extype" name="stellar.sdk.Network">Network</a>, <span class="extype" name="com.typesafe.scalalogging.LazyLogging">LazyLogging</span>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
+          <div class="superTypes hiddenContent"><span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <span class="extype" name="scala.Product">Product</span>, <span class="extype" name="scala.Equals">Equals</span>, <a href="FriendBot.html" class="extype" name="stellar.sdk.FriendBot">FriendBot</a>, <a href="Network.html" class="extype" name="stellar.sdk.Network">Network</a>, <span class="extype" name="com.typesafe.scalalogging.LazyLogging">LazyLogging</span>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div></div>
         
 
@@ -371,7 +379,7 @@
                   <span class="filtertype">Inherited<br />
                   </span>
                   <ol id="linearization">
-                    <li class="in" name="stellar.sdk.TestNetwork"><span>TestNetwork</span></li><li class="in" name="scala.Serializable"><span>Serializable</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="scala.Product"><span>Product</span></li><li class="in" name="scala.Equals"><span>Equals</span></li><li class="in" name="stellar.sdk.Network"><span>Network</span></li><li class="in" name="com.typesafe.scalalogging.LazyLogging"><span>LazyLogging</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                    <li class="in" name="stellar.sdk.TestNetwork"><span>TestNetwork</span></li><li class="in" name="scala.Serializable"><span>Serializable</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="scala.Product"><span>Product</span></li><li class="in" name="scala.Equals"><span>Equals</span></li><li class="in" name="stellar.sdk.FriendBot"><span>FriendBot</span></li><li class="in" name="stellar.sdk.Network"><span>Network</span></li><li class="in" name="com.typesafe.scalalogging.LazyLogging"><span>LazyLogging</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
                   </ol>
                 </div><div class="ancestors">
               <span class="filtertype"></span>
@@ -668,7 +676,7 @@
     </span>)</span>
               
         </dd></dl></div>
-    </li><li name="stellar.sdk.TestNetwork#fund" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+    </li><li name="stellar.sdk.FriendBot#fund" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="fund(pk:stellar.sdk.PublicKeyOps)(implicitec:scala.concurrent.ExecutionContext):scala.concurrent.Future[stellar.sdk.resp.TransactionPostResp]"></a><a id="fund(PublicKeyOps)(ExecutionContext):Future[TransactionPostResp]"></a>
       <span class="permalink">
       <a href="../../stellar/sdk/TestNetwork$.html#fund(pk:stellar.sdk.PublicKeyOps)(implicitec:scala.concurrent.ExecutionContext):scala.concurrent.Future[stellar.sdk.resp.TransactionPostResp]" title="Permalink">
@@ -683,7 +691,7 @@
         <span class="name">fund</span><span class="params">(<span name="pk">pk: <a href="PublicKeyOps.html" class="extype" name="stellar.sdk.PublicKeyOps">PublicKeyOps</a></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ec">ec: <span class="extype" name="scala.concurrent.ExecutionContext">ExecutionContext</span></span>)</span><span class="result">: <span class="extype" name="scala.concurrent.Future">Future</span>[<a href="resp/TransactionPostResp.html" class="extype" name="stellar.sdk.resp.TransactionPostResp">TransactionPostResp</a>]</span>
       </span>
       
-      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="FriendBot.html" class="extype" name="stellar.sdk.FriendBot">FriendBot</a></dd></dl></div>
     </li><li name="scala.AnyRef#getClass" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="getClass():Class[_]"></a>
       <span class="permalink">
@@ -718,7 +726,7 @@
         <span class="name">horizon</span><span class="result">: <a href="inet/Horizon.html" class="extype" name="stellar.sdk.inet.Horizon">Horizon</a></span>
       </span>
       
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="stellar.sdk.TestNetwork">TestNetwork</a> → <a href="Network.html" class="extype" name="stellar.sdk.Network">Network</a></dd></dl></div>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="stellar.sdk.TestNetwork">TestNetwork</a> → <a href="FriendBot.html" class="extype" name="stellar.sdk.FriendBot">FriendBot</a> → <a href="Network.html" class="extype" name="stellar.sdk.Network">Network</a></dd></dl></div>
     </li><li name="scala.Any#isInstanceOf" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="isInstanceOf[T0]:Boolean"></a>
       <span class="permalink">
@@ -786,6 +794,24 @@
                 <span class="name">@transient</span><span class="args">()</span>
               
         </dd></dl></div>
+    </li><li name="stellar.sdk.Network#masterAccount" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="masterAccount:stellar.sdk.KeyPair"></a><a id="masterAccount:KeyPair"></a>
+      <span class="permalink">
+      <a href="../../stellar/sdk/TestNetwork$.html#masterAccount:stellar.sdk.KeyPair" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">lazy val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">masterAccount</span><span class="result">: <a href="KeyPair.html" class="extype" name="stellar.sdk.KeyPair">KeyPair</a></span>
+      </span>
+      
+      <p class="shortcomment cmt">The keypair for the master account for this network
+</p><div class="fullcomment"><div class="comment cmt"><p>The keypair for the master account for this network
+</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="Network.html" class="extype" name="stellar.sdk.Network">Network</a></dd></dl></div>
     </li><li name="scala.AnyRef#ne" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="ne(x$1:AnyRef):Boolean"></a><a id="ne(AnyRef):Boolean"></a>
       <span class="permalink">
@@ -1262,6 +1288,8 @@
               <h3>Inherited from <span class="extype" name="scala.Product">Product</span></h3>
             </div><div class="parent" name="scala.Equals">
               <h3>Inherited from <span class="extype" name="scala.Equals">Equals</span></h3>
+            </div><div class="parent" name="stellar.sdk.FriendBot">
+              <h3>Inherited from <a href="FriendBot.html" class="extype" name="stellar.sdk.FriendBot">FriendBot</a></h3>
             </div><div class="parent" name="stellar.sdk.Network">
               <h3>Inherited from <a href="Network.html" class="extype" name="stellar.sdk.Network">Network</a></h3>
             </div><div class="parent" name="com.typesafe.scalalogging.LazyLogging">

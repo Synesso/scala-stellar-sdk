@@ -123,8 +123,8 @@
                         <a href="AccountMergeOperation.html" title="Deletes account and transfers remaining balance to destination account.">AccountMergeOperation</a>
                       </li><li class="current-entities indented3">
                         <a class="object" href="AllowTrustOperation$.html" title=""></a>
-                        <a class="class" href="AllowTrustOperation.html" title="Updates the “authorized” flag of an existing trust line this is called by the issuer of the related asset."></a>
-                        <a href="AllowTrustOperation.html" title="Updates the “authorized” flag of an existing trust line this is called by the issuer of the related asset.">AllowTrustOperation</a>
+                        <a class="class" href="AllowTrustOperation.html" title="Updates the “authorized” flag of an existing trust line."></a>
+                        <a href="AllowTrustOperation.html" title="Updates the “authorized” flag of an existing trust line.">AllowTrustOperation</a>
                       </li><li class="current-entities indented3">
                         <span class="separator"></span>
                         <a class="object" href="AuthorizationImmutableFlag$.html" title=""></a>
@@ -138,13 +138,17 @@
                         <a class="object" href="AuthorizationRevocableFlag$.html" title=""></a>
                         <a href="AuthorizationRevocableFlag$.html" title="">AuthorizationRevocableFlag</a>
                       </li><li class="current-entities indented3">
+                        <a class="object" href="BumpSequenceOperation$.html" title=""></a>
+                        <a class="class" href="BumpSequenceOperation.html" title="Bumps forward the sequence number of the source account of the operation, allowing it to invalidate any transactions with a smaller sequence number."></a>
+                        <a href="BumpSequenceOperation.html" title="Bumps forward the sequence number of the source account of the operation, allowing it to invalidate any transactions with a smaller sequence number.">BumpSequenceOperation</a>
+                      </li><li class="current-entities indented3">
                         <a class="object" href="ChangeTrustOperation$.html" title=""></a>
-                        <a class="class" href="ChangeTrustOperation.html" title="Represents ChangeTrust operation."></a>
-                        <a href="ChangeTrustOperation.html" title="Represents ChangeTrust operation.">ChangeTrustOperation</a>
+                        <a class="class" href="ChangeTrustOperation.html" title="The source account is stating that it will trust the asset of the limit up to the amount of the limit."></a>
+                        <a href="ChangeTrustOperation.html" title="The source account is stating that it will trust the asset of the limit up to the amount of the limit.">ChangeTrustOperation</a>
                       </li><li class="current-entities indented3">
                         <a class="object" href="CreateAccountOperation$.html" title=""></a>
-                        <a class="class" href="CreateAccountOperation.html" title="Represents CreateAccount operation."></a>
-                        <a href="CreateAccountOperation.html" title="Represents CreateAccount operation.">CreateAccountOperation</a>
+                        <a class="class" href="CreateAccountOperation.html" title="Funds and creates a new account."></a>
+                        <a href="CreateAccountOperation.html" title="Funds and creates a new account.">CreateAccountOperation</a>
                       </li><li class="current-entities indented3">
                         <span class="separator"></span>
                         <a class="class" href="CreateOfferOperation.html" title="Creates an offer in the Stellar network."></a>
@@ -191,20 +195,20 @@
                         <a href="OperationDeserializer$.html" title="">OperationDeserializer</a>
                       </li><li class="current-entities indented3">
                         <a class="object" href="PathPaymentOperation$.html" title=""></a>
-                        <a class="class" href="PathPaymentOperation.html" title="Represents PathPayment operation."></a>
-                        <a href="PathPaymentOperation.html" title="Represents PathPayment operation.">PathPaymentOperation</a>
+                        <a class="class" href="PathPaymentOperation.html" title="Represents a payment from one account to another through a path."></a>
+                        <a href="PathPaymentOperation.html" title="Represents a payment from one account to another through a path.">PathPaymentOperation</a>
                       </li><li class="current-entities indented3">
                         <span class="separator"></span>
                         <a class="trait" href="PayOperation.html" title="Marker trait for any operation that involves a payment (PaymentOperation, CreateAccountOperation)"></a>
                         <a href="PayOperation.html" title="Marker trait for any operation that involves a payment (PaymentOperation, CreateAccountOperation)">PayOperation</a>
                       </li><li class="current-entities indented3">
                         <a class="object" href="PaymentOperation$.html" title=""></a>
-                        <a class="class" href="PaymentOperation.html" title="Represents Payment operation."></a>
-                        <a href="PaymentOperation.html" title="Represents Payment operation.">PaymentOperation</a>
+                        <a class="class" href="PaymentOperation.html" title="Represents a payment from one account to another."></a>
+                        <a href="PaymentOperation.html" title="Represents a payment from one account to another.">PaymentOperation</a>
                       </li><li class="current-entities indented3">
                         <a class="object" href="SetOptionsOperation$.html" title=""></a>
-                        <a class="class" href="" title=""></a>
-                        <a href="" title="">SetOptionsOperation</a>
+                        <a class="class" href="" title="Modify an account, setting one or more options."></a>
+                        <a href="" title="Modify an account, setting one or more options.">SetOptionsOperation</a>
                       </li><li class="current-entities indented3">
                         <span class="separator"></span>
                         <a class="class" href="Transacted.html" title="Provides access to additional information related to an operation after it has been transacted in the network."></a>
@@ -251,7 +255,8 @@
       </h4>
 
       
-          <div id="comment" class="fullcommenttop"><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Modify an account, setting one or more options.
+</p></div><dl class="paramcmts block"><dt class="param">inflationDestination</dt><dd class="cmt"><p>the account's inflation destination</p></dd><dt class="param">clearFlags</dt><dd class="cmt"><p>issuer flags to be turned off</p></dd><dt class="param">setFlags</dt><dd class="cmt"><p>issuer flags to be turned on</p></dd><dt class="param">masterKeyWeight</dt><dd class="cmt"><p>the weight of the master key</p></dd><dt class="param">lowThreshold</dt><dd class="cmt"><p>the minimum weight required for low threshold operations</p></dd><dt class="param">mediumThreshold</dt><dd class="cmt"><p>the minimum weight required for medium threshold operations</p></dd><dt class="param">highThreshold</dt><dd class="cmt"><p>the minimum weight required for highthreshold operations</p></dd><dt class="param">homeDomain</dt><dd class="cmt"><p>the home domain used for reverse federation lookup</p></dd><dt class="param">signer</dt><dd class="cmt"><p>the key and weight of the signer for this account</p></dd><dt class="param">sourceAccount</dt><dd class="cmt"><p>the account effecting this operation, if different from the owning account of the transaction</p></dd></dl><dl class="attributes block"> <dt>See also</dt><dd><span class="cmt"><p><a href="https://www.stellar.org/developers/horizon/reference/resources/operation.html#set-options" target="_blank">endpoint doc</a></p></span></dd></dl><div class="toggleContainer block">
           <span class="toggle">
             Linear Supertypes
           </span>
@@ -301,7 +306,7 @@
         <div id="allMembers">
         <div id="constructors" class="members">
               <h3>Instance Constructors</h3>
-              <ol><li name="stellar.sdk.op.SetOptionsOperation#&lt;init&gt;" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+              <ol><li name="stellar.sdk.op.SetOptionsOperation#&lt;init&gt;" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="&lt;init&gt;(inflationDestination:Option[stellar.sdk.PublicKeyOps],clearFlags:Option[Set[stellar.sdk.op.IssuerFlag]],setFlags:Option[Set[stellar.sdk.op.IssuerFlag]],masterKeyWeight:Option[Int],lowThreshold:Option[Int],mediumThreshold:Option[Int],highThreshold:Option[Int],homeDomain:Option[String],signer:Option[stellar.sdk.Signer],sourceAccount:Option[stellar.sdk.PublicKeyOps]):stellar.sdk.op.SetOptionsOperation"></a><a id="&lt;init&gt;:SetOptionsOperation"></a>
       <span class="permalink">
       <a href="../../../stellar/sdk/op/SetOptionsOperation.html#&lt;init&gt;(inflationDestination:Option[stellar.sdk.PublicKeyOps],clearFlags:Option[Set[stellar.sdk.op.IssuerFlag]],setFlags:Option[Set[stellar.sdk.op.IssuerFlag]],masterKeyWeight:Option[Int],lowThreshold:Option[Int],mediumThreshold:Option[Int],highThreshold:Option[Int],homeDomain:Option[String],signer:Option[stellar.sdk.Signer],sourceAccount:Option[stellar.sdk.PublicKeyOps]):stellar.sdk.op.SetOptionsOperation" title="Permalink">
@@ -316,7 +321,7 @@
         <span class="name">SetOptionsOperation</span><span class="params">(<span name="inflationDestination">inflationDestination: <span class="extype" name="scala.Option">Option</span>[<a href="../PublicKeyOps.html" class="extype" name="stellar.sdk.PublicKeyOps">PublicKeyOps</a>] = <span class="symbol">None</span></span>, <span name="clearFlags">clearFlags: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.Set">Set</span>[<a href="IssuerFlag.html" class="extype" name="stellar.sdk.op.IssuerFlag">IssuerFlag</a>]] = <span class="symbol">None</span></span>, <span name="setFlags">setFlags: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.Set">Set</span>[<a href="IssuerFlag.html" class="extype" name="stellar.sdk.op.IssuerFlag">IssuerFlag</a>]] = <span class="symbol">None</span></span>, <span name="masterKeyWeight">masterKeyWeight: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Int">Int</span>] = <span class="symbol">None</span></span>, <span name="lowThreshold">lowThreshold: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Int">Int</span>] = <span class="symbol">None</span></span>, <span name="mediumThreshold">mediumThreshold: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Int">Int</span>] = <span class="symbol">None</span></span>, <span name="highThreshold">highThreshold: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Int">Int</span>] = <span class="symbol">None</span></span>, <span name="homeDomain">homeDomain: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>] = <span class="symbol">None</span></span>, <span name="signer">signer: <span class="extype" name="scala.Option">Option</span>[<a href="../Signer.html" class="extype" name="stellar.sdk.Signer">Signer</a>] = <span class="symbol">None</span></span>, <span name="sourceAccount">sourceAccount: <span class="extype" name="scala.Option">Option</span>[<a href="../PublicKeyOps.html" class="extype" name="stellar.sdk.PublicKeyOps">PublicKeyOps</a>] = <span class="symbol">None</span></span>)</span>
       </span>
       
-      
+      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt class="param">inflationDestination</dt><dd class="cmt"><p>the account's inflation destination</p></dd><dt class="param">clearFlags</dt><dd class="cmt"><p>issuer flags to be turned off</p></dd><dt class="param">setFlags</dt><dd class="cmt"><p>issuer flags to be turned on</p></dd><dt class="param">masterKeyWeight</dt><dd class="cmt"><p>the weight of the master key</p></dd><dt class="param">lowThreshold</dt><dd class="cmt"><p>the minimum weight required for low threshold operations</p></dd><dt class="param">mediumThreshold</dt><dd class="cmt"><p>the minimum weight required for medium threshold operations</p></dd><dt class="param">highThreshold</dt><dd class="cmt"><p>the minimum weight required for highthreshold operations</p></dd><dt class="param">homeDomain</dt><dd class="cmt"><p>the home domain used for reverse federation lookup</p></dd><dt class="param">signer</dt><dd class="cmt"><p>the key and weight of the signer for this account</p></dd><dt class="param">sourceAccount</dt><dd class="cmt"><p>the account effecting this operation, if different from the owning account of the transaction</p></dd></dl></div>
     </li></ol>
             </div>
 

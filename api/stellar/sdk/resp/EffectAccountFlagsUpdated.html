@@ -171,12 +171,24 @@
                         <a href="EffectAccountThresholdsUpdated.html" title="">EffectAccountThresholdsUpdated</a>
                       </li><li class="current-entities indented3">
                         <span class="separator"></span>
+                        <a class="class" href="EffectDataCreated.html" title=""></a>
+                        <a href="EffectDataCreated.html" title="">EffectDataCreated</a>
+                      </li><li class="current-entities indented3">
+                        <span class="separator"></span>
+                        <a class="class" href="EffectDataRemoved.html" title=""></a>
+                        <a href="EffectDataRemoved.html" title="">EffectDataRemoved</a>
+                      </li><li class="current-entities indented3">
+                        <span class="separator"></span>
                         <a class="trait" href="EffectResp.html" title=""></a>
                         <a href="EffectResp.html" title="">EffectResp</a>
                       </li><li class="current-entities indented3">
                         <span class="separator"></span>
                         <a class="object" href="EffectRespDeserializer$.html" title=""></a>
                         <a href="EffectRespDeserializer$.html" title="">EffectRespDeserializer</a>
+                      </li><li class="current-entities indented3">
+                        <span class="separator"></span>
+                        <a class="class" href="EffectSequenceBumped.html" title=""></a>
+                        <a href="EffectSequenceBumped.html" title="">EffectSequenceBumped</a>
                       </li><li class="current-entities indented3">
                         <span class="separator"></span>
                         <a class="class" href="EffectSignerCreated.html" title=""></a>
@@ -280,7 +292,7 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <span class="name">EffectAccountFlagsUpdated</span><span class="params">(<span name="id">id: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="account">account: <a href="../PublicKeyOps.html" class="extype" name="stellar.sdk.PublicKeyOps">PublicKeyOps</a></span>, <span name="authRequiredFlag">authRequiredFlag: <span class="extype" name="scala.Boolean">Boolean</span></span>)</span><span class="result"> extends <a href="EffectResp.html" class="extype" name="stellar.sdk.resp.EffectResp">EffectResp</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <span class="name">EffectAccountFlagsUpdated</span><span class="params">(<span name="id">id: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="account">account: <a href="../PublicKeyOps.html" class="extype" name="stellar.sdk.PublicKeyOps">PublicKeyOps</a></span>)</span><span class="result"> extends <a href="EffectResp.html" class="extype" name="stellar.sdk.resp.EffectResp">EffectResp</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4>
 
@@ -336,9 +348,9 @@
         <div id="constructors" class="members">
               <h3>Instance Constructors</h3>
               <ol><li name="stellar.sdk.resp.EffectAccountFlagsUpdated#&lt;init&gt;" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="&lt;init&gt;(id:String,account:stellar.sdk.PublicKeyOps,authRequiredFlag:Boolean):stellar.sdk.resp.EffectAccountFlagsUpdated"></a><a id="&lt;init&gt;:EffectAccountFlagsUpdated"></a>
+      <a id="&lt;init&gt;(id:String,account:stellar.sdk.PublicKeyOps):stellar.sdk.resp.EffectAccountFlagsUpdated"></a><a id="&lt;init&gt;:EffectAccountFlagsUpdated"></a>
       <span class="permalink">
-      <a href="../../../stellar/sdk/resp/EffectAccountFlagsUpdated.html#&lt;init&gt;(id:String,account:stellar.sdk.PublicKeyOps,authRequiredFlag:Boolean):stellar.sdk.resp.EffectAccountFlagsUpdated" title="Permalink">
+      <a href="../../../stellar/sdk/resp/EffectAccountFlagsUpdated.html#&lt;init&gt;(id:String,account:stellar.sdk.PublicKeyOps):stellar.sdk.resp.EffectAccountFlagsUpdated" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -347,7 +359,7 @@
         <span class="kind">new</span>
       </span>
       <span class="symbol">
-        <span class="name">EffectAccountFlagsUpdated</span><span class="params">(<span name="id">id: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="account">account: <a href="../PublicKeyOps.html" class="extype" name="stellar.sdk.PublicKeyOps">PublicKeyOps</a></span>, <span name="authRequiredFlag">authRequiredFlag: <span class="extype" name="scala.Boolean">Boolean</span></span>)</span>
+        <span class="name">EffectAccountFlagsUpdated</span><span class="params">(<span name="id">id: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="account">account: <a href="../PublicKeyOps.html" class="extype" name="stellar.sdk.PublicKeyOps">PublicKeyOps</a></span>)</span>
       </span>
       
       
@@ -441,22 +453,6 @@
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
-    </li><li name="stellar.sdk.resp.EffectAccountFlagsUpdated#authRequiredFlag" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="authRequiredFlag:Boolean"></a>
-      <span class="permalink">
-      <a href="../../../stellar/sdk/resp/EffectAccountFlagsUpdated.html#authRequiredFlag:Boolean" title="Permalink">
-        <i class="material-icons"></i>
-      </a>
-    </span>
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">val</span>
-      </span>
-      <span class="symbol">
-        <span class="name">authRequiredFlag</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
-      </span>
-      
-      
     </li><li name="scala.AnyRef#clone" visbl="prt" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="clone():Object"></a><a id="clone():AnyRef"></a>
       <span class="permalink">

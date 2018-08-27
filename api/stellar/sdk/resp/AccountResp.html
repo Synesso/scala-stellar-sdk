@@ -171,12 +171,24 @@
                         <a href="EffectAccountThresholdsUpdated.html" title="">EffectAccountThresholdsUpdated</a>
                       </li><li class="current-entities indented3">
                         <span class="separator"></span>
+                        <a class="class" href="EffectDataCreated.html" title=""></a>
+                        <a href="EffectDataCreated.html" title="">EffectDataCreated</a>
+                      </li><li class="current-entities indented3">
+                        <span class="separator"></span>
+                        <a class="class" href="EffectDataRemoved.html" title=""></a>
+                        <a href="EffectDataRemoved.html" title="">EffectDataRemoved</a>
+                      </li><li class="current-entities indented3">
+                        <span class="separator"></span>
                         <a class="trait" href="EffectResp.html" title=""></a>
                         <a href="EffectResp.html" title="">EffectResp</a>
                       </li><li class="current-entities indented3">
                         <span class="separator"></span>
                         <a class="object" href="EffectRespDeserializer$.html" title=""></a>
                         <a href="EffectRespDeserializer$.html" title="">EffectRespDeserializer</a>
+                      </li><li class="current-entities indented3">
+                        <span class="separator"></span>
+                        <a class="class" href="EffectSequenceBumped.html" title=""></a>
+                        <a href="EffectSequenceBumped.html" title="">EffectSequenceBumped</a>
                       </li><li class="current-entities indented3">
                         <span class="separator"></span>
                         <a class="class" href="EffectSignerCreated.html" title=""></a>
@@ -280,7 +292,7 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <span class="name">AccountResp</span><span class="params">(<span name="id">id: <a href="../PublicKey.html" class="extype" name="stellar.sdk.PublicKey">PublicKey</a></span>, <span name="lastSequence">lastSequence: <span class="extype" name="scala.Long">Long</span></span>, <span name="subEntryCount">subEntryCount: <span class="extype" name="scala.Int">Int</span></span>, <span name="thresholds">thresholds: <a href="../Thresholds.html" class="extype" name="stellar.sdk.Thresholds">Thresholds</a></span>, <span name="authRequired">authRequired: <span class="extype" name="scala.Boolean">Boolean</span></span>, <span name="authRevocable">authRevocable: <span class="extype" name="scala.Boolean">Boolean</span></span>, <span name="balances">balances: <span class="extype" name="scala.List">List</span>[<a href="../Amount.html" class="extype" name="stellar.sdk.Amount">Amount</a>]</span>, <span name="signers">signers: <span class="extype" name="scala.List">List</span>[<a href="../Signer.html" class="extype" name="stellar.sdk.Signer">Signer</a>]</span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <span class="name">AccountResp</span><span class="params">(<span name="id">id: <a href="../PublicKey.html" class="extype" name="stellar.sdk.PublicKey">PublicKey</a></span>, <span name="lastSequence">lastSequence: <span class="extype" name="scala.Long">Long</span></span>, <span name="subEntryCount">subEntryCount: <span class="extype" name="scala.Int">Int</span></span>, <span name="thresholds">thresholds: <a href="../Thresholds.html" class="extype" name="stellar.sdk.Thresholds">Thresholds</a></span>, <span name="authRequired">authRequired: <span class="extype" name="scala.Boolean">Boolean</span></span>, <span name="authRevocable">authRevocable: <span class="extype" name="scala.Boolean">Boolean</span></span>, <span name="balances">balances: <span class="extype" name="scala.List">List</span>[<a href="../Balance.html" class="extype" name="stellar.sdk.Balance">Balance</a>]</span>, <span name="signers">signers: <span class="extype" name="scala.List">List</span>[<a href="../Signer.html" class="extype" name="stellar.sdk.Signer">Signer</a>]</span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4>
 
@@ -336,9 +348,9 @@
         <div id="constructors" class="members">
               <h3>Instance Constructors</h3>
               <ol><li name="stellar.sdk.resp.AccountResp#&lt;init&gt;" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="&lt;init&gt;(id:stellar.sdk.PublicKey,lastSequence:Long,subEntryCount:Int,thresholds:stellar.sdk.Thresholds,authRequired:Boolean,authRevocable:Boolean,balances:List[stellar.sdk.Amount],signers:List[stellar.sdk.Signer]):stellar.sdk.resp.AccountResp"></a><a id="&lt;init&gt;:AccountResp"></a>
+      <a id="&lt;init&gt;(id:stellar.sdk.PublicKey,lastSequence:Long,subEntryCount:Int,thresholds:stellar.sdk.Thresholds,authRequired:Boolean,authRevocable:Boolean,balances:List[stellar.sdk.Balance],signers:List[stellar.sdk.Signer]):stellar.sdk.resp.AccountResp"></a><a id="&lt;init&gt;:AccountResp"></a>
       <span class="permalink">
-      <a href="../../../stellar/sdk/resp/AccountResp.html#&lt;init&gt;(id:stellar.sdk.PublicKey,lastSequence:Long,subEntryCount:Int,thresholds:stellar.sdk.Thresholds,authRequired:Boolean,authRevocable:Boolean,balances:List[stellar.sdk.Amount],signers:List[stellar.sdk.Signer]):stellar.sdk.resp.AccountResp" title="Permalink">
+      <a href="../../../stellar/sdk/resp/AccountResp.html#&lt;init&gt;(id:stellar.sdk.PublicKey,lastSequence:Long,subEntryCount:Int,thresholds:stellar.sdk.Thresholds,authRequired:Boolean,authRevocable:Boolean,balances:List[stellar.sdk.Balance],signers:List[stellar.sdk.Signer]):stellar.sdk.resp.AccountResp" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -347,7 +359,7 @@
         <span class="kind">new</span>
       </span>
       <span class="symbol">
-        <span class="name">AccountResp</span><span class="params">(<span name="id">id: <a href="../PublicKey.html" class="extype" name="stellar.sdk.PublicKey">PublicKey</a></span>, <span name="lastSequence">lastSequence: <span class="extype" name="scala.Long">Long</span></span>, <span name="subEntryCount">subEntryCount: <span class="extype" name="scala.Int">Int</span></span>, <span name="thresholds">thresholds: <a href="../Thresholds.html" class="extype" name="stellar.sdk.Thresholds">Thresholds</a></span>, <span name="authRequired">authRequired: <span class="extype" name="scala.Boolean">Boolean</span></span>, <span name="authRevocable">authRevocable: <span class="extype" name="scala.Boolean">Boolean</span></span>, <span name="balances">balances: <span class="extype" name="scala.List">List</span>[<a href="../Amount.html" class="extype" name="stellar.sdk.Amount">Amount</a>]</span>, <span name="signers">signers: <span class="extype" name="scala.List">List</span>[<a href="../Signer.html" class="extype" name="stellar.sdk.Signer">Signer</a>]</span>)</span>
+        <span class="name">AccountResp</span><span class="params">(<span name="id">id: <a href="../PublicKey.html" class="extype" name="stellar.sdk.PublicKey">PublicKey</a></span>, <span name="lastSequence">lastSequence: <span class="extype" name="scala.Long">Long</span></span>, <span name="subEntryCount">subEntryCount: <span class="extype" name="scala.Int">Int</span></span>, <span name="thresholds">thresholds: <a href="../Thresholds.html" class="extype" name="stellar.sdk.Thresholds">Thresholds</a></span>, <span name="authRequired">authRequired: <span class="extype" name="scala.Boolean">Boolean</span></span>, <span name="authRevocable">authRevocable: <span class="extype" name="scala.Boolean">Boolean</span></span>, <span name="balances">balances: <span class="extype" name="scala.List">List</span>[<a href="../Balance.html" class="extype" name="stellar.sdk.Balance">Balance</a>]</span>, <span name="signers">signers: <span class="extype" name="scala.List">List</span>[<a href="../Signer.html" class="extype" name="stellar.sdk.Signer">Signer</a>]</span>)</span>
       </span>
       
       
@@ -458,9 +470,9 @@
       
       
     </li><li name="stellar.sdk.resp.AccountResp#balances" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="balances:List[stellar.sdk.Amount]"></a><a id="balances:List[Amount]"></a>
+      <a id="balances:List[stellar.sdk.Balance]"></a><a id="balances:List[Balance]"></a>
       <span class="permalink">
-      <a href="../../../stellar/sdk/resp/AccountResp.html#balances:List[stellar.sdk.Amount]" title="Permalink">
+      <a href="../../../stellar/sdk/resp/AccountResp.html#balances:List[stellar.sdk.Balance]" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -469,7 +481,7 @@
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">balances</span><span class="result">: <span class="extype" name="scala.List">List</span>[<a href="../Amount.html" class="extype" name="stellar.sdk.Amount">Amount</a>]</span>
+        <span class="name">balances</span><span class="result">: <span class="extype" name="scala.List">List</span>[<a href="../Balance.html" class="extype" name="stellar.sdk.Balance">Balance</a>]</span>
       </span>
       
       

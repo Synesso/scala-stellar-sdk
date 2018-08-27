@@ -123,8 +123,8 @@
                         <a href="AccountMergeOperation.html" title="Deletes account and transfers remaining balance to destination account.">AccountMergeOperation</a>
                       </li><li class="current-entities indented3">
                         <a class="object" href="AllowTrustOperation$.html" title=""></a>
-                        <a class="class" href="AllowTrustOperation.html" title="Updates the “authorized” flag of an existing trust line this is called by the issuer of the related asset."></a>
-                        <a href="AllowTrustOperation.html" title="Updates the “authorized” flag of an existing trust line this is called by the issuer of the related asset.">AllowTrustOperation</a>
+                        <a class="class" href="AllowTrustOperation.html" title="Updates the “authorized” flag of an existing trust line."></a>
+                        <a href="AllowTrustOperation.html" title="Updates the “authorized” flag of an existing trust line.">AllowTrustOperation</a>
                       </li><li class="current-entities indented3">
                         <span class="separator"></span>
                         <a class="object" href="AuthorizationImmutableFlag$.html" title=""></a>
@@ -138,13 +138,17 @@
                         <a class="object" href="AuthorizationRevocableFlag$.html" title=""></a>
                         <a href="AuthorizationRevocableFlag$.html" title="">AuthorizationRevocableFlag</a>
                       </li><li class="current-entities indented3">
+                        <a class="object" href="BumpSequenceOperation$.html" title=""></a>
+                        <a class="class" href="BumpSequenceOperation.html" title="Bumps forward the sequence number of the source account of the operation, allowing it to invalidate any transactions with a smaller sequence number."></a>
+                        <a href="BumpSequenceOperation.html" title="Bumps forward the sequence number of the source account of the operation, allowing it to invalidate any transactions with a smaller sequence number.">BumpSequenceOperation</a>
+                      </li><li class="current-entities indented3">
                         <a class="object" href="ChangeTrustOperation$.html" title=""></a>
-                        <a class="class" href="ChangeTrustOperation.html" title="Represents ChangeTrust operation."></a>
-                        <a href="ChangeTrustOperation.html" title="Represents ChangeTrust operation.">ChangeTrustOperation</a>
+                        <a class="class" href="ChangeTrustOperation.html" title="The source account is stating that it will trust the asset of the limit up to the amount of the limit."></a>
+                        <a href="ChangeTrustOperation.html" title="The source account is stating that it will trust the asset of the limit up to the amount of the limit.">ChangeTrustOperation</a>
                       </li><li class="current-entities indented3">
                         <a class="object" href="CreateAccountOperation$.html" title=""></a>
-                        <a class="class" href="CreateAccountOperation.html" title="Represents CreateAccount operation."></a>
-                        <a href="CreateAccountOperation.html" title="Represents CreateAccount operation.">CreateAccountOperation</a>
+                        <a class="class" href="CreateAccountOperation.html" title="Funds and creates a new account."></a>
+                        <a href="CreateAccountOperation.html" title="Funds and creates a new account.">CreateAccountOperation</a>
                       </li><li class="current-entities indented3">
                         <span class="separator"></span>
                         <a class="class" href="CreateOfferOperation.html" title="Creates an offer in the Stellar network."></a>
@@ -191,20 +195,20 @@
                         <a href="OperationDeserializer$.html" title="">OperationDeserializer</a>
                       </li><li class="current-entities indented3">
                         <a class="object" href="PathPaymentOperation$.html" title=""></a>
-                        <a class="class" href="" title="Represents PathPayment operation."></a>
-                        <a href="" title="Represents PathPayment operation.">PathPaymentOperation</a>
+                        <a class="class" href="" title="Represents a payment from one account to another through a path."></a>
+                        <a href="" title="Represents a payment from one account to another through a path.">PathPaymentOperation</a>
                       </li><li class="current-entities indented3">
                         <span class="separator"></span>
                         <a class="trait" href="PayOperation.html" title="Marker trait for any operation that involves a payment (PaymentOperation, CreateAccountOperation)"></a>
                         <a href="PayOperation.html" title="Marker trait for any operation that involves a payment (PaymentOperation, CreateAccountOperation)">PayOperation</a>
                       </li><li class="current-entities indented3">
                         <a class="object" href="PaymentOperation$.html" title=""></a>
-                        <a class="class" href="PaymentOperation.html" title="Represents Payment operation."></a>
-                        <a href="PaymentOperation.html" title="Represents Payment operation.">PaymentOperation</a>
+                        <a class="class" href="PaymentOperation.html" title="Represents a payment from one account to another."></a>
+                        <a href="PaymentOperation.html" title="Represents a payment from one account to another.">PaymentOperation</a>
                       </li><li class="current-entities indented3">
                         <a class="object" href="SetOptionsOperation$.html" title=""></a>
-                        <a class="class" href="SetOptionsOperation.html" title=""></a>
-                        <a href="SetOptionsOperation.html" title="">SetOptionsOperation</a>
+                        <a class="class" href="SetOptionsOperation.html" title="Modify an account, setting one or more options."></a>
+                        <a href="SetOptionsOperation.html" title="Modify an account, setting one or more options.">SetOptionsOperation</a>
                       </li><li class="current-entities indented3">
                         <span class="separator"></span>
                         <a class="class" href="Transacted.html" title="Provides access to additional information related to an operation after it has been transacted in the network."></a>
@@ -246,17 +250,19 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <span class="name">PathPaymentOperation</span><span class="params">(<span name="sendMax">sendMax: <a href="../Amount.html" class="extype" name="stellar.sdk.Amount">Amount</a></span>, <span name="destinationAccount">destinationAccount: <a href="../PublicKeyOps.html" class="extype" name="stellar.sdk.PublicKeyOps">PublicKeyOps</a></span>, <span name="destinationAmount">destinationAmount: <a href="../Amount.html" class="extype" name="stellar.sdk.Amount">Amount</a></span>, <span name="path">path: <span class="extype" name="scala.Seq">Seq</span>[<a href="../Asset.html" class="extype" name="stellar.sdk.Asset">Asset</a>]</span>, <span name="sourceAccount">sourceAccount: <span class="extype" name="scala.Option">Option</span>[<a href="../PublicKeyOps.html" class="extype" name="stellar.sdk.PublicKeyOps">PublicKeyOps</a>] = <span class="symbol">None</span></span>)</span><span class="result"> extends <a href="Operation.html" class="extype" name="stellar.sdk.op.Operation">Operation</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <span class="name">PathPaymentOperation</span><span class="params">(<span name="sendMax">sendMax: <a href="../Amount.html" class="extype" name="stellar.sdk.Amount">Amount</a></span>, <span name="destinationAccount">destinationAccount: <a href="../PublicKeyOps.html" class="extype" name="stellar.sdk.PublicKeyOps">PublicKeyOps</a></span>, <span name="destinationAmount">destinationAmount: <a href="../Amount.html" class="extype" name="stellar.sdk.Amount">Amount</a></span>, <span name="path">path: <span class="extype" name="scala.Seq">Seq</span>[<a href="../Asset.html" class="extype" name="stellar.sdk.Asset">Asset</a>] = <span class="symbol">Nil</span></span>, <span name="sourceAccount">sourceAccount: <span class="extype" name="scala.Option">Option</span>[<a href="../PublicKeyOps.html" class="extype" name="stellar.sdk.PublicKeyOps">PublicKeyOps</a>] = <span class="symbol">None</span></span>)</span><span class="result"> extends <a href="PayOperation.html" class="extype" name="stellar.sdk.op.PayOperation">PayOperation</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4>
 
       
-          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Represents <a href="https://www.stellar.org/developers/learn/concepts/list-of-operations.html#path-payment" target="_blank">PathPayment</a> operation.
-</p></div><dl class="attributes block"> <dt>See also</dt><dd><span class="cmt"><p><a href="https://www.stellar.org/developers/learn/concepts/list-of-operations.html" target="_blank">List of Operations</a></p></span></dd></dl><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Represents a payment from one account to another through a path. This type of payment starts as one type of asset
+and ends as another type of asset. There can be other assets that are traded into and out of along the path.
+Suitable orders must exist on the relevant order books for this operation to be successful.
+</p></div><dl class="paramcmts block"><dt class="param">sendMax</dt><dd class="cmt"><p>the maximum amount willing to be spent to effect the payment</p></dd><dt class="param">destinationAccount</dt><dd class="cmt"><p>the payment recipient</p></dd><dt class="param">destinationAmount</dt><dd class="cmt"><p>the exact amount to be received</p></dd><dt class="param">path</dt><dd class="cmt"><p>the intermediate assets to traverse (may be empty)</p></dd><dt class="param">sourceAccount</dt><dd class="cmt"><p>the account effecting this operation, if different from the owning account of the transaction</p></dd></dl><dl class="attributes block"> <dt>See also</dt><dd><span class="cmt"><p><a href="https://www.stellar.org/developers/horizon/reference/resources/operation.html#path-payment" target="_blank">endpoint doc</a></p></span></dd></dl><div class="toggleContainer block">
           <span class="toggle">
             Linear Supertypes
           </span>
-          <div class="superTypes hiddenContent"><span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <span class="extype" name="scala.Product">Product</span>, <span class="extype" name="scala.Equals">Equals</span>, <a href="Operation.html" class="extype" name="stellar.sdk.op.Operation">Operation</a>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
+          <div class="superTypes hiddenContent"><span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <span class="extype" name="scala.Product">Product</span>, <span class="extype" name="scala.Equals">Equals</span>, <a href="PayOperation.html" class="extype" name="stellar.sdk.op.PayOperation">PayOperation</a>, <a href="Operation.html" class="extype" name="stellar.sdk.op.Operation">Operation</a>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div></div>
         
 
@@ -282,7 +288,7 @@
                   <span class="filtertype">Inherited<br />
                   </span>
                   <ol id="linearization">
-                    <li class="in" name="stellar.sdk.op.PathPaymentOperation"><span>PathPaymentOperation</span></li><li class="in" name="scala.Serializable"><span>Serializable</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="scala.Product"><span>Product</span></li><li class="in" name="scala.Equals"><span>Equals</span></li><li class="in" name="stellar.sdk.op.Operation"><span>Operation</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                    <li class="in" name="stellar.sdk.op.PathPaymentOperation"><span>PathPaymentOperation</span></li><li class="in" name="scala.Serializable"><span>Serializable</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="scala.Product"><span>Product</span></li><li class="in" name="scala.Equals"><span>Equals</span></li><li class="in" name="stellar.sdk.op.PayOperation"><span>PayOperation</span></li><li class="in" name="stellar.sdk.op.Operation"><span>Operation</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
                   </ol>
                 </div><div class="ancestors">
               <span class="filtertype"></span>
@@ -302,7 +308,7 @@
         <div id="allMembers">
         <div id="constructors" class="members">
               <h3>Instance Constructors</h3>
-              <ol><li name="stellar.sdk.op.PathPaymentOperation#&lt;init&gt;" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+              <ol><li name="stellar.sdk.op.PathPaymentOperation#&lt;init&gt;" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="&lt;init&gt;(sendMax:stellar.sdk.Amount,destinationAccount:stellar.sdk.PublicKeyOps,destinationAmount:stellar.sdk.Amount,path:Seq[stellar.sdk.Asset],sourceAccount:Option[stellar.sdk.PublicKeyOps]):stellar.sdk.op.PathPaymentOperation"></a><a id="&lt;init&gt;:PathPaymentOperation"></a>
       <span class="permalink">
       <a href="../../../stellar/sdk/op/PathPaymentOperation.html#&lt;init&gt;(sendMax:stellar.sdk.Amount,destinationAccount:stellar.sdk.PublicKeyOps,destinationAmount:stellar.sdk.Amount,path:Seq[stellar.sdk.Asset],sourceAccount:Option[stellar.sdk.PublicKeyOps]):stellar.sdk.op.PathPaymentOperation" title="Permalink">
@@ -314,10 +320,10 @@
         <span class="kind">new</span>
       </span>
       <span class="symbol">
-        <span class="name">PathPaymentOperation</span><span class="params">(<span name="sendMax">sendMax: <a href="../Amount.html" class="extype" name="stellar.sdk.Amount">Amount</a></span>, <span name="destinationAccount">destinationAccount: <a href="../PublicKeyOps.html" class="extype" name="stellar.sdk.PublicKeyOps">PublicKeyOps</a></span>, <span name="destinationAmount">destinationAmount: <a href="../Amount.html" class="extype" name="stellar.sdk.Amount">Amount</a></span>, <span name="path">path: <span class="extype" name="scala.Seq">Seq</span>[<a href="../Asset.html" class="extype" name="stellar.sdk.Asset">Asset</a>]</span>, <span name="sourceAccount">sourceAccount: <span class="extype" name="scala.Option">Option</span>[<a href="../PublicKeyOps.html" class="extype" name="stellar.sdk.PublicKeyOps">PublicKeyOps</a>] = <span class="symbol">None</span></span>)</span>
+        <span class="name">PathPaymentOperation</span><span class="params">(<span name="sendMax">sendMax: <a href="../Amount.html" class="extype" name="stellar.sdk.Amount">Amount</a></span>, <span name="destinationAccount">destinationAccount: <a href="../PublicKeyOps.html" class="extype" name="stellar.sdk.PublicKeyOps">PublicKeyOps</a></span>, <span name="destinationAmount">destinationAmount: <a href="../Amount.html" class="extype" name="stellar.sdk.Amount">Amount</a></span>, <span name="path">path: <span class="extype" name="scala.Seq">Seq</span>[<a href="../Asset.html" class="extype" name="stellar.sdk.Asset">Asset</a>] = <span class="symbol">Nil</span></span>, <span name="sourceAccount">sourceAccount: <span class="extype" name="scala.Option">Option</span>[<a href="../PublicKeyOps.html" class="extype" name="stellar.sdk.PublicKeyOps">PublicKeyOps</a>] = <span class="symbol">None</span></span>)</span>
       </span>
       
-      
+      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt class="param">sendMax</dt><dd class="cmt"><p>the maximum amount willing to be spent to effect the payment</p></dd><dt class="param">destinationAccount</dt><dd class="cmt"><p>the payment recipient</p></dd><dt class="param">destinationAmount</dt><dd class="cmt"><p>the exact amount to be received</p></dd><dt class="param">path</dt><dd class="cmt"><p>the intermediate assets to traverse (may be empty)</p></dd><dt class="param">sourceAccount</dt><dd class="cmt"><p>the account effecting this operation, if different from the owning account of the transaction</p></dd></dl></div>
     </li></ol>
             </div>
 
@@ -757,6 +763,8 @@
               <h3>Inherited from <span class="extype" name="scala.Product">Product</span></h3>
             </div><div class="parent" name="scala.Equals">
               <h3>Inherited from <span class="extype" name="scala.Equals">Equals</span></h3>
+            </div><div class="parent" name="stellar.sdk.op.PayOperation">
+              <h3>Inherited from <a href="PayOperation.html" class="extype" name="stellar.sdk.op.PayOperation">PayOperation</a></h3>
             </div><div class="parent" name="stellar.sdk.op.Operation">
               <h3>Inherited from <a href="Operation.html" class="extype" name="stellar.sdk.op.Operation">Operation</a></h3>
             </div><div class="parent" name="scala.AnyRef">
