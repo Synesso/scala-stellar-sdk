@@ -58,6 +58,8 @@ lazy val root = (project in file("."))
   .settings(
     commonSettings,
     compile := ((compile in Compile) dependsOn (paradox in Compile)).value,
+    test := ((test in Test) dependsOn dependencyUpdates).value,
+    dependencyUpdatesFailBuild := true,
     Defaults.itSettings,
     target in Compile in doc := target.value / "paradox" / "site" / "main" / "api",
     libraryDependencies ++= List(
