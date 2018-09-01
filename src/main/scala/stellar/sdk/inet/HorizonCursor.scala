@@ -1,6 +1,14 @@
 package stellar.sdk.inet
 
 
-sealed trait HorizonCursor
-case object Now extends HorizonCursor
-case class Record(value: Long) extends HorizonCursor
+sealed trait HorizonCursor {
+  def paramValue: String
+}
+
+case object Now extends HorizonCursor {
+  def paramValue: String = "now"
+}
+
+case class Record(value: Long) extends HorizonCursor {
+  def paramValue: String = s"$value"
+}

@@ -1,0 +1,25 @@
+{
+  "id" : "01932309-f419-4266-ae60-e10611f24e10",
+  "name" : "ledgers_6_operations",
+  "request" : {
+    "url" : "/ledgers/6/operations?cursor=25769807879&limit=100&order=asc",
+    "method" : "GET"
+  },
+  "response" : {
+    "status" : 200,
+    "body" : "{\n  \"_links\": {\n    \"self\": {\n      \"href\": \"http://localhost:8000/ledgers/6/operations?cursor=25769807879\\u0026limit=100\\u0026order=asc\"\n    },\n    \"next\": {\n      \"href\": \"http://localhost:8000/ledgers/6/operations?cursor=25769807879\\u0026limit=100\\u0026order=asc\"\n    },\n    \"prev\": {\n      \"href\": \"http://localhost:8000/ledgers/6/operations?cursor=25769807879\\u0026limit=100\\u0026order=desc\"\n    }\n  },\n  \"_embedded\": {\n    \"records\": []\n  }\n}",
+    "headers" : {
+      "Cache-Control" : "no-cache, no-store, max-age=0",
+      "Content-Disposition" : "inline",
+      "Content-Type" : "application/hal+json; charset=utf-8",
+      "Vary" : "Origin",
+      "X-Ratelimit-Limit" : "72000",
+      "X-Ratelimit-Remaining" : "71980",
+      "X-Ratelimit-Reset" : "3574",
+      "Date" : "Sat, 01 Sep 2018 08:47:47 GMT"
+    }
+  },
+  "uuid" : "01932309-f419-4266-ae60-e10611f24e10",
+  "persistent" : true,
+  "insertionIndex" : 14
+}

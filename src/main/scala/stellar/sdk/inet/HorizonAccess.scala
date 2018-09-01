@@ -3,13 +3,19 @@ package stellar.sdk.inet
 import java.net.URI
 
 import akka.actor.ActorSystem
-import com.softwaremill.sttp._
-import com.softwaremill.sttp.akkahttp.AkkaHttpBackend
-import com.softwaremill.sttp.json4s._
+import akka.http.scaladsl.Http
+import akka.http.scaladsl.model.HttpMethods.{GET, POST}
+import akka.http.scaladsl.model.MediaTypes.`application/json`
+import akka.http.scaladsl.model.Uri.Query
+import akka.http.scaladsl.model._
+import akka.http.scaladsl.model.headers.Location
+import akka.http.scaladsl.unmarshalling.Unmarshal
+import akka.stream.ActorMaterializer
 import com.typesafe.config.ConfigFactory
 import com.typesafe.scalalogging.LazyLogging
+import de.heikoseeberger.akkahttpjson4s.Json4sSupport
 import org.json4s.native.Serialization
-import org.json4s.{CustomSerializer, NoTypeHints}
+import org.json4s.{CustomSerializer, DefaultFormats, Formats, NoTypeHints}
 import stellar.sdk.op.TransactedOperationDeserializer
 import stellar.sdk.resp._
 import stellar.sdk.{OrderBookDeserializer, SignedTransaction}
@@ -21,70 +27,80 @@ import scala.util.{Failure, Success, Try}
 
 
 trait HorizonAccess {
+  val `application/hal+json` = MediaType.applicationWithFixedCharset("hal+json", HttpCharsets.`UTF-8`)
+  val `application/problem+json` = MediaType.applicationWithFixedCharset("problem+json", HttpCharsets.`UTF-8`)
+
+  final object HalJsonSupport extends Json4sSupport {
+    override def unmarshallerContentTypes = List(`application/json`, `application/hal+json`, `application/problem+json`)
+  }
+
   def post(txn: SignedTransaction)(implicit ec: ExecutionContext): Future[TransactionPostResp]
 
-  def get[T: ClassTag](path: String, params: Map[String, Any] = Map.empty)
+  def get[T: ClassTag](path: String, params: Map[String, String] = Map.empty)
                       (implicit ec: ExecutionContext, m: Manifest[T]): Future[T]
 
   def getStream[T: ClassTag](path: String, de: CustomSerializer[T], cursor: HorizonCursor, order: HorizonOrder, params: Map[String, String] = Map.empty)
                             (implicit ec: ExecutionContext, m: Manifest[T]): Future[Stream[T]]
-
-  def getPage[T: ClassTag](path: String, params: Map[String, String])
-                          (implicit ec: ExecutionContext, de: CustomSerializer[T], m: Manifest[T]): Future[Page[T]]
 }
 
-class Horizon(uri: URI,
-              system: ActorSystem = ActorSystem("stellar-sdk", ConfigFactory.load().getConfig("scala-stellar-sdk")))
+class Horizon(uri: URI)
+             (implicit system: ActorSystem = ActorSystem("stellar-sdk", ConfigFactory.load().getConfig("scala-stellar-sdk")))
   extends HorizonAccess with LazyLogging {
 
-  implicit val backend = AkkaHttpBackend.usingActorSystem(system)
+  import HalJsonSupport._
+
+  implicit val materializer = ActorMaterializer()
+  implicit val executionContext = system.dispatcher
+//  implicit val jsonStreamingSupport: JsonEntityStreamingSupport = EntityStreamingSupport.json()
+
+  implicit val serialization = org.json4s.native.Serialization
   implicit val formats = Serialization.formats(NoTypeHints) + AccountRespDeserializer + DataValueRespDeserializer +
-    LedgerRespDeserializer + TransactedOperationDeserializer + OrderBookDeserializer + TransactionPostRespDeserializer
+    LedgerRespDeserializer + TransactedOperationDeserializer + OrderBookDeserializer + TransactionPostRespDeserializer +
+    TxnFailureDeserializer
+
 
   def post(txn: SignedTransaction)(implicit ec: ExecutionContext): Future[TransactionPostResp] = {
     logger.debug(s"Posting {} {}", txn, txn.encodeXDR)
-    val requestUri = uri"$uri/transactions"
     for {
       envelope <- Future(txn.encodeXDR)
-      response <- sttp.body(Map("tx" -> envelope)).post(requestUri)
-        .readTimeout(5 minutes)
-        .response(asJson[TransactionPostResp]).send()
-    } yield {
-      response.body match {
-        case Right(r) => r
-        case Left(s) => throw TxnFailure(requestUri, s).getOrElse(new RuntimeException(s"Unrecognised response: $s"))
-      }
-    }
+      request = HttpRequest(POST, Uri(s"$uri/transactions"), entity = FormData("tx" -> envelope).toEntity)
+      response <- Http().singleRequest(request)
+      unwrapped <- Unmarshal(response).to[TransactionPostResp]
+    } yield unwrapped
   }
 
-  def get[T: ClassTag](path: String, params: Map[String, Any] = Map.empty)(implicit ec: ExecutionContext, m: Manifest[T]): Future[T] = {
-    val uriPath = s"$uri$path"
-    val requestUri = uri"$uriPath?$params"
+  def get[T: ClassTag](path: String, params: Map[String, String] = Map.empty)(implicit ec: ExecutionContext, m: Manifest[T]): Future[T] = {
+    val requestUri = Uri(s"$uri$path").withQuery(Query(params))
     logger.debug(s"Getting {}", requestUri)
 
-    sttp.get(requestUri).response(asJson[T]).send().map(_.body match {
-      case Left(s) => throw TxnFailure(requestUri, s).getOrElse(new RuntimeException(s"Unrecognised response: $s"))
-      case Right(r) => r
-    })
+    def parseOrRedirectOrError(response: HttpResponse): Future[Try[T]] = {
+      val HttpResponse(status, _, entity, _) = response
+      if (status.isRedirection()) {
+        Http().singleRequest(HttpRequest(GET, response.header[Location].get.uri)).flatMap(parseOrRedirectOrError)
+      } else if (status.isSuccess()) Unmarshal(entity).to[T].map(Success(_))
+      else Unmarshal(entity).to[TxnFailure].map(_.copy(uri = requestUri)).map(Failure(_))
+    }
+
+    for {
+      response <- Http().singleRequest(HttpRequest(GET, requestUri))
+      unwrapped <- parseOrRedirectOrError(response)
+    } yield unwrapped.get
   }
 
   def getStream[T: ClassTag](path: String, de: CustomSerializer[T], cursor: HorizonCursor, order: HorizonOrder, params: Map[String, String] = Map.empty)
                             (implicit ec: ExecutionContext, m: Manifest[T]): Future[Stream[T]] = {
 
-    val cursorParam = cursor match {
-      case Now => "now"
-      case Record(r) => r.toString
-    }
-    val orderParam = order match {
-      case Asc => "asc"
-      case Desc => "desc"
-    }
-    val allParams = params ++ Map("cursor" -> cursorParam) ++ Map("order" -> orderParam)
+    implicit val formats = DefaultFormats + RawPageDeserializer + de
 
-    implicit val inner = de
-
+    val query = Query(params ++ Map(
+      "cursor" -> cursor.paramValue,
+      "order" -> order.paramValue,
+      "limit" -> "100"
+    ))
+    val requestUri = Uri(s"$uri$path").withQuery(query)
+    
     def next(p: Page[T]): Future[Option[Page[T]]] =
-      (getPageAbsoluteUri(uri"${p.nextLink}".copy(port = Some(uri.getPort))): Future[Page[T]]).map(Some(_))
+      (getPage(Uri(p.nextLink).withPort(requestUri.effectivePort)): Future[Page[T]]).map(Some(_))
         .recover { case e: TxnFailure => None }
 
     def stream(ts: Seq[T], maybeNextPage: Future[Option[Page[T]]]): Stream[T] = {
@@ -102,29 +118,21 @@ class Horizon(uri: URI,
       }
     }
 
-    (getPage(path, allParams): Future[Page[T]]).map { p0: Page[T] => stream(p0.xs, next(p0)) }
+    (getPage(requestUri): Future[Page[T]]).map { p0: Page[T] => stream(p0.xs, next(p0)) }
   }
 
-  def getPage[T: ClassTag](path: String, params: Map[String, String])
-                          (implicit ec: ExecutionContext, de: CustomSerializer[T], m: Manifest[T]): Future[Page[T]] = {
-    val absoluteUri = uri"$uri/$path?${params.updated("limit", "100")}"
-    getPageAbsoluteUri(absoluteUri)
-  }
+  def getPage[T: ClassTag](uri: Uri)
+                          (implicit ec: ExecutionContext, m: Manifest[T], formats: Formats): Future[Page[T]] = {
 
-  private def getPageAbsoluteUri[T: ClassTag](uri: Uri)(implicit ec: ExecutionContext, de: CustomSerializer[T],
-                                                        m: Manifest[T]): Future[Page[T]] = {
     logger.debug(s"Getting $uri")
     for {
-      resp <- sttp.get(uri).response(asString).send()
-    } yield {
-      resp.body match {
-        case Right(r) => Page(r, de)
-        case Left(s) => throw TxnFailure(uri, s).getOrElse(new RuntimeException(s"Unrecognised response: $s"))
-      }
-    }
+      response <- Http().singleRequest(HttpRequest(GET, uri))
+      unwrapped <- Unmarshal(response).to[RawPage]
+    } yield unwrapped.parse[T]
   }
 }
 
 object HorizonAccess {
   def apply(uri: String): Try[HorizonAccess] = Try(new Horizon(URI.create(uri)))
 }
+

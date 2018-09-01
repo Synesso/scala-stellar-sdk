@@ -72,7 +72,6 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
     val futureAccountA = network.account(accnA).map(_.toAccount)
     val futureAccountB = network.account(accnB).map(_.toAccount)
     futureAccountA.flatMap(a => futureAccountB.map(b => (a, b))).recoverWith {
-      // todo - fixtures should include every kind of operation
       case _ => // account details not found, assume fixture setup is required then try again
         // docker container running inside travis has trouble processing non-trivial transactions within timeout.
         // so, group the operations into smaller transactions.
@@ -129,7 +128,6 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
 
         setupFixtures
     }
-
   }
 
   val (accountA, accountB) = Await.result(setupFixtures, 5 minutes /* for travis */)
@@ -147,7 +145,10 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
     }
 
     "fetch nothing for an account that has been merged" >> {
-      network.account(accnC) must throwA[TxnFailure].awaitFor(30 seconds)
+      network.account(accnC) must throwA[TxnFailure].like { case t: TxnFailure =>
+        val expectedUri = s"http://localhost:${network.port}/accounts/${accnC.accountId}"
+        t.uri.toString() mustEqual expectedUri
+      }.awaitFor(30 seconds)
     }
 
     "fetch account details from response" >> {
@@ -210,69 +211,69 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
       val effects = network.effects()
       effects.map(_.size) must beEqualTo(30).awaitFor(10 seconds)
     }
-  }
 
-  "filter effects by account" >> {
-    val byAccount = network.effectsByAccount(accnA).map(_.take(10).toList)
-    byAccount.map(_.size) must beEqualTo(9).awaitFor(10 seconds)
-    byAccount.map(_.head) must beLike[EffectResp] {
-      case EffectAccountCreated(_, account, startingBalance) =>
-        account.accountId mustEqual accnA.accountId
-        startingBalance mustEqual lumens(1000)
-    }.awaitFor(10.seconds)
-  }
+    "filter effects by account" >> {
+      val byAccount = network.effectsByAccount(accnA).map(_.take(10).toList)
+      byAccount.map(_.size) must beEqualTo(9).awaitFor(10 seconds)
+      byAccount.map(_.head) must beLike[EffectResp] {
+        case EffectAccountCreated(_, account, startingBalance) =>
+          account.accountId mustEqual accnA.accountId
+          startingBalance mustEqual lumens(1000)
+      }.awaitFor(10.seconds)
+    }
 
-  "filter effects by ledger" >> {
-    val byLedger = network.effectsByLedger(0).map(_.toList)
-    byLedger.map(_.head) must beLike[EffectResp] {
-      case EffectAccountCreated(_, account, startingBalance) =>
-        account.accountId mustEqual accnA.accountId
-        startingBalance mustEqual lumens(1000)
-    }.awaitFor(10.seconds)
-  }
+    "filter effects by ledger" >> {
+      val byLedger = network.effectsByLedger(0).map(_.toList)
+      byLedger.map(_.head) must beLike[EffectResp] {
+        case EffectAccountCreated(_, account, startingBalance) =>
+          account.accountId mustEqual accnA.accountId
+          startingBalance mustEqual lumens(1000)
+      }.awaitFor(10.seconds)
+    }
 
-  "filter effects by transaction hash" >> {
-    val byTransaction = network.effectsByTransaction("a631c8617c47b735967352755ac305f4230fdfc4385c2d8815934cdc41877cff").map(_.toList)
-    byTransaction must beLike[List[EffectResp]] {
-      case List(
+    "filter effects by transaction hash" >> {
+      val byTransaction = network.effectsByTransaction("a631c8617c47b735967352755ac305f4230fdfc4385c2d8815934cdc41877cff").map(_.toList)
+      byTransaction must beLike[List[EffectResp]] {
+        case List(
         EffectAccountDebited(_, accn1, amount1),
         EffectAccountCredited(_, accn2, amount2),
         EffectAccountRemoved(_, accn3),
         EffectTrustLineDeauthorized(_, accn4, IssuedAsset12(code, accn5))
-      ) =>
-        accn1 must beEquivalentTo(accnC)
-        accn2 must beEquivalentTo(accnB)
-        accn3 must beEquivalentTo(accnC)
-        accn4 must beEquivalentTo(accnB)
-        accn5 must beEquivalentTo(accnA)
-        amount1 mustEqual lumens(1000)
-        amount2 mustEqual lumens(1000)
-        code mustEqual "Aardvark"
-    }.awaitFor(10.seconds)
-  }
+        ) =>
+          accn1 must beEquivalentTo(accnC)
+          accn2 must beEquivalentTo(accnB)
+          accn3 must beEquivalentTo(accnC)
+          accn4 must beEquivalentTo(accnB)
+          accn5 must beEquivalentTo(accnA)
+          amount1 mustEqual lumens(1000)
+          amount2 mustEqual lumens(1000)
+          code mustEqual "Aardvark"
+      }.awaitFor(10.seconds)
+    }
 
-  "filter effects by operation" >> {
-    (for {
-      operationId <- network.operations().map(_.find(_.operation == AccountMergeOperation(accnB, Some(accnC))).get.id)
-      byOperation <- network.effectsByOperation(operationId).map(_.toSeq)
-    } yield byOperation) must beLike[Seq[EffectResp]] {
-      case Seq(
+    "filter effects by operation" >> {
+      (for {
+        operationId <- network.operations().map(_.find(_.operation == AccountMergeOperation(accnB, Some(accnC))).get.id)
+        byOperation <- network.effectsByOperation(operationId).map(_.toSeq)
+      } yield byOperation) must beLike[Seq[EffectResp]] {
+        case Seq(
         EffectAccountDebited(_, accn1, amount1),
         EffectAccountCredited(_, accn2, amount2),
         EffectAccountRemoved(_, accn3)) =>
-        accn1 must beEquivalentTo(accnC)
-        accn2 must beEquivalentTo(accnB)
-        accn3 must beEquivalentTo(accnC)
-        amount1 mustEqual lumens(1000)
-        amount2 mustEqual lumens(1000)
-    }.awaitFor(10.seconds)
+          accn1 must beEquivalentTo(accnC)
+          accn2 must beEquivalentTo(accnB)
+          accn3 must beEquivalentTo(accnC)
+          amount1 mustEqual lumens(1000)
+          amount2 mustEqual lumens(1000)
+      }.awaitFor(10.seconds)
+    }
   }
 
   "ledger endpoint" should {
-    val ledgers = network.ledgers().map(_.filter(_.operationCount > 0))
-    val firstLedger = ledgers.map(_.head)
-
     "list the details of a given ledger" >> {
+      val ledgers = network.ledgers().map(_.filter(_.operationCount > 0))
+      val firstLedger = ledgers.map(_.head)
+
       val ledger = for {
         seq <- firstLedger.map(_.sequence)
         l <- network.ledger(seq)
@@ -308,43 +309,43 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
           op.operation mustEqual WriteDataOperation("life_universe_everything", "42", Some(accnB))
       }.awaitFor(10.seconds)
     }
-  }
 
-  "list operations by ledger" >> {
-    (for {
-      ledgerId <- network.ledgers().map(_.filter(_.operationCount > 0).last.sequence)
-      operation <- network.operationsByLedger(ledgerId).map(_.last)
-    } yield operation) must beLike[Transacted[Operation]] {
-      case op =>
-        op.operation must beLike[Operation] {
-          case BumpSequenceOperation(bumpTo, source) =>
-            bumpTo mustEqual 23L
-            source must beSome[PublicKeyOps](masterAccountKey.asPublicKey)
-        }
-    }.awaitFor(10.seconds)
-
-    "list operations by transaction" >> {
-      network.operationsByTransaction("a631c8617c47b735967352755ac305f4230fdfc4385c2d8815934cdc41877cff")
-        .map(_.head) must beLike[Transacted[Operation]] {
+    "list operations by ledger" >> {
+      (for {
+        ledgerId <- network.ledgers().map(_.filter(_.operationCount > 0).last.sequence)
+        operation <- network.operationsByLedger(ledgerId).map(_.last)
+      } yield operation) must beLike[Transacted[Operation]] {
         case op =>
           op.operation must beLike[Operation] {
-            case AccountMergeOperation(dest, source) =>
-              dest must beEquivalentTo(accnB)
-              source.map(_.asPublicKey) must beSome(accnC.asPublicKey)
+            case BumpSequenceOperation(bumpTo, source) =>
+              bumpTo mustEqual 23L
+              source must beSome[PublicKeyOps](masterAccountKey.asPublicKey)
+          }
+      }.awaitFor(10.seconds)
+
+      "list operations by transaction" >> {
+        network.operationsByTransaction("a631c8617c47b735967352755ac305f4230fdfc4385c2d8815934cdc41877cff")
+          .map(_.head) must beLike[Transacted[Operation]] {
+          case op =>
+            op.operation must beLike[Operation] {
+              case AccountMergeOperation(dest, source) =>
+                dest must beEquivalentTo(accnB)
+                source.map(_.asPublicKey) must beSome(accnC.asPublicKey)
+            }
+        }.awaitFor(10.seconds)
+      }
+    }
+
+    "list the details of a given operation" >> {
+      network.operationsByTransaction("c5e29c7d19c8af4fa932e6bd3214397a6f20041bc0234dacaac66bf155c02ae9")
+        .map(_.drop(2).head) must beLike[Transacted[Operation]] {
+        case op =>
+          op.operation must beLike[Operation] {
+            case InflationOperation(source) =>
+              source.map(_.asPublicKey) must beSome(masterAccountKey.asPublicKey)
           }
       }.awaitFor(10.seconds)
     }
-  }
-
-  "list the details of a given operation" >> {
-    network.operationsByTransaction("c5e29c7d19c8af4fa932e6bd3214397a6f20041bc0234dacaac66bf155c02ae9")
-        .map(_.drop(2).head) must beLike[Transacted[Operation]] {
-      case op =>
-        op.operation must beLike[Operation] {
-          case InflationOperation(source) =>
-            source.map(_.asPublicKey) must beSome(masterAccountKey.asPublicKey)
-        }
-    }.awaitFor(10.seconds)
   }
 
   "orderbook endpoint" should {
@@ -380,7 +381,6 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
     }
 
     "filter payments by transaction" >> {
-      Await.result(network.transactions(), Duration.Inf).foreach(println)
       network.paymentsByTransaction("c5e29c7d19c8af4fa932e6bd3214397a6f20041bc0234dacaac66bf155c02ae9") must
         beLike[Seq[Transacted[PayOperation]]] {
           case Seq(op) =>

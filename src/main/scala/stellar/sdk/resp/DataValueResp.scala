@@ -1,13 +1,11 @@
 package stellar.sdk.resp
 
+import org.json4s.DefaultFormats
 import org.json4s.JsonAST.JObject
-import org.json4s.{CustomSerializer, DefaultFormats}
 
 case class DataValueResp(v: String)
 
-object DataValueRespDeserializer extends CustomSerializer[DataValueResp](format => ( {
-  case o: JObject =>
+object DataValueRespDeserializer extends ResponseParser[DataValueResp]({ o: JObject =>
     implicit val formats = DefaultFormats
     DataValueResp((o \ "value").extract[String])
-}, PartialFunction.empty)
-)
+})
