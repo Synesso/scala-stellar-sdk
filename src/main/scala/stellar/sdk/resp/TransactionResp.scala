@@ -2,8 +2,8 @@ package stellar.sdk.resp
 
 import java.time.ZonedDateTime
 
+import org.json4s.DefaultFormats
 import org.json4s.JsonAST.JObject
-import org.json4s.{CustomSerializer, DefaultFormats}
 import org.stellar.sdk.xdr.{TransactionMeta, TransactionResult}
 import stellar.sdk.ByteArrays.base64
 import stellar.sdk._
@@ -47,13 +47,9 @@ case class TransactionHistoryResp(hash: String, ledger: Long, createdAt: ZonedDa
                                   envelopeXDR: String, resultXDR: String, resultMetaXDR: String, feeMetaXDR: String)
   extends TransactionResp
 
-object TransactionPostRespDeserializer extends CustomSerializer[TransactionPostResp](_ => ( {
-  case o: JObject =>
+object TransactionPostRespDeserializer extends ResponseParser[TransactionPostResp]({
+  o: JObject =>
     implicit val formats = DefaultFormats
-
-//        import org.json4s.native.JsonMethods._
-//        println(pretty(render(o)))
-
     TransactionPostResp(
       hash = (o \ "hash").extract[String],
       ledger = (o \ "ledger").extract[Long],
@@ -61,16 +57,11 @@ object TransactionPostRespDeserializer extends CustomSerializer[TransactionPostR
       resultXDR = (o \ "result_xdr").extract[String],
       resultMetaXDR = (o \ "result_meta_xdr").extract[String]
     )
+})
 
-}, PartialFunction.empty)
-)
-
-object TransactionHistoryRespDeserializer extends CustomSerializer[TransactionHistoryResp](_ => ( {
-  case o: JObject =>
+object TransactionHistoryRespDeserializer extends ResponseParser[TransactionHistoryResp]({
+  o: JObject =>
     implicit val formats = DefaultFormats
-
-//    import org.json4s.native.JsonMethods._
-//    println(pretty(render(o)))
 
     TransactionHistoryResp(
       hash = (o \ "hash").extract[String],
@@ -92,7 +83,5 @@ object TransactionHistoryRespDeserializer extends CustomSerializer[TransactionHi
       resultMetaXDR = (o \ "result_meta_xdr").extract[String],
       feeMetaXDR = (o \ "fee_meta_xdr").extract[String]
     )
-
-}, PartialFunction.empty)
-)
+})
 

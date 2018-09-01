@@ -2,8 +2,9 @@ package stellar.sdk
 
 import java.time.ZonedDateTime
 
+import org.json4s.DefaultFormats
 import org.json4s.JsonAST.JObject
-import org.json4s.{CustomSerializer, DefaultFormats}
+import stellar.sdk.resp.ResponseParser
 
 case class Trade(id: String, ledgerCloseTime: ZonedDateTime, offerId: Long,
                  baseAccount: PublicKeyOps, baseAmount: Amount,
@@ -11,8 +12,8 @@ case class Trade(id: String, ledgerCloseTime: ZonedDateTime, offerId: Long,
                  baseIsSeller: Boolean)
 
 
-object TradeDeserializer extends CustomSerializer[Trade](format => ( {
-  case o: JObject =>
+object TradeDeserializer extends ResponseParser[Trade]({
+  o: JObject =>
     implicit val formats = DefaultFormats
 
     def account(accountKey: String = "account") = KeyPair.fromAccountId((o \ accountKey).extract[String])
@@ -52,6 +53,4 @@ object TradeDeserializer extends CustomSerializer[Trade](format => ( {
       counterAmount = amount("counter_"),
       baseIsSeller = (o \ "base_is_seller").extract[Boolean]
     )
-
-}, PartialFunction.empty)
-)
+})

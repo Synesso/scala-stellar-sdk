@@ -1,6 +1,6 @@
 package stellar.sdk.inet
 
-import com.softwaremill.sttp.Uri
+import akka.http.scaladsl.model.Uri
 import org.json4s.NoTypeHints
 import org.json4s.native.JsonMethods._
 import org.json4s.native.Serialization

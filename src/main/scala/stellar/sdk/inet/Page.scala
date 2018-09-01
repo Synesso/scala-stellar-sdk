@@ -1,21 +1,23 @@
 package stellar.sdk.inet
 
-import org.json4s.JsonAST.{JArray, JString}
-import org.json4s.native.JsonMethods._
-import org.json4s.{CustomSerializer, DefaultFormats}
+import org.json4s.JsonAST.JArray
+import org.json4s.{DefaultFormats, Formats, JObject, JValue}
+import stellar.sdk.resp.ResponseParser
 
 /**
   * A page of results
   */
 case class Page[T](xs: Seq[T], nextLink: String)
 
-object Page {
-  def apply[T](js: String, de: CustomSerializer[T])(implicit m: Manifest[T]): Page[T] = {
-    implicit val formats = DefaultFormats + de
-    val o = parse(js)
-    val JString(nextLink) = o \ "_links" \ "next" \ "href"
-    val JArray(recordsJson) = o \ "_embedded" \ "records"
-    val records = recordsJson.map(_.extract[T])
-    Page(records, nextLink)
-  }
+case class RawPage(inner: Seq[JValue], nextLink: String) {
+  def parse[T](implicit formats: Formats, m: Manifest[T]): Page[T] = Page(inner.map(_.extract[T]), nextLink)
 }
+
+object RawPageDeserializer extends ResponseParser[RawPage]({ o: JObject =>
+  implicit val formats = DefaultFormats
+
+  val nextLink = (o \ "_links" \ "next" \ "href").extract[String]
+  val JArray(records) = o \ "_embedded" \ "records"
+
+  RawPage(records, nextLink)
+})

@@ -296,7 +296,7 @@ class NetworkSpec(implicit ee: ExecutionEnv) extends Specification with Arbitrar
           "selling_asset_code" -> nna.code,
           "selling_asset_issuer" -> nna.issuer.accountId)
       }
-      val params = Map("limit" -> limit) ++ buyingMap ++ sellingMap
+      val params = Map("limit" -> limit.toString) ++ buyingMap ++ sellingMap
       network.horizon.get[OrderBook]("/order_book", params) returns expected
       network.orderBook(selling, buying, limit) mustEqual expected
     }.setGen3(Gen.posNum[Int])
@@ -699,7 +699,7 @@ class NetworkSpec(implicit ee: ExecutionEnv) extends Specification with Arbitrar
       override def post(txn: SignedTransaction)(implicit ec: ExecutionContext): Future[TransactionPostResp] =
         mock[Future[TransactionPostResp]]
 
-      override def get[T: ClassTag](path: String, params: Map[String, Any])
+      override def get[T: ClassTag](path: String, params: Map[String, String])
                                    (implicit ec: ExecutionContext, m: Manifest[T]): Future[T] =
         if (path.endsWith("data/data_key")) {
           Future(DataValueResp("00").asInstanceOf[T])(ec)
@@ -711,9 +711,9 @@ class NetworkSpec(implicit ee: ExecutionEnv) extends Specification with Arbitrar
                                          (implicit ec: ExecutionContext, m: Manifest[T]): Future[Stream[T]] =
         mock[Future[Stream[T]]]
 
-      override def getPage[T: ClassTag](path: String, params: Map[String, String])
-                                       (implicit ec: ExecutionContext, de: CustomSerializer[T], m: Manifest[T]): Future[Page[T]] =
-        mock[Future[Page[T]]]
+//      override def getPage[T: ClassTag](path: String, params: Map[String, String])
+//                                       (implicit ec: ExecutionContext, de: CustomSerializer[T], m: Manifest[T]): Future[Page[T]] =
+//        mock[Future[Page[T]]]
     }
   }
 }

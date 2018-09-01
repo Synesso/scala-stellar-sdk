@@ -1,9 +1,10 @@
 package stellar.sdk.inet
 
+import org.json4s.DefaultFormats
 import org.json4s.JsonAST.JObject
 import org.json4s.native.JsonMethods
-import org.json4s.{CustomSerializer, DefaultFormats}
 import org.specs2.mutable.Specification
+import stellar.sdk.resp.ResponseParser
 
 class PageSpec extends Specification {
 
@@ -31,17 +32,16 @@ class PageSpec extends Specification {
           |}
         """.stripMargin
 
-      Page(doc, HelloDeserializer) mustEqual Page(Seq("world"),
+      implicit val formats = DefaultFormats + RawPageDeserializer + HelloDeserializer
+      JsonMethods.parse(doc).extract[RawPage].parse[String] mustEqual Page(Seq("world"),
         nextLink = "https://horizon-testnet.stellar.org/hello?cursor=2045052972961793-0&limit=10&order=asc"
       )
     }
   }
 
-  object HelloDeserializer extends CustomSerializer[String](format => ( {
-    case o: JObject =>
-      implicit val formats = DefaultFormats
-      (o \ "hello").extract[String]
-  }, PartialFunction.empty)
-  )
+  object HelloDeserializer extends ResponseParser[String]({ o: JObject =>
+    implicit val formats = DefaultFormats
+    (o \ "hello").extract[String]
+  })
 
 }

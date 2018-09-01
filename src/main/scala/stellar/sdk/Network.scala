@@ -114,7 +114,7 @@ trait Network extends LazyLogging {
     * @see [[https://www.stellar.org/developers/horizon/reference/endpoints/ledgers-all.html endpoint doc]]
     */
   def ledgers(cursor: HorizonCursor = Record(0), order: HorizonOrder = Asc)(implicit ec: ExecutionContext): Future[Stream[LedgerResp]] =
-    horizon.getStream[LedgerResp](s"/ledgers", LedgerRespDeserializer, cursor, order)
+    horizon.getStream[LedgerResp]("/ledgers", LedgerRespDeserializer, cursor, order)
 
   /**
     * Fetch details of a ledger by its id
@@ -185,7 +185,7 @@ trait Network extends LazyLogging {
     * @see [[https://www.stellar.org/developers/horizon/reference/endpoints/orderbook-details.html endpoint doc]]
     */
   def orderBook(selling: Asset, buying: Asset, limit: Int = 20)(implicit ex: ExecutionContext): Future[OrderBook] = {
-    val params = assetParams("selling", selling) ++ assetParams("buying", buying).updated("limit", limit)
+    val params = assetParams("selling", selling) ++ assetParams("buying", buying).updated("limit", limit.toString)
     horizon.get[OrderBook]("/order_book", params)
   }
 
