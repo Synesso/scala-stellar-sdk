@@ -1,0 +1,25 @@
+{
+  "id" : "a6d93493-7156-478d-a024-45788a1ec79a",
+  "name" : "assets",
+  "request" : {
+    "url" : "/assets?asset_code=Chinchilla&cursor=0&order=asc&limit=100",
+    "method" : "GET"
+  },
+  "response" : {
+    "status" : 200,
+    "body" : "{\n  \"_links\": {\n    \"self\": {\n      \"href\": \"http://localhost:8000/assets?asset_code=Chinchilla\\u0026cursor=0\\u0026limit=100\\u0026order=asc\"\n    },\n    \"next\": {\n      \"href\": \"http://localhost:8000/assets?asset_code=Chinchilla\\u0026cursor=Chinchilla_GBZXN7PIRZGNMHGA7MUUUF4GWPY5AYPV6LY4UV2GL6VJGIQRXFDNMADI_credit_alphanum12\\u0026limit=100\\u0026order=asc\"\n    },\n    \"prev\": {\n      \"href\": \"http://localhost:8000/assets?asset_code=Chinchilla\\u0026cursor=Chinchilla_GAAYHQF2PNZ3H6LE5AX3UJSGUR2DQXHHGXYMHF32TDYF2FFPTTOFI3PA_credit_alphanum12\\u0026limit=100\\u0026order=desc\"\n    }\n  },\n  \"_embedded\": {\n    \"records\": [\n      {\n        \"_links\": {\n          \"toml\": {\n            \"href\": \"\"\n          }\n        },\n        \"asset_type\": \"credit_alphanum12\",\n        \"asset_code\": \"Chinchilla\",\n        \"asset_issuer\": \"GAAYHQF2PNZ3H6LE5AX3UJSGUR2DQXHHGXYMHF32TDYF2FFPTTOFI3PA\",\n        \"paging_token\": \"Chinchilla_GAAYHQF2PNZ3H6LE5AX3UJSGUR2DQXHHGXYMHF32TDYF2FFPTTOFI3PA_credit_alphanum12\",\n        \"amount\": \"0.0000001\",\n        \"num_accounts\": 1,\n        \"flags\": {\n          \"auth_required\": true,\n          \"auth_revocable\": true\n        }\n      },\n      {\n        \"_links\": {\n          \"toml\": {\n            \"href\": \"\"\n          }\n        },\n        \"asset_type\": \"credit_alphanum12\",\n        \"asset_code\": \"Chinchilla\",\n        \"asset_issuer\": \"GBZXN7PIRZGNMHGA7MUUUF4GWPY5AYPV6LY4UV2GL6VJGIQRXFDNMADI\",\n        \"paging_token\": \"Chinchilla_GBZXN7PIRZGNMHGA7MUUUF4GWPY5AYPV6LY4UV2GL6VJGIQRXFDNMADI_credit_alphanum12\",\n        \"amount\": \"0.0000001\",\n        \"num_accounts\": 1,\n        \"flags\": {\n          \"auth_required\": false,\n          \"auth_revocable\": false\n        }\n      }\n    ]\n  }\n}",
+    "headers" : {
+      "Cache-Control" : "no-cache, no-store, max-age=0",
+      "Content-Disposition" : "inline",
+      "Content-Type" : "application/hal+json; charset=utf-8",
+      "Vary" : "Origin",
+      "X-Ratelimit-Limit" : "72000",
+      "X-Ratelimit-Remaining" : "71970",
+      "X-Ratelimit-Reset" : "3568",
+      "Date" : "Sun, 02 Sep 2018 08:15:51 GMT"
+    }
+  },
+  "uuid" : "a6d93493-7156-478d-a024-45788a1ec79a",
+  "persistent" : true,
+  "insertionIndex" : 24
+}

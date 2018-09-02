@@ -1,0 +1,28 @@
+{
+  "id" : "a19171d7-f02f-493b-8594-5dff0bb02c98",
+  "name" : "transactions",
+  "request" : {
+    "url" : "/transactions",
+    "method" : "POST",
+    "bodyPatterns" : [ {
+      "equalTo" : "tx=AAAAAAGDwLp7c7P5ZOgvuiZGpHQ4XOc18MOXepjwXRSvnNxUAAAAZAAAAAQAAAABAAAAAAAAAAAAAAABAAAAAAAAAAEAAAAAsTRWYCF8BLsm7OtyfdknyrpdNEywDO0R1g%2FGNQ0aU34AAAAAAAAAC6Q7dAAAAAAAAAAAAa%2Bc3FQAAABAO92%2Fqo0FvPyCOEoEDSWjYKaGhaCSd6DPwTkQFYsmBwgb6F8VvmZOobthU%2BdjIeteA3IsKYHeDtURxnkZSFDBBg%3D%3D",
+      "caseInsensitive" : false
+    } ]
+  },
+  "response" : {
+    "status" : 400,
+    "body" : "{\n  \"type\": \"https://stellar.org/horizon-errors/transaction_failed\",\n  \"title\": \"Transaction Failed\",\n  \"status\": 400,\n  \"detail\": \"The transaction failed when submitted to the stellar network. The `extras.result_codes` field on this response contains further details.  Descriptions of each code can be found at: https://www.stellar.org/developers/learn/concepts/list-of-operations.html\",\n  \"extras\": {\n    \"envelope_xdr\": \"AAAAAAGDwLp7c7P5ZOgvuiZGpHQ4XOc18MOXepjwXRSvnNxUAAAAZAAAAAQAAAABAAAAAAAAAAAAAAABAAAAAAAAAAEAAAAAsTRWYCF8BLsm7OtyfdknyrpdNEywDO0R1g/GNQ0aU34AAAAAAAAAC6Q7dAAAAAAAAAAAAa+c3FQAAABAO92/qo0FvPyCOEoEDSWjYKaGhaCSd6DPwTkQFYsmBwgb6F8VvmZOobthU+djIeteA3IsKYHeDtURxnkZSFDBBg==\",\n    \"result_codes\": {\n      \"transaction\": \"tx_failed\",\n      \"operations\": [\n        \"op_underfunded\"\n      ]\n    },\n    \"result_xdr\": \"AAAAAAAAAGT/////AAAAAQAAAAAAAAAB/////gAAAAA=\"\n  }\n}",
+    "headers" : {
+      "Cache-Control" : "no-cache, no-store, max-age=0",
+      "Content-Type" : "application/problem+json; charset=utf-8",
+      "Vary" : "Origin",
+      "X-Ratelimit-Limit" : "72000",
+      "X-Ratelimit-Remaining" : "71986",
+      "X-Ratelimit-Reset" : "3579",
+      "Date" : "Sun, 02 Sep 2018 08:15:45 GMT"
+    }
+  },
+  "uuid" : "a19171d7-f02f-493b-8594-5dff0bb02c98",
+  "persistent" : true,
+  "insertionIndex" : 8
+}

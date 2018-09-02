@@ -1,0 +1,24 @@
+{
+  "id" : "85b0939b-a82b-425d-b7f3-eb9efc6854de",
+  "name" : "accounts_gc6o6nstrlqu3xsdb3shf3t4k2wq5dvxyyh7nppn4k6m4cmhrcgphcof",
+  "request" : {
+    "url" : "/accounts/GC6O6NSTRLQU3XSDB3SHF3T4K2WQ5DVXYYH7NPPN4K6M4CMHRCGPHCOF",
+    "method" : "GET"
+  },
+  "response" : {
+    "status" : 404,
+    "body" : "{\n  \"type\": \"https://stellar.org/horizon-errors/not_found\",\n  \"title\": \"Resource Missing\",\n  \"status\": 404,\n  \"detail\": \"The resource at the url requested was not found.  This is usually occurs for one of two reasons:  The url requested is not valid, or no data in our database could be found with the parameters provided.\"\n}",
+    "headers" : {
+      "Cache-Control" : "no-cache, no-store, max-age=0",
+      "Content-Type" : "application/problem+json; charset=utf-8",
+      "Vary" : "Origin",
+      "X-Ratelimit-Limit" : "72000",
+      "X-Ratelimit-Remaining" : "71977",
+      "X-Ratelimit-Reset" : "3569",
+      "Date" : "Sun, 02 Sep 2018 08:15:51 GMT"
+    }
+  },
+  "uuid" : "85b0939b-a82b-425d-b7f3-eb9efc6854de",
+  "persistent" : true,
+  "insertionIndex" : 17
+}

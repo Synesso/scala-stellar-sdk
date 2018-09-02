@@ -1,0 +1,24 @@
+{
+  "id" : "b6afa606-5e9b-4b6e-b881-d2cc45d3da32",
+  "name" : "ledgers",
+  "request" : {
+    "url" : "/ledgers?cursor=8589934592&limit=100&order=desc",
+    "method" : "GET"
+  },
+  "response" : {
+    "status" : 410,
+    "body" : "{\n  \"type\": \"https://stellar.org/horizon-errors/before_history\",\n  \"title\": \"Data Requested Is Before Recorded History\",\n  \"status\": 410,\n  \"detail\": \"This horizon instance is configured to only track a portion of the stellar network's latest history. This request is asking for results prior to the recorded history known to this horizon instance.\"\n}",
+    "headers" : {
+      "Cache-Control" : "no-cache, no-store, max-age=0",
+      "Content-Type" : "application/problem+json; charset=utf-8",
+      "Vary" : "Origin",
+      "X-Ratelimit-Limit" : "72000",
+      "X-Ratelimit-Remaining" : "71919",
+      "X-Ratelimit-Reset" : "3566",
+      "Date" : "Sun, 02 Sep 2018 08:15:53 GMT"
+    }
+  },
+  "uuid" : "b6afa606-5e9b-4b6e-b881-d2cc45d3da32",
+  "persistent" : true,
+  "insertionIndex" : 75
+}

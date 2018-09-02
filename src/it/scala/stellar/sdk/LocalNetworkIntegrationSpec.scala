@@ -7,7 +7,7 @@ import org.specs2.concurrent.ExecutionEnv
 import org.specs2.mutable.Specification
 import stellar.sdk.Amount.lumens
 import stellar.sdk.ProxyMode.{NoProxy, Record, Replay}
-import stellar.sdk.inet.TxnFailure
+import stellar.sdk.inet.{Desc, Now, TxnFailure}
 import stellar.sdk.op._
 import stellar.sdk.resp._
 
@@ -126,6 +126,10 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
         // #payment_example
         Await.ready(response, 15.seconds)
 
+        // 100 payments
+        masterAccount = masterAccount.copy(sequenceNumber = 24) // because of previous bump_sequence op
+        transact((1 to 100).map(i => PaymentOperation(accnA, NativeAmount(i))): _*)
+
         setupFixtures
     }
   }
@@ -138,7 +142,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
         case AccountResp(id, _, _, _, _, _, balances, _) =>
           id mustEqual accnA
           balances must containTheSameElementsAs(Seq(
-            Balance(lumens(999.99999), buyingLiabilities = 1600),
+            Balance(lumens(1000.000495), buyingLiabilities = 1600),
             Balance(IssuedAmount(1, Asset.apply("Chinchilla", masterAccountKey)), limit = Some(100000000))
           ))
       }.awaitFor(30 seconds)
@@ -209,12 +213,12 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
   "effect endpoint" should {
     "parse all effects" >> {
       val effects = network.effects()
-      effects.map(_.size) must beEqualTo(30).awaitFor(10 seconds)
+      effects.map(_.size) must beEqualTo(230).awaitFor(10 seconds)
     }
 
     "filter effects by account" >> {
       val byAccount = network.effectsByAccount(accnA).map(_.take(10).toList)
-      byAccount.map(_.size) must beEqualTo(9).awaitFor(10 seconds)
+      byAccount.map(_.size) must beEqualTo(10).awaitFor(10 seconds)
       byAccount.map(_.head) must beLike[EffectResp] {
         case EffectAccountCreated(_, account, startingBalance) =>
           account.accountId mustEqual accnA.accountId
@@ -300,7 +304,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
 
   "operation endpoint" should {
     "list all operations" >> {
-      network.operations().map(_.size) must beEqualTo(26).awaitFor(10.seconds)
+      network.operations().map(_.size) must beEqualTo(126).awaitFor(10.seconds)
     }
 
     "list operations by account" >> {
@@ -317,8 +321,9 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
       } yield operation) must beLike[Transacted[Operation]] {
         case op =>
           op.operation must beLike[Operation] {
-            case BumpSequenceOperation(bumpTo, source) =>
-              bumpTo mustEqual 23L
+            case PaymentOperation(dest, amount, source) =>
+              dest must beEquivalentTo(accnA)
+              amount mustEqual NativeAmount(100)
               source must beSome[PublicKeyOps](masterAccountKey.asPublicKey)
           }
       }.awaitFor(10.seconds)
@@ -362,15 +367,16 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
   "payments endpoint" should {
     "filter payments by account" >> {
       network.paymentsByAccount(accnA) must beLike[Seq[Transacted[PayOperation]]] {
-        case Seq(a, b) =>
+        case a +: b +: oneHundredPayments =>
            a.operation must beEquivalentTo(CreateAccountOperation(accnA, lumens(1000), Some(masterAccountKey)))
            b.operation must beEquivalentTo(PaymentOperation(accnB, IssuedAmount(555, Asset("Aardvark", accnA)), Some(accnA)))
+          oneHundredPayments must haveSize(100)
       }.awaitFor(10.seconds)
     }
 
     "filter payments by ledger" >> {
       (for {
-        ledgerId <- network.ledgers().map(_.filter(_.operationCount > 0).last.sequence)
+        ledgerId <- network.ledgers().map(_.filter(_.operationCount > 0).filter(_.operationCount != 100).last.sequence)
         operation <- network.paymentsByLedger(ledgerId)
       } yield operation) must beLike[Seq[Transacted[PayOperation]]] {
         case Seq(op) =>
@@ -422,13 +428,13 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
 
     "filter transactions by ledger" >> {
       (for {
-        ledgerId <- network.ledgers().map(_.filter(_.operationCount > 0).last.sequence)
+        ledgerId <- network.ledgers(Now, Desc).map(_.filter(_.operationCount > 0).head.sequence)
         operation <- network.transactionsByLedger(ledgerId)
       } yield operation) must beLike[Seq[TransactionHistoryResp]] {
         case Seq(t) =>
           t.account must beEquivalentTo(masterAccountKey)
-          t.feePaid mustEqual 700
-          t.operationCount mustEqual 7
+          t.feePaid mustEqual 10000
+          t.operationCount mustEqual 100
           t.memo mustEqual NoMemo
       }.awaitFor(10.seconds)
     }

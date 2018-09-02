@@ -1,0 +1,28 @@
+{
+  "id" : "85427806-6e1f-4f3a-8826-acd40a3d8c7c",
+  "name" : "ledgers",
+  "request" : {
+    "url" : "/ledgers?cursor=34359738368&limit=100&order=asc",
+    "method" : "GET"
+  },
+  "response" : {
+    "status" : 200,
+    "body" : "{\n  \"_links\": {\n    \"self\": {\n      \"href\": \"http://localhost:8000/ledgers?cursor=34359738368\\u0026limit=100\\u0026order=asc\"\n    },\n    \"next\": {\n      \"href\": \"http://localhost:8000/ledgers?cursor=34359738368\\u0026limit=100\\u0026order=asc\"\n    },\n    \"prev\": {\n      \"href\": \"http://localhost:8000/ledgers?cursor=34359738368\\u0026limit=100\\u0026order=desc\"\n    }\n  },\n  \"_embedded\": {\n    \"records\": []\n  }\n}",
+    "headers" : {
+      "Cache-Control" : "no-cache, no-store, max-age=0",
+      "Content-Disposition" : "inline",
+      "Content-Type" : "application/hal+json; charset=utf-8",
+      "Vary" : "Origin",
+      "X-Ratelimit-Limit" : "72000",
+      "X-Ratelimit-Remaining" : "71947",
+      "X-Ratelimit-Reset" : "3568",
+      "Date" : "Sun, 02 Sep 2018 08:15:52 GMT"
+    }
+  },
+  "uuid" : "85427806-6e1f-4f3a-8826-acd40a3d8c7c",
+  "persistent" : true,
+  "scenarioName" : "scenario-ledgers",
+  "requiredScenarioState" : "scenario-ledgers-2",
+  "newScenarioState" : "scenario-ledgers-3",
+  "insertionIndex" : 47
+}

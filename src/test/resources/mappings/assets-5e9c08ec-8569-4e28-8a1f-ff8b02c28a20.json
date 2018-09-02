@@ -1,0 +1,25 @@
+{
+  "id" : "5e9c08ec-8569-4e28-8a1f-ff8b02c28a20",
+  "name" : "assets",
+  "request" : {
+    "url" : "/assets?asset_code=Chinchilla&asset_issuer=GAAYHQF2PNZ3H6LE5AX3UJSGUR2DQXHHGXYMHF32TDYF2FFPTTOFI3PA&cursor=Chinchilla_GAAYHQF2PNZ3H6LE5AX3UJSGUR2DQXHHGXYMHF32TDYF2FFPTTOFI3PA_credit_alphanum12&limit=100&order=asc",
+    "method" : "GET"
+  },
+  "response" : {
+    "status" : 200,
+    "body" : "{\n  \"_links\": {\n    \"self\": {\n      \"href\": \"http://localhost:8000/assets?asset_code=Chinchilla\\u0026asset_issuer=GAAYHQF2PNZ3H6LE5AX3UJSGUR2DQXHHGXYMHF32TDYF2FFPTTOFI3PA\\u0026cursor=Chinchilla_GAAYHQF2PNZ3H6LE5AX3UJSGUR2DQXHHGXYMHF32TDYF2FFPTTOFI3PA_credit_alphanum12\\u0026limit=100\\u0026order=asc\"\n    },\n    \"next\": {\n      \"href\": \"http://localhost:8000/assets?asset_code=Chinchilla\\u0026asset_issuer=GAAYHQF2PNZ3H6LE5AX3UJSGUR2DQXHHGXYMHF32TDYF2FFPTTOFI3PA\\u0026cursor=Chinchilla_GAAYHQF2PNZ3H6LE5AX3UJSGUR2DQXHHGXYMHF32TDYF2FFPTTOFI3PA_credit_alphanum12\\u0026limit=100\\u0026order=asc\"\n    },\n    \"prev\": {\n      \"href\": \"http://localhost:8000/assets?asset_code=Chinchilla\\u0026asset_issuer=GAAYHQF2PNZ3H6LE5AX3UJSGUR2DQXHHGXYMHF32TDYF2FFPTTOFI3PA\\u0026cursor=Chinchilla_GAAYHQF2PNZ3H6LE5AX3UJSGUR2DQXHHGXYMHF32TDYF2FFPTTOFI3PA_credit_alphanum12\\u0026limit=100\\u0026order=desc\"\n    }\n  },\n  \"_embedded\": {\n    \"records\": []\n  }\n}",
+    "headers" : {
+      "Cache-Control" : "no-cache, no-store, max-age=0",
+      "Content-Disposition" : "inline",
+      "Content-Type" : "application/hal+json; charset=utf-8",
+      "Vary" : "Origin",
+      "X-Ratelimit-Limit" : "72000",
+      "X-Ratelimit-Remaining" : "71965",
+      "X-Ratelimit-Reset" : "3568",
+      "Date" : "Sun, 02 Sep 2018 08:15:51 GMT"
+    }
+  },
+  "uuid" : "5e9c08ec-8569-4e28-8a1f-ff8b02c28a20",
+  "persistent" : true,
+  "insertionIndex" : 29
+}

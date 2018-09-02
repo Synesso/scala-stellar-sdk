@@ -6,9 +6,9 @@ sealed trait HorizonCursor {
 }
 
 case object Now extends HorizonCursor {
-  def paramValue: String = "now"
+  override def paramValue: String = "now"
 }
 
 case class Record(value: Long) extends HorizonCursor {
-  def paramValue: String = s"$value"
+  override def paramValue: String = s"$value"
 }

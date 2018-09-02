@@ -10,7 +10,6 @@ import stellar.sdk.op.{Operation, PayOperation, Transacted, TransactedOperationD
 import stellar.sdk.resp._
 
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.{Failure, Success}
 
 trait Network extends LazyLogging {
   val passphrase: String

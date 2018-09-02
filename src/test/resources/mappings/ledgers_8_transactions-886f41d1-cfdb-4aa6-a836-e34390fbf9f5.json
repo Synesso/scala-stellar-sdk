@@ -1,0 +1,25 @@
+{
+  "id" : "886f41d1-cfdb-4aa6-a836-e34390fbf9f5",
+  "name" : "ledgers_8_transactions",
+  "request" : {
+    "url" : "/ledgers/8/transactions?cursor=34359742464&limit=100&order=asc",
+    "method" : "GET"
+  },
+  "response" : {
+    "status" : 200,
+    "body" : "{\n  \"_links\": {\n    \"self\": {\n      \"href\": \"http://localhost:8000/ledgers/8/transactions?cursor=34359742464\\u0026limit=100\\u0026order=asc\"\n    },\n    \"next\": {\n      \"href\": \"http://localhost:8000/ledgers/8/transactions?cursor=34359742464\\u0026limit=100\\u0026order=asc\"\n    },\n    \"prev\": {\n      \"href\": \"http://localhost:8000/ledgers/8/transactions?cursor=34359742464\\u0026limit=100\\u0026order=desc\"\n    }\n  },\n  \"_embedded\": {\n    \"records\": []\n  }\n}",
+    "headers" : {
+      "Cache-Control" : "no-cache, no-store, max-age=0",
+      "Content-Disposition" : "inline",
+      "Content-Type" : "application/hal+json; charset=utf-8",
+      "Vary" : "Origin",
+      "X-Ratelimit-Limit" : "72000",
+      "X-Ratelimit-Remaining" : "71917",
+      "X-Ratelimit-Reset" : "3566",
+      "Date" : "Sun, 02 Sep 2018 08:15:53 GMT"
+    }
+  },
+  "uuid" : "886f41d1-cfdb-4aa6-a836-e34390fbf9f5",
+  "persistent" : true,
+  "insertionIndex" : 77
+}

@@ -9,8 +9,9 @@ import akka.http.scaladsl.model.MediaTypes.`application/json`
 import akka.http.scaladsl.model.Uri.Query
 import akka.http.scaladsl.model._
 import akka.http.scaladsl.model.headers.Location
-import akka.http.scaladsl.unmarshalling.Unmarshal
+import akka.http.scaladsl.unmarshalling.{Unmarshal, Unmarshaller}
 import akka.stream.ActorMaterializer
+import akka.util.ByteString
 import com.typesafe.config.ConfigFactory
 import com.typesafe.scalalogging.LazyLogging
 import de.heikoseeberger.akkahttpjson4s.Json4sSupport
@@ -51,13 +52,18 @@ class Horizon(uri: URI)
 
   implicit val materializer = ActorMaterializer()
   implicit val executionContext = system.dispatcher
-//  implicit val jsonStreamingSupport: JsonEntityStreamingSupport = EntityStreamingSupport.json()
 
   implicit val serialization = org.json4s.native.Serialization
   implicit val formats = Serialization.formats(NoTypeHints) + AccountRespDeserializer + DataValueRespDeserializer +
     LedgerRespDeserializer + TransactedOperationDeserializer + OrderBookDeserializer + TransactionPostRespDeserializer +
     TxnFailureDeserializer
 
+  implicit val jsonToString = Unmarshaller.byteStringUnmarshaller
+    .forContentTypes(unmarshallerContentTypes: _*)
+    .mapWithCharset {
+      case (ByteString.empty, _) => throw Unmarshaller.NoContentException
+      case (data, charset)       => data.decodeString(charset.nioCharset.name)
+    }
 
   def post(txn: SignedTransaction)(implicit ec: ExecutionContext): Future[TransactionPostResp] = {
     logger.debug(s"Posting {} {}", txn, txn.encodeXDR)
@@ -65,26 +71,28 @@ class Horizon(uri: URI)
       envelope <- Future(txn.encodeXDR)
       request = HttpRequest(POST, Uri(s"$uri/transactions"), entity = FormData("tx" -> envelope).toEntity)
       response <- Http().singleRequest(request)
-      unwrapped <- Unmarshal(response).to[TransactionPostResp]
-    } yield unwrapped
+      unwrapped <- parseOrRedirectOrError[TransactionPostResp](request, response)
+    } yield unwrapped.get
   }
 
   def get[T: ClassTag](path: String, params: Map[String, String] = Map.empty)(implicit ec: ExecutionContext, m: Manifest[T]): Future[T] = {
     val requestUri = Uri(s"$uri$path").withQuery(Query(params))
     logger.debug(s"Getting {}", requestUri)
 
-    def parseOrRedirectOrError(response: HttpResponse): Future[Try[T]] = {
-      val HttpResponse(status, _, entity, _) = response
-      if (status.isRedirection()) {
-        Http().singleRequest(HttpRequest(GET, response.header[Location].get.uri)).flatMap(parseOrRedirectOrError)
-      } else if (status.isSuccess()) Unmarshal(entity).to[T].map(Success(_))
-      else Unmarshal(entity).to[TxnFailure].map(_.copy(uri = requestUri)).map(Failure(_))
-    }
-
+    val request = HttpRequest(GET, requestUri)
     for {
-      response <- Http().singleRequest(HttpRequest(GET, requestUri))
-      unwrapped <- parseOrRedirectOrError(response)
+      response <- Http().singleRequest(request)
+      unwrapped <- parseOrRedirectOrError(request, response)
     } yield unwrapped.get
+  }
+
+  def parseOrRedirectOrError[T](request: HttpRequest, response: HttpResponse)(implicit m: Manifest[T]): Future[Try[T]] = {
+    val HttpResponse(status, _, entity, _) = response
+    if (status.isRedirection()) {
+      val request_ = request.copy(uri = response.header[Location].get.uri)
+      Http().singleRequest(request).flatMap(parseOrRedirectOrError(request_, _))
+    } else if (status.isSuccess()) Unmarshal(entity).to[T].map(Success(_))
+    else Unmarshal(entity).to[TxnFailure].map(_.copy(uri = request.uri)).map(Failure(_))
   }
 
   def getStream[T: ClassTag](path: String, de: CustomSerializer[T], cursor: HorizonCursor, order: HorizonOrder, params: Map[String, String] = Map.empty)

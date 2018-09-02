@@ -6,9 +6,9 @@ sealed trait HorizonOrder {
 }
 
 case object Asc extends HorizonOrder {
-  def paramValue: String = "asc"
+  override def paramValue: String = "asc"
 }
 
 case object Desc extends HorizonOrder {
-  def paramValue: String = "desc"
+  override def paramValue: String = "desc"
 }
