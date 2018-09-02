@@ -58,13 +58,6 @@ class Horizon(uri: URI)
     LedgerRespDeserializer + TransactedOperationDeserializer + OrderBookDeserializer + TransactionPostRespDeserializer +
     TxnFailureDeserializer
 
-  implicit val jsonToString = Unmarshaller.byteStringUnmarshaller
-    .forContentTypes(unmarshallerContentTypes: _*)
-    .mapWithCharset {
-      case (ByteString.empty, _) => throw Unmarshaller.NoContentException
-      case (data, charset)       => data.decodeString(charset.nioCharset.name)
-    }
-
   def post(txn: SignedTransaction)(implicit ec: ExecutionContext): Future[TransactionPostResp] = {
     logger.debug(s"Posting {} {}", txn, txn.encodeXDR)
     for {
