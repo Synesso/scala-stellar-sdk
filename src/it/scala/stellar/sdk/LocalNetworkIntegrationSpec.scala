@@ -2,6 +2,9 @@ package stellar.sdk
 
 import java.io.File
 
+import akka.actor.ActorSystem
+import akka.stream.ActorMaterializer
+import akka.stream.scaladsl.{Keep, Sink}
 import com.github.tomakehurst.wiremock.WireMockServer
 import org.specs2.concurrent.ExecutionEnv
 import org.specs2.mutable.Specification
@@ -26,7 +29,9 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
   val mode = Replay
 
   val proxy: Option[WireMockServer] = mode match {
-    case NoProxy => None
+    case NoProxy =>
+      Seq("src/it/bin/stellar_standalone.sh", "true").!
+      None
     case Record =>
       require(new File("src/test/resources/mappings").listFiles().forall(_.delete))
       val s = new WireMockServer(8080)
@@ -439,6 +444,26 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
       }.awaitFor(10.seconds)
     }
   }
+
+  // Integration tests for SSE endpoints are pending one of the following fixes:
+  // * Horizon Docker image doesn't hang randomly at ledger close; or
+  // * Wiremock supports mocking of SSE.
+  // The following works in `NoProxy` mode.
+/*
+
+  implicit val system = ActorSystem("local-network-integration-spec")
+  implicit val materializer = ActorMaterializer()
+
+  "transaction source" should {
+    "provide all future transactions" >> {
+      val source = network.transactionSource()
+      val results: Future[Seq[TransactionHistoryResp]] = source.take(1).runWith(Sink.seq[TransactionHistoryResp])
+      results.isCompleted must beFalse
+      transact(InflationOperation())
+      results.map(_.size) must beEqualTo(1).awaitFor(1 minute)
+    }
+  }
+*/
 
   step {
     proxy.foreach(_.stopRecording())

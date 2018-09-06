@@ -3,6 +3,8 @@ package stellar.sdk
 import java.net.URI
 import java.nio.charset.StandardCharsets.UTF_8
 
+import akka.NotUsed
+import akka.stream.scaladsl.Source
 import com.typesafe.scalalogging.LazyLogging
 import stellar.sdk.ByteArrays._
 import stellar.sdk.inet._
@@ -266,13 +268,22 @@ trait Network extends LazyLogging {
   }
 
   /**
-    * Fetch a stream of transactions
+    * Fetch a stream of historical transactions from the cursor.
     * @param cursor optional record id to start results from (defaults to `0`)
     * @param order  optional order to sort results by (defaults to `Asc`)
     * @see [[https://www.stellar.org/developers/horizon/reference/endpoints/transactions-all.html endpoint doc]]
     */
   def transactions(cursor: HorizonCursor = Record(0), order: HorizonOrder = Asc)(implicit ex: ExecutionContext): Future[Stream[TransactionHistoryResp]] = {
     horizon.getStream[TransactionHistoryResp]("/transactions", TransactionHistoryRespDeserializer, cursor, order)
+  }
+
+  /**
+    * A source of all transactions from the cursor in ascending order, forever.
+    * @param cursor optional record id to start results from (default to `Now`)
+    * @see [[https://www.stellar.org/developers/horizon/reference/endpoints/transactions-all.html endpoint doc]]
+    */
+  def transactionSource(cursor: HorizonCursor = Now)(implicit ex: ExecutionContext): Source[TransactionHistoryResp, NotUsed] = {
+    horizon.getSource[TransactionHistoryResp]("/transactions", TransactionHistoryRespDeserializer, cursor)
   }
 
   /**

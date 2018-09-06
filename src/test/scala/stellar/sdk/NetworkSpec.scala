@@ -1,5 +1,7 @@
 package stellar.sdk
 
+import akka.NotUsed
+import akka.stream.scaladsl.Source
 import org.json4s.CustomSerializer
 import org.scalacheck.Gen
 import org.specs2.concurrent.ExecutionEnv
@@ -419,6 +421,13 @@ class NetworkSpec(implicit ee: ExecutionEnv) extends Specification with Arbitrar
       network.horizon.getStream[TransactionHistoryResp](s"/ledgers/$ledgeId/transactions", TransactionHistoryRespDeserializer, Record(0), Asc) returns expected
       network.transactionsByLedger(ledgeId) mustEqual expected
     }
+
+    "provide a source of transactions" >> {
+      val network = new MockNetwork
+      val expected = Source.empty[TransactionHistoryResp]
+      network.horizon.getSource("/transactions", TransactionHistoryRespDeserializer, Now) returns expected
+      network.transactionSource() mustEqual expected
+    }
   }
 
   //noinspection ScalaUnusedSymbol
@@ -711,9 +720,10 @@ class NetworkSpec(implicit ee: ExecutionEnv) extends Specification with Arbitrar
                                          (implicit ec: ExecutionContext, m: Manifest[T]): Future[Stream[T]] =
         mock[Future[Stream[T]]]
 
-//      override def getPage[T: ClassTag](path: String, params: Map[String, String])
-//                                       (implicit ec: ExecutionContext, de: CustomSerializer[T], m: Manifest[T]): Future[Page[T]] =
-//        mock[Future[Page[T]]]
+      override def getSource[T: ClassTag](path: String, de: CustomSerializer[T], cursor: HorizonCursor)
+                                         (implicit ec: ExecutionContext, m: Manifest[T]): Source[T, NotUsed] =
+        mock[Source[T, NotUsed]]
+
     }
   }
 }
