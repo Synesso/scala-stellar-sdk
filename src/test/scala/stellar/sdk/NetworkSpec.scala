@@ -1,6 +1,8 @@
 package stellar.sdk
 
 import akka.NotUsed
+import akka.actor.ActorSystem
+import akka.stream.ActorMaterializer
 import akka.stream.scaladsl.Source
 import org.json4s.CustomSerializer
 import org.scalacheck.Gen
@@ -617,6 +619,16 @@ class NetworkSpec(implicit ee: ExecutionEnv) extends Specification with Arbitrar
       // stream of transactions within the specified ledger
       val ledgerTxns = TestNetwork.transactionsByLedger(1234)
       // #transaction_query_examples
+
+      // #transaction_source_examples
+      // implicit values required for operations on sources
+      implicit val system = ActorSystem("transaction-processing")
+      implicit val materializer = ActorMaterializer()
+
+      // print each new transaction's hash
+      TestNetwork.transactionSource().runForeach(txn => println(txn.hash))
+      // #transaction_source_examples
+
       ok
     }
   }
@@ -721,8 +733,7 @@ class NetworkSpec(implicit ee: ExecutionEnv) extends Specification with Arbitrar
         mock[Future[Stream[T]]]
 
       override def getSource[T: ClassTag](path: String, de: CustomSerializer[T], cursor: HorizonCursor)
-                                         (implicit ec: ExecutionContext, m: Manifest[T]): Source[T, NotUsed] =
-        mock[Source[T, NotUsed]]
+                                         (implicit ec: ExecutionContext, m: Manifest[T]): Source[T, NotUsed] = Source.empty[T]
 
     }
   }

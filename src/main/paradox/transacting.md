@@ -99,4 +99,4 @@ and need to be decoded via a similar method on `SignedTransaction`.
 
 @@snip [NetworkSpec.scala](../../test/scala/stellar/sdk/TransactionSpec.scala) { #xdr_signed_serde_example }
 
-
+Continue reading to learn how to obtain historical data from network via @ref:[Queries](queries.md).

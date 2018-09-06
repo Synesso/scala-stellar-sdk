@@ -124,3 +124,5 @@ These queries return validated transactions, in the form of @scaladoc[Transactio
 (as opposed to transactions that are composed and submitted to the network).
 
 @@snip [NetworkSpec.scala](../../test/scala/stellar/sdk/NetworkSpec.scala) { #transaction_query_examples }
+
+Continue reading to learn how to subscribe and respond to future events via @ref:[Sources](sources.md).
