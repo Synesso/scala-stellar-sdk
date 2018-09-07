@@ -417,11 +417,11 @@ class NetworkSpec(implicit ee: ExecutionEnv) extends Specification with Arbitrar
       network.transactionsByAccount(account) mustEqual expected
     }
 
-    "fetch a stream of transactions for a given ledger" >> prop { ledgeId: Long =>
+    "fetch a stream of transactions for a given ledger" >> prop { ledgerId: Long =>
       val network = new MockNetwork
       val expected = Future(mock[Stream[TransactionHistoryResp]])
-      network.horizon.getStream[TransactionHistoryResp](s"/ledgers/$ledgeId/transactions", TransactionHistoryRespDeserializer, Record(0), Asc) returns expected
-      network.transactionsByLedger(ledgeId) mustEqual expected
+      network.horizon.getStream[TransactionHistoryResp](s"/ledgers/$ledgerId/transactions", TransactionHistoryRespDeserializer, Record(0), Asc) returns expected
+      network.transactionsByLedger(ledgerId) mustEqual expected
     }
 
     "provide a source of transactions" >> {
@@ -429,6 +429,20 @@ class NetworkSpec(implicit ee: ExecutionEnv) extends Specification with Arbitrar
       val expected = Source.empty[TransactionHistoryResp]
       network.horizon.getSource("/transactions", TransactionHistoryRespDeserializer, Now) returns expected
       network.transactionSource() mustEqual expected
+    }
+
+    "provide a source of transactions by account" >> prop { pk: PublicKey =>
+      val network = new MockNetwork
+      val expected = Source.empty[TransactionHistoryResp]
+      network.horizon.getSource(s"/accounts/${pk.accountId}/transactions", TransactionHistoryRespDeserializer, Now) returns expected
+      network.transactionsByAccountSource(pk) mustEqual expected
+    }
+
+    "provide a source of transactions by ledger" >> prop { ledgerId: Long =>
+      val network = new MockNetwork
+      val expected = Source.empty[TransactionHistoryResp]
+      network.horizon.getSource(s"/ledgers/$ledgerId/transactions", TransactionHistoryRespDeserializer, Now) returns expected
+      network.transactionsByLedgerSource(ledgerId) mustEqual expected
     }
   }
 
@@ -627,6 +641,14 @@ class NetworkSpec(implicit ee: ExecutionEnv) extends Specification with Arbitrar
 
       // print each new transaction's hash
       TestNetwork.transactionSource().runForeach(txn => println(txn.hash))
+
+      // a source of transactions for a given account
+      val accnTxnSource: Source[TransactionHistoryResp, NotUsed] =
+        TestNetwork.transactionsByAccountSource(publicKey)
+
+      // a source of transactions for ledger #3,
+      // started from the beginning of time to ensure we get everything
+      val ledgerTxnSource = TestNetwork.transactionsByLedgerSource(1, Record(0))
       // #transaction_source_examples
 
       ok
