@@ -446,6 +446,12 @@ class NetworkSpec(implicit ee: ExecutionEnv) extends Specification with Arbitrar
     }
   }
 
+  // #sources_implicit_setup
+  implicit val system = ActorSystem("stellar-sources")
+  implicit val materializer = ActorMaterializer()
+  import system.dispatcher
+  // #sources_implicit_setup
+
   //noinspection ScalaUnusedSymbol
   // $COVERAGE-OFF$
   "query documentation" should {
@@ -601,6 +607,15 @@ class NetworkSpec(implicit ee: ExecutionEnv) extends Specification with Arbitrar
       // stream of payment operations in a specified transaction
       val transactionPayments = TestNetwork.paymentsByTransaction("bee042...")
       // #payment_query_examples
+
+      // #payment_source_examples
+      // a source of all payment operations
+      val paymentSource: Source[Transacted[PayOperation], NotUsed] = TestNetwork.paymentsSource()
+
+      // a source of all payment operations involving a specified account
+      val paymentsByAccountSource = TestNetwork.paymentsByAccountSource(publicKey)
+      // #payment_source_examples
+
       ok
     }
 
@@ -635,10 +650,6 @@ class NetworkSpec(implicit ee: ExecutionEnv) extends Specification with Arbitrar
       // #transaction_query_examples
 
       // #transaction_source_examples
-      // implicit values required for operations on sources
-      implicit val system = ActorSystem("transaction-processing")
-      implicit val materializer = ActorMaterializer()
-
       // print each new transaction's hash
       TestNetwork.transactionSource().runForeach(txn => println(txn.hash))
 

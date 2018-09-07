@@ -198,19 +198,42 @@ trait Network extends LazyLogging {
     */
   def payments(cursor: HorizonCursor = Record(0), order: HorizonOrder = Asc)(implicit ex: ExecutionContext):
               Future[Stream[Transacted[PayOperation]]] =
-    horizon.getStream[Transacted[Operation]](s"/payments", TransactedOperationDeserializer, cursor, order)
+    horizon.getStream[Transacted[Operation]]("/payments", TransactedOperationDeserializer, cursor, order)
       .map(_.map(_.asInstanceOf[Transacted[PayOperation]]))
 
   /**
+    * A source of all payment operations from the cursor in ascending order, forever.
+    * @param cursor optional record id to start results from (defaults to `Now`)
+    * @see [[https://www.stellar.org/developers/horizon/reference/endpoints/payments-all.html endpoint doc]]
+    */
+  def paymentsSource(cursor: HorizonCursor = Now)(implicit ex: ExecutionContext): Source[Transacted[PayOperation], NotUsed] = {
+    horizon.getSource("/payments", TransactedOperationDeserializer, cursor)
+      .map(_.asInstanceOf[Transacted[PayOperation]])
+  }
+
+  /**
     * Fetch a stream of payment operations filtered by account.
+    * @param pubKey the relevant account
     * @param cursor optional record id to start results from (defaults to `0`)
     * @param order  optional order to sort results by (defaults to `Asc`)
     * @see [[https://www.stellar.org/developers/horizon/reference/endpoints/payments-for-account.html endpoint doc]]
     */
-  def paymentsByAccount(pubKey: PublicKeyOps, cursor: HorizonCursor = Record(0), order: HorizonOrder = Asc)(implicit ex: ExecutionContext):
-                       Future[Stream[Transacted[PayOperation]]] =
+  def paymentsByAccount(pubKey: PublicKeyOps, cursor: HorizonCursor = Record(0), order: HorizonOrder = Asc)
+                       (implicit ex: ExecutionContext): Future[Stream[Transacted[PayOperation]]] =
     horizon.getStream[Transacted[Operation]](s"/accounts/${pubKey.accountId}/payments", TransactedOperationDeserializer, cursor, order)
       .map(_.map(_.asInstanceOf[Transacted[PayOperation]]))
+
+  /**
+    * A source of all payment operations filtered by account from the cursor in ascending order, forever.
+    * @param pubKey the relevant account
+    * @param cursor optional record id to start results from (defaults to `Now`)
+    * @see [[https://www.stellar.org/developers/horizon/reference/endpoints/payments-all.html endpoint doc]]
+    */
+  def paymentsByAccountSource(pubKey: PublicKeyOps, cursor: HorizonCursor = Now)
+                             (implicit ex: ExecutionContext): Source[Transacted[PayOperation], NotUsed] = {
+    horizon.getSource[Transacted[Operation]](s"/accounts/${pubKey.accountId}/payments", TransactedOperationDeserializer, cursor)
+      .map(_.asInstanceOf[Transacted[PayOperation]])
+  }
 
   /**
     * Fetch a stream of payment operations filtered by ledger id.
@@ -279,7 +302,7 @@ trait Network extends LazyLogging {
 
   /**
     * A source of all transactions from the cursor in ascending order, forever.
-    * @param cursor optional record id to start results from (default to `Now`)
+    * @param cursor optional record id to start results from (defaults to `Now`)
     * @see [[https://www.stellar.org/developers/horizon/reference/endpoints/transactions-all.html endpoint doc]]
     */
   def transactionSource(cursor: HorizonCursor = Now)(implicit ex: ExecutionContext): Source[TransactionHistoryResp, NotUsed] = {
@@ -299,7 +322,7 @@ trait Network extends LazyLogging {
 
   /**
     * A source of all transactions affecting a given account from the cursor in ascending order, forever.
-    * @param cursor optional record id to start results from (default to `Now`)
+    * @param cursor optional record id to start results from (defaults to `Now`)
     * @see [[https://www.stellar.org/developers/horizon/reference/endpoints/transactions-for-account.html endpoint doc]]
     */
   def transactionsByAccountSource(pubKey: PublicKeyOps, cursor: HorizonCursor = Now)(implicit ex: ExecutionContext): Source[TransactionHistoryResp, NotUsed] = {
