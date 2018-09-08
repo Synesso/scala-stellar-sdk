@@ -20,6 +20,14 @@ Once done, sources may be used as a method for subscribing to updates. For examp
 
 Like queries, sources fall into several categories.
 
+### Ledgers
+
+@scaladoc[Ledgers](stellar.sdk.resp.LedgerResp) represent the state of the network at any time. They are created
+sequentially as the state of the network changes.
+
+@@snip [DocExamples.scala](../../test/scala/stellar/sdk/DocExamples.scala) { #ledger_source_examples }
+
+
 ### Offers
 
 @scaladoc[Offers](stellar.sdk.resp.OfferResp) can be issued by accounts to buy or sell assets. Sources for offers

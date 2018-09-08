@@ -118,6 +118,15 @@ trait Network extends LazyLogging {
     horizon.getStream[LedgerResp]("/ledgers", LedgerRespDeserializer, cursor, order)
 
   /**
+    * A source of all ledgers from the cursor in ascending order, forever.
+    * @param cursor optional record id to start results from (defaults to `Now`)
+    * @see [[https://www.stellar.org/developers/horizon/reference/endpoints/ledgers-all.html endpoint doc]]
+    */
+  def ledgersSource(cursor: HorizonCursor = Now)(implicit ex: ExecutionContext): Source[LedgerResp, NotUsed] = {
+    horizon.getSource("/ledgers", LedgerRespDeserializer, cursor)
+  }
+
+  /**
     * Fetch details of a ledger by its id
     * @see [[https://www.stellar.org/developers/horizon/reference/endpoints/ledgers-single.html endpoint doc]]
     */

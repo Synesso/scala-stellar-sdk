@@ -49,7 +49,7 @@ By default the results will be in ascending order from the earliest record. This
 sequentially as the state of the network changes.
 
 It is possible to stream all ledgers or query for a specific ledger by its sequential id. Each returned value provides
-meta-data about the changes in that ledger, as weall as a summary of the network at that point of time.
+meta-data about the changes in that ledger, as well as a summary of the network at that point of time.
 
 By default the results will be in ascending order from the earliest record. This behaviour can be modified with the
 `cursor` and `order` parameters.

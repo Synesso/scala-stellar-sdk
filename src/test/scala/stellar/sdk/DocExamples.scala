@@ -107,6 +107,12 @@ class DocExamples(implicit ee: ExecutionEnv)  extends Specification with Mockito
       val last20Ledgers =
         TestNetwork.ledgers(cursor = Now, order = Desc).map(_.take(20))
       // #ledger_query_examples
+
+      // #ledger_source_examples
+      // a source of all new operations
+      val ledgersSource: Source[LedgerResp, NotUsed] = TestNetwork.ledgersSource()
+      // #ledger_source_examples
+
       ok
     }
 

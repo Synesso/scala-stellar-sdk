@@ -157,6 +157,14 @@ class NetworkSpec(implicit ee: ExecutionEnv) extends Specification with Arbitrar
       network.ledgers() mustEqual expected
     }
 
+    "provide a source of ledgers" >> {
+      val network = new MockNetwork
+      val op = mock[LedgerResp]
+      val expectedSource: Source[LedgerResp, NotUsed] = Source.fromFuture(Future(op))
+      network.horizon.getSource("/ledgers", LedgerRespDeserializer, Now) returns expectedSource
+      network.ledgersSource().toMat(Sink.seq)(Keep.right).run must beEqualTo(Seq(op)).awaitFor(10.seconds)
+    }
+
     "fetch details of a single ledger" >> prop { ledgerId: Long =>
       val network = new MockNetwork
       val response = mock[LedgerResp]
