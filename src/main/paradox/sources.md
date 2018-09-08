@@ -20,6 +20,17 @@ Once done, sources may be used as a method for subscribing to updates. For examp
 
 Like queries, sources fall into several categories.
 
+### Operations
+
+@scaladoc[Operations](stellar.sdk.resp.Operation) are changes to the ledger. They represent the action, as opposed to
+the effects resulting from the action.
+
+Operations returned by these queries are wrapped in the @scaladoc[Transacted](stellar.sdk.op.Transacted) type. This indicates
+that the operation has been part of a successful transaction, and provides details about that transaction.
+
+@@snip [NetworkSpec.scala](../../test/scala/stellar/sdk/NetworkSpec.scala) { #operation_source_examples }
+
+
 ### OrderBooks
 
 @scaladoc[OrderBooks](stellar.sdk.OrderBook) include all the offers to buy or sell a specific asset. The source for an

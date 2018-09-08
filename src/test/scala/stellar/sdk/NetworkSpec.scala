@@ -257,6 +257,14 @@ class NetworkSpec(implicit ee: ExecutionEnv) extends Specification with Arbitrar
       network.operations(Now, Asc) mustEqual expected
     }
 
+    "provide a source of operations " >> {
+      val network = new MockNetwork
+      val op = mock[Transacted[Operation]]
+      val expectedSource: Source[Transacted[Operation], NotUsed] = Source.fromFuture(Future(op))
+      network.horizon.getSource(s"/operations", TransactedOperationDeserializer, Now) returns expectedSource
+      network.operationsSource().toMat(Sink.seq)(Keep.right).run must beEqualTo(Seq(op)).awaitFor(10.seconds)
+    }
+
     "fetch a descending stream of operations beginning from now" >> {
       val network = new MockNetwork
       val response = mock[Stream[Transacted[Operation]]]
@@ -271,6 +279,14 @@ class NetworkSpec(implicit ee: ExecutionEnv) extends Specification with Arbitrar
       val expected = Future(response)
       network.horizon.getStream[Transacted[Operation]](s"/accounts/${account.accountId}/operations", TransactedOperationDeserializer, Record(0), Asc) returns expected
       network.operationsByAccount(account, Record(0), Asc) mustEqual expected
+    }
+
+    "provide a source of operations for an account" >> prop { account: PublicKey =>
+      val network = new MockNetwork
+      val op = mock[Transacted[Operation]]
+      val expectedSource: Source[Transacted[Operation], NotUsed] = Source.fromFuture(Future(op))
+      network.horizon.getSource(s"/accounts/${account.accountId}/operations", TransactedOperationDeserializer, Now) returns expectedSource
+      network.operationsByAccountSource(account).toMat(Sink.seq)(Keep.right).run must beEqualTo(Seq(op)).awaitFor(10.seconds)
     }
 
     "fetch a stream of operations filtered by ledger" >> prop { id: Long =>
@@ -611,6 +627,14 @@ class NetworkSpec(implicit ee: ExecutionEnv) extends Specification with Arbitrar
         TestNetwork.operationsByTransaction("f00cafe...")
       // #operation_query_examples
 
+      // #operation_source_examples
+      // a source of all new operations
+      val operationsSource: Source[Transacted[Operation], NotUsed] = TestNetwork.operationsSource()
+
+      // a source of all new operations involving a specified account
+      val operationsByAccountSource = TestNetwork.operationsByAccountSource(publicKey)
+      // #operation_source_examples
+
       ok
     }
 
@@ -655,10 +679,10 @@ class NetworkSpec(implicit ee: ExecutionEnv) extends Specification with Arbitrar
       // #payment_query_examples
 
       // #payment_source_examples
-      // a source of all payment operations
-      val paymentSource: Source[Transacted[PayOperation], NotUsed] = TestNetwork.paymentsSource()
+      // a source of all new payment operations
+      val paymentsSource: Source[Transacted[PayOperation], NotUsed] = TestNetwork.paymentsSource()
 
-      // a source of all payment operations involving a specified account
+      // a source of all new payment operations involving a specified account
       val paymentsByAccountSource = TestNetwork.paymentsByAccountSource(publicKey)
       // #payment_source_examples
 
