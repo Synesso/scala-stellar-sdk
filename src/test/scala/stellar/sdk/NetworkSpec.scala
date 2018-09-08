@@ -93,6 +93,14 @@ class NetworkSpec(implicit ee: ExecutionEnv) extends Specification with Arbitrar
       network.effects() mustEqual expected
     }
 
+    "provide source of all effects" >> {
+      val network = new MockNetwork
+      val op = mock[EffectResp]
+      val expectedSource: Source[EffectResp, NotUsed] = Source.fromFuture(Future(op))
+      network.horizon.getSource("/effects", EffectRespDeserializer, Now) returns expectedSource
+      network.effectsSource().toMat(Sink.seq)(Keep.right).run must beEqualTo(Seq(op)).awaitFor(10.seconds)
+    }
+
     "fetch all effects descending" >> {
       val network = new MockNetwork
       val response = mock[Stream[EffectResp]]
@@ -115,6 +123,14 @@ class NetworkSpec(implicit ee: ExecutionEnv) extends Specification with Arbitrar
       val expected = Future(response)
       network.horizon.getStream[EffectResp](s"/accounts/${account.accountId}/effects", EffectRespDeserializer, Record(0), Asc) returns expected
       network.effectsByAccount(account) mustEqual expected
+    }
+
+    "provide source of all effects filtered by account" >> prop { account: PublicKey =>
+      val network = new MockNetwork
+      val op = mock[EffectResp]
+      val expectedSource: Source[EffectResp, NotUsed] = Source.fromFuture(Future(op))
+      network.horizon.getSource(s"/accounts/${account.accountId}/effects", EffectRespDeserializer, Now) returns expectedSource
+      network.effectsByAccountSource(account).toMat(Sink.seq)(Keep.right).run must beEqualTo(Seq(op)).awaitFor(10.seconds)
     }
 
     "fetch descending effects by account" >> prop { account: PublicKey =>

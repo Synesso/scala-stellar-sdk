@@ -20,6 +20,14 @@ Once done, sources may be used as a method for subscribing to updates. For examp
 
 Like queries, sources fall into several categories.
 
+### Effects
+
+@scaladoc[Effects](stellar.sdk.resp.EffectResp) are the changes that have been effected on the network as a result of
+operations successfully processed.
+
+@@snip [DocExamples.scala](../../test/scala/stellar/sdk/DocExamples.scala) { #effect_source_examples }
+
+
 ### Ledgers
 
 @scaladoc[Ledgers](stellar.sdk.resp.LedgerResp) represent the state of the network at any time. They are created

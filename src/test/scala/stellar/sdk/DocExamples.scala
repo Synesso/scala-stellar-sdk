@@ -92,6 +92,15 @@ class DocExamples(implicit ee: ExecutionEnv)  extends Specification with Mockito
       // stream of effects for a specific ledger
       val effectsForLedger = TestNetwork.effectsByLedger(1234)
       // #effect_query_examples
+
+      // #effect_source_examples
+      // a source of all new effects
+      val effectsSource: Source[EffectResp, NotUsed] = TestNetwork.effectsSource()
+
+      // a source of all new effects for a given account
+      val effectsForAccountSource = TestNetwork.effectsByAccountSource(publicKey)
+      // #effect_source_examples
+
       ok
     }
 
@@ -109,7 +118,7 @@ class DocExamples(implicit ee: ExecutionEnv)  extends Specification with Mockito
       // #ledger_query_examples
 
       // #ledger_source_examples
-      // a source of all new operations
+      // a source of all new ledgers
       val ledgersSource: Source[LedgerResp, NotUsed] = TestNetwork.ledgersSource()
       // #ledger_source_examples
 
