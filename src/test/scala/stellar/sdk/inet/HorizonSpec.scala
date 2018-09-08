@@ -12,11 +12,4 @@ class HorizonSpec extends Specification {
       HorizonAccess("https://horizon.stellar.org") must beSuccessfulTry[HorizonAccess]
     }
   }
-
-  "creating a cursor with a specified number" should {
-    "set the correct value" >> {
-      Record(123).value mustEqual 123
-    }
-  }
-
 }

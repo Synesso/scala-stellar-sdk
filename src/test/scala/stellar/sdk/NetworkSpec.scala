@@ -3,7 +3,7 @@ package stellar.sdk
 import akka.NotUsed
 import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
-import akka.stream.scaladsl.Source
+import akka.stream.scaladsl.{Keep, Sink, Source}
 import org.json4s.CustomSerializer
 import org.scalacheck.Gen
 import org.specs2.concurrent.ExecutionEnv
@@ -15,8 +15,15 @@ import stellar.sdk.resp._
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.reflect.ClassTag
+import scala.concurrent.duration._
 
 class NetworkSpec(implicit ee: ExecutionEnv) extends Specification with ArbitraryInput with Mockito {
+
+  // #sources_implicit_setup
+  implicit val system = ActorSystem("stellar-sources")
+  implicit val materializer = ActorMaterializer()
+  import system.dispatcher
+  // #sources_implicit_setup
 
   "test network" should {
     "identify itself" >> {
@@ -305,6 +312,28 @@ class NetworkSpec(implicit ee: ExecutionEnv) extends Specification with Arbitrar
       network.orderBook(selling, buying, limit) mustEqual expected
     }.setGen3(Gen.posNum[Int])
 
+    "provide a source of order books"  >> prop { (buying: Asset, selling: Asset) =>
+      val network = new MockNetwork
+      val expected = Source.empty[OrderBook]
+      val buyingMap = buying match {
+        case NativeAsset => Map("buying_asset_type" -> "native")
+        case nna: NonNativeAsset => Map(
+          "buying_asset_type" -> nna.typeString,
+          "buying_asset_code" -> nna.code,
+          "buying_asset_issuer" -> nna.issuer.accountId)
+      }
+      val sellingMap = selling match {
+        case NativeAsset => Map("selling_asset_type" -> "native")
+        case nna: NonNativeAsset => Map(
+          "selling_asset_type" -> nna.typeString,
+          "selling_asset_code" -> nna.code,
+          "selling_asset_issuer" -> nna.issuer.accountId)
+      }
+      val params = buyingMap ++ sellingMap
+      network.horizon.getSource("/order_book", OrderBookDeserializer, Now, params) returns expected
+      network.orderBookSource(selling, buying) mustEqual expected
+    }
+
     "fetch a stream of payment operations" >> {
       val network = new MockNetwork
       val ops = Gen.listOf(genTransacted(genPayOperation)).sample.get
@@ -314,6 +343,14 @@ class NetworkSpec(implicit ee: ExecutionEnv) extends Specification with Arbitrar
       network.payments() must containTheSameElementsAs(ops).await
     }
 
+    "provide a source of payment operations" >> {
+      val network = new MockNetwork
+      val op = mock[Transacted[PaymentOperation]]
+      val expectedSource: Source[Transacted[Operation], NotUsed] = Source.fromFuture(Future(op.asInstanceOf[Transacted[Operation]]))
+      network.horizon.getSource("/payments", TransactedOperationDeserializer, Now) returns expectedSource
+      network.paymentsSource().toMat(Sink.seq)(Keep.right).run must beEqualTo(Seq(op)).awaitFor(10.seconds)
+    }
+
     "fetch a stream of payment operations for an account" >> prop { account: PublicKey =>
       val network = new MockNetwork
       val ops = Gen.listOf(genTransacted(genPayOperation)).sample.get
@@ -321,6 +358,14 @@ class NetworkSpec(implicit ee: ExecutionEnv) extends Specification with Arbitrar
       network.horizon.getStream[Transacted[Operation]](s"/accounts/${account.accountId}/payments", TransactedOperationDeserializer, Record(0), Asc) returns
         expected.asInstanceOf[Future[Stream[Transacted[Operation]]]]
       network.paymentsByAccount(account) must containTheSameElementsAs(ops).await
+    }
+
+    "provide a source of payment operations for an account" >> prop { account: PublicKey =>
+      val network = new MockNetwork
+      val op = mock[Transacted[PaymentOperation]]
+      val expectedSource: Source[Transacted[Operation], NotUsed] = Source.fromFuture(Future(op.asInstanceOf[Transacted[Operation]]))
+      network.horizon.getSource(s"/accounts/${account.accountId}/payments", TransactedOperationDeserializer, Now) returns expectedSource
+      network.paymentsByAccountSource(account).toMat(Sink.seq)(Keep.right).run must beEqualTo(Seq(op)).awaitFor(10.seconds)
     }
 
     "fetch a stream of payment operations for a ledger" >> prop { ledgerId: Long =>
@@ -445,12 +490,6 @@ class NetworkSpec(implicit ee: ExecutionEnv) extends Specification with Arbitrar
       network.transactionsByLedgerSource(ledgerId) mustEqual expected
     }
   }
-
-  // #sources_implicit_setup
-  implicit val system = ActorSystem("stellar-sources")
-  implicit val materializer = ActorMaterializer()
-  import system.dispatcher
-  // #sources_implicit_setup
 
   //noinspection ScalaUnusedSymbol
   // $COVERAGE-OFF$
@@ -590,6 +629,13 @@ class NetworkSpec(implicit ee: ExecutionEnv) extends Specification with Arbitrar
         limit = 100
       )
       // #orderbook_query_examples
+
+      // #orderbook_source_examples
+      val beerForHugsBigOrderBookSource: Source[OrderBook, NotUsed] = TestNetwork.orderBookSource(
+        selling = Asset("FabulousBeer", publicKey),
+        buying = Asset("HUG", publicKey),
+      )
+      // #orderbook_source_examples
       ok
     }
 
@@ -765,7 +811,7 @@ class NetworkSpec(implicit ee: ExecutionEnv) extends Specification with Arbitrar
                                          (implicit ec: ExecutionContext, m: Manifest[T]): Future[Stream[T]] =
         mock[Future[Stream[T]]]
 
-      override def getSource[T: ClassTag](path: String, de: CustomSerializer[T], cursor: HorizonCursor)
+      override def getSource[T: ClassTag](path: String, de: CustomSerializer[T], cursor: HorizonCursor, params: Map[String, String])
                                          (implicit ec: ExecutionContext, m: Manifest[T]): Source[T, NotUsed] = Source.empty[T]
 
     }

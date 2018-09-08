@@ -21,7 +21,7 @@ import org.json4s.native.{JsonMethods, Serialization}
 import org.json4s.{CustomSerializer, DefaultFormats, Formats, NoTypeHints}
 import stellar.sdk.op.TransactedOperationDeserializer
 import stellar.sdk.resp._
-import stellar.sdk.{OrderBookDeserializer, SignedTransaction}
+import stellar.sdk.{HorizonCursor, HorizonOrder, OrderBookDeserializer, Record, SignedTransaction}
 
 import scala.concurrent.duration._
 import scala.concurrent.{Await, ExecutionContext, Future}
@@ -45,7 +45,7 @@ trait HorizonAccess {
   def getStream[T: ClassTag](path: String, de: CustomSerializer[T], cursor: HorizonCursor, order: HorizonOrder, params: Map[String, String] = Map.empty)
                             (implicit ec: ExecutionContext, m: Manifest[T]): Future[Stream[T]]
 
-  def getSource[T: ClassTag](path: String, de: CustomSerializer[T], cursor: HorizonCursor)
+  def getSource[T: ClassTag](path: String, de: CustomSerializer[T], cursor: HorizonCursor, params: Map[String, String] = Map.empty)
     (implicit ec: ExecutionContext, m: Manifest[T]): Source[T, NotUsed]
 
 }
@@ -140,12 +140,12 @@ class Horizon(uri: URI)
     } yield unwrapped.parse[T]
   }
 
-  override def getSource[T: ClassTag](path: String, de: CustomSerializer[T], cursor: HorizonCursor)
+  override def getSource[T: ClassTag](path: String, de: CustomSerializer[T], cursor: HorizonCursor, params: Map[String, String] = Map.empty)
                                      (implicit ec: ExecutionContext, m: Manifest[T]): Source[T, NotUsed] = {
 
     implicit val formats = DefaultFormats + de
 
-    val query = Query(Map("cursor" -> cursor.paramValue))
+    val query = Query(Map("cursor" -> cursor.paramValue) ++ params)
     val requestUri = Uri(s"$uri$path").withQuery(query)
 
     logger.debug(s"Streaming $requestUri")

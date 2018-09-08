@@ -20,6 +20,14 @@ Once done, sources may be used as a method for subscribing to updates. For examp
 
 Like queries, sources fall into several categories.
 
+### OrderBooks
+
+@scaladoc[OrderBooks](stellar.sdk.OrderBook) include all the offers to buy or sell a specific asset. The source for an
+orderbook will present offers for that pair.
+
+@@snip [NetworkSpec.scala](../../test/scala/stellar/sdk/NetworkSpec.scala) { #orderbook_source_examples }
+
+
 ### Payments
 
 @scaladoc[Payments](stellar.sdk.op.PayOperation) are the subset of Operations that cause payments to be made to an

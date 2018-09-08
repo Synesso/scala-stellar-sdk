@@ -182,12 +182,27 @@ trait Network extends LazyLogging {
 
   /**
     * Fetch details of the current orderbook for the given asset pairs.
+    * @param selling the asset being offered
+    * @param buying the asset being sought
     * @param limit the maximun quantity of offers to return, should the order book depth exceed this value.
     * @see [[https://www.stellar.org/developers/horizon/reference/endpoints/orderbook-details.html endpoint doc]]
     */
   def orderBook(selling: Asset, buying: Asset, limit: Int = 20)(implicit ex: ExecutionContext): Future[OrderBook] = {
     val params = assetParams("selling", selling) ++ assetParams("buying", buying).updated("limit", limit.toString)
     horizon.get[OrderBook]("/order_book", params)
+  }
+
+  /**
+    * A source of orders in the orderbook for the given asset pairs.
+    * @param selling the asset being offered
+    * @param buying the asset being sought
+    * @param cursor optional record id to start results from (defaults to `Now`)
+    * @see [[https://www.stellar.org/developers/horizon/reference/endpoints/orderbook-details.html endpoint doc]]
+    */
+  def orderBookSource(selling: Asset, buying: Asset, cursor: HorizonCursor = Now)
+                     (implicit ex: ExecutionContext): Source[OrderBook, NotUsed] = {
+    val params = assetParams("selling", selling) ++ assetParams("buying", buying)
+    horizon.getSource("/order_book", OrderBookDeserializer, cursor, params)
   }
 
   /**

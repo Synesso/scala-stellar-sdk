@@ -2,15 +2,12 @@ package stellar.sdk
 
 import java.io.File
 
-import akka.actor.ActorSystem
-import akka.stream.ActorMaterializer
-import akka.stream.scaladsl.{Keep, Sink}
 import com.github.tomakehurst.wiremock.WireMockServer
 import org.specs2.concurrent.ExecutionEnv
 import org.specs2.mutable.Specification
 import stellar.sdk.Amount.lumens
-import stellar.sdk.ProxyMode.{NoProxy, Record, Replay}
-import stellar.sdk.inet.{Desc, Now, TxnFailure}
+import stellar.sdk.ProxyMode.{NoProxy, RecordScript, ReplayScript}
+import stellar.sdk.inet.TxnFailure
 import stellar.sdk.op._
 import stellar.sdk.resp._
 
@@ -26,20 +23,20 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
   sequential
 
   // Set to NoProxy when writing tests; Record when creating stub mappings; Replay for all other times.
-  val mode = Replay
+  val mode = ReplayScript
 
   val proxy: Option[WireMockServer] = mode match {
     case NoProxy =>
       Seq("src/it/bin/stellar_standalone.sh", "true").!
       None
-    case Record =>
+    case RecordScript =>
       require(new File("src/test/resources/mappings").listFiles().forall(_.delete))
       val s = new WireMockServer(8080)
       Seq("src/it/bin/stellar_standalone.sh", "true").!
       s.start()
       s.startRecording("http://localhost:8000/")
       Some(s)
-    case Replay =>
+    case ReplayScript =>
       val s = new WireMockServer(8080)
       s.start()
       None
@@ -473,5 +470,5 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
 
 object ProxyMode extends Enumeration {
   type RecordMode = Value
-  val NoProxy, Replay, Record = Value
+  val NoProxy, ReplayScript, RecordScript = Value
 }
