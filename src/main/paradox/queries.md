@@ -18,7 +18,7 @@ Queries fall into several categories.
 They are represented by a key pair. Account details can be found given an account's @scaladoc[KeyPair](stellar.sdk.KeyPair)
 or @scaladoc[PublicKey](stellar.sdk.PublicKey).
 
-@@snip [NetworkSpec.scala](../../test/scala/stellar/sdk/NetworkSpec.scala) { #account_query_examples }
+@@snip [DocExamples.scala](../../test/scala/stellar/sdk/DocExamples.scala) { #account_query_examples }
 
 
 ### Assets
@@ -29,7 +29,7 @@ their `code`, `issuer`, neither or both.
 By default the results will be in ascending order from the earliest record. This behaviour can be modified with the
 `cursor` and `order` parameters.
 
-@@snip [NetworkSpec.scala](../../test/scala/stellar/sdk/NetworkSpec.scala) { #asset_query_examples }
+@@snip [DocExamples.scala](../../test/scala/stellar/sdk/DocExamples.scala) { #asset_query_examples }
 
 
 ### Effects
@@ -40,7 +40,7 @@ operations successfully processed.
 By default the results will be in ascending order from the earliest record. This behaviour can be modified with the
 `cursor` and `order` parameters.
 
-@@snip [NetworkSpec.scala](../../test/scala/stellar/sdk/NetworkSpec.scala) { #effect_query_examples }
+@@snip [DocExamples.scala](../../test/scala/stellar/sdk/DocExamples.scala) { #effect_query_examples }
 
 
 ### Ledgers
@@ -54,7 +54,7 @@ meta-data about the changes in that ledger, as weall as a summary of the network
 By default the results will be in ascending order from the earliest record. This behaviour can be modified with the
 `cursor` and `order` parameters.
 
-@@snip [NetworkSpec.scala](../../test/scala/stellar/sdk/NetworkSpec.scala) { #ledger_query_examples }
+@@snip [DocExamples.scala](../../test/scala/stellar/sdk/DocExamples.scala) { #ledger_query_examples }
 
 
 ### Offers
@@ -65,7 +65,7 @@ is available only by account. Additional offers are found by searching the `Orde
 By default the results will be in ascending order from the earliest record. This behaviour can be modified with the
 `cursor` and `order` parameters.
 
-@@snip [NetworkSpec.scala](../../test/scala/stellar/sdk/NetworkSpec.scala) { #offer_query_examples }
+@@snip [DocExamples.scala](../../test/scala/stellar/sdk/DocExamples.scala) { #offer_query_examples }
 
 
 ### Operations
@@ -81,7 +81,7 @@ By default the results will be in ascending order from the earliest record. This
 
 There are several ways to search for and filter operations.
 
-@@snip [NetworkSpec.scala](../../test/scala/stellar/sdk/NetworkSpec.scala) { #operation_query_examples }
+@@snip [DocExamples.scala](../../test/scala/stellar/sdk/DocExamples.scala) { #operation_query_examples }
 
 
 ### OrderBook
@@ -89,7 +89,7 @@ There are several ways to search for and filter operations.
 @scaladoc[OrderBooks](stellar.sdk.OrderBook) include all the offers to buy or sell a specific asset. They show the
 depth limited to the value of the `limit` param, which defaults to `20`.
 
-@@snip [NetworkSpec.scala](../../test/scala/stellar/sdk/NetworkSpec.scala) { #orderbook_query_examples }
+@@snip [DocExamples.scala](../../test/scala/stellar/sdk/DocExamples.scala) { #orderbook_query_examples }
 
 
 ### Payments
@@ -101,7 +101,7 @@ account. This is similar to the [Operations](#operations) query methods, but wil
 By default the results will be in ascending order from the earliest record. This behaviour can be modified with the
 `cursor` and `order` parameters.
 
-@@snip [NetworkSpec.scala](../../test/scala/stellar/sdk/NetworkSpec.scala) { #payment_query_examples }
+@@snip [DocExamples.scala](../../test/scala/stellar/sdk/DocExamples.scala) { #payment_query_examples }
 
 
 ### Trades
@@ -111,7 +111,7 @@ By default the results will be in ascending order from the earliest record. This
 By default the results will be in ascending order from the earliest record. This behaviour can be modified with the
 `cursor` and `order` parameters.
 
-@@snip [NetworkSpec.scala](../../test/scala/stellar/sdk/NetworkSpec.scala) { #trade_query_examples }
+@@snip [DocExamples.scala](../../test/scala/stellar/sdk/DocExamples.scala) { #trade_query_examples }
 
 
 ### Transactions
@@ -123,6 +123,6 @@ Transactions are the fundamental unit of change in the network and are composed 
 These queries return validated transactions, in the form of @scaladoc[TransactionHistoryResp](stellar.sdk.resp.TransactionHistoryResp)onses
 (as opposed to transactions that are composed and submitted to the network).
 
-@@snip [NetworkSpec.scala](../../test/scala/stellar/sdk/NetworkSpec.scala) { #transaction_query_examples }
+@@snip [DocExamples.scala](../../test/scala/stellar/sdk/DocExamples.scala) { #transaction_query_examples }
 
 Continue reading to learn how to subscribe and respond to future events via @ref:[Sources](sources.md).

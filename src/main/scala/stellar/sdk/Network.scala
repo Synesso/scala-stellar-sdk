@@ -134,6 +134,16 @@ trait Network extends LazyLogging {
                      Future[Stream[OfferResp]] =
     horizon.getStream[OfferResp](s"/accounts/${account.accountId}/offers", OfferRespDeserializer, cursor, order)
 
+
+  /**
+    * A source of all offers for an account from the cursor in ascending order, forever.
+    * @param cursor optional record id to start results from (defaults to `Now`)
+    * @see [[https://www.stellar.org/developers/horizon/reference/endpoints/offers-for-account.html endpoint doc]]
+    */
+  def offersByAccountSource(account: PublicKeyOps, cursor: HorizonCursor = Now)(implicit ex: ExecutionContext): Source[OfferResp, NotUsed] = {
+    horizon.getSource(s"/accounts/${account.accountId}/offers", OfferRespDeserializer, cursor)
+  }
+
   /**
     * Fetch operation details by its id
     * @see [[https://www.stellar.org/developers/horizon/reference/endpoints/operations-single.html endpoint doc]]
