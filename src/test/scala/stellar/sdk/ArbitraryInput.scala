@@ -93,6 +93,8 @@ trait ArbitraryInput extends ScalaCheck {
 
   implicit def arbTransactionHistoryResponse = Arbitrary(genTransactionHistoryResponse)
 
+  implicit def arbHorizonCursor = Arbitrary(genHorizonCursor)
+
   def genKeyPair: Gen[KeyPair] = Gen.oneOf(Seq(KeyPair.random))
 
   def genSignerKey: Gen[SignerKey] = genKeyPair.map(_.getXDRSignerKey)
@@ -498,6 +500,8 @@ trait ArbitraryInput extends ScalaCheck {
     feeMetaXDR <- genHash
   } yield TransactionHistoryResp(hash, ledger, createdAt, account, sequence, feePaid, operationCount,
     memo, signatures, envelopeXDR, resultXDR, resultMetaXDR, feeMetaXDR)
+
+  def genHorizonCursor: Gen[HorizonCursor] = Gen.option(Gen.posNum[Long]).map(_.map(Record).getOrElse(Now))
 
   def round(d: Double) = f"$d%.7f".toDouble
 }

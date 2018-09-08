@@ -93,12 +93,12 @@ class NetworkSpec(implicit ee: ExecutionEnv) extends Specification with Arbitrar
       network.effects() mustEqual expected
     }
 
-    "provide source of all effects" >> {
+    "provide source of all effects" >> prop { cursor: HorizonCursor =>
       val network = new MockNetwork
       val op = mock[EffectResp]
       val expectedSource: Source[EffectResp, NotUsed] = Source.fromFuture(Future(op))
-      network.horizon.getSource("/effects", EffectRespDeserializer, Now) returns expectedSource
-      network.effectsSource().toMat(Sink.seq)(Keep.right).run must beEqualTo(Seq(op)).awaitFor(10.seconds)
+      network.horizon.getSource("/effects", EffectRespDeserializer, cursor) returns expectedSource
+      network.effectsSource(cursor).toMat(Sink.seq)(Keep.right).run must beEqualTo(Seq(op)).awaitFor(10.seconds)
     }
 
     "fetch all effects descending" >> {
@@ -125,12 +125,12 @@ class NetworkSpec(implicit ee: ExecutionEnv) extends Specification with Arbitrar
       network.effectsByAccount(account) mustEqual expected
     }
 
-    "provide source of all effects filtered by account" >> prop { account: PublicKey =>
+    "provide source of all effects filtered by account" >> prop { (account: PublicKey, cursor: HorizonCursor) =>
       val network = new MockNetwork
       val op = mock[EffectResp]
       val expectedSource: Source[EffectResp, NotUsed] = Source.fromFuture(Future(op))
-      network.horizon.getSource(s"/accounts/${account.accountId}/effects", EffectRespDeserializer, Now) returns expectedSource
-      network.effectsByAccountSource(account).toMat(Sink.seq)(Keep.right).run must beEqualTo(Seq(op)).awaitFor(10.seconds)
+      network.horizon.getSource(s"/accounts/${account.accountId}/effects", EffectRespDeserializer, cursor) returns expectedSource
+      network.effectsByAccountSource(account, cursor).toMat(Sink.seq)(Keep.right).run must beEqualTo(Seq(op)).awaitFor(10.seconds)
     }
 
     "fetch descending effects by account" >> prop { account: PublicKey =>
@@ -173,12 +173,12 @@ class NetworkSpec(implicit ee: ExecutionEnv) extends Specification with Arbitrar
       network.ledgers() mustEqual expected
     }
 
-    "provide a source of ledgers" >> {
+    "provide a source of ledgers" >> prop { cursor: HorizonCursor =>
       val network = new MockNetwork
       val op = mock[LedgerResp]
       val expectedSource: Source[LedgerResp, NotUsed] = Source.fromFuture(Future(op))
-      network.horizon.getSource("/ledgers", LedgerRespDeserializer, Now) returns expectedSource
-      network.ledgersSource().toMat(Sink.seq)(Keep.right).run must beEqualTo(Seq(op)).awaitFor(10.seconds)
+      network.horizon.getSource("/ledgers", LedgerRespDeserializer, cursor) returns expectedSource
+      network.ledgersSource(cursor).toMat(Sink.seq)(Keep.right).run must beEqualTo(Seq(op)).awaitFor(10.seconds)
     }
 
     "fetch details of a single ledger" >> prop { ledgerId: Long =>
@@ -205,12 +205,12 @@ class NetworkSpec(implicit ee: ExecutionEnv) extends Specification with Arbitrar
       network.offersByAccount(account) mustEqual expected
     }
 
-    "provide a source of offers for an account" >> prop { account: PublicKey =>
+    "provide a source of offers for an account" >> prop { (account: PublicKey, cursor: HorizonCursor) =>
       val network = new MockNetwork
       val op = mock[OfferResp]
       val expectedSource: Source[OfferResp, NotUsed] = Source.fromFuture(Future(op))
-      network.horizon.getSource(s"/accounts/${account.accountId}/offers", OfferRespDeserializer, Now) returns expectedSource
-      network.offersByAccountSource(account).toMat(Sink.seq)(Keep.right).run must beEqualTo(Seq(op)).awaitFor(10.seconds)
+      network.horizon.getSource(s"/accounts/${account.accountId}/offers", OfferRespDeserializer, cursor) returns expectedSource
+      network.offersByAccountSource(account, cursor).toMat(Sink.seq)(Keep.right).run must beEqualTo(Seq(op)).awaitFor(10.seconds)
     }
 
     "fetch offers for an account starting at a defined cursor" >> prop { account: PublicKey =>
@@ -285,12 +285,12 @@ class NetworkSpec(implicit ee: ExecutionEnv) extends Specification with Arbitrar
       network.operations(Now, Asc) mustEqual expected
     }
 
-    "provide a source of operations" >> {
+    "provide a source of operations" >> prop { cursor: HorizonCursor =>
       val network = new MockNetwork
       val op = mock[Transacted[Operation]]
       val expectedSource: Source[Transacted[Operation], NotUsed] = Source.fromFuture(Future(op))
-      network.horizon.getSource(s"/operations", TransactedOperationDeserializer, Now) returns expectedSource
-      network.operationsSource().toMat(Sink.seq)(Keep.right).run must beEqualTo(Seq(op)).awaitFor(10.seconds)
+      network.horizon.getSource(s"/operations", TransactedOperationDeserializer, cursor) returns expectedSource
+      network.operationsSource(cursor).toMat(Sink.seq)(Keep.right).run must beEqualTo(Seq(op)).awaitFor(10.seconds)
     }
 
     "fetch a descending stream of operations beginning from now" >> {
@@ -309,12 +309,12 @@ class NetworkSpec(implicit ee: ExecutionEnv) extends Specification with Arbitrar
       network.operationsByAccount(account, Record(0), Asc) mustEqual expected
     }
 
-    "provide a source of operations for an account" >> prop { account: PublicKey =>
+    "provide a source of operations for an account" >> prop { (account: PublicKey, cursor: HorizonCursor) =>
       val network = new MockNetwork
       val op = mock[Transacted[Operation]]
       val expectedSource: Source[Transacted[Operation], NotUsed] = Source.fromFuture(Future(op))
-      network.horizon.getSource(s"/accounts/${account.accountId}/operations", TransactedOperationDeserializer, Now) returns expectedSource
-      network.operationsByAccountSource(account).toMat(Sink.seq)(Keep.right).run must beEqualTo(Seq(op)).awaitFor(10.seconds)
+      network.horizon.getSource(s"/accounts/${account.accountId}/operations", TransactedOperationDeserializer, cursor) returns expectedSource
+      network.operationsByAccountSource(account, cursor).toMat(Sink.seq)(Keep.right).run must beEqualTo(Seq(op)).awaitFor(10.seconds)
     }
 
     "fetch a stream of operations filtered by ledger" >> prop { id: Long =>
@@ -356,7 +356,7 @@ class NetworkSpec(implicit ee: ExecutionEnv) extends Specification with Arbitrar
       network.orderBook(selling, buying, limit) mustEqual expected
     }.setGen3(Gen.posNum[Int])
 
-    "provide a source of order books"  >> prop { (buying: Asset, selling: Asset) =>
+    "provide a source of order books"  >> prop { (buying: Asset, selling: Asset, cursor: HorizonCursor) =>
       val network = new MockNetwork
       val expected = Source.empty[OrderBook]
       val buyingMap = buying match {
@@ -374,8 +374,8 @@ class NetworkSpec(implicit ee: ExecutionEnv) extends Specification with Arbitrar
           "selling_asset_issuer" -> nna.issuer.accountId)
       }
       val params = buyingMap ++ sellingMap
-      network.horizon.getSource("/order_book", OrderBookDeserializer, Now, params) returns expected
-      network.orderBookSource(selling, buying) mustEqual expected
+      network.horizon.getSource("/order_book", OrderBookDeserializer, cursor, params) returns expected
+      network.orderBookSource(selling, buying, cursor) mustEqual expected
     }
 
     "fetch a stream of payment operations" >> {
@@ -387,12 +387,12 @@ class NetworkSpec(implicit ee: ExecutionEnv) extends Specification with Arbitrar
       network.payments() must containTheSameElementsAs(ops).await
     }
 
-    "provide a source of payment operations" >> {
+    "provide a source of payment operations" >> prop { cursor: HorizonCursor =>
       val network = new MockNetwork
       val op = mock[Transacted[PaymentOperation]]
       val expectedSource: Source[Transacted[Operation], NotUsed] = Source.fromFuture(Future(op.asInstanceOf[Transacted[Operation]]))
-      network.horizon.getSource("/payments", TransactedOperationDeserializer, Now) returns expectedSource
-      network.paymentsSource().toMat(Sink.seq)(Keep.right).run must beEqualTo(Seq(op)).awaitFor(10.seconds)
+      network.horizon.getSource("/payments", TransactedOperationDeserializer, cursor) returns expectedSource
+      network.paymentsSource(cursor).toMat(Sink.seq)(Keep.right).run must beEqualTo(Seq(op)).awaitFor(10.seconds)
     }
 
     "fetch a stream of payment operations for an account" >> prop { account: PublicKey =>
@@ -404,12 +404,12 @@ class NetworkSpec(implicit ee: ExecutionEnv) extends Specification with Arbitrar
       network.paymentsByAccount(account) must containTheSameElementsAs(ops).await
     }
 
-    "provide a source of payment operations for an account" >> prop { account: PublicKey =>
+    "provide a source of payment operations for an account" >> prop { (account: PublicKey, cursor: HorizonCursor) =>
       val network = new MockNetwork
       val op = mock[Transacted[PaymentOperation]]
       val expectedSource: Source[Transacted[Operation], NotUsed] = Source.fromFuture(Future(op.asInstanceOf[Transacted[Operation]]))
-      network.horizon.getSource(s"/accounts/${account.accountId}/payments", TransactedOperationDeserializer, Now) returns expectedSource
-      network.paymentsByAccountSource(account).toMat(Sink.seq)(Keep.right).run must beEqualTo(Seq(op)).awaitFor(10.seconds)
+      network.horizon.getSource(s"/accounts/${account.accountId}/payments", TransactedOperationDeserializer, cursor) returns expectedSource
+      network.paymentsByAccountSource(account, cursor).toMat(Sink.seq)(Keep.right).run must beEqualTo(Seq(op)).awaitFor(10.seconds)
     }
 
     "fetch a stream of payment operations for a ledger" >> prop { ledgerId: Long =>
@@ -513,18 +513,18 @@ class NetworkSpec(implicit ee: ExecutionEnv) extends Specification with Arbitrar
       network.transactionsByLedger(ledgerId) mustEqual expected
     }
 
-    "provide a source of transactions" >> {
+    "provide a source of transactions" >> prop { cursor: HorizonCursor =>
       val network = new MockNetwork
       val expected = Source.empty[TransactionHistoryResp]
-      network.horizon.getSource("/transactions", TransactionHistoryRespDeserializer, Now) returns expected
-      network.transactionSource() mustEqual expected
+      network.horizon.getSource("/transactions", TransactionHistoryRespDeserializer, cursor) returns expected
+      network.transactionSource(cursor) mustEqual expected
     }
 
-    "provide a source of transactions by account" >> prop { pk: PublicKey =>
+    "provide a source of transactions by account" >> prop { (pk: PublicKey, cursor: HorizonCursor) =>
       val network = new MockNetwork
       val expected = Source.empty[TransactionHistoryResp]
-      network.horizon.getSource(s"/accounts/${pk.accountId}/transactions", TransactionHistoryRespDeserializer, Now) returns expected
-      network.transactionsByAccountSource(pk) mustEqual expected
+      network.horizon.getSource(s"/accounts/${pk.accountId}/transactions", TransactionHistoryRespDeserializer, cursor) returns expected
+      network.transactionsByAccountSource(pk, cursor) mustEqual expected
     }
 
     "provide a source of transactions by ledger" >> prop { ledgerId: Long =>
