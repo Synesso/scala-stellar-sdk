@@ -2,24 +2,26 @@ package stellar.sdk.inet
 
 import java.net.URI
 
+import akka.NotUsed
 import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.model.HttpMethods.{GET, POST}
 import akka.http.scaladsl.model.MediaTypes.`application/json`
 import akka.http.scaladsl.model.Uri.Query
 import akka.http.scaladsl.model._
-import akka.http.scaladsl.model.headers.Location
-import akka.http.scaladsl.unmarshalling.{Unmarshal, Unmarshaller}
+import akka.http.scaladsl.model.headers._
+import akka.http.scaladsl.model.sse.ServerSentEvent
+import akka.http.scaladsl.unmarshalling.Unmarshal
 import akka.stream.ActorMaterializer
-import akka.util.ByteString
+import akka.stream.scaladsl.Source
 import com.typesafe.config.ConfigFactory
 import com.typesafe.scalalogging.LazyLogging
 import de.heikoseeberger.akkahttpjson4s.Json4sSupport
-import org.json4s.native.Serialization
+import org.json4s.native.{JsonMethods, Serialization}
 import org.json4s.{CustomSerializer, DefaultFormats, Formats, NoTypeHints}
 import stellar.sdk.op.TransactedOperationDeserializer
 import stellar.sdk.resp._
-import stellar.sdk.{OrderBookDeserializer, SignedTransaction}
+import stellar.sdk.{HorizonCursor, HorizonOrder, OrderBookDeserializer, Record, SignedTransaction}
 
 import scala.concurrent.duration._
 import scala.concurrent.{Await, ExecutionContext, Future}
@@ -42,6 +44,10 @@ trait HorizonAccess {
 
   def getStream[T: ClassTag](path: String, de: CustomSerializer[T], cursor: HorizonCursor, order: HorizonOrder, params: Map[String, String] = Map.empty)
                             (implicit ec: ExecutionContext, m: Manifest[T]): Future[Stream[T]]
+
+  def getSource[T: ClassTag](path: String, de: CustomSerializer[T], cursor: HorizonCursor, params: Map[String, String] = Map.empty)
+    (implicit ec: ExecutionContext, m: Manifest[T]): Source[T, NotUsed]
+
 }
 
 class Horizon(uri: URI)
@@ -58,7 +64,7 @@ class Horizon(uri: URI)
     LedgerRespDeserializer + TransactedOperationDeserializer + OrderBookDeserializer + TransactionPostRespDeserializer +
     TxnFailureDeserializer
 
-  def post(txn: SignedTransaction)(implicit ec: ExecutionContext): Future[TransactionPostResp] = {
+  override def post(txn: SignedTransaction)(implicit ec: ExecutionContext): Future[TransactionPostResp] = {
     logger.debug(s"Posting {} {}", txn, txn.encodeXDR)
     for {
       envelope <- Future(txn.encodeXDR)
@@ -68,7 +74,8 @@ class Horizon(uri: URI)
     } yield unwrapped.get
   }
 
-  def get[T: ClassTag](path: String, params: Map[String, String] = Map.empty)(implicit ec: ExecutionContext, m: Manifest[T]): Future[T] = {
+  override def get[T: ClassTag](path: String, params: Map[String, String] = Map.empty)
+                               (implicit ec: ExecutionContext, m: Manifest[T]): Future[T] = {
     val requestUri = Uri(s"$uri$path").withQuery(Query(params))
     logger.debug(s"Getting {}", requestUri)
 
@@ -79,7 +86,7 @@ class Horizon(uri: URI)
     } yield unwrapped.get
   }
 
-  def parseOrRedirectOrError[T](request: HttpRequest, response: HttpResponse)(implicit m: Manifest[T]): Future[Try[T]] = {
+  private def parseOrRedirectOrError[T](request: HttpRequest, response: HttpResponse)(implicit m: Manifest[T]): Future[Try[T]] = {
     val HttpResponse(status, _, entity, _) = response
     if (status.isRedirection()) {
       val request_ = request.copy(uri = response.header[Location].get.uri)
@@ -88,8 +95,9 @@ class Horizon(uri: URI)
     else Unmarshal(entity).to[TxnFailure].map(_.copy(uri = request.uri)).map(Failure(_))
   }
 
-  def getStream[T: ClassTag](path: String, de: CustomSerializer[T], cursor: HorizonCursor, order: HorizonOrder, params: Map[String, String] = Map.empty)
-                            (implicit ec: ExecutionContext, m: Manifest[T]): Future[Stream[T]] = {
+  override def getStream[T: ClassTag](path: String, de: CustomSerializer[T], cursor: HorizonCursor, order: HorizonOrder,
+                                      params: Map[String, String] = Map.empty)
+                                     (implicit ec: ExecutionContext, m: Manifest[T]): Future[Stream[T]] = {
 
     implicit val formats = DefaultFormats + RawPageDeserializer + de
 
@@ -130,6 +138,28 @@ class Horizon(uri: URI)
       response <- Http().singleRequest(HttpRequest(GET, uri))
       unwrapped <- Unmarshal(response).to[RawPage]
     } yield unwrapped.parse[T]
+  }
+
+  override def getSource[T: ClassTag](path: String, de: CustomSerializer[T], cursor: HorizonCursor, params: Map[String, String] = Map.empty)
+                                     (implicit ec: ExecutionContext, m: Manifest[T]): Source[T, NotUsed] = {
+
+    implicit val formats = DefaultFormats + de
+
+    val query = Query(Map("cursor" -> cursor.paramValue) ++ params)
+    val requestUri = Uri(s"$uri$path").withQuery(query)
+
+    logger.debug(s"Streaming $requestUri")
+    val lastEventId = cursor match {
+      case Record(l) => Some(l.toString)
+      case _ => None
+    }
+
+    val eventSource: Source[ServerSentEvent, NotUsed] =
+      EventSource(requestUri, Http().singleRequest(_), lastEventId, unmarshaller = BigEventUnmarshalling)
+
+    eventSource.mapConcat{ case ServerSentEvent(data, eventType, _, _) =>
+      (if (eventType.contains("open")) None else Some(data)).to[collection.immutable.Iterable]
+    }.map[T](JsonMethods.parse(_).extract[T])
   }
 }
 

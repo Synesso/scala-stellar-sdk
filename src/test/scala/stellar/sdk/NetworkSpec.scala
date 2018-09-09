@@ -1,6 +1,9 @@
 package stellar.sdk
 
-import org.json4s.CustomSerializer
+import akka.NotUsed
+import akka.actor.ActorSystem
+import akka.stream.ActorMaterializer
+import akka.stream.scaladsl.{Keep, Sink, Source}
 import org.scalacheck.Gen
 import org.specs2.concurrent.ExecutionEnv
 import org.specs2.mock.Mockito
@@ -9,10 +12,14 @@ import stellar.sdk.inet._
 import stellar.sdk.op._
 import stellar.sdk.resp._
 
-import scala.concurrent.{ExecutionContext, Future}
-import scala.reflect.ClassTag
+import scala.concurrent.Future
+import scala.concurrent.duration._
 
 class NetworkSpec(implicit ee: ExecutionEnv) extends Specification with ArbitraryInput with Mockito {
+
+  implicit val system = ActorSystem("network-spec")
+  implicit val materializer = ActorMaterializer()
+  import system.dispatcher
 
   "test network" should {
     "identify itself" >> {
@@ -86,6 +93,14 @@ class NetworkSpec(implicit ee: ExecutionEnv) extends Specification with Arbitrar
       network.effects() mustEqual expected
     }
 
+    "provide source of all effects" >> prop { cursor: HorizonCursor =>
+      val network = new MockNetwork
+      val op = mock[EffectResp]
+      val expectedSource: Source[EffectResp, NotUsed] = Source.fromFuture(Future(op))
+      network.horizon.getSource("/effects", EffectRespDeserializer, cursor) returns expectedSource
+      network.effectsSource(cursor).toMat(Sink.seq)(Keep.right).run must beEqualTo(Seq(op)).awaitFor(10.seconds)
+    }
+
     "fetch all effects descending" >> {
       val network = new MockNetwork
       val response = mock[Stream[EffectResp]]
@@ -108,6 +123,14 @@ class NetworkSpec(implicit ee: ExecutionEnv) extends Specification with Arbitrar
       val expected = Future(response)
       network.horizon.getStream[EffectResp](s"/accounts/${account.accountId}/effects", EffectRespDeserializer, Record(0), Asc) returns expected
       network.effectsByAccount(account) mustEqual expected
+    }
+
+    "provide source of all effects filtered by account" >> prop { (account: PublicKey, cursor: HorizonCursor) =>
+      val network = new MockNetwork
+      val op = mock[EffectResp]
+      val expectedSource: Source[EffectResp, NotUsed] = Source.fromFuture(Future(op))
+      network.horizon.getSource(s"/accounts/${account.accountId}/effects", EffectRespDeserializer, cursor) returns expectedSource
+      network.effectsByAccountSource(account, cursor).toMat(Sink.seq)(Keep.right).run must beEqualTo(Seq(op)).awaitFor(10.seconds)
     }
 
     "fetch descending effects by account" >> prop { account: PublicKey =>
@@ -150,6 +173,14 @@ class NetworkSpec(implicit ee: ExecutionEnv) extends Specification with Arbitrar
       network.ledgers() mustEqual expected
     }
 
+    "provide a source of ledgers" >> prop { cursor: HorizonCursor =>
+      val network = new MockNetwork
+      val op = mock[LedgerResp]
+      val expectedSource: Source[LedgerResp, NotUsed] = Source.fromFuture(Future(op))
+      network.horizon.getSource("/ledgers", LedgerRespDeserializer, cursor) returns expectedSource
+      network.ledgersSource(cursor).toMat(Sink.seq)(Keep.right).run must beEqualTo(Seq(op)).awaitFor(10.seconds)
+    }
+
     "fetch details of a single ledger" >> prop { ledgerId: Long =>
       val network = new MockNetwork
       val response = mock[LedgerResp]
@@ -172,6 +203,14 @@ class NetworkSpec(implicit ee: ExecutionEnv) extends Specification with Arbitrar
       val expected = Future(response)
       network.horizon.getStream[OfferResp](s"/accounts/${account.accountId}/offers", OfferRespDeserializer, Record(0), Asc) returns expected
       network.offersByAccount(account) mustEqual expected
+    }
+
+    "provide a source of offers for an account" >> prop { (account: PublicKey, cursor: HorizonCursor) =>
+      val network = new MockNetwork
+      val op = mock[OfferResp]
+      val expectedSource: Source[OfferResp, NotUsed] = Source.fromFuture(Future(op))
+      network.horizon.getSource(s"/accounts/${account.accountId}/offers", OfferRespDeserializer, cursor) returns expectedSource
+      network.offersByAccountSource(account, cursor).toMat(Sink.seq)(Keep.right).run must beEqualTo(Seq(op)).awaitFor(10.seconds)
     }
 
     "fetch offers for an account starting at a defined cursor" >> prop { account: PublicKey =>
@@ -246,6 +285,14 @@ class NetworkSpec(implicit ee: ExecutionEnv) extends Specification with Arbitrar
       network.operations(Now, Asc) mustEqual expected
     }
 
+    "provide a source of operations" >> prop { cursor: HorizonCursor =>
+      val network = new MockNetwork
+      val op = mock[Transacted[Operation]]
+      val expectedSource: Source[Transacted[Operation], NotUsed] = Source.fromFuture(Future(op))
+      network.horizon.getSource(s"/operations", TransactedOperationDeserializer, cursor) returns expectedSource
+      network.operationsSource(cursor).toMat(Sink.seq)(Keep.right).run must beEqualTo(Seq(op)).awaitFor(10.seconds)
+    }
+
     "fetch a descending stream of operations beginning from now" >> {
       val network = new MockNetwork
       val response = mock[Stream[Transacted[Operation]]]
@@ -260,6 +307,14 @@ class NetworkSpec(implicit ee: ExecutionEnv) extends Specification with Arbitrar
       val expected = Future(response)
       network.horizon.getStream[Transacted[Operation]](s"/accounts/${account.accountId}/operations", TransactedOperationDeserializer, Record(0), Asc) returns expected
       network.operationsByAccount(account, Record(0), Asc) mustEqual expected
+    }
+
+    "provide a source of operations for an account" >> prop { (account: PublicKey, cursor: HorizonCursor) =>
+      val network = new MockNetwork
+      val op = mock[Transacted[Operation]]
+      val expectedSource: Source[Transacted[Operation], NotUsed] = Source.fromFuture(Future(op))
+      network.horizon.getSource(s"/accounts/${account.accountId}/operations", TransactedOperationDeserializer, cursor) returns expectedSource
+      network.operationsByAccountSource(account, cursor).toMat(Sink.seq)(Keep.right).run must beEqualTo(Seq(op)).awaitFor(10.seconds)
     }
 
     "fetch a stream of operations filtered by ledger" >> prop { id: Long =>
@@ -301,6 +356,28 @@ class NetworkSpec(implicit ee: ExecutionEnv) extends Specification with Arbitrar
       network.orderBook(selling, buying, limit) mustEqual expected
     }.setGen3(Gen.posNum[Int])
 
+    "provide a source of order books"  >> prop { (buying: Asset, selling: Asset, cursor: HorizonCursor) =>
+      val network = new MockNetwork
+      val expected = Source.empty[OrderBook]
+      val buyingMap = buying match {
+        case NativeAsset => Map("buying_asset_type" -> "native")
+        case nna: NonNativeAsset => Map(
+          "buying_asset_type" -> nna.typeString,
+          "buying_asset_code" -> nna.code,
+          "buying_asset_issuer" -> nna.issuer.accountId)
+      }
+      val sellingMap = selling match {
+        case NativeAsset => Map("selling_asset_type" -> "native")
+        case nna: NonNativeAsset => Map(
+          "selling_asset_type" -> nna.typeString,
+          "selling_asset_code" -> nna.code,
+          "selling_asset_issuer" -> nna.issuer.accountId)
+      }
+      val params = buyingMap ++ sellingMap
+      network.horizon.getSource("/order_book", OrderBookDeserializer, cursor, params) returns expected
+      network.orderBookSource(selling, buying, cursor) mustEqual expected
+    }
+
     "fetch a stream of payment operations" >> {
       val network = new MockNetwork
       val ops = Gen.listOf(genTransacted(genPayOperation)).sample.get
@@ -310,6 +387,14 @@ class NetworkSpec(implicit ee: ExecutionEnv) extends Specification with Arbitrar
       network.payments() must containTheSameElementsAs(ops).await
     }
 
+    "provide a source of payment operations" >> prop { cursor: HorizonCursor =>
+      val network = new MockNetwork
+      val op = mock[Transacted[PaymentOperation]]
+      val expectedSource: Source[Transacted[Operation], NotUsed] = Source.fromFuture(Future(op.asInstanceOf[Transacted[Operation]]))
+      network.horizon.getSource("/payments", TransactedOperationDeserializer, cursor) returns expectedSource
+      network.paymentsSource(cursor).toMat(Sink.seq)(Keep.right).run must beEqualTo(Seq(op)).awaitFor(10.seconds)
+    }
+
     "fetch a stream of payment operations for an account" >> prop { account: PublicKey =>
       val network = new MockNetwork
       val ops = Gen.listOf(genTransacted(genPayOperation)).sample.get
@@ -317,6 +402,14 @@ class NetworkSpec(implicit ee: ExecutionEnv) extends Specification with Arbitrar
       network.horizon.getStream[Transacted[Operation]](s"/accounts/${account.accountId}/payments", TransactedOperationDeserializer, Record(0), Asc) returns
         expected.asInstanceOf[Future[Stream[Transacted[Operation]]]]
       network.paymentsByAccount(account) must containTheSameElementsAs(ops).await
+    }
+
+    "provide a source of payment operations for an account" >> prop { (account: PublicKey, cursor: HorizonCursor) =>
+      val network = new MockNetwork
+      val op = mock[Transacted[PaymentOperation]]
+      val expectedSource: Source[Transacted[Operation], NotUsed] = Source.fromFuture(Future(op.asInstanceOf[Transacted[Operation]]))
+      network.horizon.getSource(s"/accounts/${account.accountId}/payments", TransactedOperationDeserializer, cursor) returns expectedSource
+      network.paymentsByAccountSource(account, cursor).toMat(Sink.seq)(Keep.right).run must beEqualTo(Seq(op)).awaitFor(10.seconds)
     }
 
     "fetch a stream of payment operations for a ledger" >> prop { ledgerId: Long =>
@@ -413,307 +506,38 @@ class NetworkSpec(implicit ee: ExecutionEnv) extends Specification with Arbitrar
       network.transactionsByAccount(account) mustEqual expected
     }
 
-    "fetch a stream of transactions for a given ledger" >> prop { ledgeId: Long =>
+    "fetch a stream of transactions for a given ledger" >> prop { ledgerId: Long =>
       val network = new MockNetwork
       val expected = Future(mock[Stream[TransactionHistoryResp]])
-      network.horizon.getStream[TransactionHistoryResp](s"/ledgers/$ledgeId/transactions", TransactionHistoryRespDeserializer, Record(0), Asc) returns expected
-      network.transactionsByLedger(ledgeId) mustEqual expected
+      network.horizon.getStream[TransactionHistoryResp](s"/ledgers/$ledgerId/transactions", TransactionHistoryRespDeserializer, Record(0), Asc) returns expected
+      network.transactionsByLedger(ledgerId) mustEqual expected
+    }
+
+    "provide a source of transactions" >> prop { cursor: HorizonCursor =>
+      val network = new MockNetwork
+      val expected = Source.empty[TransactionHistoryResp]
+      network.horizon.getSource("/transactions", TransactionHistoryRespDeserializer, cursor) returns expected
+      network.transactionSource(cursor) mustEqual expected
+    }
+
+    "provide a source of transactions by account" >> prop { (pk: PublicKey, cursor: HorizonCursor) =>
+      val network = new MockNetwork
+      val expected = Source.empty[TransactionHistoryResp]
+      network.horizon.getSource(s"/accounts/${pk.accountId}/transactions", TransactionHistoryRespDeserializer, cursor) returns expected
+      network.transactionsByAccountSource(pk, cursor) mustEqual expected
+    }
+
+    "provide a source of transactions by ledger" >> prop { ledgerId: Long =>
+      val network = new MockNetwork
+      val expected = Source.empty[TransactionHistoryResp]
+      network.horizon.getSource(s"/ledgers/$ledgerId/transactions", TransactionHistoryRespDeserializer, Now) returns expected
+      network.transactionsByLedgerSource(ledgerId) mustEqual expected
     }
   }
-
-  //noinspection ScalaUnusedSymbol
-  // $COVERAGE-OFF$
-  "query documentation" should {
-    val TestNetwork = new DoNothingNetwork
-    val accountId = "GCXYKQF35XWATRB6AWDDV2Y322IFU2ACYYN5M2YB44IBWAIITQ4RYPXK"
-    val publicKey = KeyPair.fromAccountId(accountId)
-
-    "be present for accounts" >> {
-      // #account_query_examples
-      val accountId = "GCXYKQF35XWATRB6AWDDV2Y322IFU2ACYYN5M2YB44IBWAIITQ4RYPXK"
-      val publicKey = KeyPair.fromAccountId(accountId)
-
-      // account details
-      val accountDetails: Future[AccountResp] = TestNetwork.account(publicKey)
-
-      // account datum value
-      val accountData: Future[String] = TestNetwork.accountData(publicKey, "data_key")
-      // #account_query_examples
-
-      ok
-    }
-
-    "be present for assets" >> {
-      // #asset_query_examples
-      // stream of all assets from all issuers
-      val allAssets: Future[Stream[AssetResp]] = TestNetwork.assets()
-
-      // stream of the last 20 assets created
-      val last20Assets =
-        TestNetwork.assets(cursor = Now, order = Desc).map(_.take(20))
-
-      // stream of assets with the code HUG
-      val hugAssets: Future[Stream[AssetResp]] = TestNetwork.assets(code = Some("HUG"))
-
-      // stream of assets from the specified issuer
-      val issuerAssets: Future[Stream[AssetResp]] =
-        TestNetwork.assets(issuer = Some(publicKey))
-
-      // Stream (of max length 1) of HUG assets from the issuer
-      val issuersHugAsset: Future[Stream[AssetResp]] =
-        TestNetwork.assets(code = Some("HUG"), issuer = Some(publicKey))
-      // #asset_query_examples
-      ok
-    }
-
-    "be present for effects" >> {
-      // #effect_query_examples
-      // stream of all effects
-      val allEffects: Future[Stream[EffectResp]] = TestNetwork.effects()
-
-      // stream of the last 20 effects
-      val last20Effects =
-        TestNetwork.effects(cursor = Now, order = Desc).map(_.take(20))
-
-      // stream of effects related to a specific account
-      val effectsForAccount = TestNetwork.effectsByAccount(publicKey)
-
-      // stream of effects related to a specific transaction hash
-      val effectsForTxn: Future[Stream[EffectResp]] =
-        TestNetwork.effectsByTransaction("f00cafe...")
-
-      // stream of effects related to a specific operation id
-      val effectsForOperationId: Future[Stream[EffectResp]] =
-        TestNetwork.effectsByOperation(123L)
-
-      // stream of effects for a specific ledger
-      val effectsForLedger = TestNetwork.effectsByLedger(1234)
-      // #effect_query_examples
-      ok
-    }
-
-    "be present for ledgers" >> {
-      // #ledger_query_examples
-      // details of a specific ledger
-      val ledger: Future[LedgerResp] = TestNetwork.ledger(1234)
-
-      // stream of all ledgers
-      val ledgers: Future[Stream[LedgerResp]] = TestNetwork.ledgers()
-
-      // stream of the last 20 ledgers
-      val last20Ledgers =
-        TestNetwork.ledgers(cursor = Now, order = Desc).map(_.take(20))
-      // #ledger_query_examples
-      ok
-    }
-
-    "be present for offers" >> {
-      // #offer_query_examples
-      // all offers for a specified account
-      val offersByAccount: Future[Stream[OfferResp]] =
-        TestNetwork.offersByAccount(publicKey)
-
-      // most recent offers from a specified account
-      val last20Offers = TestNetwork
-        .offersByAccount(publicKey, order = Desc, cursor = Now).map(_.take(20))
-      // #offer_query_examples
-      ok
-    }
-
-    "be present for operations" >> {
-      // #operation_query_examples
-      // details of a specific operation
-      val operation: Future[Transacted[Operation]] = TestNetwork.operation(1234)
-
-      // stream of all operations
-      val operations: Future[Stream[Transacted[Operation]]] = TestNetwork.operations()
-
-      // stream of operations from a specified account
-      val opsForAccount: Future[Stream[Transacted[Operation]]] =
-        TestNetwork.operationsByAccount(publicKey)
-
-      // stream of operations from a specified ledger
-      val opsForLedger: Future[Stream[Transacted[Operation]]] =
-        TestNetwork.operationsByLedger(1234)
-
-      // stream of operations from a transaction specified by its hash
-      val opsForTxn: Future[Stream[Transacted[Operation]]] =
-        TestNetwork.operationsByTransaction("f00cafe...")
-      // #operation_query_examples
-
-      ok
-    }
-
-    "be present for orderbooks" >> {
-      // #orderbook_query_examples
-      // the XLM/HUG orderbook with up to 20 offers
-      val hugOrderBook: Future[OrderBook] = TestNetwork.orderBook(
-        selling = NativeAsset,
-        buying = Asset("HUG", publicKey)
-      )
-
-      // the FabulousBeer/HUG orderbook with up to 100 offers
-      val beerForHugsBigOrderBook: Future[OrderBook] = TestNetwork.orderBook(
-        selling = Asset("FabulousBeer", publicKey),
-        buying = Asset("HUG", publicKey),
-        limit = 100
-      )
-      // #orderbook_query_examples
-      ok
-    }
-
-    "be present for payments" >> {
-      // #payment_query_examples
-      // stream of all payment operations
-      val payments: Future[Stream[Transacted[PayOperation]]] = TestNetwork.payments()
-
-      // stream of payment operations involving a specified account
-      val accountPayments = TestNetwork.paymentsByAccount(publicKey)
-
-      // stream of payment operations in a specified ledger
-      val ledgerPayments = TestNetwork.paymentsByLedger(1234)
-
-      // stream of payment operations in a specified transaction
-      val transactionPayments = TestNetwork.paymentsByTransaction("bee042...")
-      // #payment_query_examples
-      ok
-    }
-
-    "be present for trades" >> {
-      // #trade_query_examples
-      // stream of all trades
-      val trades: Future[Stream[Trade]] = TestNetwork.trades()
-
-      // stream of trades belonging to a specified orderbook
-      val orderBookTrades: Future[Stream[Trade]] = TestNetwork.tradesByOrderBook(
-        base = NativeAsset,
-        counter = Asset("HUG", publicKey)
-      )
-
-      // stream of trades that are created as a result of the specified offer
-      val offerBookTrades: Future[Stream[Trade]] = TestNetwork.tradesByOfferId(1234)
-      // #trade_query_examples
-      ok
-    }
-
-    "be present for transactions" >> {
-      // #transaction_query_examples
-      // stream of all transactions
-      val transactions: Future[Stream[TransactionHistoryResp]] =
-        TestNetwork.transactions()
-
-      // stream of transactions affecting the specified account
-      val accountTxns = TestNetwork.transactionsByAccount(publicKey)
-
-      // stream of transactions within the specified ledger
-      val ledgerTxns = TestNetwork.transactionsByLedger(1234)
-      // #transaction_query_examples
-      ok
-    }
-  }
-
-  //noinspection ScalaUnusedSymbol
-  "transaction documentation" should {
-    val Array(sourceKey, aliceKey, bobKey, charlieKey) = Array.fill(4)(KeyPair.random)
-    val nextSequenceNumber = 1234
-
-    "show how to create a transaction with operations" >> {
-      // #transaction_createwithops_example
-      val account = Account(sourceKey, nextSequenceNumber)
-      val txn = Transaction(account, Seq(
-        CreateAccountOperation(aliceKey),
-        CreateAccountOperation(bobKey),
-        PaymentOperation(charlieKey, Amount.lumens(42))
-      ))
-      // #transaction_createwithops_example
-      ok
-    }
-
-    "show how to add operations afterwards" >> {
-      val account = Account(sourceKey, nextSequenceNumber)
-      // #transaction_addops_example
-      val txn = Transaction(account)
-        .add(PaymentOperation(aliceKey, Amount.lumens(100)))
-        .add(PaymentOperation(bobKey, Amount.lumens(77)))
-        .add(PaymentOperation(charlieKey, Amount.lumens(4.08)))
-        .add(CreateOfferOperation(
-          selling = Amount.lumens(100),
-          buying = Asset("FRUITCAKE42", aliceKey),
-          price = Price(100, 1)
-        ))
-      // #transaction_addops_example
-      ok
-    }
-
-    "show signing" >> {
-      val account = Account(sourceKey, nextSequenceNumber)
-      val operation = PaymentOperation(aliceKey, Amount.lumens(100))
-      // #transaction_signing_example
-      val transaction = Transaction(account).add(operation)
-      val signedTransaction: SignedTransaction = transaction.sign(sourceKey)
-      // #transaction_signing_example
-      ok
-    }
-
-    "show signing of a joint account" >> {
-      val jointAccount = Account(sourceKey, nextSequenceNumber)
-      val operation = PaymentOperation(aliceKey, Amount.lumens(100))
-      // #joint_transaction_signing_example
-      val transaction = Transaction(jointAccount).add(operation)
-      val signedTransaction: SignedTransaction = transaction.sign(aliceKey, bobKey)
-      // #joint_transaction_signing_example
-      ok
-    }
-
-    "show submitting" >> {
-      val account = Account(sourceKey, nextSequenceNumber)
-      val operation = PaymentOperation(aliceKey, Amount.lumens(100))
-      // #transaction_submit_example
-      val transaction = Transaction(account).add(operation).sign(sourceKey)
-      val response: Future[TransactionPostResp] = transaction.submit()
-      // #transaction_submit_example
-      ok
-    }
-
-    "show checking of response" >> {
-      val account = Account(sourceKey, nextSequenceNumber)
-      val operation = PaymentOperation(aliceKey, Amount.lumens(100))
-      // #transaction_response_example
-      Transaction(account).add(operation).sign(sourceKey).submit().foreach {
-        response => println(response.result.getFeeCharged)
-      }
-      // #transaction_response_example
-      ok
-    }
-  }
-  // $COVERAGE-ON$
 
   class MockNetwork extends Network {
     override val passphrase: String = "Scala SDK mock network"
     override val horizon: HorizonAccess = mock[HorizonAccess]
   }
 
-  class DoNothingNetwork extends Network {
-    override val passphrase: String = "Scala SDK do-nothing network"
-    override val horizon: HorizonAccess = new HorizonAccess {
-      override def post(txn: SignedTransaction)(implicit ec: ExecutionContext): Future[TransactionPostResp] =
-        mock[Future[TransactionPostResp]]
-
-      override def get[T: ClassTag](path: String, params: Map[String, String])
-                                   (implicit ec: ExecutionContext, m: Manifest[T]): Future[T] =
-        if (path.endsWith("data/data_key")) {
-          Future(DataValueResp("00").asInstanceOf[T])(ec)
-        } else {
-          mock[Future[T]]
-        }
-
-      override def getStream[T: ClassTag](path: String, de: CustomSerializer[T], cursor: HorizonCursor, order: HorizonOrder, params: Map[String, String] = Map.empty)
-                                         (implicit ec: ExecutionContext, m: Manifest[T]): Future[Stream[T]] =
-        mock[Future[Stream[T]]]
-
-//      override def getPage[T: ClassTag](path: String, params: Map[String, String])
-//                                       (implicit ec: ExecutionContext, de: CustomSerializer[T], m: Manifest[T]): Future[Page[T]] =
-//        mock[Future[Page[T]]]
-    }
-  }
 }

@@ -69,5 +69,6 @@ is [@jem](https://keybase.io/jem).
 
 * [Transacting](transacting.md)
 * [Queries](queries.md)
+* [Sources](sources.md)
 
 @@@

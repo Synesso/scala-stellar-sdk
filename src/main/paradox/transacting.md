@@ -30,11 +30,11 @@ Without any @scaladoc[Operation](stellar.sdk.op.Operation)s, a transaction is no
 one and as many and one hundred operations added to each Transaction. These can be provided when constructing the
 Transaction.
 
-@@snip [NetworkSpec.scala](../../test/scala/stellar/sdk/NetworkSpec.scala) { #transaction_createwithops_example }
+@@snip [DocExamples.scala](../../test/scala/stellar/sdk/DocExamples.scala) { #transaction_createwithops_example }
 
 Or they can be added afterwards.
 
-@@snip [NetworkSpec.scala](../../test/scala/stellar/sdk/NetworkSpec.scala) { #transaction_addops_example }
+@@snip [DocExamples.scala](../../test/scala/stellar/sdk/DocExamples.scala) { #transaction_addops_example }
 
 The available operations are:
 
@@ -64,13 +64,13 @@ constructor parameter `sourceAccount: Option[PublicKey]` where the source accoun
 Before a transaction will be accepted by the network, it must be signed with at least one key. In the most basic case,
 the transaction only needs to be signed by the source account. This is done by calling `.sign(KeyPair)`.
 
-@@snip [NetworkSpec.scala](../../test/scala/stellar/sdk/NetworkSpec.scala) { #transaction_signing_example }
+@@snip [DocExamples.scala](../../test/scala/stellar/sdk/DocExamples.scala) { #transaction_signing_example }
 
 It may be that the source account has been modified to require more than one signature. Or, as mentioned earlier, one or
 more of the operations may affect other accounts. In either of these cases, the transaction will not be valid until it
 has received all necessary signatures.
 
-@@snip [NetworkSpec.scala](../../test/scala/stellar/sdk/NetworkSpec.scala) { #joint_transaction_signing_example }
+@@snip [DocExamples.scala](../../test/scala/stellar/sdk/DocExamples.scala) { #joint_transaction_signing_example }
 
 Additionally, a transaction will fail if it has too many signatures.
 
@@ -78,13 +78,13 @@ Additionally, a transaction will fail if it has too many signatures.
 
 Once a transaction is signed (and therefore is of type `SignedTransaction`) it can be submitted to the network.
 
-@@snip [NetworkSpec.scala](../../test/scala/stellar/sdk/NetworkSpec.scala) { #transaction_submit_example }
+@@snip [DocExamples.scala](../../test/scala/stellar/sdk/DocExamples.scala) { #transaction_submit_example }
 
 The eventual resulting @scaladoc[TransactionPostResp](stellar.sdk.resp.TransactionPostResp) contains metadata about the
 processed transaction, including the full results encoded as [XDR](https://www.stellar.org/developers/guides/concepts/xdr.html).
 Additionally, the XDR can be decoded on the fly by calling the relevant convenience methods.
 
-@@snip [NetworkSpec.scala](../../test/scala/stellar/sdk/NetworkSpec.scala) { #transaction_response_example }
+@@snip [DocExamples.scala](../../test/scala/stellar/sdk/DocExamples.scala) { #transaction_response_example }
 
 ## XDR
 
@@ -92,11 +92,11 @@ Transactions can be serialized to a base64-encoding of their XDR form. This is a
 that is compatible across all supporting Stellar libraries and tooling. Given this, it is possible to save and load
 transaction state via XDR strings.
 
-@@snip [NetworkSpec.scala](../../test/scala/stellar/sdk/TransactionSpec.scala) { #xdr_serde_example }
+@@snip [DocExamples.scala](../../test/scala/stellar/sdk/TransactionSpec.scala) { #xdr_serde_example }
 
 Transactions with signatures are a different data structure (signatures are included in an envelope along with the transaction)
 and need to be decoded via a similar method on `SignedTransaction`.
 
-@@snip [NetworkSpec.scala](../../test/scala/stellar/sdk/TransactionSpec.scala) { #xdr_signed_serde_example }
+@@snip [DocExamples.scala](../../test/scala/stellar/sdk/TransactionSpec.scala) { #xdr_signed_serde_example }
 
-
+Continue reading to learn how to obtain historical data from network via @ref:[Queries](queries.md).

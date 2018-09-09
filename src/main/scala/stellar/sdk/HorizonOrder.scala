@@ -1,5 +1,4 @@
-package stellar.sdk.inet
-
+package stellar.sdk
 
 sealed trait HorizonOrder {
   def paramValue: String
