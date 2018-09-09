@@ -5,38 +5,40 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta http-equiv="x-ua-compatible" content="ie=edge">
 <meta name="description" content="scala-stellar-sdk">
-<meta name="generator" content="Paradox, paradox-material-theme=0.4.0, mkdocs-material=2.2.2">
+<meta name="generator" content="Paradox, paradox-material-theme=0.5.0, mkdocs-material=3.0.3">
 
 <meta name="lang:clipboard.copy" content="Copy to clipboard">
 <meta name="lang:clipboard.copied" content="Copied to clipboard">
+<meta name="lang:search.language" content="">
+<meta name="lang:search.pipeline.stopwords" content="true">
+<meta name="lang:search.pipeline.trimmer" content="true">
 <meta name="lang:search.result.none" content="No matching documents">
 <meta name="lang:search.result.one" content="1 matching document">
 <meta name="lang:search.result.other" content="# matching documents">
-<meta name="lang:search.language" content="">
 <meta name="lang:search.tokenizer" content="">
 
 
 <meta name="description" content="scala-stellar-sdk">
 <link rel="shortcut icon" href="assets/images/favicon.png">
 <title>Transacting · Stellar SDK for Scala</title>
-<link rel="stylesheet" href="assets/stylesheets/application.7a4cdee3.css">
+<link rel="stylesheet" href="assets/stylesheets/application.451f80e5.css">
 <link rel="stylesheet" href="lib/material__tabs/dist/mdc.tabs.min.css">
 <link rel="stylesheet" href="lib/prettify/prettify.css">
-<script src="lib/modernizr/modernizr.min.js"></script>
+<script src="assets/javascripts/modernizr.1aa3b519.js"></script>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700|Roboto+Mono">
 <style>
 body,input{font-family:"Roboto","Helvetica Neue",Helvetica,Arial,sans-serif}
 code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}
 </style>
-<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="assets/fonts/font-awesome.css">
+<link rel="stylesheet" href="assets/fonts/material-icons.css">
 <link rel="stylesheet" href="assets/stylesheets/paradox-material-theme.css">
 </head>
 <body
 >
-<input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="drawer">
-<input class="md-toggle" data-md-toggle="search" type="checkbox" id="search">
-<label class="md-overlay" data-md-component="overlay" for="drawer"></label>
+<input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+<input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+<label class="md-overlay" data-md-component="overlay" for="__drawer"></label>
 <header class="md-header" data-md-component="header">
 <nav class="md-header-nav md-grid">
 <div class="md-flex">
@@ -46,7 +48,7 @@ code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}
 </a>
 </div>
 <div class="md-flex__cell md-flex__cell--shrink">
-<label class="md-icon md-icon--menu md-header-nav__button" for="drawer"></label>
+<label class="md-icon md-icon--menu md-header-nav__button" for="__drawer"></label>
 </div>
 <div class="md-flex__cell md-flex__cell--stretch">
 <div class="md-flex__ellipsis md-header-nav__title" data-md-component="title">
@@ -89,9 +91,10 @@ synesso/scala-stellar-sdk
 <div class="md-sidebar__inner">
 <nav class="md-nav md-nav--primary" data-md-level="0" style="visibility: hidden">
 <label class="md-nav__title md-nav__title--site" for="drawer">
+<a href="index.html" title="Stellar SDK for Scala" class="md-nav__button md-logo">
 <span class="md-nav__button md-logo">
 <i class="md-icon">local_library</i>
-</span>
+</a>
 <a href="index.html" title="Stellar SDK for Scala">
 Stellar SDK for Scala
 </a>
@@ -113,9 +116,10 @@ synesso/scala-stellar-sdk
 <ul>
   <li><a href="transacting.html" class="active page">Transacting</a></li>
   <li><a href="queries.html" class="page">Queries</a></li>
+  <li><a href="sources.html" class="page">Sources</a></li>
 </ul>
 <nav class="md-nav md-nav--secondary">
-<label class="md-nav__title" for="toc">Table of contents</label>
+<label class="md-nav__title" for="__toc">Table of contents</label>
 <ul>
   <li><a href="transacting.html#transacting" class="header">Transacting</a>
   <ul>
@@ -126,11 +130,14 @@ synesso/scala-stellar-sdk
 </ul>
 </nav>
 
-<div class="md-nav__title--site md-version" title="Version">
-<i class="md-icon">label_outline</i> 0.2.2
-</div>
 </nav>
-
+<ul style="display: none">
+<li class="md-nav__item md-version" id="project.version">
+<label class="md-nav__link" for="__version">
+<i class="md-icon" title="Version">label_outline</i> 0.3.2
+</label>
+</li>
+</ul>
 </div>
 </div>
 </div>
@@ -138,7 +145,7 @@ synesso/scala-stellar-sdk
 <div class="md-sidebar__scrollwrap">
 <div class="md-sidebar__inner">
 <nav class="md-nav md-nav--secondary">
-<label class="md-nav__title" for="toc">Table of contents</label>
+<label class="md-nav__title" for="__toc">Table of contents</label>
 <ul>
   <li><a href="transacting.html#transacting" class="header">Transacting</a>
   <ul>
@@ -162,7 +169,7 @@ synesso/scala-stellar-sdk
 <p>Additionally, a <code>Network</code> must be implicit in scope. The choice of network will affect how the transaction is serialised.</p>
 <pre class="prettyprint"><code class="language-scala">implicit val network = TestNetwork
 val account = Account(accn, sequence)
-Transaction(account)</code></pre><a href="https://github.com/Synesso/scala-stellar-sdk/tree/v0.2.2/src/it/scala/stellar/sdk/FriendbotSpec.scala#L27-L29">Full source at GitHub</a>
+Transaction(account)</code></pre><a href="https://github.com/Synesso/scala-stellar-sdk/tree/v0.3.2/src/it/scala/stellar/sdk/FriendBotSpec.scala#L27-L29">Full source at GitHub</a>
 <h3><a href="#sequence-number" name="sequence-number" class="anchor"><span class="anchor-link"></span></a>Sequence Number</h3>
 <p>The sequence number for a new account is the id of the ledger in which is was created. The id increments by one with every submitted transaction. In simple architectures, it is possible to keep track of the next sequence number without querying the network. However, if this is not possible, or the number is unknown, you can directly substitute the response from the <a href="queries.html#accounts">account query</a> into the <code>Transaction</code> constructor.</p>
 <pre class="prettyprint"><code class="language-scala">  for {
@@ -171,7 +178,7 @@ Transaction(account)</code></pre><a href="https://github.com/Synesso/scala-stell
       .add(PaymentOperation(payeePublicKey, Amount.lumens(5000)))
       .sign(payerKeyPair)
       .submit()
-  } yield response</code></pre><a href="https://github.com/Synesso/scala-stellar-sdk/tree/v0.2.2/src/it/scala/stellar/sdk/LocalNetworkIntegrationSpec.scala#L120-L126">Full source at GitHub</a>
+  } yield response</code></pre><a href="https://github.com/Synesso/scala-stellar-sdk/tree/v0.3.2/src/it/scala/stellar/sdk/LocalNetworkIntegrationSpec.scala#L121-L127">Full source at GitHub</a>
 <p>As this example shows, transactions require additional data before they can be successfully processed.</p>
 <h3><a href="#operations" name="operations" class="anchor"><span class="anchor-link"></span></a>Operations</h3>
 <p>Without any <a href="https://synesso.github.io/scala-stellar-sdk/api/stellar/sdk/op/Operation.html">Operation</a>s, a transaction is not very useful. There can be as few as one and as many and one hundred operations added to each Transaction. These can be provided when constructing the Transaction.</p>
@@ -180,7 +187,7 @@ val txn = Transaction(account, Seq(
   CreateAccountOperation(aliceKey),
   CreateAccountOperation(bobKey),
   PaymentOperation(charlieKey, Amount.lumens(42))
-))</code></pre><a href="https://github.com/Synesso/scala-stellar-sdk/tree/v0.2.2/src/test/scala/stellar/sdk/NetworkSpec.scala#L622-L627">Full source at GitHub</a>
+))</code></pre><a href="https://github.com/Synesso/scala-stellar-sdk/tree/v0.3.2/src/test/scala/stellar/sdk/DocExamples.scala#L285-L290">Full source at GitHub</a>
 <p>Or they can be added afterwards.</p>
 <pre class="prettyprint"><code class="language-scala">val txn = Transaction(account)
   .add(PaymentOperation(aliceKey, Amount.lumens(100)))
@@ -190,7 +197,7 @@ val txn = Transaction(account, Seq(
     selling = Amount.lumens(100),
     buying = Asset(&quot;FRUITCAKE42&quot;, aliceKey),
     price = Price(100, 1)
-  ))</code></pre><a href="https://github.com/Synesso/scala-stellar-sdk/tree/v0.2.2/src/test/scala/stellar/sdk/NetworkSpec.scala#L635-L643">Full source at GitHub</a>
+  ))</code></pre><a href="https://github.com/Synesso/scala-stellar-sdk/tree/v0.3.2/src/test/scala/stellar/sdk/DocExamples.scala#L298-L306">Full source at GitHub</a>
 <p>The available operations are:</p>
 <ul>
   <li><a href="https://synesso.github.io/scala-stellar-sdk/api/stellar/sdk/op/AccountMergeOperation.html">AccountMerge</a></li>
@@ -213,28 +220,29 @@ val txn = Transaction(account, Seq(
 <h3><a href="#signatures" name="signatures" class="anchor"><span class="anchor-link"></span></a>Signatures</h3>
 <p>Before a transaction will be accepted by the network, it must be signed with at least one key. In the most basic case, the transaction only needs to be signed by the source account. This is done by calling <code>.sign(KeyPair)</code>.</p>
 <pre class="prettyprint"><code class="language-scala">val transaction = Transaction(account).add(operation)
-val signedTransaction: SignedTransaction = transaction.sign(sourceKey)</code></pre><a href="https://github.com/Synesso/scala-stellar-sdk/tree/v0.2.2/src/test/scala/stellar/sdk/NetworkSpec.scala#L652-L653">Full source at GitHub</a>
+val signedTransaction: SignedTransaction = transaction.sign(sourceKey)</code></pre><a href="https://github.com/Synesso/scala-stellar-sdk/tree/v0.3.2/src/test/scala/stellar/sdk/DocExamples.scala#L315-L316">Full source at GitHub</a>
 <p>It may be that the source account has been modified to require more than one signature. Or, as mentioned earlier, one or more of the operations may affect other accounts. In either of these cases, the transaction will not be valid until it has received all necessary signatures.</p>
 <pre class="prettyprint"><code class="language-scala">val transaction = Transaction(jointAccount).add(operation)
-val signedTransaction: SignedTransaction = transaction.sign(aliceKey, bobKey)</code></pre><a href="https://github.com/Synesso/scala-stellar-sdk/tree/v0.2.2/src/test/scala/stellar/sdk/NetworkSpec.scala#L662-L663">Full source at GitHub</a>
+val signedTransaction: SignedTransaction = transaction.sign(aliceKey, bobKey)</code></pre><a href="https://github.com/Synesso/scala-stellar-sdk/tree/v0.3.2/src/test/scala/stellar/sdk/DocExamples.scala#L325-L326">Full source at GitHub</a>
 <p>Additionally, a transaction will fail if it has too many signatures.</p>
 <h2><a href="#submitting" name="submitting" class="anchor"><span class="anchor-link"></span></a>Submitting</h2>
 <p>Once a transaction is signed (and therefore is of type <code>SignedTransaction</code>) it can be submitted to the network.</p>
 <pre class="prettyprint"><code class="language-scala">val transaction = Transaction(account).add(operation).sign(sourceKey)
-val response: Future[TransactionPostResp] = transaction.submit()</code></pre><a href="https://github.com/Synesso/scala-stellar-sdk/tree/v0.2.2/src/test/scala/stellar/sdk/NetworkSpec.scala#L672-L673">Full source at GitHub</a>
+val response: Future[TransactionPostResp] = transaction.submit()</code></pre><a href="https://github.com/Synesso/scala-stellar-sdk/tree/v0.3.2/src/test/scala/stellar/sdk/DocExamples.scala#L335-L336">Full source at GitHub</a>
 <p>The eventual resulting <a href="https://synesso.github.io/scala-stellar-sdk/api/stellar/sdk/resp/TransactionPostResp.html">TransactionPostResp</a> contains metadata about the processed transaction, including the full results encoded as <a href="https://www.stellar.org/developers/guides/concepts/xdr.html">XDR</a>. Additionally, the XDR can be decoded on the fly by calling the relevant convenience methods.</p>
 <pre class="prettyprint"><code class="language-scala">Transaction(account).add(operation).sign(sourceKey).submit().foreach {
   response =&gt; println(response.result.getFeeCharged)
-}</code></pre><a href="https://github.com/Synesso/scala-stellar-sdk/tree/v0.2.2/src/test/scala/stellar/sdk/NetworkSpec.scala#L682-L684">Full source at GitHub</a>
+}</code></pre><a href="https://github.com/Synesso/scala-stellar-sdk/tree/v0.3.2/src/test/scala/stellar/sdk/DocExamples.scala#L345-L347">Full source at GitHub</a>
 <h2><a href="#xdr" name="xdr" class="anchor"><span class="anchor-link"></span></a>XDR</h2>
 <p>Transactions can be serialized to a base64-encoding of their XDR form. This is a strictly-defined format for transactions that is compatible across all supporting Stellar libraries and tooling. Given this, it is possible to save and load transaction state via XDR strings.</p>
 <pre class="prettyprint"><code class="language-scala">val encoded: String = txn.encodeXDR
 val decoded: Transaction = Transaction.decodeXDR(encoded)
-decoded must beEquivalentTo(txn)</code></pre><a href="https://github.com/Synesso/scala-stellar-sdk/tree/v0.2.2/src/test/scala/stellar/sdk/TransactionSpec.scala#L108-L110">Full source at GitHub</a>
+decoded must beEquivalentTo(txn)</code></pre><a href="https://github.com/Synesso/scala-stellar-sdk/tree/v0.3.2/src/test/scala/stellar/sdk/TransactionSpec.scala#L108-L110">Full source at GitHub</a>
 <p>Transactions with signatures are a different data structure (signatures are included in an envelope along with the transaction) and need to be decoded via a similar method on <code>SignedTransaction</code>.</p>
 <pre class="prettyprint"><code class="language-scala">val encoded: String = signedTxn.encodeXDR
 val decoded: SignedTransaction = SignedTransaction.decodeXDR(encoded)
-decoded must beEquivalentTo(signedTxn)</code></pre><a href="https://github.com/Synesso/scala-stellar-sdk/tree/v0.2.2/src/test/scala/stellar/sdk/TransactionSpec.scala#L116-L118">Full source at GitHub</a>
+decoded must beEquivalentTo(signedTxn)</code></pre><a href="https://github.com/Synesso/scala-stellar-sdk/tree/v0.3.2/src/test/scala/stellar/sdk/TransactionSpec.scala#L116-L118">Full source at GitHub</a>
+<p>Continue reading to learn how to obtain historical data from network via <a href="queries.html">Queries</a>.</p>
 </div>
 <div>
 <a href="https://github.com/Synesso/scala-stellar-sdk/tree/master/src/main/paradox/transacting.md" title="Edit this page" class="md-source-file md-edit">
@@ -243,7 +251,7 @@ Edit this page
 </div>
 <div class="print-only">
 <span class="md-source-file md-version">
-0.2.2
+0.3.2
 </span>
 </div>
 </article>
@@ -299,7 +307,7 @@ and
 </footer>
 
 </div>
-<script src="assets/javascripts/application.5165553b.js"></script>
+<script src="assets/javascripts/application.583bbe55.js"></script>
 <script src="assets/javascripts/paradox-material-theme.js"></script>
 <script>app.initialize({version:"0.17",url:{base:"."}})</script>
 <script type="text/javascript" src="lib/prettify/prettify.js"></script>
