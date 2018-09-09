@@ -132,7 +132,7 @@ synesso/scala-stellar-sdk
 <ul style="display: none">
 <li class="md-nav__item md-version" id="project.version">
 <label class="md-nav__link" for="__version">
-<i class="md-icon" title="Version">label_outline</i> 0.3.2
+<i class="md-icon" title="Version">label_outline</i> c5d4d1983d46c93c035ef34f69580f3a31a6699a
 </label>
 </li>
 </ul>
@@ -171,19 +171,19 @@ synesso/scala-stellar-sdk
 </ul>
 <p>The code throughout this documentation is compiled against Scala 2.12.</p>
 <h2><a href="#quick-start" name="quick-start" class="anchor"><span class="anchor-link"></span></a>Quick-start</h2>
-<p>Add the SDK via your dependency management tool.</p><dl class="dependency"><dt>sbt</dt><dd><pre class="prettyprint"><code class="language-scala">libraryDependencies += "io.github.synesso" %% "scala-stellar-sdk" % "0.3.2"</code></pre></dd><dt>Maven</dt><dd><pre class="prettyprint"><code class="language-xml">&lt;dependency&gt;
+<p>Add the SDK via your dependency management tool.</p><dl class="dependency"><dt>sbt</dt><dd><pre class="prettyprint"><code class="language-scala">libraryDependencies += "io.github.synesso" %% "scala-stellar-sdk" % "c5d4d1983d46c93c035ef34f69580f3a31a6699a"</code></pre></dd><dt>Maven</dt><dd><pre class="prettyprint"><code class="language-xml">&lt;dependency&gt;
   &lt;groupId&gt;io.github.synesso&lt;/groupId&gt;
   &lt;artifactId&gt;scala-stellar-sdk_2.12&lt;/artifactId&gt;
-  &lt;version&gt;0.3.2&lt;/version&gt;
+  &lt;version&gt;c5d4d1983d46c93c035ef34f69580f3a31a6699a&lt;/version&gt;
 &lt;/dependency&gt;</code></pre></dd><dt>Gradle</dt><dd><pre class="prettyprint"><code class="language-gradle">dependencies {
-  compile group: 'io.github.synesso', name: 'scala-stellar-sdk_2.12', version: '0.3.2'
+  compile group: 'io.github.synesso', name: 'scala-stellar-sdk_2.12', version: 'c5d4d1983d46c93c035ef34f69580f3a31a6699a'
 }</code></pre></dd></dl>
 <p>Creating an account on the public test network.</p>
 <pre class="prettyprint"><code class="language-scala">val kp = KeyPair.random
-val response = TestNetwork.fund(kp)</code></pre><a href="https://github.com/Synesso/scala-stellar-sdk/tree/v0.3.2/src/it/scala/stellar/sdk/FriendBotSpec.scala#L15-L16">Full source at GitHub</a>
+val response = TestNetwork.fund(kp)</code></pre><a href="https://github.com/Synesso/scala-stellar-sdk/tree/master/src/it/scala/stellar/sdk/FriendBotSpec.scala#L15-L16">Full source at GitHub</a>
 <p>Fetching the details of an account.</p>
 <pre class="prettyprint"><code class="language-scala">val account: Future[Account] = network.account(kp).map(_.toAccount)
-val nextSeqNo: Future[Long] = account.map(_.sequenceNumber)</code></pre><a href="https://github.com/Synesso/scala-stellar-sdk/tree/v0.3.2/src/it/scala/stellar/sdk/LocalNetworkIntegrationSpec.scala#L163-L164">Full source at GitHub</a>
+val nextSeqNo: Future[Long] = account.map(_.sequenceNumber)</code></pre><a href="https://github.com/Synesso/scala-stellar-sdk/tree/master/src/it/scala/stellar/sdk/LocalNetworkIntegrationSpec.scala#L163-L164">Full source at GitHub</a>
 <p>Submitting a payment.</p>
 <pre class="prettyprint"><code class="language-scala">  for {
     sourceAccount &lt;- network.account(payerKeyPair)
@@ -191,7 +191,7 @@ val nextSeqNo: Future[Long] = account.map(_.sequenceNumber)</code></pre><a href=
       .add(PaymentOperation(payeePublicKey, Amount.lumens(5000)))
       .sign(payerKeyPair)
       .submit()
-  } yield response</code></pre><a href="https://github.com/Synesso/scala-stellar-sdk/tree/v0.3.2/src/it/scala/stellar/sdk/LocalNetworkIntegrationSpec.scala#L121-L127">Full source at GitHub</a>
+  } yield response</code></pre><a href="https://github.com/Synesso/scala-stellar-sdk/tree/master/src/it/scala/stellar/sdk/LocalNetworkIntegrationSpec.scala#L121-L127">Full source at GitHub</a>
 <p>For more detailed coverage, continue by reading about <a href="transacting.html">Transacting</a>.</p>
 <h2><a href="#api" name="api" class="anchor"><span class="anchor-link"></span></a>API</h2>
 <p>Please enjoy the <a href="api/stellar/sdk">scaladoc</a> for this release.</p>
@@ -210,7 +210,7 @@ Edit this page
 </div>
 <div class="print-only">
 <span class="md-source-file md-version">
-0.3.2
+c5d4d1983d46c93c035ef34f69580f3a31a6699a
 </span>
 </div>
 </article>
