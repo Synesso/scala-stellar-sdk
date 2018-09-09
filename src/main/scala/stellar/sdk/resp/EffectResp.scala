@@ -2,6 +2,7 @@ package stellar.sdk.resp
 
 import org.json4s.DefaultFormats
 import org.json4s.JsonAST.JObject
+import org.json4s.native.JsonMethods._
 import stellar.sdk._
 
 sealed trait EffectResp {
@@ -25,6 +26,8 @@ case class EffectAccountFlagsUpdated(id: String, account: PublicKeyOps) extends 
 case class EffectDataCreated(id: String, account: PublicKeyOps) extends EffectResp
 
 case class EffectDataRemoved(id: String, account: PublicKeyOps) extends EffectResp
+
+case class EffectDataUpdated(id: String, account: PublicKeyOps) extends EffectResp
 
 case class EffectSequenceBumped(id: String, account: PublicKeyOps, newSeq: Long) extends EffectResp
 
@@ -95,6 +98,7 @@ object EffectRespDeserializer extends ResponseParser[EffectResp]({ o: JObject =>
     case "account_flags_updated" => EffectAccountFlagsUpdated(id, account())
     case "data_created" => EffectDataCreated(id, account())
     case "data_removed" => EffectDataRemoved(id, account())
+    case "data_updated" => EffectDataUpdated(id, account())
     case "sequence_bumped" => EffectSequenceBumped(id, account(), (o \ "new_seq").extract[String].toLong)
     case "signer_created" => EffectSignerCreated(id, account(), weight, (o \ "public_key").extract[String])
     case "signer_updated" => EffectSignerUpdated(id, account(), weight, (o \ "public_key").extract[String])
@@ -105,6 +109,6 @@ object EffectRespDeserializer extends ResponseParser[EffectResp]({ o: JObject =>
     case "trustline_authorized" => EffectTrustLineAuthorized(id, account("trustor"), asset(issuerKey = "account").asInstanceOf[NonNativeAsset])
     case "trustline_deauthorized" => EffectTrustLineDeauthorized(id, account("trustor"), asset(issuerKey = "account").asInstanceOf[NonNativeAsset])
     case "trade" => EffectTrade(id, (o \ "offer_id").extract[Long], account(), amount("bought_"), account("seller"), amount("sold_"))
-    case t => throw new RuntimeException(s"Unrecognised effect type '$t'")
+    case t => throw new RuntimeException(s"Unrecognised effect type '$t': ${compact(render(o))}")
   }
 })
