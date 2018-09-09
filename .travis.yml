@@ -32,7 +32,7 @@ before_deploy:
 deploy:
   skip_cleanup: true
   provider: script
-  script: sbt -Dbintray.user=$BINTRAY_USER -Dbintray.pass=$BINTRAY_PASS paradox ghpagesPushSite +publishSigned
+  script: sbt -Dbintray.user=$BINTRAY_USER -Dbintray.pass=$BINTRAY_PASS publishLocal paradox ghpagesPushSite +publishSigned
   on:
     tags: true
     condition: $TRAVIS_PULL_REQUEST = false
