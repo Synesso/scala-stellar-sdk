@@ -33,7 +33,7 @@ Add the SDK via your dependency management tool.
 
 Creating an account on the public test network.
 
-@@snip [FriendbotSpec.scala](../../it/scala/stellar/sdk/FriendbotSpec.scala) { #friendbot_example }
+@@snip [FriendBotSpec.scala](../../it/scala/stellar/sdk/FriendBotSpec.scala) { #friendbot_example }
 
 Fetching the details of an account.
 
