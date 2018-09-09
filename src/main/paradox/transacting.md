@@ -11,7 +11,7 @@ Creating a new `Transaction` instance requires these two values, wrapped in an @
 
 Additionally, a `Network` must be implicit in scope. The choice of network will affect how the transaction is serialised.
 
-@@snip [FriendbotSpec.scala](../../it/scala/stellar/sdk/FriendbotSpec.scala) { #new_transaction_example }
+@@snip [FriendBotSpec.scala](../../it/scala/stellar/sdk/FriendBotSpec.scala) { #new_transaction_example }
 
 ### Sequence Number
 
