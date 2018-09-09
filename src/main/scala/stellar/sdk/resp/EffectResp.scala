@@ -15,6 +15,8 @@ case class EffectAccountCredited(id: String, account: PublicKeyOps, amount: Amou
 
 case class EffectAccountDebited(id: String, account: PublicKeyOps, amount: Amount) extends EffectResp
 
+case class EffectAccountInflationDestinationUpdated(id: String, account: PublicKeyOps) extends EffectResp
+
 case class EffectAccountRemoved(id: String, account: PublicKeyOps) extends EffectResp
 
 case class EffectAccountThresholdsUpdated(id: String, account: PublicKeyOps, thresholds: Thresholds) extends EffectResp
@@ -86,6 +88,7 @@ object EffectRespDeserializer extends ResponseParser[EffectResp]({ o: JObject =>
       EffectAccountCreated(id, account(), startingBalance)
     case "account_credited" => EffectAccountCredited(id, account(), amount())
     case "account_debited" => EffectAccountDebited(id, account(), amount())
+    case "account_inflation_destination_updated" => EffectAccountInflationDestinationUpdated(id, account())
     case "account_removed" => EffectAccountRemoved(id, account())
     case "account_thresholds_updated" =>
       val thresholds = Thresholds(

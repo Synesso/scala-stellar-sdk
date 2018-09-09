@@ -67,6 +67,13 @@ class AccountEffectRespSpec extends Specification with ArbitraryInput {
     }.setGen1(Gen.identifier)
   }
 
+  "an account inflation destination update effect document" should {
+    "parse to an effect" >> prop { (id: String, accn: KeyPair) =>
+      val json = doc(id, accn, "account_inflation_destination_updated")
+      parse(json).extract[EffectResp] mustEqual EffectAccountInflationDestinationUpdated(id, accn.asPublicKey)
+    }.setGen1(Gen.identifier)
+  }
+
   "an account thresholds updated effect document" should {
     "parse to an account thresholds updated effect" >> prop { (id: String, accn: KeyPair, thresholds: Thresholds) =>
       val json = doc(id, accn, "account_thresholds_updated",
