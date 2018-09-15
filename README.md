@@ -8,3 +8,13 @@ Please see the [SDK documentation](https://synesso.github.io/scala-stellar-sdk) 
 ## License
 
 This software is licensed under the Apache 2 license.
+
+## Ack
+
+_A tremendious thanks to the [Stellar Development Foundation](https://www.stellar.org/about/) for their support via their
+[]build challenge program](https://www.stellar.org/lumens/build)._
+
+_Thanks also to [JetBrains](https://www.jetbrains.com/?from=ScalaStellarSDK) for providing an IDE license.
+
+[![JetBrains](https://github.com/JetBrains/logos/blob/master/web/intellij-idea/intellij-idea.svg?sanitise=true)](https://www.jetbrains.com/?from=ScalaStellarSDK)
+
