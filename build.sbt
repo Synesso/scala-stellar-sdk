@@ -75,7 +75,7 @@ lazy val root = (project in file("."))
       "org.specs2" %% "specs2-core" % "4.3.4" % "test,it",
       "org.specs2" %% "specs2-mock" % "4.3.4" % "test",
       "org.specs2" %% "specs2-scalacheck" % "4.3.4" % "test",
-      "com.github.tomakehurst" % "wiremock" % "2.18.0" % "it"
+      "com.github.tomakehurst" % "wiremock" % "2.19.0" % "it"
     )
   )
 

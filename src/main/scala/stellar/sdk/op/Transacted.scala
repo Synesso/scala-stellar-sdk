@@ -9,7 +9,7 @@ import stellar.sdk.resp.ResponseParser
 /**
   * Provides access to additional information related to an operation after it has been transacted in the network.
   */
-case class Transacted[O <: Operation](id: Long,
+case class Transacted[+O <: Operation](id: Long,
                                       txnHash: String,
                                       createdAt: ZonedDateTime,
                                       operation: O)
