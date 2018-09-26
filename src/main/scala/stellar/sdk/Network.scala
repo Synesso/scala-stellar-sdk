@@ -373,6 +373,15 @@ trait Network extends LazyLogging {
   }
 
   /**
+    * Fetch information on a single transaction.
+    * @param transactionId transaction to fetch
+    * @see [[https://www.stellar.org/developers/horizon/reference/endpoints/transactions-single.html endpoint doc]]
+    */
+  def transaction(transactionId: String)(implicit ex: ExecutionContext): Future[TransactionHistoryResp] = {
+    horizon.get[TransactionHistoryResp](s"/transactions/$transactionId")
+  }
+
+  /**
     * Fetch a stream of historical transactions from the cursor.
     * @param cursor optional record id to start results from (defaults to `0`)
     * @param order  optional order to sort results by (defaults to `Asc`)
