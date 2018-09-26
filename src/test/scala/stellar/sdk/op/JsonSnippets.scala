@@ -1,13 +1,14 @@
 package stellar.sdk.op
 
 import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 import stellar.sdk.{Amount, Asset, NonNativeAsset}
 
 trait JsonSnippets {
   val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")
 
-  def amountString(a: Amount): String = f"${a.units / math.pow(10, 7)}%.7f"
+  def amountString(a: Amount): String = "%.7f".formatLocal(Locale.ROOT, a.units / math.pow(10, 7))
 
   def amountDocPortion(amount: Amount, label: String = "amount", assetPrefix: String = ""): String = {
     s"""

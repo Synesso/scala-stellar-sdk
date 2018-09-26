@@ -1,6 +1,7 @@
 package stellar.sdk
 
 import java.math.{MathContext, RoundingMode}
+import java.util.Locale
 
 import scala.util.Try
 
@@ -27,7 +28,7 @@ object Amount {
     (bd * BigDecimal(math.pow(10, decimalPlaces)).round(new MathContext(0, RoundingMode.DOWN))).toLongExact
   }
 
-  def toDisplayUnits(l: Long): String = f"${l / math.pow(10, decimalPlaces)}%.7f"
+  def toDisplayUnits(l: Long): String = "%.7f".formatLocal(Locale.ROOT, l / math.pow(10, decimalPlaces))
 
   def apply(units: Long, asset: Asset): Amount = {
     asset match {

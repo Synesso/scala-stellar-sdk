@@ -27,15 +27,15 @@ class ByteArraysSpec extends Specification with ArbitraryInput {
   "trimming a byte array" should {
     "remove trailing zeros" >> {
       trimmedByteArray(Array()) mustEqual Array()
-      trimmedByteArray("hello".getBytes()) mustEqual "hello".getBytes()
-      trimmedByteArray("hello\u0000\u0000".getBytes()) mustEqual "hello".getBytes()
-      trimmedByteArray("hello\u0000there".getBytes()) mustEqual "hello\u0000there".getBytes()
+      trimmedByteArray("hello".getBytes("UTF-8")) mustEqual "hello".getBytes("UTF-8")
+      trimmedByteArray("hello\u0000\u0000".getBytes("UTF-8")) mustEqual "hello".getBytes("UTF-8")
+      trimmedByteArray("hello\u0000there".getBytes("UTF-8")) mustEqual "hello\u0000there".getBytes("UTF-8")
     }
   }
 
   "sha256" should {
     "hash correctly" >> {
-      val hash = sha256("今日は世界".getBytes)
+      val hash = sha256("今日は世界".getBytes("UTF-8"))
       new BigInteger(1, hash).toString(16).toUpperCase mustEqual
         "72C2CC3C678D77939435E5AE0A0EF2B83D6A42AFB221EA15CD736CB122B23989"
     }

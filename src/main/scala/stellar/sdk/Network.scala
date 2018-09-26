@@ -22,7 +22,7 @@ trait Network extends LazyLogging {
     * The keypair for the master account for this network
     */
   lazy val masterAccount: KeyPair =
-    KeyPair.fromSecretSeed(ByteArrays.sha256(passphrase.getBytes("UTF-8")))
+    KeyPair.fromSecretSeed(ByteArrays.sha256(passphrase.getBytes(UTF_8)))
 
   /**
     * Submit the SignedTransaction to the network and eventually receive a TransactionPostResp with the results.
@@ -45,7 +45,7 @@ trait Network extends LazyLogging {
     * @see [[https://www.stellar.org/developers/horizon/reference/endpoints/data-for-account.html endpoint doc]]
     */
   def accountData(pubKey: PublicKeyOps, dataKey: String)(implicit ec: ExecutionContext): Future[String] =
-    horizon.get[DataValueResp](s"/accounts/${pubKey.accountId}/data/$dataKey").map(_.v).map(base64).map(new String(_))
+    horizon.get[DataValueResp](s"/accounts/${pubKey.accountId}/data/$dataKey").map(_.v).map(base64).map(new String(_, "UTF-8"))
 
   /**
     * Fetch a stream of assets, optionally filtered by code, issuer or neither

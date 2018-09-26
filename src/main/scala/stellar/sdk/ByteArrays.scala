@@ -4,8 +4,6 @@ import java.security.MessageDigest
 
 import org.apache.commons.codec.binary.Base64
 
-import scala.util.Try
-
 object ByteArrays {
 
   def paddedByteArray(bs: Array[Byte], length: Int): Array[Byte] = {
@@ -14,9 +12,9 @@ object ByteArrays {
     padded
   }
 
-  def paddedByteArray(s: String, length: Int): Array[Byte] = paddedByteArray(s.getBytes, length)
+  def paddedByteArray(s: String, length: Int): Array[Byte] = paddedByteArray(s.getBytes("US-ASCII"), length)
 
-  def paddedByteArrayToString(bs: Array[Byte]): String = new String(bs).split("\u0000")(0)
+  def paddedByteArrayToString(bs: Array[Byte]): String = new String(bs, "US-ASCII").split("\u0000")(0)
 
   def trimmedByteArray(bs: Array[Byte]): Array[Byte] = bs.reverse.dropWhile(_ == 0).reverse
 
