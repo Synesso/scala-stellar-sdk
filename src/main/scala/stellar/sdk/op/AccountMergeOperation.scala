@@ -14,7 +14,7 @@ import scala.util.Try
   * @param sourceAccount the account to be merged, if different from the owning account of the transaction
   * @see [[https://www.stellar.org/developers/horizon/reference/resources/operation.html#account-merge endpoint doc]]
   */
-case class AccountMergeOperation(destination: PublicKeyOps, sourceAccount: Option[PublicKeyOps] = None) extends Operation {
+case class AccountMergeOperation(destination: PublicKeyOps, sourceAccount: Option[PublicKeyOps] = None) extends PayOperation {
   override def toOperationBody: OperationBody = {
     val body = new OperationBody
     val id = new AccountID

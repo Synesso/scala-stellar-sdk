@@ -170,7 +170,7 @@ object OperationDeserializer extends ResponseParser[Operation]({ o: JObject =>
 })
 
 /**
-  * Marker trait for any operation that involves a payment (`PaymentOperation`, `CreateAccountOperation`)
+  * Marker trait for any operation that involves a payment (`CreateAccountOperation`, `PaymentOperation`, `PathPaymentOperation`, `AccountMergeOperation`)
   */
 trait PayOperation extends Operation
 
