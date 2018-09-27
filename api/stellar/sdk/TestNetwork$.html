@@ -1326,6 +1326,22 @@
       </span>
       
       <p class="shortcomment cmt">Fetch a stream of trades filtered by orderbook</p><div class="fullcomment"><div class="comment cmt"><p>Fetch a stream of trades filtered by orderbook</p></div><dl class="paramcmts block"><dt class="param">cursor</dt><dd class="cmt"><p>optional record id to start results from (defaults to <code>0</code>)</p></dd><dt class="param">order</dt><dd class="cmt"><p>optional order to sort results by (defaults to <code>Asc</code>)</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="Network.html" class="extype" name="stellar.sdk.Network">Network</a></dd><dt>See also</dt><dd><span class="cmt"><p><a href="https://www.stellar.org/developers/horizon/reference/endpoints/trades.html" target="_blank">endpoint doc</a></p></span></dd></dl></div>
+    </li><li name="stellar.sdk.Network#transaction" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="transaction(transactionId:String)(implicitex:scala.concurrent.ExecutionContext):scala.concurrent.Future[stellar.sdk.resp.TransactionHistoryResp]"></a><a id="transaction(String)(ExecutionContext):Future[TransactionHistoryResp]"></a>
+      <span class="permalink">
+      <a href="../../stellar/sdk/TestNetwork$.html#transaction(transactionId:String)(implicitex:scala.concurrent.ExecutionContext):scala.concurrent.Future[stellar.sdk.resp.TransactionHistoryResp]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">transaction</span><span class="params">(<span name="transactionId">transactionId: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ex">ex: <span class="extype" name="scala.concurrent.ExecutionContext">ExecutionContext</span></span>)</span><span class="result">: <span class="extype" name="scala.concurrent.Future">Future</span>[<a href="resp/TransactionHistoryResp.html" class="extype" name="stellar.sdk.resp.TransactionHistoryResp">TransactionHistoryResp</a>]</span>
+      </span>
+      
+      <p class="shortcomment cmt">Fetch information on a single transaction.</p><div class="fullcomment"><div class="comment cmt"><p>Fetch information on a single transaction.</p></div><dl class="paramcmts block"><dt class="param">transactionId</dt><dd class="cmt"><p>transaction to fetch</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="Network.html" class="extype" name="stellar.sdk.Network">Network</a></dd><dt>See also</dt><dd><span class="cmt"><p><a href="https://www.stellar.org/developers/horizon/reference/endpoints/transactions-single.html" target="_blank">endpoint doc</a></p></span></dd></dl></div>
     </li><li name="stellar.sdk.Network#transactionSource" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="transactionSource(cursor:stellar.sdk.HorizonCursor)(implicitex:scala.concurrent.ExecutionContext):akka.stream.scaladsl.Source[stellar.sdk.resp.TransactionHistoryResp,akka.NotUsed]"></a><a id="transactionSource(HorizonCursor)(ExecutionContext):Source[TransactionHistoryResp,NotUsed]"></a>
       <span class="permalink">

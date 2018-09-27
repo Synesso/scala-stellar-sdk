@@ -199,8 +199,8 @@
                         <a href="PathPaymentOperation.html" title="Represents a payment from one account to another through a path.">PathPaymentOperation</a>
                       </li><li class="current-entities indented3">
                         <span class="separator"></span>
-                        <a class="trait" href="PayOperation.html" title="Marker trait for any operation that involves a payment (PaymentOperation, CreateAccountOperation)"></a>
-                        <a href="PayOperation.html" title="Marker trait for any operation that involves a payment (PaymentOperation, CreateAccountOperation)">PayOperation</a>
+                        <a class="trait" href="PayOperation.html" title="Marker trait for any operation that involves a payment (CreateAccountOperation, PaymentOperation, PathPaymentOperation, AccountMergeOperation)"></a>
+                        <a href="PayOperation.html" title="Marker trait for any operation that involves a payment (CreateAccountOperation, PaymentOperation, PathPaymentOperation, AccountMergeOperation)">PayOperation</a>
                       </li><li class="current-entities indented3">
                         <a class="object" href="PaymentOperation$.html" title=""></a>
                         <a class="class" href="PaymentOperation.html" title="Represents a payment from one account to another."></a>
@@ -248,7 +248,7 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <span class="name">Transacted</span><span class="tparams">[<span name="O">O &lt;: <a href="Operation.html" class="extype" name="stellar.sdk.op.Operation">Operation</a></span>]</span><span class="params">(<span name="id">id: <span class="extype" name="scala.Long">Long</span></span>, <span name="txnHash">txnHash: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="createdAt">createdAt: <span class="extype" name="java.time.ZonedDateTime">ZonedDateTime</span></span>, <span name="operation">operation: <span class="extype" name="stellar.sdk.op.Transacted.O">O</span></span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <span class="name">Transacted</span><span class="tparams">[<span name="O">+O &lt;: <a href="Operation.html" class="extype" name="stellar.sdk.op.Operation">Operation</a></span>]</span><span class="params">(<span name="id">id: <span class="extype" name="scala.Long">Long</span></span>, <span name="txnHash">txnHash: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="createdAt">createdAt: <span class="extype" name="java.time.ZonedDateTime">ZonedDateTime</span></span>, <span name="operation">operation: <span class="extype" name="stellar.sdk.op.Transacted.O">O</span></span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4>
 

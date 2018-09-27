@@ -199,8 +199,8 @@
                         <a href="PathPaymentOperation.html" title="Represents a payment from one account to another through a path.">PathPaymentOperation</a>
                       </li><li class="current-entities indented3">
                         <span class="separator"></span>
-                        <a class="trait" href="PayOperation.html" title="Marker trait for any operation that involves a payment (PaymentOperation, CreateAccountOperation)"></a>
-                        <a href="PayOperation.html" title="Marker trait for any operation that involves a payment (PaymentOperation, CreateAccountOperation)">PayOperation</a>
+                        <a class="trait" href="PayOperation.html" title="Marker trait for any operation that involves a payment (CreateAccountOperation, PaymentOperation, PathPaymentOperation, AccountMergeOperation)"></a>
+                        <a href="PayOperation.html" title="Marker trait for any operation that involves a payment (CreateAccountOperation, PaymentOperation, PathPaymentOperation, AccountMergeOperation)">PayOperation</a>
                       </li><li class="current-entities indented3">
                         <a class="object" href="PaymentOperation$.html" title=""></a>
                         <a class="class" href="PaymentOperation.html" title="Represents a payment from one account to another."></a>
@@ -250,7 +250,7 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <span class="name">AccountMergeOperation</span><span class="params">(<span name="destination">destination: <a href="../PublicKeyOps.html" class="extype" name="stellar.sdk.PublicKeyOps">PublicKeyOps</a></span>, <span name="sourceAccount">sourceAccount: <span class="extype" name="scala.Option">Option</span>[<a href="../PublicKeyOps.html" class="extype" name="stellar.sdk.PublicKeyOps">PublicKeyOps</a>] = <span class="symbol">None</span></span>)</span><span class="result"> extends <a href="Operation.html" class="extype" name="stellar.sdk.op.Operation">Operation</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <span class="name">AccountMergeOperation</span><span class="params">(<span name="destination">destination: <a href="../PublicKeyOps.html" class="extype" name="stellar.sdk.PublicKeyOps">PublicKeyOps</a></span>, <span name="sourceAccount">sourceAccount: <span class="extype" name="scala.Option">Option</span>[<a href="../PublicKeyOps.html" class="extype" name="stellar.sdk.PublicKeyOps">PublicKeyOps</a>] = <span class="symbol">None</span></span>)</span><span class="result"> extends <a href="PayOperation.html" class="extype" name="stellar.sdk.op.PayOperation">PayOperation</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4>
 
@@ -260,7 +260,7 @@
           <span class="toggle">
             Linear Supertypes
           </span>
-          <div class="superTypes hiddenContent"><span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <span class="extype" name="scala.Product">Product</span>, <span class="extype" name="scala.Equals">Equals</span>, <a href="Operation.html" class="extype" name="stellar.sdk.op.Operation">Operation</a>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
+          <div class="superTypes hiddenContent"><span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <span class="extype" name="scala.Product">Product</span>, <span class="extype" name="scala.Equals">Equals</span>, <a href="PayOperation.html" class="extype" name="stellar.sdk.op.PayOperation">PayOperation</a>, <a href="Operation.html" class="extype" name="stellar.sdk.op.Operation">Operation</a>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div></div>
         
 
@@ -286,7 +286,7 @@
                   <span class="filtertype">Inherited<br />
                   </span>
                   <ol id="linearization">
-                    <li class="in" name="stellar.sdk.op.AccountMergeOperation"><span>AccountMergeOperation</span></li><li class="in" name="scala.Serializable"><span>Serializable</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="scala.Product"><span>Product</span></li><li class="in" name="scala.Equals"><span>Equals</span></li><li class="in" name="stellar.sdk.op.Operation"><span>Operation</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                    <li class="in" name="stellar.sdk.op.AccountMergeOperation"><span>AccountMergeOperation</span></li><li class="in" name="scala.Serializable"><span>Serializable</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="scala.Product"><span>Product</span></li><li class="in" name="scala.Equals"><span>Equals</span></li><li class="in" name="stellar.sdk.op.PayOperation"><span>PayOperation</span></li><li class="in" name="stellar.sdk.op.Operation"><span>Operation</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
                   </ol>
                 </div><div class="ancestors">
               <span class="filtertype"></span>
@@ -713,6 +713,8 @@
               <h3>Inherited from <span class="extype" name="scala.Product">Product</span></h3>
             </div><div class="parent" name="scala.Equals">
               <h3>Inherited from <span class="extype" name="scala.Equals">Equals</span></h3>
+            </div><div class="parent" name="stellar.sdk.op.PayOperation">
+              <h3>Inherited from <a href="PayOperation.html" class="extype" name="stellar.sdk.op.PayOperation">PayOperation</a></h3>
             </div><div class="parent" name="stellar.sdk.op.Operation">
               <h3>Inherited from <a href="Operation.html" class="extype" name="stellar.sdk.op.Operation">Operation</a></h3>
             </div><div class="parent" name="scala.AnyRef">

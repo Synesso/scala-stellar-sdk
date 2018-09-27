@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta http-equiv="x-ua-compatible" content="ie=edge">
 <meta name="description" content="scala-stellar-sdk">
-<meta name="generator" content="Paradox, paradox-material-theme=0.5.0, mkdocs-material=3.0.3">
+<meta name="generator" content="Paradox, paradox-material-theme=0.5.1, mkdocs-material=3.0.3">
 
 <meta name="lang:clipboard.copy" content="Copy to clipboard">
 <meta name="lang:clipboard.copied" content="Copied to clipboard">
@@ -141,7 +141,7 @@ synesso/scala-stellar-sdk
 <ul style="display: none">
 <li class="md-nav__item md-version" id="project.version">
 <label class="md-nav__link" for="__version">
-<i class="md-icon" title="Version">label_outline</i> 0.3.2
+<i class="md-icon" title="Version">label_outline</i> 0.3.3
 </label>
 </li>
 </ul>
@@ -192,7 +192,7 @@ val publicKey = KeyPair.fromAccountId(accountId)
 val accountDetails: Future[AccountResp] = TestNetwork.account(publicKey)
 
 // account datum value
-val accountData: Future[String] = TestNetwork.accountData(publicKey, &quot;data_key&quot;)</code></pre><a href="https://github.com/Synesso/scala-stellar-sdk/tree/v0.3.2/src/test/scala/stellar/sdk/DocExamples.scala#L36-L43">Full source at GitHub</a>
+val accountData: Future[String] = TestNetwork.accountData(publicKey, &quot;data_key&quot;)</code></pre><a href="https://github.com/Synesso/scala-stellar-sdk/tree/v0.3.3/src/test/scala/stellar/sdk/DocExamples.scala#L36-L43">Full source at GitHub</a>
 <h3><a href="#assets" name="assets" class="anchor"><span class="anchor-link"></span></a>Assets</h3>
 <p><a href="https://synesso.github.io/scala-stellar-sdk/api/stellar/sdk/resp/AssetResp.html">Assets</a> are the items that are traded on the network. They can be searched for by their <code>code</code>, <code>issuer</code>, neither or both.</p>
 <p>By default the results will be in ascending order from the earliest record. This behaviour can be modified with the <code>cursor</code> and <code>order</code> parameters.</p>
@@ -212,7 +212,7 @@ val issuerAssets: Future[Stream[AssetResp]] =
 
 // Stream (of max length 1) of HUG assets from the issuer
 val issuersHugAsset: Future[Stream[AssetResp]] =
-  TestNetwork.assets(code = Some(&quot;HUG&quot;), issuer = Some(publicKey))</code></pre><a href="https://github.com/Synesso/scala-stellar-sdk/tree/v0.3.2/src/test/scala/stellar/sdk/DocExamples.scala#L51-L67">Full source at GitHub</a>
+  TestNetwork.assets(code = Some(&quot;HUG&quot;), issuer = Some(publicKey))</code></pre><a href="https://github.com/Synesso/scala-stellar-sdk/tree/v0.3.3/src/test/scala/stellar/sdk/DocExamples.scala#L51-L67">Full source at GitHub</a>
 <h3><a href="#effects" name="effects" class="anchor"><span class="anchor-link"></span></a>Effects</h3>
 <p><a href="https://synesso.github.io/scala-stellar-sdk/api/stellar/sdk/resp/EffectResp.html">Effects</a> are the changes that have been effected on the network as a result of operations successfully processed.</p>
 <p>By default the results will be in ascending order from the earliest record. This behaviour can be modified with the <code>cursor</code> and <code>order</code> parameters.</p>
@@ -235,7 +235,7 @@ val effectsForOperationId: Future[Stream[EffectResp]] =
   TestNetwork.effectsByOperation(123L)
 
 // stream of effects for a specific ledger
-val effectsForLedger = TestNetwork.effectsByLedger(1234)</code></pre><a href="https://github.com/Synesso/scala-stellar-sdk/tree/v0.3.2/src/test/scala/stellar/sdk/DocExamples.scala#L74-L93">Full source at GitHub</a>
+val effectsForLedger = TestNetwork.effectsByLedger(1234)</code></pre><a href="https://github.com/Synesso/scala-stellar-sdk/tree/v0.3.3/src/test/scala/stellar/sdk/DocExamples.scala#L74-L93">Full source at GitHub</a>
 <h3><a href="#ledgers" name="ledgers" class="anchor"><span class="anchor-link"></span></a>Ledgers</h3>
 <p><a href="https://synesso.github.io/scala-stellar-sdk/api/stellar/sdk/resp/LedgerResp.html">Ledgers</a> represent the state of the network at any time. They are created sequentially as the state of the network changes.</p>
 <p>It is possible to stream all ledgers or query for a specific ledger by its sequential id. Each returned value provides meta-data about the changes in that ledger, as well as a summary of the network at that point of time.</p>
@@ -248,7 +248,7 @@ val ledgers: Future[Stream[LedgerResp]] = TestNetwork.ledgers()
 
 // stream of the last 20 ledgers
 val last20Ledgers =
-  TestNetwork.ledgers(cursor = Now, order = Desc).map(_.take(20))</code></pre><a href="https://github.com/Synesso/scala-stellar-sdk/tree/v0.3.2/src/test/scala/stellar/sdk/DocExamples.scala#L109-L117">Full source at GitHub</a>
+  TestNetwork.ledgers(cursor = Now, order = Desc).map(_.take(20))</code></pre><a href="https://github.com/Synesso/scala-stellar-sdk/tree/v0.3.3/src/test/scala/stellar/sdk/DocExamples.scala#L109-L117">Full source at GitHub</a>
 <h3><a href="#offers" name="offers" class="anchor"><span class="anchor-link"></span></a>Offers</h3>
 <p><a href="https://synesso.github.io/scala-stellar-sdk/api/stellar/sdk/resp/OfferResp.html">Offers</a> can be issued by accounts to buy or sell assets. Querying for offers is available only by account. Additional offers are found by searching the <code>OrderBook</code>.</p>
 <p>By default the results will be in ascending order from the earliest record. This behaviour can be modified with the <code>cursor</code> and <code>order</code> parameters.</p>
@@ -258,7 +258,7 @@ TestNetwork.offersByAccount(publicKey)
 
 // most recent offers from a specified account
 val last20Offers = TestNetwork
-  .offersByAccount(publicKey, order = Desc, cursor = Now).map(_.take(20))</code></pre><a href="https://github.com/Synesso/scala-stellar-sdk/tree/v0.3.2/src/test/scala/stellar/sdk/DocExamples.scala#L130-L136">Full source at GitHub</a>
+  .offersByAccount(publicKey, order = Desc, cursor = Now).map(_.take(20))</code></pre><a href="https://github.com/Synesso/scala-stellar-sdk/tree/v0.3.3/src/test/scala/stellar/sdk/DocExamples.scala#L130-L136">Full source at GitHub</a>
 <h3><a href="#operations" name="operations" class="anchor"><span class="anchor-link"></span></a>Operations</h3>
 <p><a href="https://synesso.github.io/scala-stellar-sdk/api/stellar/sdk/resp/Operation.html">Operations</a> are changes to the ledger. They represent the action, as opposed to the effects resulting from the action.</p>
 <p>Operations returned by these queries are wrapped in the <a href="https://synesso.github.io/scala-stellar-sdk/api/stellar/sdk/op/Transacted.html">Transacted</a> type. This indicates that the operation has been part of a successful transaction, and provides details about that transaction.</p>
@@ -280,7 +280,7 @@ val opsForLedger: Future[Stream[Transacted[Operation]]] =
 
 // stream of operations from a transaction specified by its hash
 val opsForTxn: Future[Stream[Transacted[Operation]]] =
-  TestNetwork.operationsByTransaction(&quot;f00cafe...&quot;)</code></pre><a href="https://github.com/Synesso/scala-stellar-sdk/tree/v0.3.2/src/test/scala/stellar/sdk/DocExamples.scala#L148-L164">Full source at GitHub</a>
+  TestNetwork.operationsByTransaction(&quot;f00cafe...&quot;)</code></pre><a href="https://github.com/Synesso/scala-stellar-sdk/tree/v0.3.3/src/test/scala/stellar/sdk/DocExamples.scala#L148-L164">Full source at GitHub</a>
 <h3><a href="#orderbook" name="orderbook" class="anchor"><span class="anchor-link"></span></a>OrderBook</h3>
 <p><a href="https://synesso.github.io/scala-stellar-sdk/api/stellar/sdk/OrderBook.html">OrderBooks</a> include all the offers to buy or sell a specific asset. They show the depth limited to the value of the <code>limit</code> param, which defaults to <code>20</code>.</p>
 <pre class="prettyprint"><code class="language-scala">// the XLM/HUG orderbook with up to 20 offers
@@ -294,7 +294,7 @@ val beerForHugsBigOrderBook: Future[OrderBook] = TestNetwork.orderBook(
   selling = Asset(&quot;FabulousBeer&quot;, publicKey),
   buying = Asset(&quot;HUG&quot;, publicKey),
   limit = 100
-)</code></pre><a href="https://github.com/Synesso/scala-stellar-sdk/tree/v0.3.2/src/test/scala/stellar/sdk/DocExamples.scala#L180-L191">Full source at GitHub</a>
+)</code></pre><a href="https://github.com/Synesso/scala-stellar-sdk/tree/v0.3.3/src/test/scala/stellar/sdk/DocExamples.scala#L180-L191">Full source at GitHub</a>
 <h3><a href="#payments" name="payments" class="anchor"><span class="anchor-link"></span></a>Payments</h3>
 <p><a href="https://synesso.github.io/scala-stellar-sdk/api/stellar/sdk/op/PayOperation.html">Payments</a> are the subset of Operations that cause payments to be made to an account. This is similar to the <a href="#operations">Operations</a> query methods, but will only return <code>CreateAccount</code> and <code>Payment</code> operations.</p>
 <p>By default the results will be in ascending order from the earliest record. This behaviour can be modified with the <code>cursor</code> and <code>order</code> parameters.</p>
@@ -308,7 +308,7 @@ val accountPayments = TestNetwork.paymentsByAccount(publicKey)
 val ledgerPayments = TestNetwork.paymentsByLedger(1234)
 
 // stream of payment operations in a specified transaction
-val transactionPayments = TestNetwork.paymentsByTransaction(&quot;bee042...&quot;)</code></pre><a href="https://github.com/Synesso/scala-stellar-sdk/tree/v0.3.2/src/test/scala/stellar/sdk/DocExamples.scala#L205-L215">Full source at GitHub</a>
+val transactionPayments = TestNetwork.paymentsByTransaction(&quot;bee042...&quot;)</code></pre><a href="https://github.com/Synesso/scala-stellar-sdk/tree/v0.3.3/src/test/scala/stellar/sdk/DocExamples.scala#L205-L215">Full source at GitHub</a>
 <h3><a href="#trades" name="trades" class="anchor"><span class="anchor-link"></span></a>Trades</h3>
 <p><a href="https://synesso.github.io/scala-stellar-sdk/api/stellar/sdk/Trade.html">Trades</a> are created when offers in an orderbook are partially or fully matched.</p>
 <p>By default the results will be in ascending order from the earliest record. This behaviour can be modified with the <code>cursor</code> and <code>order</code> parameters.</p>
@@ -322,11 +322,15 @@ val orderBookTrades: Future[Stream[Trade]] = TestNetwork.tradesByOrderBook(
 )
 
 // stream of trades that are created as a result of the specified offer
-val offerBookTrades: Future[Stream[Trade]] = TestNetwork.tradesByOfferId(1234)</code></pre><a href="https://github.com/Synesso/scala-stellar-sdk/tree/v0.3.2/src/test/scala/stellar/sdk/DocExamples.scala#L231-L241">Full source at GitHub</a>
+val offerBookTrades: Future[Stream[Trade]] = TestNetwork.tradesByOfferId(1234)</code></pre><a href="https://github.com/Synesso/scala-stellar-sdk/tree/v0.3.3/src/test/scala/stellar/sdk/DocExamples.scala#L231-L241">Full source at GitHub</a>
 <h3><a href="#transactions" name="transactions" class="anchor"><span class="anchor-link"></span></a>Transactions</h3>
 <p>By default the results will be in ascending order from the earliest record. This behaviour can be modified with the <code>cursor</code> and <code>order</code> parameters.</p>
 <p>Transactions are the fundamental unit of change in the network and are composed of at least one and at most 100 operations. These queries return validated transactions, in the form of <a href="https://synesso.github.io/scala-stellar-sdk/api/stellar/sdk/resp/TransactionHistoryResp.html">TransactionHistoryResp</a>onses (as opposed to transactions that are composed and submitted to the network).</p>
-<pre class="prettyprint"><code class="language-scala">// stream of all transactions
+<pre class="prettyprint"><code class="language-scala">// details of a specific transaction
+val transaction: Future[TransactionHistoryResp] =
+  TestNetwork.transaction(transactionIdString)
+
+// stream of all transactions
 val transactions: Future[Stream[TransactionHistoryResp]] =
 TestNetwork.transactions()
 
@@ -334,7 +338,7 @@ TestNetwork.transactions()
 val accountTxns = TestNetwork.transactionsByAccount(publicKey)
 
 // stream of transactions within the specified ledger
-val ledgerTxns = TestNetwork.transactionsByLedger(1234)</code></pre><a href="https://github.com/Synesso/scala-stellar-sdk/tree/v0.3.2/src/test/scala/stellar/sdk/DocExamples.scala#L248-L256">Full source at GitHub</a>
+val ledgerTxns = TestNetwork.transactionsByLedger(1234)</code></pre><a href="https://github.com/Synesso/scala-stellar-sdk/tree/v0.3.3/src/test/scala/stellar/sdk/DocExamples.scala#L250-L262">Full source at GitHub</a>
 <p>Continue reading to learn how to subscribe and respond to future events via <a href="sources.html">Sources</a>.</p>
 </div>
 <div>
@@ -344,7 +348,7 @@ Edit this page
 </div>
 <div class="print-only">
 <span class="md-source-file md-version">
-0.3.2
+0.3.3
 </span>
 </div>
 </article>
