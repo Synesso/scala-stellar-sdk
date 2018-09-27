@@ -42,8 +42,8 @@ object AllowTrustOperation {
     AllowTrustOperation(
       trustor = KeyPair.fromXDRPublicKey(op.getTrustor.getAccountID),
       assetCode = (op.getAsset.getDiscriminant: @unchecked) match {
-        case ASSET_TYPE_CREDIT_ALPHANUM4 => new String(op.getAsset.getAssetCode4).trim
-        case ASSET_TYPE_CREDIT_ALPHANUM12 => new String(op.getAsset.getAssetCode12).trim
+        case ASSET_TYPE_CREDIT_ALPHANUM4 => new String(op.getAsset.getAssetCode4, "US-ASCII").trim
+        case ASSET_TYPE_CREDIT_ALPHANUM12 => new String(op.getAsset.getAssetCode12, "US-ASCII").trim
       },
       authorize = op.getAuthorize,
       sourceAccount = source

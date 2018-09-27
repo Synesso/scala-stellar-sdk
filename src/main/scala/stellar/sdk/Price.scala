@@ -1,5 +1,7 @@
 package stellar.sdk
 
+import java.util.Locale
+
 import org.stellar.sdk.xdr.{Price => XDRPrice}
 import stellar.sdk.XDRPrimitives._
 
@@ -11,6 +13,6 @@ case class Price(n: Int, d: Int) {
     xdr
   }
 
-  def asDecimalString = f"${n * 1.0 / d * 1.0}%.7f"
+  def asDecimalString = "%.7f".formatLocal(Locale.ROOT, n * 1.0 / d * 1.0)
 
 }

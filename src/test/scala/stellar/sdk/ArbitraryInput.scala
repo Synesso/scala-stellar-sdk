@@ -2,6 +2,7 @@ package stellar.sdk
 
 import java.time.temporal.ChronoField
 import java.time.{Instant, ZoneId, ZonedDateTime}
+import java.util.Locale
 
 import org.apache.commons.codec.binary.Base64
 import org.scalacheck.{Arbitrary, Gen}
@@ -503,5 +504,5 @@ trait ArbitraryInput extends ScalaCheck {
 
   def genHorizonCursor: Gen[HorizonCursor] = Gen.option(Gen.posNum[Long]).map(_.map(Record).getOrElse(Now))
 
-  def round(d: Double) = f"$d%.7f".toDouble
+  def round(d: Double) = "%.7f".formatLocal(Locale.ROOT, d).toDouble
 }

@@ -1,5 +1,7 @@
 package stellar.sdk.resp
 
+import java.util.Locale
+
 import org.json4s.NoTypeHints
 import org.json4s.native.JsonMethods._
 import org.json4s.native.Serialization
@@ -127,7 +129,7 @@ class AccountEffectRespSpec extends Specification with ArbitraryInput {
        |}
     """.stripMargin
 
-  def amountString(a: Amount): String = f"${a.units / math.pow(10, 7)}%.7f"
+  def amountString(a: Amount): String = "%.7f".formatLocal(Locale.ROOT, a.units / math.pow(10, 7))
 
 }
 

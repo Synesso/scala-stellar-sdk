@@ -2,6 +2,7 @@ package stellar.sdk.resp
 
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 import org.json4s.NoTypeHints
 import org.json4s.native.JsonMethods.parse
@@ -63,7 +64,7 @@ class OfferRespSpec extends Specification with ArbitraryInput {
     case _ => """"asset_type": "native""""
   }
 
-  def amountString(a: Amount): String = f"${a.units / math.pow(10, 7)}%.7f"
+  def amountString(a: Amount): String = "%.7f".formatLocal(Locale.ROOT, a.units / math.pow(10, 7))
 
 
 }
