@@ -244,7 +244,13 @@ class DocExamples(implicit ee: ExecutionEnv)  extends Specification with Mockito
     }
 
     "be present for transactions" >> {
+      val transactionIdString = "17a670bc424ff5ce3b386dbfaae9990b66a2a37b4fbe51547e8794962a3f9e6a"
+
       // #transaction_query_examples
+      // details of a specific transaction
+      val transaction: Future[TransactionHistoryResp] =
+        TestNetwork.transaction(transactionIdString)
+
       // stream of all transactions
       val transactions: Future[Stream[TransactionHistoryResp]] =
       TestNetwork.transactions()

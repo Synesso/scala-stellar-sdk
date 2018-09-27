@@ -492,6 +492,13 @@ class NetworkSpec(implicit ee: ExecutionEnv) extends Specification with Arbitrar
       network.tradesByOfferId(offerId, Now, Asc) mustEqual expected
     }
 
+    "fetch a specified transaction" >> prop { txnId: String =>
+      val network = new MockNetwork
+      val expected = Future(mock[TransactionHistoryResp])
+      network.horizon.get[TransactionHistoryResp](s"/transactions/$txnId") returns expected
+      network.transaction(txnId) mustEqual expected
+    }
+
     "fetch a stream of transactions" >> {
       val network = new MockNetwork
       val expected = Future(mock[Stream[TransactionHistoryResp]])
