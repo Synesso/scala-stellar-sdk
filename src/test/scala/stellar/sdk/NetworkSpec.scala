@@ -46,7 +46,7 @@ class NetworkSpec(implicit ee: ExecutionEnv) extends Specification with Arbitrar
 
     "submit a signed transaction" >> prop { txn: SignedTransaction =>
       val network = new MockNetwork
-      val expected = Future(TransactionPostResp("hash", 1L, "envelopeXDR", "resultXDR", "resultMetaXDR"))
+      val expected = Future(TransactionPostSuccess("hash", 1L, "envelopeXDR", "resultXDR", "resultMetaXDR"))
       network.horizon.post(txn) returns expected
       network.submit(txn) mustEqual expected
     }

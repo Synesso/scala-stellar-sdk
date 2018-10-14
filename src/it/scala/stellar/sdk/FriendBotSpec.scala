@@ -15,6 +15,8 @@ class FriendBotSpec(implicit ee: ExecutionEnv) extends Specification {
       val kp = KeyPair.random
       val response = TestNetwork.fund(kp)
       // #friendbot_example
+
+
       val result = response.map(_.result.getResult.getResults.head.getTr.getCreateAccountResult.getDiscriminant)
       result must beEqualTo(CreateAccountResultCode.CREATE_ACCOUNT_SUCCESS).awaitFor(1 minute)
     }

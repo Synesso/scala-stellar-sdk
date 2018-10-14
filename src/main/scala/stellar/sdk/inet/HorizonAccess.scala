@@ -18,7 +18,7 @@ import com.typesafe.config.ConfigFactory
 import com.typesafe.scalalogging.LazyLogging
 import de.heikoseeberger.akkahttpjson4s.Json4sSupport
 import org.json4s.native.{JsonMethods, Serialization}
-import org.json4s.{CustomSerializer, DefaultFormats, Formats, NoTypeHints}
+import org.json4s.{CustomSerializer, DefaultFormats, Formats, JObject, NoTypeHints}
 import stellar.sdk.op.TransactedOperationDeserializer
 import stellar.sdk.resp._
 import stellar.sdk.{HorizonCursor, HorizonOrder, OrderBookDeserializer, Record, SignedTransaction}
@@ -62,7 +62,7 @@ class Horizon(uri: URI)
   implicit val serialization = org.json4s.native.Serialization
   implicit val formats = Serialization.formats(NoTypeHints) + AccountRespDeserializer + DataValueRespDeserializer +
     LedgerRespDeserializer + TransactedOperationDeserializer + OrderBookDeserializer + TransactionPostRespDeserializer +
-    TransactionHistoryRespDeserializer + TxnFailureDeserializer
+    TransactionHistoryRespDeserializer
 
   override def post(txn: SignedTransaction)(implicit ec: ExecutionContext): Future[TransactionPostResp] = {
     logger.debug(s"Posting {} {}", txn, txn.encodeXDR)
@@ -86,13 +86,25 @@ class Horizon(uri: URI)
     } yield unwrapped.get
   }
 
-  private def parseOrRedirectOrError[T](request: HttpRequest, response: HttpResponse)(implicit m: Manifest[T]): Future[Try[T]] = {
+  private[inet] def parseOrRedirectOrError[T](request: HttpRequest, response: HttpResponse)(implicit m: Manifest[T]): Future[Try[T]] = {
     val HttpResponse(status, _, entity, _) = response
-    if (status.isRedirection()) {
+
+    // 404 - not found
+    if (status.intValue() == StatusCodes.NotFound.intValue)
+      Unmarshal(response.entity).to[JObject]
+        .map(HorizonEntityNotFound(request.uri, _)).map(Failure(_))
+
+    // 3xx redirect
+    else if (status.isRedirection()) {
       val request_ = request.copy(uri = response.header[Location].get.uri)
       Http().singleRequest(request).flatMap(parseOrRedirectOrError(request_, _))
-    } else if (status.isSuccess()) Unmarshal(entity).to[T].map(Success(_))
-    else Unmarshal(entity).to[TxnFailure].map(_.copy(uri = request.uri)).map(Failure(_))
+    }
+
+    // 200 or 4xx
+    else if (status.isSuccess() || status.intValue() < 500) Unmarshal(entity).to[T].map(Success(_))
+
+    // 5xx
+    else Unmarshal(response.entity).to[JObject].map(HorizonServerError(request.uri, _)).map(Failure(_))
   }
 
   override def getStream[T: ClassTag](path: String, de: CustomSerializer[T], cursor: HorizonCursor, order: HorizonOrder,
@@ -110,7 +122,6 @@ class Horizon(uri: URI)
     
     def next(p: Page[T]): Future[Option[Page[T]]] =
       (getPage(Uri(p.nextLink).withPort(requestUri.effectivePort)): Future[Page[T]]).map(Some(_))
-        .recover { case e: TxnFailure => None }
 
     def stream(ts: Seq[T], maybeNextPage: Future[Option[Page[T]]]): Stream[T] = {
       ts match {

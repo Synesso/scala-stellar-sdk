@@ -3,11 +3,12 @@ package stellar.sdk
 import java.io.File
 
 import com.github.tomakehurst.wiremock.WireMockServer
+import org.json4s.JsonDSL._
 import org.specs2.concurrent.ExecutionEnv
 import org.specs2.mutable.Specification
 import stellar.sdk.Amount.lumens
 import stellar.sdk.ProxyMode.{NoProxy, RecordScript, ReplayScript}
-import stellar.sdk.inet.TxnFailure
+import stellar.sdk.inet.HorizonEntityNotFound
 import stellar.sdk.op._
 import stellar.sdk.resp._
 
@@ -22,7 +23,7 @@ import scala.sys.process._
 class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specification with DomainMatchersIT {
   sequential
 
-  // Set to NoProxy when writing tests; Record when creating stub mappings; Replay for all other times.
+  // Set to NoProxy when writing tests; RecordScript when creating stub mappings; ReplayScript for all other times.
   val mode = ReplayScript
 
   val proxy: Option[WireMockServer] = mode match {
@@ -151,9 +152,11 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
     }
 
     "fetch nothing for an account that has been merged" >> {
-      network.account(accnC) must throwA[TxnFailure].like { case t: TxnFailure =>
-        val expectedUri = s"http://localhost:${network.port}/accounts/${accnC.accountId}"
-        t.uri.toString() mustEqual expectedUri
+      network.account(accnC) must throwA[Exception].like { case HorizonEntityNotFound(uri, body) =>
+        body mustEqual ("type" -> "https://stellar.org/horizon-errors/not_found") ~
+          ("title" -> "Resource Missing") ~
+          ("status" -> 404) ~
+          ("detail" -> "The resource at the url requested was not found.  This is usually occurs for one of two reasons:  The url requested is not valid, or no data in our database could be found with the parameters provided.")
       }.awaitFor(30 seconds)
     }
 
@@ -169,7 +172,12 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
 
     "fetch nothing if no account exists" >> {
       val kp = KeyPair.fromSecretSeed(ByteArrays.sha256("何物".getBytes("UTF-8")))
-      network.account(kp) must throwA[TxnFailure].awaitFor(5.seconds)
+      network.account(kp) must throwA[Exception].like { case HorizonEntityNotFound(uri, body) =>
+        body mustEqual ("type" -> "https://stellar.org/horizon-errors/not_found") ~
+          ("title" -> "Resource Missing") ~
+          ("status" -> 404) ~
+          ("detail" -> "The resource at the url requested was not found.  This is usually occurs for one of two reasons:  The url requested is not valid, or no data in our database could be found with the parameters provided.")
+      }.awaitFor(5.seconds)
     }
 
     "return the data for an account" >> {
@@ -177,7 +185,12 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
     }
 
     "fetch nothing if no data exists for the account" >> {
-      network.accountData(accnB, "brain_size_of_planet") must throwA[TxnFailure].awaitFor(5.seconds)
+      network.accountData(accnB, "brain_size_of_planet") must throwA[Exception].like { case HorizonEntityNotFound(uri, body) =>
+        body mustEqual ("type" -> "https://stellar.org/horizon-errors/not_found") ~
+          ("title" -> "Resource Missing") ~
+          ("status" -> 404) ~
+          ("detail" -> "The resource at the url requested was not found.  This is usually occurs for one of two reasons:  The url requested is not valid, or no data in our database could be found with the parameters provided.")
+      }.awaitFor(5.seconds)
     }
   }
 

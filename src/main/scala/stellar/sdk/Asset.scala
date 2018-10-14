@@ -4,7 +4,7 @@ import org.stellar.sdk.xdr.AssetType._
 import org.stellar.sdk.xdr.{AccountID, AssetType, Asset => XDRAsset}
 import stellar.sdk.ByteArrays._
 
-import scala.util.{Success, Try}
+import scala.util.Try
 
 sealed trait Asset {
   def toXDR: XDRAsset

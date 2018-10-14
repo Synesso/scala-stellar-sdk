@@ -1,0 +1,25 @@
+{
+  "id" : "e257a3e5-32a5-4c53-87a3-5d153a1a9877",
+  "name" : "transactions_a631c8617c47b735967352755ac305f4230fdfc4385c2d8815934cdc41877cff_effects",
+  "request" : {
+    "url" : "/transactions/a631c8617c47b735967352755ac305f4230fdfc4385c2d8815934cdc41877cff/effects?cursor=21474840581-1&limit=100&order=asc",
+    "method" : "GET"
+  },
+  "response" : {
+    "status" : 200,
+    "body" : "{\n  \"_links\": {\n    \"self\": {\n      \"href\": \"http://localhost:8000/transactions/a631c8617c47b735967352755ac305f4230fdfc4385c2d8815934cdc41877cff/effects?cursor=21474840581-1\\u0026limit=100\\u0026order=asc\"\n    },\n    \"next\": {\n      \"href\": \"http://localhost:8000/transactions/a631c8617c47b735967352755ac305f4230fdfc4385c2d8815934cdc41877cff/effects?cursor=21474840581-1\\u0026limit=100\\u0026order=asc\"\n    },\n    \"prev\": {\n      \"href\": \"http://localhost:8000/transactions/a631c8617c47b735967352755ac305f4230fdfc4385c2d8815934cdc41877cff/effects?cursor=21474840581-1\\u0026limit=100\\u0026order=desc\"\n    }\n  },\n  \"_embedded\": {\n    \"records\": []\n  }\n}",
+    "headers" : {
+      "Cache-Control" : "no-cache, no-store, max-age=0",
+      "Content-Disposition" : "inline",
+      "Content-Type" : "application/hal+json; charset=utf-8",
+      "Vary" : "Origin",
+      "X-Ratelimit-Limit" : "72000",
+      "X-Ratelimit-Remaining" : "71952",
+      "X-Ratelimit-Reset" : "3567",
+      "Date" : "Sun, 14 Oct 2018 04:49:05 GMT"
+    }
+  },
+  "uuid" : "e257a3e5-32a5-4c53-87a3-5d153a1a9877",
+  "persistent" : true,
+  "insertionIndex" : 41
+}
