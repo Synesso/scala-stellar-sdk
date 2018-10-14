@@ -267,10 +267,6 @@
                         <a href="TransactionHistoryRespDeserializer$.html" title="">TransactionHistoryRespDeserializer</a>
                       </li><li class="current-entities indented3">
                         <span class="separator"></span>
-                        <a class="class" href="" title="The failure response received after submitting a new transaction to Horizon"></a>
-                        <a href="" title="The failure response received after submitting a new transaction to Horizon">TransactionPostFailure</a>
-                      </li><li class="current-entities indented3">
-                        <span class="separator"></span>
                         <a class="trait" href="TransactionPostResp.html" title=""></a>
                         <a href="TransactionPostResp.html" title="">TransactionPostResp</a>
                       </li><li class="current-entities indented3">
@@ -279,8 +275,12 @@
                         <a href="TransactionPostRespDeserializer$.html" title="">TransactionPostRespDeserializer</a>
                       </li><li class="current-entities indented3">
                         <span class="separator"></span>
-                        <a class="class" href="TransactionPostSuccess.html" title="The success response received after submitting a new transaction to Horizon"></a>
-                        <a href="TransactionPostSuccess.html" title="The success response received after submitting a new transaction to Horizon">TransactionPostSuccess</a>
+                        <a class="class" href="TransactionProcessed.html" title="The success response received after submitting a new transaction to Horizon"></a>
+                        <a href="TransactionProcessed.html" title="The success response received after submitting a new transaction to Horizon">TransactionProcessed</a>
+                      </li><li class="current-entities indented3">
+                        <span class="separator"></span>
+                        <a class="class" href="" title="The failure response received after submitting a new transaction to Horizon"></a>
+                        <a href="" title="The failure response received after submitting a new transaction to Horizon">TransactionRejected</a>
                       </li><li class="current-entities indented3">
                         <span class="separator"></span>
                         <a class="trait" href="TransactionSuccessResp.html" title=""></a>
@@ -298,8 +298,8 @@
       <div id="definition">
         <div class="big-circle class">c</div>
         <p id="owner"><a href="../../index.html" class="extype" name="stellar">stellar</a>.<a href="../index.html" class="extype" name="stellar.sdk">sdk</a>.<a href="index.html" class="extype" name="stellar.sdk.resp">resp</a></p>
-        <h1>TransactionPostFailure<span class="permalink">
-      <a href="../../../stellar/sdk/resp/TransactionPostFailure.html" title="Permalink">
+        <h1>TransactionRejected<span class="permalink">
+      <a href="../../../stellar/sdk/resp/TransactionRejected.html" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span></h1>
@@ -312,7 +312,7 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <span class="name">TransactionPostFailure</span><span class="params">(<span name="status">status: <span class="extype" name="scala.Int">Int</span></span>, <span name="detail">detail: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="envelopeXDR">envelopeXDR: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="resultXDR">resultXDR: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="resultCode">resultCode: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="operationResultCodes">operationResultCodes: <span class="extype" name="scala.Array">Array</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>)</span><span class="result"> extends <a href="TransactionPostResp.html" class="extype" name="stellar.sdk.resp.TransactionPostResp">TransactionPostResp</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <span class="name">TransactionRejected</span><span class="params">(<span name="status">status: <span class="extype" name="scala.Int">Int</span></span>, <span name="detail">detail: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="envelopeXDR">envelopeXDR: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="resultXDR">resultXDR: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="resultCode">resultCode: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="operationResultCodes">operationResultCodes: <span class="extype" name="scala.Array">Array</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>)</span><span class="result"> extends <a href="TransactionPostResp.html" class="extype" name="stellar.sdk.resp.TransactionPostResp">TransactionPostResp</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4>
 
@@ -348,7 +348,7 @@
                   <span class="filtertype">Inherited<br />
                   </span>
                   <ol id="linearization">
-                    <li class="in" name="stellar.sdk.resp.TransactionPostFailure"><span>TransactionPostFailure</span></li><li class="in" name="scala.Serializable"><span>Serializable</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="scala.Product"><span>Product</span></li><li class="in" name="scala.Equals"><span>Equals</span></li><li class="in" name="stellar.sdk.resp.TransactionPostResp"><span>TransactionPostResp</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                    <li class="in" name="stellar.sdk.resp.TransactionRejected"><span>TransactionRejected</span></li><li class="in" name="scala.Serializable"><span>Serializable</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="scala.Product"><span>Product</span></li><li class="in" name="scala.Equals"><span>Equals</span></li><li class="in" name="stellar.sdk.resp.TransactionPostResp"><span>TransactionPostResp</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
                   </ol>
                 </div><div class="ancestors">
               <span class="filtertype"></span>
@@ -368,10 +368,10 @@
         <div id="allMembers">
         <div id="constructors" class="members">
               <h3>Instance Constructors</h3>
-              <ol><li name="stellar.sdk.resp.TransactionPostFailure#&lt;init&gt;" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="&lt;init&gt;(status:Int,detail:String,envelopeXDR:String,resultXDR:String,resultCode:String,operationResultCodes:Array[String]):stellar.sdk.resp.TransactionPostFailure"></a><a id="&lt;init&gt;:TransactionPostFailure"></a>
+              <ol><li name="stellar.sdk.resp.TransactionRejected#&lt;init&gt;" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="&lt;init&gt;(status:Int,detail:String,envelopeXDR:String,resultXDR:String,resultCode:String,operationResultCodes:Array[String]):stellar.sdk.resp.TransactionRejected"></a><a id="&lt;init&gt;:TransactionRejected"></a>
       <span class="permalink">
-      <a href="../../../stellar/sdk/resp/TransactionPostFailure.html#&lt;init&gt;(status:Int,detail:String,envelopeXDR:String,resultXDR:String,resultCode:String,operationResultCodes:Array[String]):stellar.sdk.resp.TransactionPostFailure" title="Permalink">
+      <a href="../../../stellar/sdk/resp/TransactionRejected.html#&lt;init&gt;(status:Int,detail:String,envelopeXDR:String,resultXDR:String,resultCode:String,operationResultCodes:Array[String]):stellar.sdk.resp.TransactionRejected" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -380,7 +380,7 @@
         <span class="kind">new</span>
       </span>
       <span class="symbol">
-        <span class="name">TransactionPostFailure</span><span class="params">(<span name="status">status: <span class="extype" name="scala.Int">Int</span></span>, <span name="detail">detail: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="envelopeXDR">envelopeXDR: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="resultXDR">resultXDR: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="resultCode">resultCode: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="operationResultCodes">operationResultCodes: <span class="extype" name="scala.Array">Array</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>)</span>
+        <span class="name">TransactionRejected</span><span class="params">(<span name="status">status: <span class="extype" name="scala.Int">Int</span></span>, <span name="detail">detail: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="envelopeXDR">envelopeXDR: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="resultXDR">resultXDR: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="resultCode">resultCode: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="operationResultCodes">operationResultCodes: <span class="extype" name="scala.Array">Array</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>)</span>
       </span>
       
       
@@ -397,7 +397,7 @@
                 <li name="scala.AnyRef#!=" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="!=(x$1:Any):Boolean"></a><a id="!=(Any):Boolean"></a>
       <span class="permalink">
-      <a href="../../../stellar/sdk/resp/TransactionPostFailure.html#!=(x$1:Any):Boolean" title="Permalink">
+      <a href="../../../stellar/sdk/resp/TransactionRejected.html#!=(x$1:Any):Boolean" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -413,7 +413,7 @@
     </li><li name="scala.AnyRef###" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="##():Int"></a>
       <span class="permalink">
-      <a href="../../../stellar/sdk/resp/TransactionPostFailure.html###():Int" title="Permalink">
+      <a href="../../../stellar/sdk/resp/TransactionRejected.html###():Int" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -429,7 +429,7 @@
     </li><li name="scala.AnyRef#==" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="==(x$1:Any):Boolean"></a><a id="==(Any):Boolean"></a>
       <span class="permalink">
-      <a href="../../../stellar/sdk/resp/TransactionPostFailure.html#==(x$1:Any):Boolean" title="Permalink">
+      <a href="../../../stellar/sdk/resp/TransactionRejected.html#==(x$1:Any):Boolean" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -445,7 +445,7 @@
     </li><li name="scala.Any#asInstanceOf" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="asInstanceOf[T0]:T0"></a>
       <span class="permalink">
-      <a href="../../../stellar/sdk/resp/TransactionPostFailure.html#asInstanceOf[T0]:T0" title="Permalink">
+      <a href="../../../stellar/sdk/resp/TransactionRejected.html#asInstanceOf[T0]:T0" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -461,7 +461,7 @@
     </li><li name="scala.AnyRef#clone" visbl="prt" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="clone():Object"></a><a id="clone():AnyRef"></a>
       <span class="permalink">
-      <a href="../../../stellar/sdk/resp/TransactionPostFailure.html#clone():Object" title="Permalink">
+      <a href="../../../stellar/sdk/resp/TransactionRejected.html#clone():Object" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -482,10 +482,10 @@
     </span>)</span>
               
         </dd></dl></div>
-    </li><li name="stellar.sdk.resp.TransactionPostFailure#detail" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+    </li><li name="stellar.sdk.resp.TransactionRejected#detail" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="detail:String"></a>
       <span class="permalink">
-      <a href="../../../stellar/sdk/resp/TransactionPostFailure.html#detail:String" title="Permalink">
+      <a href="../../../stellar/sdk/resp/TransactionRejected.html#detail:String" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -498,10 +498,10 @@
       </span>
       
       
-    </li><li name="stellar.sdk.resp.TransactionPostFailure#envelopeXDR" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+    </li><li name="stellar.sdk.resp.TransactionRejected#envelopeXDR" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="envelopeXDR:String"></a>
       <span class="permalink">
-      <a href="../../../stellar/sdk/resp/TransactionPostFailure.html#envelopeXDR:String" title="Permalink">
+      <a href="../../../stellar/sdk/resp/TransactionRejected.html#envelopeXDR:String" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -513,11 +513,11 @@
         <span class="name">envelopeXDR</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
       </span>
       
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="stellar.sdk.resp.TransactionPostFailure">TransactionPostFailure</a> → <a href="TransactionPostResp.html" class="extype" name="stellar.sdk.resp.TransactionPostResp">TransactionPostResp</a></dd></dl></div>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="stellar.sdk.resp.TransactionRejected">TransactionRejected</a> → <a href="TransactionPostResp.html" class="extype" name="stellar.sdk.resp.TransactionPostResp">TransactionPostResp</a></dd></dl></div>
     </li><li name="scala.AnyRef#eq" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="eq(x$1:AnyRef):Boolean"></a><a id="eq(AnyRef):Boolean"></a>
       <span class="permalink">
-      <a href="../../../stellar/sdk/resp/TransactionPostFailure.html#eq(x$1:AnyRef):Boolean" title="Permalink">
+      <a href="../../../stellar/sdk/resp/TransactionRejected.html#eq(x$1:AnyRef):Boolean" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -533,7 +533,7 @@
     </li><li name="scala.AnyRef#finalize" visbl="prt" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="finalize():Unit"></a>
       <span class="permalink">
-      <a href="../../../stellar/sdk/resp/TransactionPostFailure.html#finalize():Unit" title="Permalink">
+      <a href="../../../stellar/sdk/resp/TransactionRejected.html#finalize():Unit" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -555,7 +555,7 @@
     </li><li name="scala.AnyRef#getClass" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="getClass():Class[_]"></a>
       <span class="permalink">
-      <a href="../../../stellar/sdk/resp/TransactionPostFailure.html#getClass():Class[_]" title="Permalink">
+      <a href="../../../stellar/sdk/resp/TransactionRejected.html#getClass():Class[_]" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -574,7 +574,7 @@
     </li><li name="scala.Any#isInstanceOf" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="isInstanceOf[T0]:Boolean"></a>
       <span class="permalink">
-      <a href="../../../stellar/sdk/resp/TransactionPostFailure.html#isInstanceOf[T0]:Boolean" title="Permalink">
+      <a href="../../../stellar/sdk/resp/TransactionRejected.html#isInstanceOf[T0]:Boolean" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -590,7 +590,7 @@
     </li><li name="scala.AnyRef#ne" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="ne(x$1:AnyRef):Boolean"></a><a id="ne(AnyRef):Boolean"></a>
       <span class="permalink">
-      <a href="../../../stellar/sdk/resp/TransactionPostFailure.html#ne(x$1:AnyRef):Boolean" title="Permalink">
+      <a href="../../../stellar/sdk/resp/TransactionRejected.html#ne(x$1:AnyRef):Boolean" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -606,7 +606,7 @@
     </li><li name="scala.AnyRef#notify" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="notify():Unit"></a>
       <span class="permalink">
-      <a href="../../../stellar/sdk/resp/TransactionPostFailure.html#notify():Unit" title="Permalink">
+      <a href="../../../stellar/sdk/resp/TransactionRejected.html#notify():Unit" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -625,7 +625,7 @@
     </li><li name="scala.AnyRef#notifyAll" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="notifyAll():Unit"></a>
       <span class="permalink">
-      <a href="../../../stellar/sdk/resp/TransactionPostFailure.html#notifyAll():Unit" title="Permalink">
+      <a href="../../../stellar/sdk/resp/TransactionRejected.html#notifyAll():Unit" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -641,10 +641,10 @@
                 <span class="name">@native</span><span class="args">()</span>
               
         </dd></dl></div>
-    </li><li name="stellar.sdk.resp.TransactionPostFailure#operationResultCodes" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+    </li><li name="stellar.sdk.resp.TransactionRejected#operationResultCodes" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="operationResultCodes:Array[String]"></a>
       <span class="permalink">
-      <a href="../../../stellar/sdk/resp/TransactionPostFailure.html#operationResultCodes:Array[String]" title="Permalink">
+      <a href="../../../stellar/sdk/resp/TransactionRejected.html#operationResultCodes:Array[String]" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -660,7 +660,7 @@
     </li><li name="stellar.sdk.resp.TransactionPostResp#result" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="result:org.stellar.sdk.xdr.TransactionResult"></a><a id="result:TransactionResult"></a>
       <span class="permalink">
-      <a href="../../../stellar/sdk/resp/TransactionPostFailure.html#result:org.stellar.sdk.xdr.TransactionResult" title="Permalink">
+      <a href="../../../stellar/sdk/resp/TransactionRejected.html#result:org.stellar.sdk.xdr.TransactionResult" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -675,10 +675,10 @@
       <p class="shortcomment cmt">The transaction result as reported in the XDR returned from Horizon.</p><div class="fullcomment"><div class="comment cmt"><p>The transaction result as reported in the XDR returned from Horizon.
 Note: This response provided is the native Java XDR type.
 </p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="TransactionPostResp.html" class="extype" name="stellar.sdk.resp.TransactionPostResp">TransactionPostResp</a></dd></dl></div>
-    </li><li name="stellar.sdk.resp.TransactionPostFailure#resultCode" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+    </li><li name="stellar.sdk.resp.TransactionRejected#resultCode" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="resultCode:String"></a>
       <span class="permalink">
-      <a href="../../../stellar/sdk/resp/TransactionPostFailure.html#resultCode:String" title="Permalink">
+      <a href="../../../stellar/sdk/resp/TransactionRejected.html#resultCode:String" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -691,10 +691,10 @@ Note: This response provided is the native Java XDR type.
       </span>
       
       
-    </li><li name="stellar.sdk.resp.TransactionPostFailure#resultXDR" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+    </li><li name="stellar.sdk.resp.TransactionRejected#resultXDR" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="resultXDR:String"></a>
       <span class="permalink">
-      <a href="../../../stellar/sdk/resp/TransactionPostFailure.html#resultXDR:String" title="Permalink">
+      <a href="../../../stellar/sdk/resp/TransactionRejected.html#resultXDR:String" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -706,11 +706,11 @@ Note: This response provided is the native Java XDR type.
         <span class="name">resultXDR</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
       </span>
       
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="stellar.sdk.resp.TransactionPostFailure">TransactionPostFailure</a> → <a href="TransactionPostResp.html" class="extype" name="stellar.sdk.resp.TransactionPostResp">TransactionPostResp</a></dd></dl></div>
-    </li><li name="stellar.sdk.resp.TransactionPostFailure#status" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="stellar.sdk.resp.TransactionRejected">TransactionRejected</a> → <a href="TransactionPostResp.html" class="extype" name="stellar.sdk.resp.TransactionPostResp">TransactionPostResp</a></dd></dl></div>
+    </li><li name="stellar.sdk.resp.TransactionRejected#status" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="status:Int"></a>
       <span class="permalink">
-      <a href="../../../stellar/sdk/resp/TransactionPostFailure.html#status:Int" title="Permalink">
+      <a href="../../../stellar/sdk/resp/TransactionRejected.html#status:Int" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -726,7 +726,7 @@ Note: This response provided is the native Java XDR type.
     </li><li name="scala.AnyRef#synchronized" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="synchronized[T0](x$1:=&gt;T0):T0"></a><a id="synchronized[T0](⇒T0):T0"></a>
       <span class="permalink">
-      <a href="../../../stellar/sdk/resp/TransactionPostFailure.html#synchronized[T0](x$1:=&gt;T0):T0" title="Permalink">
+      <a href="../../../stellar/sdk/resp/TransactionRejected.html#synchronized[T0](x$1:=&gt;T0):T0" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -742,7 +742,7 @@ Note: This response provided is the native Java XDR type.
     </li><li name="scala.AnyRef#wait" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="wait():Unit"></a>
       <span class="permalink">
-      <a href="../../../stellar/sdk/resp/TransactionPostFailure.html#wait():Unit" title="Permalink">
+      <a href="../../../stellar/sdk/resp/TransactionRejected.html#wait():Unit" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -764,7 +764,7 @@ Note: This response provided is the native Java XDR type.
     </li><li name="scala.AnyRef#wait" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="wait(x$1:Long,x$2:Int):Unit"></a><a id="wait(Long,Int):Unit"></a>
       <span class="permalink">
-      <a href="../../../stellar/sdk/resp/TransactionPostFailure.html#wait(x$1:Long,x$2:Int):Unit" title="Permalink">
+      <a href="../../../stellar/sdk/resp/TransactionRejected.html#wait(x$1:Long,x$2:Int):Unit" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -786,7 +786,7 @@ Note: This response provided is the native Java XDR type.
     </li><li name="scala.AnyRef#wait" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="wait(x$1:Long):Unit"></a><a id="wait(Long):Unit"></a>
       <span class="permalink">
-      <a href="../../../stellar/sdk/resp/TransactionPostFailure.html#wait(x$1:Long):Unit" title="Permalink">
+      <a href="../../../stellar/sdk/resp/TransactionRejected.html#wait(x$1:Long):Unit" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
