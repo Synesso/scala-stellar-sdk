@@ -139,8 +139,8 @@
                         <a href="DataValueResp.html" title="">DataValueResp</a>
                       </li><li class="current-entities indented3">
                         <span class="separator"></span>
-                        <a class="object" href="" title=""></a>
-                        <a href="" title="">DataValueRespDeserializer</a>
+                        <a class="object" href="DataValueRespDeserializer$.html" title=""></a>
+                        <a href="DataValueRespDeserializer$.html" title="">DataValueRespDeserializer</a>
                       </li><li class="current-entities indented3">
                         <span class="separator"></span>
                         <a class="class" href="EffectAccountCreated.html" title=""></a>
@@ -283,8 +283,8 @@
                         <a href="TransactionPostSuccess.html" title="The success response received after submitting a new transaction to Horizon">TransactionPostSuccess</a>
                       </li><li class="current-entities indented3">
                         <span class="separator"></span>
-                        <a class="trait" href="TransactionSuccessResp.html" title=""></a>
-                        <a href="TransactionSuccessResp.html" title="">TransactionSuccessResp</a>
+                        <a class="trait" href="" title=""></a>
+                        <a href="" title="">TransactionSuccessResp</a>
                       </li><li class="current-entities indented3">
                         <span class="separator"></span>
                         <a class="object" href="TxResult$.html" title=""></a>
@@ -294,12 +294,12 @@
             </div>
           </div>
           <div id="content">
-            <body class="object value">
+            <body class="trait type">
       <div id="definition">
-        <div class="big-circle object">o</div>
+        <div class="big-circle trait">t</div>
         <p id="owner"><a href="../../index.html" class="extype" name="stellar">stellar</a>.<a href="../index.html" class="extype" name="stellar.sdk">sdk</a>.<a href="index.html" class="extype" name="stellar.sdk.resp">resp</a></p>
-        <h1>DataValueRespDeserializer<span class="permalink">
-      <a href="../../../stellar/sdk/resp/DataValueRespDeserializer$.html" title="Permalink">
+        <h1>TransactionSuccessResp<span class="permalink">
+      <a href="../../../stellar/sdk/resp/TransactionSuccessResp.html" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span></h1>
@@ -308,11 +308,11 @@
 
       <h4 id="signature" class="signature">
       <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">object</span>
+        <span class="modifier">sealed </span>
+        <span class="kind">trait</span>
       </span>
       <span class="symbol">
-        <span class="name">DataValueRespDeserializer</span><span class="result"> extends <a href="ResponseParser.html" class="extype" name="stellar.sdk.resp.ResponseParser">ResponseParser</a>[<a href="DataValueResp.html" class="extype" name="stellar.sdk.resp.DataValueResp">DataValueResp</a>]</span>
+        <span class="name">TransactionSuccessResp</span><span class="result"> extends <a href="TransactionPostResp.html" class="extype" name="stellar.sdk.resp.TransactionPostResp">TransactionPostResp</a></span>
       </span>
       </h4>
 
@@ -321,8 +321,13 @@
           <span class="toggle">
             Linear Supertypes
           </span>
-          <div class="superTypes hiddenContent"><a href="ResponseParser.html" class="extype" name="stellar.sdk.resp.ResponseParser">ResponseParser</a>[<a href="DataValueResp.html" class="extype" name="stellar.sdk.resp.DataValueResp">DataValueResp</a>], <span class="extype" name="org.json4s.CustomSerializer">CustomSerializer</span>[<a href="DataValueResp.html" class="extype" name="stellar.sdk.resp.DataValueResp">DataValueResp</a>], <span class="extype" name="org.json4s.Serializer">Serializer</span>[<a href="DataValueResp.html" class="extype" name="stellar.sdk.resp.DataValueResp">DataValueResp</a>], <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
-        </div></div>
+          <div class="superTypes hiddenContent"><a href="TransactionPostResp.html" class="extype" name="stellar.sdk.resp.TransactionPostResp">TransactionPostResp</a>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
+        </div><div class="toggleContainer block">
+            <span class="toggle">
+              Known Subclasses
+            </span>
+            <div class="subClasses hiddenContent"><a href="TransactionHistoryResp.html" class="extype" name="stellar.sdk.resp.TransactionHistoryResp">TransactionHistoryResp</a>, <a href="TransactionPostSuccess.html" class="extype" name="stellar.sdk.resp.TransactionPostSuccess">TransactionPostSuccess</a></div>
+          </div></div>
         
 
       <div id="mbrsel">
@@ -347,7 +352,7 @@
                   <span class="filtertype">Inherited<br />
                   </span>
                   <ol id="linearization">
-                    <li class="in" name="stellar.sdk.resp.DataValueRespDeserializer"><span>DataValueRespDeserializer</span></li><li class="in" name="stellar.sdk.resp.ResponseParser"><span>ResponseParser</span></li><li class="in" name="org.json4s.CustomSerializer"><span>CustomSerializer</span></li><li class="in" name="org.json4s.Serializer"><span>Serializer</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                    <li class="in" name="stellar.sdk.resp.TransactionSuccessResp"><span>TransactionSuccessResp</span></li><li class="in" name="stellar.sdk.resp.TransactionPostResp"><span>TransactionPostResp</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
                   </ol>
                 </div><div class="ancestors">
               <span class="filtertype"></span>
@@ -369,15 +374,98 @@
 
         
 
-        
+        <div class="values members">
+              <h3>Abstract Value Members</h3>
+              <ol><li name="stellar.sdk.resp.TransactionPostResp#envelopeXDR" visbl="pub" class="indented0 " data-isabs="true" fullComment="yes" group="Ungrouped">
+      <a id="envelopeXDR:String"></a>
+      <span class="permalink">
+      <a href="../../../stellar/sdk/resp/TransactionSuccessResp.html#envelopeXDR:String" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier">abstract </span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">envelopeXDR</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
+      </span>
+      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="TransactionPostResp.html" class="extype" name="stellar.sdk.resp.TransactionPostResp">TransactionPostResp</a></dd></dl></div>
+    </li><li name="stellar.sdk.resp.TransactionSuccessResp#hash" visbl="pub" class="indented0 " data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="hash:String"></a>
+      <span class="permalink">
+      <a href="../../../stellar/sdk/resp/TransactionSuccessResp.html#hash:String" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier">abstract </span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">hash</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
+      </span>
+      
+      
+    </li><li name="stellar.sdk.resp.TransactionSuccessResp#ledger" visbl="pub" class="indented0 " data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="ledger:Long"></a>
+      <span class="permalink">
+      <a href="../../../stellar/sdk/resp/TransactionSuccessResp.html#ledger:Long" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier">abstract </span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">ledger</span><span class="result">: <span class="extype" name="scala.Long">Long</span></span>
+      </span>
+      
+      
+    </li><li name="stellar.sdk.resp.TransactionSuccessResp#resultMetaXDR" visbl="pub" class="indented0 " data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="resultMetaXDR:String"></a>
+      <span class="permalink">
+      <a href="../../../stellar/sdk/resp/TransactionSuccessResp.html#resultMetaXDR:String" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier">abstract </span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">resultMetaXDR</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
+      </span>
+      
+      
+    </li><li name="stellar.sdk.resp.TransactionPostResp#resultXDR" visbl="pub" class="indented0 " data-isabs="true" fullComment="yes" group="Ungrouped">
+      <a id="resultXDR:String"></a>
+      <span class="permalink">
+      <a href="../../../stellar/sdk/resp/TransactionSuccessResp.html#resultXDR:String" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier">abstract </span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">resultXDR</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
+      </span>
+      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="TransactionPostResp.html" class="extype" name="stellar.sdk.resp.TransactionPostResp">TransactionPostResp</a></dd></dl></div>
+    </li></ol>
+            </div>
 
         <div class="values members">
-              <h3>Value Members</h3>
+              <h3>Concrete Value Members</h3>
               <ol>
                 <li name="scala.AnyRef#!=" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="!=(x$1:Any):Boolean"></a><a id="!=(Any):Boolean"></a>
       <span class="permalink">
-      <a href="../../../stellar/sdk/resp/DataValueRespDeserializer$.html#!=(x$1:Any):Boolean" title="Permalink">
+      <a href="../../../stellar/sdk/resp/TransactionSuccessResp.html#!=(x$1:Any):Boolean" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -393,7 +481,7 @@
     </li><li name="scala.AnyRef###" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="##():Int"></a>
       <span class="permalink">
-      <a href="../../../stellar/sdk/resp/DataValueRespDeserializer$.html###():Int" title="Permalink">
+      <a href="../../../stellar/sdk/resp/TransactionSuccessResp.html###():Int" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -409,7 +497,7 @@
     </li><li name="scala.AnyRef#==" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="==(x$1:Any):Boolean"></a><a id="==(Any):Boolean"></a>
       <span class="permalink">
-      <a href="../../../stellar/sdk/resp/DataValueRespDeserializer$.html#==(x$1:Any):Boolean" title="Permalink">
+      <a href="../../../stellar/sdk/resp/TransactionSuccessResp.html#==(x$1:Any):Boolean" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -422,26 +510,10 @@
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
-    </li><li name="org.json4s.CustomSerializer#Class" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="Class:Class[_]"></a>
-      <span class="permalink">
-      <a href="../../../stellar/sdk/resp/DataValueRespDeserializer$.html#Class:Class[_]" title="Permalink">
-        <i class="material-icons"></i>
-      </a>
-    </span>
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">val</span>
-      </span>
-      <span class="symbol">
-        <span class="name">Class</span><span class="result">: <span class="extype" name="java.lang.Class">Class</span>[_]</span>
-      </span>
-      
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>CustomSerializer</dd></dl></div>
     </li><li name="scala.Any#asInstanceOf" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="asInstanceOf[T0]:T0"></a>
       <span class="permalink">
-      <a href="../../../stellar/sdk/resp/DataValueRespDeserializer$.html#asInstanceOf[T0]:T0" title="Permalink">
+      <a href="../../../stellar/sdk/resp/TransactionSuccessResp.html#asInstanceOf[T0]:T0" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -457,7 +529,7 @@
     </li><li name="scala.AnyRef#clone" visbl="prt" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="clone():Object"></a><a id="clone():AnyRef"></a>
       <span class="permalink">
-      <a href="../../../stellar/sdk/resp/DataValueRespDeserializer$.html#clone():Object" title="Permalink">
+      <a href="../../../stellar/sdk/resp/TransactionSuccessResp.html#clone():Object" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -478,26 +550,10 @@
     </span>)</span>
               
         </dd></dl></div>
-    </li><li name="org.json4s.CustomSerializer#deserialize" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="deserialize(implicitformat:org.json4s.Formats):PartialFunction[(org.json4s.TypeInfo,org.json4s.JValue),A]"></a><a id="deserialize(Formats):PartialFunction[(TypeInfo,JValue),DataValueResp]"></a>
-      <span class="permalink">
-      <a href="../../../stellar/sdk/resp/DataValueRespDeserializer$.html#deserialize(implicitformat:org.json4s.Formats):PartialFunction[(org.json4s.TypeInfo,org.json4s.JValue),A]" title="Permalink">
-        <i class="material-icons"></i>
-      </a>
-    </span>
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">deserialize</span><span class="params">(<span class="implicit">implicit </span><span name="format">format: <span class="extype" name="org.json4s.Formats">Formats</span></span>)</span><span class="result">: <span class="extype" name="scala.PartialFunction">PartialFunction</span>[(<span class="extype" name="org.json4s.TypeInfo">TypeInfo</span>, <span class="extype" name="org.json4s.JValue">JValue</span>), <a href="DataValueResp.html" class="extype" name="stellar.sdk.resp.DataValueResp">DataValueResp</a>]</span>
-      </span>
-      
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>CustomSerializer → Serializer</dd></dl></div>
     </li><li name="scala.AnyRef#eq" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="eq(x$1:AnyRef):Boolean"></a><a id="eq(AnyRef):Boolean"></a>
       <span class="permalink">
-      <a href="../../../stellar/sdk/resp/DataValueRespDeserializer$.html#eq(x$1:AnyRef):Boolean" title="Permalink">
+      <a href="../../../stellar/sdk/resp/TransactionSuccessResp.html#eq(x$1:AnyRef):Boolean" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -513,7 +569,7 @@
     </li><li name="scala.AnyRef#equals" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="equals(x$1:Any):Boolean"></a><a id="equals(Any):Boolean"></a>
       <span class="permalink">
-      <a href="../../../stellar/sdk/resp/DataValueRespDeserializer$.html#equals(x$1:Any):Boolean" title="Permalink">
+      <a href="../../../stellar/sdk/resp/TransactionSuccessResp.html#equals(x$1:Any):Boolean" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -529,7 +585,7 @@
     </li><li name="scala.AnyRef#finalize" visbl="prt" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="finalize():Unit"></a>
       <span class="permalink">
-      <a href="../../../stellar/sdk/resp/DataValueRespDeserializer$.html#finalize():Unit" title="Permalink">
+      <a href="../../../stellar/sdk/resp/TransactionSuccessResp.html#finalize():Unit" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -551,7 +607,7 @@
     </li><li name="scala.AnyRef#getClass" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="getClass():Class[_]"></a>
       <span class="permalink">
-      <a href="../../../stellar/sdk/resp/DataValueRespDeserializer$.html#getClass():Class[_]" title="Permalink">
+      <a href="../../../stellar/sdk/resp/TransactionSuccessResp.html#getClass():Class[_]" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -570,7 +626,7 @@
     </li><li name="scala.AnyRef#hashCode" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="hashCode():Int"></a>
       <span class="permalink">
-      <a href="../../../stellar/sdk/resp/DataValueRespDeserializer$.html#hashCode():Int" title="Permalink">
+      <a href="../../../stellar/sdk/resp/TransactionSuccessResp.html#hashCode():Int" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -589,7 +645,7 @@
     </li><li name="scala.Any#isInstanceOf" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="isInstanceOf[T0]:Boolean"></a>
       <span class="permalink">
-      <a href="../../../stellar/sdk/resp/DataValueRespDeserializer$.html#isInstanceOf[T0]:Boolean" title="Permalink">
+      <a href="../../../stellar/sdk/resp/TransactionSuccessResp.html#isInstanceOf[T0]:Boolean" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -605,7 +661,7 @@
     </li><li name="scala.AnyRef#ne" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="ne(x$1:AnyRef):Boolean"></a><a id="ne(AnyRef):Boolean"></a>
       <span class="permalink">
-      <a href="../../../stellar/sdk/resp/DataValueRespDeserializer$.html#ne(x$1:AnyRef):Boolean" title="Permalink">
+      <a href="../../../stellar/sdk/resp/TransactionSuccessResp.html#ne(x$1:AnyRef):Boolean" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -621,7 +677,7 @@
     </li><li name="scala.AnyRef#notify" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="notify():Unit"></a>
       <span class="permalink">
-      <a href="../../../stellar/sdk/resp/DataValueRespDeserializer$.html#notify():Unit" title="Permalink">
+      <a href="../../../stellar/sdk/resp/TransactionSuccessResp.html#notify():Unit" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -640,7 +696,7 @@
     </li><li name="scala.AnyRef#notifyAll" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="notifyAll():Unit"></a>
       <span class="permalink">
-      <a href="../../../stellar/sdk/resp/DataValueRespDeserializer$.html#notifyAll():Unit" title="Permalink">
+      <a href="../../../stellar/sdk/resp/TransactionSuccessResp.html#notifyAll():Unit" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -656,10 +712,10 @@
                 <span class="name">@native</span><span class="args">()</span>
               
         </dd></dl></div>
-    </li><li name="org.json4s.CustomSerializer#serialize" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="serialize(implicitformat:org.json4s.Formats):PartialFunction[Any,org.json4s.JValue]"></a><a id="serialize(Formats):PartialFunction[Any,JValue]"></a>
+    </li><li name="stellar.sdk.resp.TransactionPostResp#result" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="result:org.stellar.sdk.xdr.TransactionResult"></a><a id="result:TransactionResult"></a>
       <span class="permalink">
-      <a href="../../../stellar/sdk/resp/DataValueRespDeserializer$.html#serialize(implicitformat:org.json4s.Formats):PartialFunction[Any,org.json4s.JValue]" title="Permalink">
+      <a href="../../../stellar/sdk/resp/TransactionSuccessResp.html#result:org.stellar.sdk.xdr.TransactionResult" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -668,14 +724,34 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">serialize</span><span class="params">(<span class="implicit">implicit </span><span name="format">format: <span class="extype" name="org.json4s.Formats">Formats</span></span>)</span><span class="result">: <span class="extype" name="scala.PartialFunction">PartialFunction</span>[<span class="extype" name="scala.Any">Any</span>, <span class="extype" name="org.json4s.JValue">JValue</span>]</span>
+        <span class="name">result</span><span class="result">: <a href="../../../org/stellar/sdk/xdr/TransactionResult.html" class="extype" name="org.stellar.sdk.xdr.TransactionResult">TransactionResult</a></span>
       </span>
       
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>CustomSerializer → Serializer</dd></dl></div>
+      <p class="shortcomment cmt">The transaction result as reported in the XDR returned from Horizon.</p><div class="fullcomment"><div class="comment cmt"><p>The transaction result as reported in the XDR returned from Horizon.
+Note: This response provided is the native Java XDR type.
+</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="TransactionPostResp.html" class="extype" name="stellar.sdk.resp.TransactionPostResp">TransactionPostResp</a></dd></dl></div>
+    </li><li name="stellar.sdk.resp.TransactionSuccessResp#resultMeta" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="resultMeta:org.stellar.sdk.xdr.TransactionMeta"></a><a id="resultMeta:TransactionMeta"></a>
+      <span class="permalink">
+      <a href="../../../stellar/sdk/resp/TransactionSuccessResp.html#resultMeta:org.stellar.sdk.xdr.TransactionMeta" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">resultMeta</span><span class="result">: <a href="../../../org/stellar/sdk/xdr/TransactionMeta.html" class="extype" name="org.stellar.sdk.xdr.TransactionMeta">TransactionMeta</a></span>
+      </span>
+      
+      <p class="shortcomment cmt">The transaction meta info as reported in the XDR returned from Horizon.</p><div class="fullcomment"><div class="comment cmt"><p>The transaction meta info as reported in the XDR returned from Horizon.
+Note: This response provided is the native Java XDR type.
+</p></div></div>
     </li><li name="scala.AnyRef#synchronized" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="synchronized[T0](x$1:=&gt;T0):T0"></a><a id="synchronized[T0](⇒T0):T0"></a>
       <span class="permalink">
-      <a href="../../../stellar/sdk/resp/DataValueRespDeserializer$.html#synchronized[T0](x$1:=&gt;T0):T0" title="Permalink">
+      <a href="../../../stellar/sdk/resp/TransactionSuccessResp.html#synchronized[T0](x$1:=&gt;T0):T0" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -691,7 +767,7 @@
     </li><li name="scala.AnyRef#toString" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="toString():String"></a>
       <span class="permalink">
-      <a href="../../../stellar/sdk/resp/DataValueRespDeserializer$.html#toString():String" title="Permalink">
+      <a href="../../../stellar/sdk/resp/TransactionSuccessResp.html#toString():String" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -704,10 +780,26 @@
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
+    </li><li name="stellar.sdk.resp.TransactionSuccessResp#transaction" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="transaction(implicitnetwork:stellar.sdk.Network):stellar.sdk.SignedTransaction"></a><a id="transaction(Network):SignedTransaction"></a>
+      <span class="permalink">
+      <a href="../../../stellar/sdk/resp/TransactionSuccessResp.html#transaction(implicitnetwork:stellar.sdk.Network):stellar.sdk.SignedTransaction" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">transaction</span><span class="params">(<span class="implicit">implicit </span><span name="network">network: <a href="../Network.html" class="extype" name="stellar.sdk.Network">Network</a></span>)</span><span class="result">: <a href="../SignedTransaction.html" class="extype" name="stellar.sdk.SignedTransaction">SignedTransaction</a></span>
+      </span>
+      
+      <p class="shortcomment cmt">The previously submitted signed transaction as reported in the XDR returned from Horizon.</p>
     </li><li name="scala.AnyRef#wait" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="wait():Unit"></a>
       <span class="permalink">
-      <a href="../../../stellar/sdk/resp/DataValueRespDeserializer$.html#wait():Unit" title="Permalink">
+      <a href="../../../stellar/sdk/resp/TransactionSuccessResp.html#wait():Unit" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -729,7 +821,7 @@
     </li><li name="scala.AnyRef#wait" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="wait(x$1:Long,x$2:Int):Unit"></a><a id="wait(Long,Int):Unit"></a>
       <span class="permalink">
-      <a href="../../../stellar/sdk/resp/DataValueRespDeserializer$.html#wait(x$1:Long,x$2:Int):Unit" title="Permalink">
+      <a href="../../../stellar/sdk/resp/TransactionSuccessResp.html#wait(x$1:Long,x$2:Int):Unit" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -751,7 +843,7 @@
     </li><li name="scala.AnyRef#wait" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="wait(x$1:Long):Unit"></a><a id="wait(Long):Unit"></a>
       <span class="permalink">
-      <a href="../../../stellar/sdk/resp/DataValueRespDeserializer$.html#wait(x$1:Long):Unit" title="Permalink">
+      <a href="../../../stellar/sdk/resp/TransactionSuccessResp.html#wait(x$1:Long):Unit" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -782,12 +874,8 @@
         </div>
 
         <div id="inheritedMembers">
-        <div class="parent" name="stellar.sdk.resp.ResponseParser">
-              <h3>Inherited from <a href="ResponseParser.html" class="extype" name="stellar.sdk.resp.ResponseParser">ResponseParser</a>[<a href="DataValueResp.html" class="extype" name="stellar.sdk.resp.DataValueResp">DataValueResp</a>]</h3>
-            </div><div class="parent" name="org.json4s.CustomSerializer">
-              <h3>Inherited from <span class="extype" name="org.json4s.CustomSerializer">CustomSerializer</span>[<a href="DataValueResp.html" class="extype" name="stellar.sdk.resp.DataValueResp">DataValueResp</a>]</h3>
-            </div><div class="parent" name="org.json4s.Serializer">
-              <h3>Inherited from <span class="extype" name="org.json4s.Serializer">Serializer</span>[<a href="DataValueResp.html" class="extype" name="stellar.sdk.resp.DataValueResp">DataValueResp</a>]</h3>
+        <div class="parent" name="stellar.sdk.resp.TransactionPostResp">
+              <h3>Inherited from <a href="TransactionPostResp.html" class="extype" name="stellar.sdk.resp.TransactionPostResp">TransactionPostResp</a></h3>
             </div><div class="parent" name="scala.AnyRef">
               <h3>Inherited from <span class="extype" name="scala.AnyRef">AnyRef</span></h3>
             </div><div class="parent" name="scala.Any">

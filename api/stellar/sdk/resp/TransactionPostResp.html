@@ -267,32 +267,36 @@
                         <a href="TransactionHistoryRespDeserializer$.html" title="">TransactionHistoryRespDeserializer</a>
                       </li><li class="current-entities indented3">
                         <span class="separator"></span>
-                        <a class="class" href="" title="The response received after submitting a new transaction to Horizon"></a>
-                        <a href="" title="The response received after submitting a new transaction to Horizon">TransactionPostResp</a>
+                        <a class="class" href="TransactionPostFailure.html" title="The failure response received after submitting a new transaction to Horizon"></a>
+                        <a href="TransactionPostFailure.html" title="The failure response received after submitting a new transaction to Horizon">TransactionPostFailure</a>
+                      </li><li class="current-entities indented3">
+                        <span class="separator"></span>
+                        <a class="trait" href="" title=""></a>
+                        <a href="" title="">TransactionPostResp</a>
                       </li><li class="current-entities indented3">
                         <span class="separator"></span>
                         <a class="object" href="TransactionPostRespDeserializer$.html" title=""></a>
                         <a href="TransactionPostRespDeserializer$.html" title="">TransactionPostRespDeserializer</a>
                       </li><li class="current-entities indented3">
                         <span class="separator"></span>
-                        <a class="trait" href="TransactionResp.html" title=""></a>
-                        <a href="TransactionResp.html" title="">TransactionResp</a>
+                        <a class="class" href="TransactionPostSuccess.html" title="The success response received after submitting a new transaction to Horizon"></a>
+                        <a href="TransactionPostSuccess.html" title="The success response received after submitting a new transaction to Horizon">TransactionPostSuccess</a>
+                      </li><li class="current-entities indented3">
+                        <span class="separator"></span>
+                        <a class="trait" href="TransactionSuccessResp.html" title=""></a>
+                        <a href="TransactionSuccessResp.html" title="">TransactionSuccessResp</a>
                       </li><li class="current-entities indented3">
                         <span class="separator"></span>
                         <a class="object" href="TxResult$.html" title=""></a>
                         <a href="TxResult$.html" title="">TxResult</a>
-                      </li><li class="current-entities indented3">
-                        <span class="separator"></span>
-                        <a class="object" href="TxnFailureDeserializer$.html" title=""></a>
-                        <a href="TxnFailureDeserializer$.html" title="">TxnFailureDeserializer</a>
                       </li>
               </ul>
             </div>
           </div>
           <div id="content">
-            <body class="class type">
+            <body class="trait type">
       <div id="definition">
-        <div class="big-circle class">c</div>
+        <div class="big-circle trait">t</div>
         <p id="owner"><a href="../../index.html" class="extype" name="stellar">stellar</a>.<a href="../index.html" class="extype" name="stellar.sdk">sdk</a>.<a href="index.html" class="extype" name="stellar.sdk.resp">resp</a></p>
         <h1>TransactionPostResp<span class="permalink">
       <a href="../../../stellar/sdk/resp/TransactionPostResp.html" title="Permalink">
@@ -304,22 +308,26 @@
 
       <h4 id="signature" class="signature">
       <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">case class</span>
+        <span class="modifier">sealed </span>
+        <span class="kind">trait</span>
       </span>
       <span class="symbol">
-        <span class="name">TransactionPostResp</span><span class="params">(<span name="hash">hash: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="ledger">ledger: <span class="extype" name="scala.Long">Long</span></span>, <span name="envelopeXDR">envelopeXDR: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="resultXDR">resultXDR: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="resultMetaXDR">resultMetaXDR: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="TransactionResp.html" class="extype" name="stellar.sdk.resp.TransactionResp">TransactionResp</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <span class="name">TransactionPostResp</span><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
       </span>
       </h4>
 
       
-          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>The response received after submitting a new transaction to Horizon
-</p></div><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><div class="toggleContainer block">
           <span class="toggle">
             Linear Supertypes
           </span>
-          <div class="superTypes hiddenContent"><span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <span class="extype" name="scala.Product">Product</span>, <span class="extype" name="scala.Equals">Equals</span>, <a href="TransactionResp.html" class="extype" name="stellar.sdk.resp.TransactionResp">TransactionResp</a>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
-        </div></div>
+          <div class="superTypes hiddenContent"><span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
+        </div><div class="toggleContainer block">
+            <span class="toggle">
+              Known Subclasses
+            </span>
+            <div class="subClasses hiddenContent"><a href="TransactionHistoryResp.html" class="extype" name="stellar.sdk.resp.TransactionHistoryResp">TransactionHistoryResp</a>, <a href="TransactionPostFailure.html" class="extype" name="stellar.sdk.resp.TransactionPostFailure">TransactionPostFailure</a>, <a href="TransactionPostSuccess.html" class="extype" name="stellar.sdk.resp.TransactionPostSuccess">TransactionPostSuccess</a>, <a href="TransactionSuccessResp.html" class="extype" name="stellar.sdk.resp.TransactionSuccessResp">TransactionSuccessResp</a></div>
+          </div></div>
         
 
       <div id="mbrsel">
@@ -344,7 +352,7 @@
                   <span class="filtertype">Inherited<br />
                   </span>
                   <ol id="linearization">
-                    <li class="in" name="stellar.sdk.resp.TransactionPostResp"><span>TransactionPostResp</span></li><li class="in" name="scala.Serializable"><span>Serializable</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="scala.Product"><span>Product</span></li><li class="in" name="scala.Equals"><span>Equals</span></li><li class="in" name="stellar.sdk.resp.TransactionResp"><span>TransactionResp</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                    <li class="in" name="stellar.sdk.resp.TransactionPostResp"><span>TransactionPostResp</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
                   </ol>
                 </div><div class="ancestors">
               <span class="filtertype"></span>
@@ -362,33 +370,49 @@
 
       <div id="template">
         <div id="allMembers">
-        <div id="constructors" class="members">
-              <h3>Instance Constructors</h3>
-              <ol><li name="stellar.sdk.resp.TransactionPostResp#&lt;init&gt;" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="&lt;init&gt;(hash:String,ledger:Long,envelopeXDR:String,resultXDR:String,resultMetaXDR:String):stellar.sdk.resp.TransactionPostResp"></a><a id="&lt;init&gt;:TransactionPostResp"></a>
+        
+
+        
+
+        <div class="values members">
+              <h3>Abstract Value Members</h3>
+              <ol><li name="stellar.sdk.resp.TransactionPostResp#envelopeXDR" visbl="pub" class="indented0 " data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="envelopeXDR:String"></a>
       <span class="permalink">
-      <a href="../../../stellar/sdk/resp/TransactionPostResp.html#&lt;init&gt;(hash:String,ledger:Long,envelopeXDR:String,resultXDR:String,resultMetaXDR:String):stellar.sdk.resp.TransactionPostResp" title="Permalink">
+      <a href="../../../stellar/sdk/resp/TransactionPostResp.html#envelopeXDR:String" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
       <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">new</span>
+        <span class="modifier">abstract </span>
+        <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">TransactionPostResp</span><span class="params">(<span name="hash">hash: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="ledger">ledger: <span class="extype" name="scala.Long">Long</span></span>, <span name="envelopeXDR">envelopeXDR: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="resultXDR">resultXDR: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="resultMetaXDR">resultMetaXDR: <span class="extype" name="scala.Predef.String">String</span></span>)</span>
+        <span class="name">envelopeXDR</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
+      </span>
+      
+      
+    </li><li name="stellar.sdk.resp.TransactionPostResp#resultXDR" visbl="pub" class="indented0 " data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="resultXDR:String"></a>
+      <span class="permalink">
+      <a href="../../../stellar/sdk/resp/TransactionPostResp.html#resultXDR:String" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier">abstract </span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">resultXDR</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
       </span>
       
       
     </li></ol>
             </div>
 
-        
-
-        
-
         <div class="values members">
-              <h3>Value Members</h3>
+              <h3>Concrete Value Members</h3>
               <ol>
                 <li name="scala.AnyRef#!=" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="!=(x$1:Any):Boolean"></a><a id="!=(Any):Boolean"></a>
@@ -478,22 +502,6 @@
     </span>)</span>
               
         </dd></dl></div>
-    </li><li name="stellar.sdk.resp.TransactionPostResp#envelopeXDR" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="envelopeXDR:String"></a>
-      <span class="permalink">
-      <a href="../../../stellar/sdk/resp/TransactionPostResp.html#envelopeXDR:String" title="Permalink">
-        <i class="material-icons"></i>
-      </a>
-    </span>
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">val</span>
-      </span>
-      <span class="symbol">
-        <span class="name">envelopeXDR</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
-      </span>
-      
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="stellar.sdk.resp.TransactionPostResp">TransactionPostResp</a> → <a href="TransactionResp.html" class="extype" name="stellar.sdk.resp.TransactionResp">TransactionResp</a></dd></dl></div>
     </li><li name="scala.AnyRef#eq" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="eq(x$1:AnyRef):Boolean"></a><a id="eq(AnyRef):Boolean"></a>
       <span class="permalink">
@@ -510,6 +518,22 @@
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
+    </li><li name="scala.AnyRef#equals" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="equals(x$1:Any):Boolean"></a><a id="equals(Any):Boolean"></a>
+      <span class="permalink">
+      <a href="../../../stellar/sdk/resp/TransactionPostResp.html#equals(x$1:Any):Boolean" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">equals</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Any">Any</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+      </span>
+      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
     </li><li name="scala.AnyRef#finalize" visbl="prt" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="finalize():Unit"></a>
       <span class="permalink">
@@ -551,22 +575,25 @@
                 <span class="name">@native</span><span class="args">()</span>
               
         </dd></dl></div>
-    </li><li name="stellar.sdk.resp.TransactionPostResp#hash" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="hash:String"></a>
+    </li><li name="scala.AnyRef#hashCode" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="hashCode():Int"></a>
       <span class="permalink">
-      <a href="../../../stellar/sdk/resp/TransactionPostResp.html#hash:String" title="Permalink">
+      <a href="../../../stellar/sdk/resp/TransactionPostResp.html#hashCode():Int" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
       <span class="modifier_kind">
         <span class="modifier"></span>
-        <span class="kind">val</span>
+        <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">hash</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
+        <span class="name">hashCode</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
       </span>
       
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="stellar.sdk.resp.TransactionPostResp">TransactionPostResp</a> → <a href="TransactionResp.html" class="extype" name="stellar.sdk.resp.TransactionResp">TransactionResp</a></dd></dl></div>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd><dt>Annotations</dt><dd>
+                <span class="name">@native</span><span class="args">()</span>
+              
+        </dd></dl></div>
     </li><li name="scala.Any#isInstanceOf" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="isInstanceOf[T0]:Boolean"></a>
       <span class="permalink">
@@ -583,22 +610,6 @@
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
-    </li><li name="stellar.sdk.resp.TransactionPostResp#ledger" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="ledger:Long"></a>
-      <span class="permalink">
-      <a href="../../../stellar/sdk/resp/TransactionPostResp.html#ledger:Long" title="Permalink">
-        <i class="material-icons"></i>
-      </a>
-    </span>
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">val</span>
-      </span>
-      <span class="symbol">
-        <span class="name">ledger</span><span class="result">: <span class="extype" name="scala.Long">Long</span></span>
-      </span>
-      
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="stellar.sdk.resp.TransactionPostResp">TransactionPostResp</a> → <a href="TransactionResp.html" class="extype" name="stellar.sdk.resp.TransactionResp">TransactionResp</a></dd></dl></div>
     </li><li name="scala.AnyRef#ne" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="ne(x$1:AnyRef):Boolean"></a><a id="ne(AnyRef):Boolean"></a>
       <span class="permalink">
@@ -653,7 +664,7 @@
                 <span class="name">@native</span><span class="args">()</span>
               
         </dd></dl></div>
-    </li><li name="stellar.sdk.resp.TransactionResp#result" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+    </li><li name="stellar.sdk.resp.TransactionPostResp#result" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="result:org.stellar.sdk.xdr.TransactionResult"></a><a id="result:TransactionResult"></a>
       <span class="permalink">
       <a href="../../../stellar/sdk/resp/TransactionPostResp.html#result:org.stellar.sdk.xdr.TransactionResult" title="Permalink">
@@ -670,57 +681,7 @@
       
       <p class="shortcomment cmt">The transaction result as reported in the XDR returned from Horizon.</p><div class="fullcomment"><div class="comment cmt"><p>The transaction result as reported in the XDR returned from Horizon.
 Note: This response provided is the native Java XDR type.
-</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="TransactionResp.html" class="extype" name="stellar.sdk.resp.TransactionResp">TransactionResp</a></dd></dl></div>
-    </li><li name="stellar.sdk.resp.TransactionResp#resultMeta" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="resultMeta:org.stellar.sdk.xdr.TransactionMeta"></a><a id="resultMeta:TransactionMeta"></a>
-      <span class="permalink">
-      <a href="../../../stellar/sdk/resp/TransactionPostResp.html#resultMeta:org.stellar.sdk.xdr.TransactionMeta" title="Permalink">
-        <i class="material-icons"></i>
-      </a>
-    </span>
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">resultMeta</span><span class="result">: <a href="../../../org/stellar/sdk/xdr/TransactionMeta.html" class="extype" name="org.stellar.sdk.xdr.TransactionMeta">TransactionMeta</a></span>
-      </span>
-      
-      <p class="shortcomment cmt">The transaction meta info as reported in the XDR returned from Horizon.</p><div class="fullcomment"><div class="comment cmt"><p>The transaction meta info as reported in the XDR returned from Horizon.
-Note: This response provided is the native Java XDR type.
-</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="TransactionResp.html" class="extype" name="stellar.sdk.resp.TransactionResp">TransactionResp</a></dd></dl></div>
-    </li><li name="stellar.sdk.resp.TransactionPostResp#resultMetaXDR" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="resultMetaXDR:String"></a>
-      <span class="permalink">
-      <a href="../../../stellar/sdk/resp/TransactionPostResp.html#resultMetaXDR:String" title="Permalink">
-        <i class="material-icons"></i>
-      </a>
-    </span>
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">val</span>
-      </span>
-      <span class="symbol">
-        <span class="name">resultMetaXDR</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
-      </span>
-      
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="stellar.sdk.resp.TransactionPostResp">TransactionPostResp</a> → <a href="TransactionResp.html" class="extype" name="stellar.sdk.resp.TransactionResp">TransactionResp</a></dd></dl></div>
-    </li><li name="stellar.sdk.resp.TransactionPostResp#resultXDR" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="resultXDR:String"></a>
-      <span class="permalink">
-      <a href="../../../stellar/sdk/resp/TransactionPostResp.html#resultXDR:String" title="Permalink">
-        <i class="material-icons"></i>
-      </a>
-    </span>
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">val</span>
-      </span>
-      <span class="symbol">
-        <span class="name">resultXDR</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
-      </span>
-      
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="stellar.sdk.resp.TransactionPostResp">TransactionPostResp</a> → <a href="TransactionResp.html" class="extype" name="stellar.sdk.resp.TransactionResp">TransactionResp</a></dd></dl></div>
+</p></div></div>
     </li><li name="scala.AnyRef#synchronized" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="synchronized[T0](x$1:=&gt;T0):T0"></a><a id="synchronized[T0](⇒T0):T0"></a>
       <span class="permalink">
@@ -737,10 +698,10 @@ Note: This response provided is the native Java XDR type.
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
-    </li><li name="stellar.sdk.resp.TransactionResp#transaction" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="transaction(implicitnetwork:stellar.sdk.Network):stellar.sdk.SignedTransaction"></a><a id="transaction(Network):SignedTransaction"></a>
+    </li><li name="scala.AnyRef#toString" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="toString():String"></a>
       <span class="permalink">
-      <a href="../../../stellar/sdk/resp/TransactionPostResp.html#transaction(implicitnetwork:stellar.sdk.Network):stellar.sdk.SignedTransaction" title="Permalink">
+      <a href="../../../stellar/sdk/resp/TransactionPostResp.html#toString():String" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -749,11 +710,10 @@ Note: This response provided is the native Java XDR type.
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">transaction</span><span class="params">(<span class="implicit">implicit </span><span name="network">network: <a href="../Network.html" class="extype" name="stellar.sdk.Network">Network</a></span>)</span><span class="result">: <a href="../SignedTransaction.html" class="extype" name="stellar.sdk.SignedTransaction">SignedTransaction</a></span>
+        <span class="name">toString</span><span class="params">()</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
       </span>
       
-      <p class="shortcomment cmt">The previously submitted signed transaction as reported in the XDR returned from Horizon.</p><div class="fullcomment"><div class="comment cmt"><p>The previously submitted signed transaction as reported in the XDR returned from Horizon.
-</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="TransactionResp.html" class="extype" name="stellar.sdk.resp.TransactionResp">TransactionResp</a></dd></dl></div>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
     </li><li name="scala.AnyRef#wait" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="wait():Unit"></a>
       <span class="permalink">
@@ -832,17 +792,7 @@ Note: This response provided is the native Java XDR type.
         </div>
 
         <div id="inheritedMembers">
-        <div class="parent" name="scala.Serializable">
-              <h3>Inherited from <span class="extype" name="scala.Serializable">Serializable</span></h3>
-            </div><div class="parent" name="java.io.Serializable">
-              <h3>Inherited from <span class="extype" name="java.io.Serializable">Serializable</span></h3>
-            </div><div class="parent" name="scala.Product">
-              <h3>Inherited from <span class="extype" name="scala.Product">Product</span></h3>
-            </div><div class="parent" name="scala.Equals">
-              <h3>Inherited from <span class="extype" name="scala.Equals">Equals</span></h3>
-            </div><div class="parent" name="stellar.sdk.resp.TransactionResp">
-              <h3>Inherited from <a href="TransactionResp.html" class="extype" name="stellar.sdk.resp.TransactionResp">TransactionResp</a></h3>
-            </div><div class="parent" name="scala.AnyRef">
+        <div class="parent" name="scala.AnyRef">
               <h3>Inherited from <span class="extype" name="scala.AnyRef">AnyRef</span></h3>
             </div><div class="parent" name="scala.Any">
               <h3>Inherited from <span class="extype" name="scala.Any">Any</span></h3>

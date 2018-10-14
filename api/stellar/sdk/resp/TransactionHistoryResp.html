@@ -267,24 +267,28 @@
                         <a href="TransactionHistoryRespDeserializer$.html" title="">TransactionHistoryRespDeserializer</a>
                       </li><li class="current-entities indented3">
                         <span class="separator"></span>
-                        <a class="class" href="TransactionPostResp.html" title="The response received after submitting a new transaction to Horizon"></a>
-                        <a href="TransactionPostResp.html" title="The response received after submitting a new transaction to Horizon">TransactionPostResp</a>
+                        <a class="class" href="TransactionPostFailure.html" title="The failure response received after submitting a new transaction to Horizon"></a>
+                        <a href="TransactionPostFailure.html" title="The failure response received after submitting a new transaction to Horizon">TransactionPostFailure</a>
+                      </li><li class="current-entities indented3">
+                        <span class="separator"></span>
+                        <a class="trait" href="TransactionPostResp.html" title=""></a>
+                        <a href="TransactionPostResp.html" title="">TransactionPostResp</a>
                       </li><li class="current-entities indented3">
                         <span class="separator"></span>
                         <a class="object" href="TransactionPostRespDeserializer$.html" title=""></a>
                         <a href="TransactionPostRespDeserializer$.html" title="">TransactionPostRespDeserializer</a>
                       </li><li class="current-entities indented3">
                         <span class="separator"></span>
-                        <a class="trait" href="TransactionResp.html" title=""></a>
-                        <a href="TransactionResp.html" title="">TransactionResp</a>
+                        <a class="class" href="TransactionPostSuccess.html" title="The success response received after submitting a new transaction to Horizon"></a>
+                        <a href="TransactionPostSuccess.html" title="The success response received after submitting a new transaction to Horizon">TransactionPostSuccess</a>
+                      </li><li class="current-entities indented3">
+                        <span class="separator"></span>
+                        <a class="trait" href="TransactionSuccessResp.html" title=""></a>
+                        <a href="TransactionSuccessResp.html" title="">TransactionSuccessResp</a>
                       </li><li class="current-entities indented3">
                         <span class="separator"></span>
                         <a class="object" href="TxResult$.html" title=""></a>
                         <a href="TxResult$.html" title="">TxResult</a>
-                      </li><li class="current-entities indented3">
-                        <span class="separator"></span>
-                        <a class="object" href="TxnFailureDeserializer$.html" title=""></a>
-                        <a href="TxnFailureDeserializer$.html" title="">TxnFailureDeserializer</a>
                       </li>
               </ul>
             </div>
@@ -308,7 +312,7 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <span class="name">TransactionHistoryResp</span><span class="params">(<span name="hash">hash: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="ledger">ledger: <span class="extype" name="scala.Long">Long</span></span>, <span name="createdAt">createdAt: <span class="extype" name="java.time.ZonedDateTime">ZonedDateTime</span></span>, <span name="account">account: <a href="../PublicKey.html" class="extype" name="stellar.sdk.PublicKey">PublicKey</a></span>, <span name="sequence">sequence: <span class="extype" name="scala.Long">Long</span></span>, <span name="feePaid">feePaid: <span class="extype" name="scala.Int">Int</span></span>, <span name="operationCount">operationCount: <span class="extype" name="scala.Int">Int</span></span>, <span name="memo">memo: <a href="../Memo.html" class="extype" name="stellar.sdk.Memo">Memo</a></span>, <span name="signatures">signatures: <span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>, <span name="envelopeXDR">envelopeXDR: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="resultXDR">resultXDR: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="resultMetaXDR">resultMetaXDR: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="feeMetaXDR">feeMetaXDR: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="TransactionResp.html" class="extype" name="stellar.sdk.resp.TransactionResp">TransactionResp</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <span class="name">TransactionHistoryResp</span><span class="params">(<span name="hash">hash: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="ledger">ledger: <span class="extype" name="scala.Long">Long</span></span>, <span name="createdAt">createdAt: <span class="extype" name="java.time.ZonedDateTime">ZonedDateTime</span></span>, <span name="account">account: <a href="../PublicKey.html" class="extype" name="stellar.sdk.PublicKey">PublicKey</a></span>, <span name="sequence">sequence: <span class="extype" name="scala.Long">Long</span></span>, <span name="feePaid">feePaid: <span class="extype" name="scala.Int">Int</span></span>, <span name="operationCount">operationCount: <span class="extype" name="scala.Int">Int</span></span>, <span name="memo">memo: <a href="../Memo.html" class="extype" name="stellar.sdk.Memo">Memo</a></span>, <span name="signatures">signatures: <span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>, <span name="envelopeXDR">envelopeXDR: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="resultXDR">resultXDR: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="resultMetaXDR">resultMetaXDR: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="feeMetaXDR">feeMetaXDR: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="TransactionSuccessResp.html" class="extype" name="stellar.sdk.resp.TransactionSuccessResp">TransactionSuccessResp</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4>
 
@@ -318,7 +322,7 @@
           <span class="toggle">
             Linear Supertypes
           </span>
-          <div class="superTypes hiddenContent"><span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <span class="extype" name="scala.Product">Product</span>, <span class="extype" name="scala.Equals">Equals</span>, <a href="TransactionResp.html" class="extype" name="stellar.sdk.resp.TransactionResp">TransactionResp</a>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
+          <div class="superTypes hiddenContent"><span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <span class="extype" name="scala.Product">Product</span>, <span class="extype" name="scala.Equals">Equals</span>, <a href="TransactionSuccessResp.html" class="extype" name="stellar.sdk.resp.TransactionSuccessResp">TransactionSuccessResp</a>, <a href="TransactionPostResp.html" class="extype" name="stellar.sdk.resp.TransactionPostResp">TransactionPostResp</a>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div></div>
         
 
@@ -344,7 +348,7 @@
                   <span class="filtertype">Inherited<br />
                   </span>
                   <ol id="linearization">
-                    <li class="in" name="stellar.sdk.resp.TransactionHistoryResp"><span>TransactionHistoryResp</span></li><li class="in" name="scala.Serializable"><span>Serializable</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="scala.Product"><span>Product</span></li><li class="in" name="scala.Equals"><span>Equals</span></li><li class="in" name="stellar.sdk.resp.TransactionResp"><span>TransactionResp</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                    <li class="in" name="stellar.sdk.resp.TransactionHistoryResp"><span>TransactionHistoryResp</span></li><li class="in" name="scala.Serializable"><span>Serializable</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="scala.Product"><span>Product</span></li><li class="in" name="scala.Equals"><span>Equals</span></li><li class="in" name="stellar.sdk.resp.TransactionSuccessResp"><span>TransactionSuccessResp</span></li><li class="in" name="stellar.sdk.resp.TransactionPostResp"><span>TransactionPostResp</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
                   </ol>
                 </div><div class="ancestors">
               <span class="filtertype"></span>
@@ -525,7 +529,7 @@
         <span class="name">envelopeXDR</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
       </span>
       
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="stellar.sdk.resp.TransactionHistoryResp">TransactionHistoryResp</a> → <a href="TransactionResp.html" class="extype" name="stellar.sdk.resp.TransactionResp">TransactionResp</a></dd></dl></div>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="stellar.sdk.resp.TransactionHistoryResp">TransactionHistoryResp</a> → <a href="TransactionPostResp.html" class="extype" name="stellar.sdk.resp.TransactionPostResp">TransactionPostResp</a></dd></dl></div>
     </li><li name="scala.AnyRef#eq" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="eq(x$1:AnyRef):Boolean"></a><a id="eq(AnyRef):Boolean"></a>
       <span class="permalink">
@@ -630,7 +634,7 @@
         <span class="name">hash</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
       </span>
       
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="stellar.sdk.resp.TransactionHistoryResp">TransactionHistoryResp</a> → <a href="TransactionResp.html" class="extype" name="stellar.sdk.resp.TransactionResp">TransactionResp</a></dd></dl></div>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="stellar.sdk.resp.TransactionHistoryResp">TransactionHistoryResp</a> → <a href="TransactionSuccessResp.html" class="extype" name="stellar.sdk.resp.TransactionSuccessResp">TransactionSuccessResp</a></dd></dl></div>
     </li><li name="scala.Any#isInstanceOf" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="isInstanceOf[T0]:Boolean"></a>
       <span class="permalink">
@@ -662,7 +666,7 @@
         <span class="name">ledger</span><span class="result">: <span class="extype" name="scala.Long">Long</span></span>
       </span>
       
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="stellar.sdk.resp.TransactionHistoryResp">TransactionHistoryResp</a> → <a href="TransactionResp.html" class="extype" name="stellar.sdk.resp.TransactionResp">TransactionResp</a></dd></dl></div>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="stellar.sdk.resp.TransactionHistoryResp">TransactionHistoryResp</a> → <a href="TransactionSuccessResp.html" class="extype" name="stellar.sdk.resp.TransactionSuccessResp">TransactionSuccessResp</a></dd></dl></div>
     </li><li name="stellar.sdk.resp.TransactionHistoryResp#memo" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="memo:stellar.sdk.Memo"></a><a id="memo:Memo"></a>
       <span class="permalink">
@@ -749,7 +753,7 @@
       </span>
       
       
-    </li><li name="stellar.sdk.resp.TransactionResp#result" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+    </li><li name="stellar.sdk.resp.TransactionPostResp#result" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="result:org.stellar.sdk.xdr.TransactionResult"></a><a id="result:TransactionResult"></a>
       <span class="permalink">
       <a href="../../../stellar/sdk/resp/TransactionHistoryResp.html#result:org.stellar.sdk.xdr.TransactionResult" title="Permalink">
@@ -766,8 +770,8 @@
       
       <p class="shortcomment cmt">The transaction result as reported in the XDR returned from Horizon.</p><div class="fullcomment"><div class="comment cmt"><p>The transaction result as reported in the XDR returned from Horizon.
 Note: This response provided is the native Java XDR type.
-</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="TransactionResp.html" class="extype" name="stellar.sdk.resp.TransactionResp">TransactionResp</a></dd></dl></div>
-    </li><li name="stellar.sdk.resp.TransactionResp#resultMeta" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="TransactionPostResp.html" class="extype" name="stellar.sdk.resp.TransactionPostResp">TransactionPostResp</a></dd></dl></div>
+    </li><li name="stellar.sdk.resp.TransactionSuccessResp#resultMeta" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="resultMeta:org.stellar.sdk.xdr.TransactionMeta"></a><a id="resultMeta:TransactionMeta"></a>
       <span class="permalink">
       <a href="../../../stellar/sdk/resp/TransactionHistoryResp.html#resultMeta:org.stellar.sdk.xdr.TransactionMeta" title="Permalink">
@@ -784,7 +788,7 @@ Note: This response provided is the native Java XDR type.
       
       <p class="shortcomment cmt">The transaction meta info as reported in the XDR returned from Horizon.</p><div class="fullcomment"><div class="comment cmt"><p>The transaction meta info as reported in the XDR returned from Horizon.
 Note: This response provided is the native Java XDR type.
-</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="TransactionResp.html" class="extype" name="stellar.sdk.resp.TransactionResp">TransactionResp</a></dd></dl></div>
+</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="TransactionSuccessResp.html" class="extype" name="stellar.sdk.resp.TransactionSuccessResp">TransactionSuccessResp</a></dd></dl></div>
     </li><li name="stellar.sdk.resp.TransactionHistoryResp#resultMetaXDR" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="resultMetaXDR:String"></a>
       <span class="permalink">
@@ -800,7 +804,7 @@ Note: This response provided is the native Java XDR type.
         <span class="name">resultMetaXDR</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
       </span>
       
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="stellar.sdk.resp.TransactionHistoryResp">TransactionHistoryResp</a> → <a href="TransactionResp.html" class="extype" name="stellar.sdk.resp.TransactionResp">TransactionResp</a></dd></dl></div>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="stellar.sdk.resp.TransactionHistoryResp">TransactionHistoryResp</a> → <a href="TransactionSuccessResp.html" class="extype" name="stellar.sdk.resp.TransactionSuccessResp">TransactionSuccessResp</a></dd></dl></div>
     </li><li name="stellar.sdk.resp.TransactionHistoryResp#resultXDR" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="resultXDR:String"></a>
       <span class="permalink">
@@ -816,7 +820,7 @@ Note: This response provided is the native Java XDR type.
         <span class="name">resultXDR</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
       </span>
       
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="stellar.sdk.resp.TransactionHistoryResp">TransactionHistoryResp</a> → <a href="TransactionResp.html" class="extype" name="stellar.sdk.resp.TransactionResp">TransactionResp</a></dd></dl></div>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="stellar.sdk.resp.TransactionHistoryResp">TransactionHistoryResp</a> → <a href="TransactionPostResp.html" class="extype" name="stellar.sdk.resp.TransactionPostResp">TransactionPostResp</a></dd></dl></div>
     </li><li name="stellar.sdk.resp.TransactionHistoryResp#sequence" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="sequence:Long"></a>
       <span class="permalink">
@@ -865,7 +869,7 @@ Note: This response provided is the native Java XDR type.
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
-    </li><li name="stellar.sdk.resp.TransactionResp#transaction" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+    </li><li name="stellar.sdk.resp.TransactionSuccessResp#transaction" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="transaction(implicitnetwork:stellar.sdk.Network):stellar.sdk.SignedTransaction"></a><a id="transaction(Network):SignedTransaction"></a>
       <span class="permalink">
       <a href="../../../stellar/sdk/resp/TransactionHistoryResp.html#transaction(implicitnetwork:stellar.sdk.Network):stellar.sdk.SignedTransaction" title="Permalink">
@@ -881,7 +885,7 @@ Note: This response provided is the native Java XDR type.
       </span>
       
       <p class="shortcomment cmt">The previously submitted signed transaction as reported in the XDR returned from Horizon.</p><div class="fullcomment"><div class="comment cmt"><p>The previously submitted signed transaction as reported in the XDR returned from Horizon.
-</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="TransactionResp.html" class="extype" name="stellar.sdk.resp.TransactionResp">TransactionResp</a></dd></dl></div>
+</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="TransactionSuccessResp.html" class="extype" name="stellar.sdk.resp.TransactionSuccessResp">TransactionSuccessResp</a></dd></dl></div>
     </li><li name="scala.AnyRef#wait" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="wait():Unit"></a>
       <span class="permalink">
@@ -968,8 +972,10 @@ Note: This response provided is the native Java XDR type.
               <h3>Inherited from <span class="extype" name="scala.Product">Product</span></h3>
             </div><div class="parent" name="scala.Equals">
               <h3>Inherited from <span class="extype" name="scala.Equals">Equals</span></h3>
-            </div><div class="parent" name="stellar.sdk.resp.TransactionResp">
-              <h3>Inherited from <a href="TransactionResp.html" class="extype" name="stellar.sdk.resp.TransactionResp">TransactionResp</a></h3>
+            </div><div class="parent" name="stellar.sdk.resp.TransactionSuccessResp">
+              <h3>Inherited from <a href="TransactionSuccessResp.html" class="extype" name="stellar.sdk.resp.TransactionSuccessResp">TransactionSuccessResp</a></h3>
+            </div><div class="parent" name="stellar.sdk.resp.TransactionPostResp">
+              <h3>Inherited from <a href="TransactionPostResp.html" class="extype" name="stellar.sdk.resp.TransactionPostResp">TransactionPostResp</a></h3>
             </div><div class="parent" name="scala.AnyRef">
               <h3>Inherited from <span class="extype" name="scala.AnyRef">AnyRef</span></h3>
             </div><div class="parent" name="scala.Any">

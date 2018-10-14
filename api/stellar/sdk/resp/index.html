@@ -299,24 +299,28 @@
                         <a href="TransactionHistoryRespDeserializer$.html" title="">TransactionHistoryRespDeserializer</a>
                       </li><li class="current-entities indented3">
                         <span class="separator"></span>
-                        <a class="class" href="TransactionPostResp.html" title="The response received after submitting a new transaction to Horizon"></a>
-                        <a href="TransactionPostResp.html" title="The response received after submitting a new transaction to Horizon">TransactionPostResp</a>
+                        <a class="class" href="TransactionPostFailure.html" title="The failure response received after submitting a new transaction to Horizon"></a>
+                        <a href="TransactionPostFailure.html" title="The failure response received after submitting a new transaction to Horizon">TransactionPostFailure</a>
+                      </li><li class="current-entities indented3">
+                        <span class="separator"></span>
+                        <a class="trait" href="TransactionPostResp.html" title=""></a>
+                        <a href="TransactionPostResp.html" title="">TransactionPostResp</a>
                       </li><li class="current-entities indented3">
                         <span class="separator"></span>
                         <a class="object" href="TransactionPostRespDeserializer$.html" title=""></a>
                         <a href="TransactionPostRespDeserializer$.html" title="">TransactionPostRespDeserializer</a>
                       </li><li class="current-entities indented3">
                         <span class="separator"></span>
-                        <a class="trait" href="TransactionResp.html" title=""></a>
-                        <a href="TransactionResp.html" title="">TransactionResp</a>
+                        <a class="class" href="TransactionPostSuccess.html" title="The success response received after submitting a new transaction to Horizon"></a>
+                        <a href="TransactionPostSuccess.html" title="The success response received after submitting a new transaction to Horizon">TransactionPostSuccess</a>
+                      </li><li class="current-entities indented3">
+                        <span class="separator"></span>
+                        <a class="trait" href="TransactionSuccessResp.html" title=""></a>
+                        <a href="TransactionSuccessResp.html" title="">TransactionSuccessResp</a>
                       </li><li class="current-entities indented3">
                         <span class="separator"></span>
                         <a class="object" href="TxResult$.html" title=""></a>
                         <a href="TxResult$.html" title="">TxResult</a>
-                      </li><li class="current-entities indented3">
-                        <span class="separator"></span>
-                        <a class="object" href="TxnFailureDeserializer$.html" title=""></a>
-                        <a href="TxnFailureDeserializer$.html" title="">TxnFailureDeserializer</a>
                       </li>
               </ul>
             </div>
@@ -845,9 +849,9 @@
       
       
     </li><li name="stellar.sdk.resp.TransactionHistoryResp" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="TransactionHistoryRespextendsTransactionRespwithProductwithSerializable"></a><a id="TransactionHistoryResp:TransactionHistoryResp"></a>
+      <a id="TransactionHistoryRespextendsTransactionSuccessRespwithProductwithSerializable"></a><a id="TransactionHistoryResp:TransactionHistoryResp"></a>
       <span class="permalink">
-      <a href="../../../stellar/sdk/resp/index.html#TransactionHistoryRespextendsTransactionRespwithProductwithSerializable" title="Permalink">
+      <a href="../../../stellar/sdk/resp/index.html#TransactionHistoryRespextendsTransactionSuccessRespwithProductwithSerializable" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -856,15 +860,15 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a title="The response received when viewing historical transactions" href="TransactionHistoryResp.html"><span class="name">TransactionHistoryResp</span></a><span class="params">(<span name="hash">hash: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="ledger">ledger: <span class="extype" name="scala.Long">Long</span></span>, <span name="createdAt">createdAt: <span class="extype" name="java.time.ZonedDateTime">ZonedDateTime</span></span>, <span name="account">account: <a href="../PublicKey.html" class="extype" name="stellar.sdk.PublicKey">PublicKey</a></span>, <span name="sequence">sequence: <span class="extype" name="scala.Long">Long</span></span>, <span name="feePaid">feePaid: <span class="extype" name="scala.Int">Int</span></span>, <span name="operationCount">operationCount: <span class="extype" name="scala.Int">Int</span></span>, <span name="memo">memo: <a href="../Memo.html" class="extype" name="stellar.sdk.Memo">Memo</a></span>, <span name="signatures">signatures: <span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>, <span name="envelopeXDR">envelopeXDR: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="resultXDR">resultXDR: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="resultMetaXDR">resultMetaXDR: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="feeMetaXDR">feeMetaXDR: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="TransactionResp.html" class="extype" name="stellar.sdk.resp.TransactionResp">TransactionResp</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a title="The response received when viewing historical transactions" href="TransactionHistoryResp.html"><span class="name">TransactionHistoryResp</span></a><span class="params">(<span name="hash">hash: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="ledger">ledger: <span class="extype" name="scala.Long">Long</span></span>, <span name="createdAt">createdAt: <span class="extype" name="java.time.ZonedDateTime">ZonedDateTime</span></span>, <span name="account">account: <a href="../PublicKey.html" class="extype" name="stellar.sdk.PublicKey">PublicKey</a></span>, <span name="sequence">sequence: <span class="extype" name="scala.Long">Long</span></span>, <span name="feePaid">feePaid: <span class="extype" name="scala.Int">Int</span></span>, <span name="operationCount">operationCount: <span class="extype" name="scala.Int">Int</span></span>, <span name="memo">memo: <a href="../Memo.html" class="extype" name="stellar.sdk.Memo">Memo</a></span>, <span name="signatures">signatures: <span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>, <span name="envelopeXDR">envelopeXDR: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="resultXDR">resultXDR: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="resultMetaXDR">resultMetaXDR: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="feeMetaXDR">feeMetaXDR: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="TransactionSuccessResp.html" class="extype" name="stellar.sdk.resp.TransactionSuccessResp">TransactionSuccessResp</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       
       <p class="shortcomment cmt">The response received when viewing historical transactions
 </p>
-    </li><li name="stellar.sdk.resp.TransactionPostResp" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="TransactionPostRespextendsTransactionRespwithProductwithSerializable"></a><a id="TransactionPostResp:TransactionPostResp"></a>
+    </li><li name="stellar.sdk.resp.TransactionPostFailure" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="TransactionPostFailureextendsTransactionPostRespwithProductwithSerializable"></a><a id="TransactionPostFailure:TransactionPostFailure"></a>
       <span class="permalink">
-      <a href="../../../stellar/sdk/resp/index.html#TransactionPostRespextendsTransactionRespwithProductwithSerializable" title="Permalink">
+      <a href="../../../stellar/sdk/resp/index.html#TransactionPostFailureextendsTransactionPostRespwithProductwithSerializable" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -873,15 +877,15 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a title="The response received after submitting a new transaction to Horizon" href="TransactionPostResp.html"><span class="name">TransactionPostResp</span></a><span class="params">(<span name="hash">hash: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="ledger">ledger: <span class="extype" name="scala.Long">Long</span></span>, <span name="envelopeXDR">envelopeXDR: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="resultXDR">resultXDR: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="resultMetaXDR">resultMetaXDR: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="TransactionResp.html" class="extype" name="stellar.sdk.resp.TransactionResp">TransactionResp</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a title="The failure response received after submitting a new transaction to Horizon" href="TransactionPostFailure.html"><span class="name">TransactionPostFailure</span></a><span class="params">(<span name="status">status: <span class="extype" name="scala.Int">Int</span></span>, <span name="detail">detail: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="envelopeXDR">envelopeXDR: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="resultXDR">resultXDR: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="resultCode">resultCode: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="operationResultCodes">operationResultCodes: <span class="extype" name="scala.Array">Array</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>)</span><span class="result"> extends <a href="TransactionPostResp.html" class="extype" name="stellar.sdk.resp.TransactionPostResp">TransactionPostResp</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       
-      <p class="shortcomment cmt">The response received after submitting a new transaction to Horizon
+      <p class="shortcomment cmt">The failure response received after submitting a new transaction to Horizon
 </p>
-    </li><li name="stellar.sdk.resp.TransactionResp" visbl="pub" class="indented0 " data-isabs="true" fullComment="no" group="Ungrouped">
-      <a id="TransactionRespextendsAnyRef"></a><a id="TransactionResp:TransactionResp"></a>
+    </li><li name="stellar.sdk.resp.TransactionPostResp" visbl="pub" class="indented0 " data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="TransactionPostRespextendsAnyRef"></a><a id="TransactionPostResp:TransactionPostResp"></a>
       <span class="permalink">
-      <a href="../../../stellar/sdk/resp/index.html#TransactionRespextendsAnyRef" title="Permalink">
+      <a href="../../../stellar/sdk/resp/index.html#TransactionPostRespextendsAnyRef" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -890,7 +894,40 @@
         <span class="kind">trait</span>
       </span>
       <span class="symbol">
-        <a title="" href="TransactionResp.html"><span class="name">TransactionResp</span></a><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+        <a title="" href="TransactionPostResp.html"><span class="name">TransactionPostResp</span></a><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+      </span>
+      
+      
+    </li><li name="stellar.sdk.resp.TransactionPostSuccess" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="TransactionPostSuccessextendsTransactionSuccessRespwithTransactionPostRespwithProductwithSerializable"></a><a id="TransactionPostSuccess:TransactionPostSuccess"></a>
+      <span class="permalink">
+      <a href="../../../stellar/sdk/resp/index.html#TransactionPostSuccessextendsTransactionSuccessRespwithTransactionPostRespwithProductwithSerializable" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a title="The success response received after submitting a new transaction to Horizon" href="TransactionPostSuccess.html"><span class="name">TransactionPostSuccess</span></a><span class="params">(<span name="hash">hash: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="ledger">ledger: <span class="extype" name="scala.Long">Long</span></span>, <span name="envelopeXDR">envelopeXDR: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="resultXDR">resultXDR: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="resultMetaXDR">resultMetaXDR: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="TransactionSuccessResp.html" class="extype" name="stellar.sdk.resp.TransactionSuccessResp">TransactionSuccessResp</a> with <a href="TransactionPostResp.html" class="extype" name="stellar.sdk.resp.TransactionPostResp">TransactionPostResp</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      
+      <p class="shortcomment cmt">The success response received after submitting a new transaction to Horizon
+</p>
+    </li><li name="stellar.sdk.resp.TransactionSuccessResp" visbl="pub" class="indented0 " data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="TransactionSuccessRespextendsTransactionPostResp"></a><a id="TransactionSuccessResp:TransactionSuccessResp"></a>
+      <span class="permalink">
+      <a href="../../../stellar/sdk/resp/index.html#TransactionSuccessRespextendsTransactionPostResp" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier">sealed </span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a title="" href="TransactionSuccessResp.html"><span class="name">TransactionSuccessResp</span></a><span class="result"> extends <a href="TransactionPostResp.html" class="extype" name="stellar.sdk.resp.TransactionPostResp">TransactionPostResp</a></span>
       </span>
       
       
@@ -1043,22 +1080,6 @@
       </span>
       <span class="symbol">
         <a title="" href="TxResult$.html"><span class="name">TxResult</span></a>
-      </span>
-      
-      
-    </li><li name="stellar.sdk.resp.TxnFailureDeserializer" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="TxnFailureDeserializer"></a><a id="TxnFailureDeserializer:TxnFailureDeserializer"></a>
-      <span class="permalink">
-      <a href="../../../stellar/sdk/resp/index.html#TxnFailureDeserializer" title="Permalink">
-        <i class="material-icons"></i>
-      </a>
-    </span>
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">object</span>
-      </span>
-      <span class="symbol">
-        <a title="" href="TxnFailureDeserializer$.html"><span class="name">TxnFailureDeserializer</span></a><span class="result"> extends <a href="ResponseParser.html" class="extype" name="stellar.sdk.resp.ResponseParser">ResponseParser</a>[<a href="../inet/TxnFailure.html" class="extype" name="stellar.sdk.inet.TxnFailure">TxnFailure</a>]</span>
       </span>
       
       
