@@ -90,7 +90,7 @@ trait ArbitraryInput extends ScalaCheck {
 
   implicit def arbTrade = Arbitrary(genTrade)
 
-  implicit def arbTransactionPostResponse = Arbitrary(genTransactionPostResponse)
+  implicit def arbTransactionPostResponse = Arbitrary(genTransactionPostSuccess)
 
   implicit def arbTransactionHistoryResponse = Arbitrary(genTransactionHistoryResponse)
 
@@ -474,13 +474,13 @@ trait ArbitraryInput extends ScalaCheck {
     Trade(id, ledgerCloseTime, offerId, baseAccount, baseAmount, counterAccount, counterAmount, baseIsSeller)
   }
 
-  def genTransactionPostResponse: Gen[TransactionPostResp] = for {
+  def genTransactionPostSuccess: Gen[TransactionPostSuccess] = for {
     hash <- genHash
     ledger <- Gen.posNum[Long]
     envelopeXDR <- genHash
     resultXDR <- genHash
     resultMetaXDR <- genHash
-  } yield TransactionPostResp(hash, ledger, envelopeXDR, resultXDR, resultMetaXDR)
+  } yield TransactionPostSuccess(hash, ledger, envelopeXDR, resultXDR, resultMetaXDR)
 
   def genTransactionHistoryResponse: Gen[TransactionHistoryResp] = for {
     hash <- genHash

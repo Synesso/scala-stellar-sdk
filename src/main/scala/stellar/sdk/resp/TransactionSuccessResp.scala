@@ -2,17 +2,16 @@ package stellar.sdk.resp
 
 import java.time.ZonedDateTime
 
+import akka.http.scaladsl.model.Uri
 import org.json4s.DefaultFormats
 import org.json4s.JsonAST.JObject
 import org.stellar.sdk.xdr.{TransactionMeta, TransactionResult}
 import stellar.sdk.ByteArrays.base64
 import stellar.sdk._
 
-sealed trait TransactionResp {
+sealed trait TransactionSuccessResp extends TransactionPostResp {
   val hash: String
   val ledger: Long
-  val envelopeXDR: String
-  val resultXDR: String
   val resultMetaXDR: String
 
   /**
@@ -21,23 +20,37 @@ sealed trait TransactionResp {
   def transaction(implicit network: Network) = SignedTransaction.decodeXDR(envelopeXDR)
 
   /**
-    * The transaction result as reported in the XDR returned from Horizon.
-    * Note: This response provided is the native Java XDR type.
-    */
-  def result: TransactionResult = TxResult.decodeXDR(resultXDR)
-
-  /**
     * The transaction meta info as reported in the XDR returned from Horizon.
     * Note: This response provided is the native Java XDR type.
     */
   def resultMeta: TransactionMeta = TxResult.decodeMetaXDR(resultMetaXDR)
 }
 
+sealed trait TransactionPostResp {
+  val envelopeXDR: String
+  val resultXDR: String
+
+  /**
+    * The transaction result as reported in the XDR returned from Horizon.
+    * Note: This response provided is the native Java XDR type.
+    */
+  def result: TransactionResult = TxResult.decodeXDR(resultXDR)
+}
+
 /**
-  * The response received after submitting a new transaction to Horizon
+  * The success response received after submitting a new transaction to Horizon
   */
-case class TransactionPostResp(hash: String, ledger: Long, envelopeXDR: String, resultXDR: String, resultMetaXDR: String)
-  extends TransactionResp
+case class TransactionPostSuccess(hash: String, ledger: Long, envelopeXDR: String, resultXDR: String, resultMetaXDR: String)
+  extends TransactionSuccessResp with TransactionPostResp
+
+/**
+  * The failure response received after submitting a new transaction to Horizon
+  */
+case class TransactionPostFailure(status: Int, detail: String, envelopeXDR: String, resultXDR: String,
+                                  resultCode: String, operationResultCodes: Array[String])
+
+  extends TransactionPostResp
+
 
 /**
   * The response received when viewing historical transactions
@@ -45,18 +58,34 @@ case class TransactionPostResp(hash: String, ledger: Long, envelopeXDR: String, 
 case class TransactionHistoryResp(hash: String, ledger: Long, createdAt: ZonedDateTime, account: PublicKey,
                                   sequence: Long, feePaid: Int, operationCount: Int, memo: Memo, signatures: Seq[String],
                                   envelopeXDR: String, resultXDR: String, resultMetaXDR: String, feeMetaXDR: String)
-  extends TransactionResp
+  extends TransactionSuccessResp
+
 
 object TransactionPostRespDeserializer extends ResponseParser[TransactionPostResp]({
   o: JObject =>
     implicit val formats = DefaultFormats
-    TransactionPostResp(
-      hash = (o \ "hash").extract[String],
-      ledger = (o \ "ledger").extract[Long],
-      envelopeXDR = (o \ "envelope_xdr").extract[String],
-      resultXDR = (o \ "result_xdr").extract[String],
-      resultMetaXDR = (o \ "result_meta_xdr").extract[String]
-    )
+
+    (o \ "type").extractOpt[String] match {
+
+      case Some("https://stellar.org/horizon-errors/transaction_failed") =>
+        TransactionPostFailure(
+          status = (o \ "status").extract[Int],
+          detail = (o \ "detail").extract[String],
+          resultCode = (o \ "extras" \ "result_codes" \ "transaction").extract[String],
+          operationResultCodes = (o \ "extras" \ "result_codes" \ "operations").extract[Array[String]],
+          resultXDR = (o \ "extras" \ "result_xdr").extract[String],
+          envelopeXDR = (o \ "extras" \ "envelope_xdr").extract[String]
+        )
+
+      case _ =>
+        TransactionPostSuccess(
+          hash = (o \ "hash").extract[String],
+          ledger = (o \ "ledger").extract[Long],
+          envelopeXDR = (o \ "envelope_xdr").extract[String],
+          resultXDR = (o \ "result_xdr").extract[String],
+          resultMetaXDR = (o \ "result_meta_xdr").extract[String]
+        )
+    }
 })
 
 object TransactionHistoryRespDeserializer extends ResponseParser[TransactionHistoryResp]({
