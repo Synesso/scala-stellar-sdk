@@ -86,7 +86,7 @@ class Horizon(uri: URI)
     } yield unwrapped.get
   }
 
-  private def parseOrRedirectOrError[T](request: HttpRequest, response: HttpResponse)(implicit m: Manifest[T]): Future[Try[T]] = {
+  private[inet] def parseOrRedirectOrError[T](request: HttpRequest, response: HttpResponse)(implicit m: Manifest[T]): Future[Try[T]] = {
     val HttpResponse(status, _, entity, _) = response
 
     // 404 - not found
@@ -104,7 +104,7 @@ class Horizon(uri: URI)
     else if (status.isSuccess() || status.intValue() < 500) Unmarshal(entity).to[T].map(Success(_))
 
     // 5xx
-    else Unmarshal(response.entity).to[String].map(HorizonServerError(request.uri, _)).map(Failure(_))
+    else Unmarshal(response.entity).to[JObject].map(HorizonServerError(request.uri, _)).map(Failure(_))
   }
 
   override def getStream[T: ClassTag](path: String, de: CustomSerializer[T], cursor: HorizonCursor, order: HorizonOrder,
