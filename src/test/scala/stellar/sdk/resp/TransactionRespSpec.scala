@@ -16,7 +16,7 @@ class TransactionRespSpec extends Specification with ArbitraryInput with DomainM
 
   "a transaction post response" should {
     "provide access to the signed transaction via XDR decoding" >> {
-      TransactionPostSuccess("", 1, "AAAAAJYHU4BtUa8ACOZZzHII4+FtEgRa9lBknmI+jQ8MmbfYAAAAZAB16IkAAAABAAAAAAAAAAAAAAABAAAAA" +
+      TransactionProcessed("", 1, "AAAAAJYHU4BtUa8ACOZZzHII4+FtEgRa9lBknmI+jQ8MmbfYAAAAZAB16IkAAAABAAAAAAAAAAAAAAABAAAAA" +
         "AAAAAAAAAAAuRsw+AoWiSHa1TWuxE8O0ve5Ytj2JJE1sDrLNJspsxsAAAAAAJiWgAAAAAAAAAABDJm32AAAAEDnDn8POBeTu0v5Hj6VCVB" +
         "KABHtap9ut+HH0+taBQsDPNLA+WXfiwrq1hG5cEQP0qTHG59vkmyjxcejqjz7dPwO", "", "").transaction must
         beLike {
@@ -41,7 +41,7 @@ class TransactionRespSpec extends Specification with ArbitraryInput with DomainM
     }
 
     "provide access to the XDR Transaction Result" >> {
-      TransactionPostSuccess("", 1, "", "AAAAAAAAAGQAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAB////+wAAAAA=", "").result must
+      TransactionProcessed("", 1, "", "AAAAAAAAAGQAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAB////+wAAAAA=", "").result must
         beLike { case tr: TransactionResult =>
           tr.getFeeCharged.getInt64 mustEqual 100
           tr.getExt.getDiscriminant mustEqual 0
@@ -53,7 +53,7 @@ class TransactionRespSpec extends Specification with ArbitraryInput with DomainM
     }
 
     "provide access to the XDR Transaction Result Meta" >> {
-      TransactionPostSuccess("", 1, "", "", "AAAAAAAAAAEAAAACAAAAAAAACVIAAAAAAAAAAPV0vlN3VR04WFNx2dsyXUyxlcIhv99+eHwdMjqmf" +
+      TransactionProcessed("", 1, "", "", "AAAAAAAAAAEAAAACAAAAAAAACVIAAAAAAAAAAPV0vlN3VR04WFNx2dsyXUyxlcIhv99+eHwdMjqmf" +
         "MHaAAAAF0h26AAAAAlSAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAQAACVIAAAAAAAAAAGXNhLrhGtltTwCpmqlarh7" +
         "s1DB2hIkbP//jgzn4Fos/AAHGqAnsV5wAAAk9AAAAAQAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAA").resultMeta must
         beLike { case tm: TransactionMeta =>
@@ -63,7 +63,7 @@ class TransactionRespSpec extends Specification with ArbitraryInput with DomainM
         }
     }
 
-    "deserialise from JSON" >> prop { tpr: TransactionPostSuccess =>
+    "deserialise from JSON" >> prop { tpr: TransactionProcessed =>
       val json = ("hash" -> tpr.hash) ~ ("ledger" -> tpr.ledger) ~ ("envelope_xdr" -> tpr.envelopeXDR) ~
         ("result_xdr" -> tpr.resultXDR) ~ ("result_meta_xdr" -> tpr.resultMetaXDR)
 

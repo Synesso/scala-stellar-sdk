@@ -39,14 +39,14 @@ sealed trait TransactionPostResp {
 /**
   * The success response received after submitting a new transaction to Horizon
   */
-case class TransactionPostSuccess(hash: String, ledger: Long, envelopeXDR: String, resultXDR: String, resultMetaXDR: String)
+case class TransactionProcessed(hash: String, ledger: Long, envelopeXDR: String, resultXDR: String, resultMetaXDR: String)
   extends TransactionSuccessResp with TransactionPostResp
 
 /**
   * The failure response received after submitting a new transaction to Horizon
   */
-case class TransactionPostFailure(status: Int, detail: String, envelopeXDR: String, resultXDR: String,
-                                  resultCode: String, operationResultCodes: Array[String])
+case class TransactionRejected(status: Int, detail: String, envelopeXDR: String, resultXDR: String,
+                               resultCode: String, operationResultCodes: Array[String])
 
   extends TransactionPostResp
 
@@ -67,7 +67,7 @@ object TransactionPostRespDeserializer extends ResponseParser[TransactionPostRes
     (o \ "type").extractOpt[String] match {
 
       case Some("https://stellar.org/horizon-errors/transaction_failed") =>
-        TransactionPostFailure(
+        TransactionRejected(
           status = (o \ "status").extract[Int],
           detail = (o \ "detail").extract[String],
           resultCode = (o \ "extras" \ "result_codes" \ "transaction").extract[String],
@@ -77,7 +77,7 @@ object TransactionPostRespDeserializer extends ResponseParser[TransactionPostRes
         )
 
       case _ =>
-        TransactionPostSuccess(
+        TransactionProcessed(
           hash = (o \ "hash").extract[String],
           ledger = (o \ "ledger").extract[Long],
           envelopeXDR = (o \ "envelope_xdr").extract[String],

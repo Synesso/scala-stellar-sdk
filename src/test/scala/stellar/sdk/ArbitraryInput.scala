@@ -474,13 +474,13 @@ trait ArbitraryInput extends ScalaCheck {
     Trade(id, ledgerCloseTime, offerId, baseAccount, baseAmount, counterAccount, counterAmount, baseIsSeller)
   }
 
-  def genTransactionPostSuccess: Gen[TransactionPostSuccess] = for {
+  def genTransactionPostSuccess: Gen[TransactionProcessed] = for {
     hash <- genHash
     ledger <- Gen.posNum[Long]
     envelopeXDR <- genHash
     resultXDR <- genHash
     resultMetaXDR <- genHash
-  } yield TransactionPostSuccess(hash, ledger, envelopeXDR, resultXDR, resultMetaXDR)
+  } yield TransactionProcessed(hash, ledger, envelopeXDR, resultXDR, resultMetaXDR)
 
   def genTransactionHistoryResponse: Gen[TransactionHistoryResp] = for {
     hash <- genHash
