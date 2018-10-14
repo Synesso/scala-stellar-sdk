@@ -2,7 +2,6 @@ package stellar.sdk.resp
 
 import java.time.ZonedDateTime
 
-import akka.http.scaladsl.model.Uri
 import org.json4s.DefaultFormats
 import org.json4s.JsonAST.JObject
 import org.stellar.sdk.xdr.{TransactionMeta, TransactionResult}

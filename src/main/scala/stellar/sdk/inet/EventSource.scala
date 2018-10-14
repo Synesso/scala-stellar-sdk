@@ -2,16 +2,15 @@ package stellar.sdk.inet
 
 import akka.NotUsed
 import akka.http.scaladsl.client.RequestBuilding.Get
-import akka.http.scaladsl.model.headers.Accept
-import akka.http.scaladsl.model.{HttpRequest, HttpResponse, Uri}
-import akka.http.scaladsl.unmarshalling.Unmarshal
-import akka.stream.scaladsl.{Broadcast, Flow, GraphDSL, Merge, Source}
-import akka.stream.{Materializer, SourceShape}
+import akka.http.scaladsl.model.MediaTypes.`text/event-stream`
+import akka.http.scaladsl.model.headers.{Accept, `Last-Event-ID`}
 import akka.http.scaladsl.model.sse.ServerSentEvent
 import akka.http.scaladsl.model.sse.ServerSentEvent.heartbeat
-import akka.http.scaladsl.model.MediaTypes.`text/event-stream`
-import akka.http.scaladsl.model.headers.`Last-Event-ID`
+import akka.http.scaladsl.model.{HttpRequest, HttpResponse, Uri}
+import akka.http.scaladsl.unmarshalling.Unmarshal
 import akka.http.scaladsl.unmarshalling.sse.EventStreamUnmarshalling
+import akka.stream.scaladsl.{Broadcast, Flow, GraphDSL, Merge, Source}
+import akka.stream.{Materializer, SourceShape}
 
 import scala.concurrent.Future
 import scala.concurrent.duration.{Duration, FiniteDuration}
@@ -84,8 +83,8 @@ object EventSource {
             unmarshaller: EventStreamUnmarshalling = EventStreamUnmarshalling)(
              implicit mat: Materializer
            ): EventSource = {
-    import unmarshaller._
     import mat.executionContext
+    import unmarshaller._
 
     val continuousEvents = {
       def getEventSource(lastEventId: Option[String]) = {

@@ -1,6 +1,7 @@
 package stellar
 
 import stellar.sdk.resp.AccountResp
+
 import scala.language.implicitConversions
 
 package object sdk {

@@ -3,6 +3,7 @@ package stellar.sdk
 import java.io.File
 
 import com.github.tomakehurst.wiremock.WireMockServer
+import org.json4s.JsonDSL._
 import org.specs2.concurrent.ExecutionEnv
 import org.specs2.mutable.Specification
 import stellar.sdk.Amount.lumens
@@ -14,7 +15,6 @@ import stellar.sdk.resp._
 import scala.concurrent.duration._
 import scala.concurrent.{Await, Future}
 import scala.sys.process._
-import org.json4s.JsonDSL._
 
 /**
   * Requires a newly launched stand-alone instance of stellar when running in NoProxy mode.

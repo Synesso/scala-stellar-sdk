@@ -8,8 +8,8 @@ import org.specs2.mutable.Specification
 import stellar.sdk.op.{Operation, PayOperation, Transacted}
 import stellar.sdk.resp.{EffectResp, TransactionHistoryResp}
 
-import scala.concurrent.duration._
 import scala.concurrent.Future
+import scala.concurrent.duration._
 
 class DataSourceEndpointsIntegrationSpec(implicit ee: ExecutionEnv) extends Specification {
 

@@ -1,9 +1,6 @@
 package stellar.sdk.inet
 
-import akka.actor.ActorSystem
-import akka.http.scaladsl.model.{HttpRequest, HttpResponse, Uri}
-import akka.http.scaladsl.unmarshalling.Unmarshal
-import akka.stream.ActorMaterializer
+import akka.http.scaladsl.model.Uri
 import org.json4s.{Formats, JObject}
 
 case class HorizonServerError(uri: Uri, body: String) extends Exception(
