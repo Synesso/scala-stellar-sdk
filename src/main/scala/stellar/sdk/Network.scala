@@ -21,8 +21,7 @@ trait Network extends LazyLogging {
   /**
     * The keypair for the master account for this network
     */
-  lazy val masterAccount: KeyPair =
-    KeyPair.fromSecretSeed(ByteArrays.sha256(passphrase.getBytes(UTF_8)))
+  lazy val masterAccount: KeyPair = KeyPair.fromSecretSeed(networkId)
 
   /**
     * Submit the SignedTransaction to the network and eventually receive a TransactionPostResp with the results.
