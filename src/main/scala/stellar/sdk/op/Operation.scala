@@ -14,7 +14,7 @@ import scala.util.{Success, Try}
 /**
   * An Operation represents a change to the ledger. It is the action, as opposed to the effects resulting from that action.
   */
-trait Operation {
+trait Operation extends Encodable {
   val sourceAccount: Option[PublicKeyOps]
 
   def toOperationBody: OperationBody

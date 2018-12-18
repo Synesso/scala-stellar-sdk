@@ -65,7 +65,7 @@ case class PublicKey(pk: EdDSAPublicKey) extends PublicKeyOps {
 
 }
 
-trait PublicKeyOps {
+trait PublicKeyOps extends Encodable {
   val pk: EdDSAPublicKey
 
   /**
@@ -128,6 +128,8 @@ trait PublicKeyOps {
     hint.setSignatureHint(hintBytes)
     hint
   }
+
+  override def encode: Stream[Byte] = Encode.int(0) ++ pk.getAbyte
 }
 
 object KeyPair {

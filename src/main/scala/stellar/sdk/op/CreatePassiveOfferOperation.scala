@@ -31,6 +31,13 @@ case class CreatePassiveOfferOperation(selling: Amount, buying: Asset, price: Pr
     body.setCreatePassiveOfferOp(op)
     body
   }
+
+  override def encode: Stream[Byte] =
+    Encode.int(4) ++
+      selling.asset.encode ++
+      buying.encode ++
+      Encode.long(selling.units) ++
+      price.encode
 }
 
 object CreatePassiveOfferOperation {

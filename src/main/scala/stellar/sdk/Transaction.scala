@@ -16,7 +16,7 @@ case class Transaction(source: Account,
                        operations: Seq[Operation] = Nil,
                        memo: Memo = NoMemo,
                        timeBounds: Option[TimeBounds] = None,
-                       fee: Option[NativeAmount] = None)(implicit val network: Network) {
+                       fee: Option[NativeAmount] = None)(implicit val network: Network) extends Encodable {
 
   private val BaseFee = 100L
   private val EnvelopeTypeTx = ByteBuffer.allocate(4).putInt(EnvelopeType.ENVELOPE_TYPE_TX.getValue).array
@@ -74,6 +74,15 @@ case class Transaction(source: Account,
     base64(baos.toByteArray)
   }
 
+  override def encode: Stream[Byte] = {
+    source.encode ++
+      calculatedFee.encode ++
+      Encode.long(source.sequenceNumber) ++
+      Encode.opt(timeBounds) ++
+      memo.encode ++
+      Encode.varArr(operations) ++
+      Encode.int(0)
+  }
 }
 
 object Transaction {

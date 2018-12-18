@@ -5,11 +5,14 @@ import java.util.Locale
 
 import scala.util.Try
 
-trait Amount {
+trait Amount extends Encodable {
   val units: Long
   val asset: Asset
 
   def toHumanValue: Double = units / math.pow(10, Amount.decimalPlaces)
+
+  override def encode: Stream[Byte] = asset.encode ++ Encode.long(units)
+
 }
 
 case class NativeAmount(units: Long) extends Amount {

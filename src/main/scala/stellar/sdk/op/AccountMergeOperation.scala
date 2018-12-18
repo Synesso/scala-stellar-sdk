@@ -3,7 +3,7 @@ package stellar.sdk.op
 import org.stellar.sdk.xdr.AccountID
 import org.stellar.sdk.xdr.Operation.OperationBody
 import org.stellar.sdk.xdr.OperationType.ACCOUNT_MERGE
-import stellar.sdk.{KeyPair, PublicKey, PublicKeyOps}
+import stellar.sdk.{Encode, KeyPair, PublicKey, PublicKeyOps}
 
 import scala.util.Try
 
@@ -23,6 +23,8 @@ case class AccountMergeOperation(destination: PublicKeyOps, sourceAccount: Optio
     body.setDiscriminant(ACCOUNT_MERGE)
     body
   }
+
+  override def encode: Stream[Byte] = Encode.int(8) ++ destination.encode
 }
 
 object AccountMergeOperation {

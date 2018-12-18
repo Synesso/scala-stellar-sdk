@@ -47,6 +47,12 @@ case class PathPaymentOperation(sendMax: Amount,
     body
   }
 
+  override def encode: Stream[Byte] =
+    Encode.int(2) ++
+      sendMax.encode ++
+      destinationAccount.encode ++
+      destinationAmount.encode ++
+      Encode.varArr(path)
 }
 
 object PathPaymentOperation {

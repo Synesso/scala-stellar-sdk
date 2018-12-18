@@ -4,7 +4,7 @@ import org.stellar.sdk.xdr.Operation.OperationBody
 import org.stellar.sdk.xdr.OperationType.BUMP_SEQUENCE
 import org.stellar.sdk.xdr.{BumpSequenceOp, SequenceNumber}
 import stellar.sdk.XDRPrimitives.int64
-import stellar.sdk.{PublicKey, PublicKeyOps}
+import stellar.sdk.{Encode, PublicKey, PublicKeyOps}
 
 import scala.util.Try
 
@@ -27,6 +27,8 @@ case class BumpSequenceOperation(bumpTo: Long,
     body.setDiscriminant(BUMP_SEQUENCE)
     body
   }
+
+  override def encode: Stream[Byte] = Encode.int(11) ++ Encode.long(bumpTo)
 }
 
 object BumpSequenceOperation {

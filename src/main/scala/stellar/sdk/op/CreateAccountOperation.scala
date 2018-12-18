@@ -32,6 +32,7 @@ case class CreateAccountOperation(destinationAccount: PublicKeyOps,
     body
   }
 
+  override def encode: Stream[Byte] = Encode.int(0) ++ destinationAccount.encode ++ Encode.long(startingBalance.units)
 }
 
 object CreateAccountOperation {

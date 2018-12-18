@@ -4,7 +4,7 @@ import org.stellar.sdk.xdr.Operation.OperationBody
 import org.stellar.sdk.xdr.OperationType.PAYMENT
 import org.stellar.sdk.xdr._
 import stellar.sdk
-import stellar.sdk.{Amount, KeyPair, PublicKey, PublicKeyOps}
+import stellar.sdk.{Amount, Encode, KeyPair, PublicKey, PublicKeyOps}
 
 import scala.util.Try
 
@@ -35,6 +35,11 @@ case class PaymentOperation(destinationAccount: PublicKeyOps,
     body.setPaymentOp(op)
     body
   }
+
+  override def encode: Stream[Byte] =
+    Encode.int(1) ++
+      destinationAccount.encode ++
+      amount.encode
 
 }
 

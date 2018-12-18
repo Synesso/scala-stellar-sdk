@@ -2,7 +2,7 @@ package stellar.sdk.op
 
 import org.stellar.sdk.xdr.Operation.OperationBody
 import org.stellar.sdk.xdr.OperationType.INFLATION
-import stellar.sdk.PublicKeyOps
+import stellar.sdk.{Encode, PublicKeyOps}
 
 /**
   * Requests that the network runs the inflation process.
@@ -16,4 +16,6 @@ case class InflationOperation(sourceAccount: Option[PublicKeyOps] = None) extend
     body.setDiscriminant(INFLATION)
     body
   }
+
+  override def encode: Stream[Byte] = Encode.int(9)
 }

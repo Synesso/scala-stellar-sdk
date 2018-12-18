@@ -31,6 +31,13 @@ case class CreateOfferOperation(selling: Amount, buying: Asset, price: Price,
     body
   }
 
+  override def encode: Stream[Byte] =
+    Encode.int(3) ++
+      selling.asset.encode ++
+      buying.encode ++
+      Encode.long(selling.units) ++
+      price.encode ++
+      Encode.long(0)
 }
 
 /**
@@ -59,6 +66,14 @@ case class DeleteOfferOperation(override val offerId: Long,
     body.setManageOfferOp(op)
     body
   }
+
+  override def encode: Stream[Byte] =
+    Encode.int(3) ++
+      selling.encode ++
+      buying.encode ++
+      Encode.long(0) ++
+      price.encode ++
+      Encode.long(offerId)
 }
 
 /**
@@ -86,6 +101,14 @@ case class UpdateOfferOperation(override val offerId: Long,
     body.setManageOfferOp(op)
     body
   }
+
+  override def encode: Stream[Byte] =
+    Encode.int(3) ++
+      selling.asset.encode ++
+      buying.encode ++
+      Encode.long(selling.units) ++
+      price.encode ++
+      Encode.long(offerId)
 }
 
 object ManageOfferOperation {

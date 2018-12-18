@@ -9,7 +9,7 @@ import stellar.sdk.XDRPrimitives._
 
 import scala.util.Try
 
-sealed trait Memo {
+sealed trait Memo extends Encodable {
   def toXDR: XDRMemo
 }
 
@@ -31,6 +31,8 @@ case object NoMemo extends Memo {
     m.setDiscriminant(MEMO_NONE)
     m
   }
+
+  override def encode: Stream[Byte] = Encode.int(0)
 }
 
 case class MemoText(text: String) extends Memo {
@@ -44,6 +46,8 @@ case class MemoText(text: String) extends Memo {
     m.setText(text)
     m
   }
+
+  override def encode: Stream[Byte] = Encode.int(1) ++ Encode.string(text)
 }
 
 case class MemoId(id: Long) extends Memo {
@@ -55,6 +59,8 @@ case class MemoId(id: Long) extends Memo {
     m.setId(uint64(id))
     m
   }
+
+  override def encode: Stream[Byte] = Encode.int(2) ++ Encode.long(id)
 }
 
 trait MemoWithHash extends Memo {
@@ -76,6 +82,8 @@ case class MemoHash(bs: Array[Byte]) extends MemoWithHash {
     m.setHash(hash(bytes))
     m
   }
+
+  override def encode: Stream[Byte] = Encode.int(3) ++ Encode.bytes(bs)
 }
 
 object MemoHash {
@@ -91,6 +99,8 @@ case class MemoReturnHash(bs: Array[Byte]) extends MemoWithHash {
     m.setRetHash(hash(bytes))
     m
   }
+
+  override def encode: Stream[Byte] = Encode.int(4) ++ Encode.bytes(bs)
 }
 
 object MemoReturnHash {

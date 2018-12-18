@@ -6,7 +6,7 @@ import stellar.sdk.ByteArrays._
 
 import scala.util.Try
 
-sealed trait Asset {
+sealed trait Asset extends Encodable {
   def toXDR: XDRAsset
 }
 
@@ -37,6 +37,8 @@ case object NativeAsset extends Asset {
     xdr.setDiscriminant(ASSET_TYPE_NATIVE)
     xdr
   }
+
+  override def encode: Stream[Byte] = Encode.int(0)
 }
 
 trait NonNativeAsset extends Asset {
@@ -67,6 +69,11 @@ case class IssuedAsset4 private(code: String, issuer: PublicKeyOps) extends NonN
   }
 
   override val typeString = "credit_alphanum4"
+
+  override def encode: Stream[Byte] = {
+    val codeBytes = paddedByteArray(code, 4)
+    Encode.int(1) ++ Encode.int(codeBytes.length) ++ Encode.bytes(codeBytes)
+  }
 }
 
 object IssuedAsset4 {
@@ -95,6 +102,11 @@ case class IssuedAsset12 private (code: String, issuer: PublicKeyOps) extends No
   }
 
   override val typeString = "credit_alphanum12"
+
+  override def encode: Stream[Byte] = {
+    val codeBytes = paddedByteArray(code, 12)
+    Encode.int(2) ++ Encode.int(codeBytes.length) ++ Encode.bytes(codeBytes)
+  }
 }
 
 object IssuedAsset12 {

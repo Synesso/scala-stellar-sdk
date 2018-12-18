@@ -25,6 +25,8 @@ case class ChangeTrustOperation(limit: IssuedAmount, sourceAccount: Option[Publi
     body.setChangeTrustOp(op)
     body
   }
+
+  override def encode: Stream[Byte] = Encode.int(6) ++ limit.encode
 }
 
 object ChangeTrustOperation {

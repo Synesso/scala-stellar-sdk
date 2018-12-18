@@ -13,7 +13,7 @@ import scala.util.Try
   * Updates the “authorized” flag of an existing trust line. This is called by the issuer of the related asset.
   */
 case class AllowTrustOperation(trustor: PublicKeyOps,
-                               assetCode: String,
+                               assetCode: String, // todo - make nonnativeasset
                                authorize: Boolean,
                                sourceAccount: Option[PublicKeyOps] = None) extends Operation {
 
@@ -35,6 +35,14 @@ case class AllowTrustOperation(trustor: PublicKeyOps,
     body.setAllowTrustOp(op)
     body
   }
+
+  override def encode: Stream[Byte] =
+    Encode.int(7) ++
+      trustor.encode ++
+      (if (assetCode.length <= 4) Encode.int(1) ++ Encode.bytes(paddedByteArray(assetCode, 4))
+      else Encode.int(2) ++ Encode.bytes(paddedByteArray(assetCode, 12))) ++
+      Encode.int(if (authorize) 1 else 0)
+
 }
 
 object AllowTrustOperation {

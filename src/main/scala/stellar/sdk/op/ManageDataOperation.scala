@@ -4,7 +4,7 @@ import org.stellar.sdk.xdr.ManageDataOp
 import org.stellar.sdk.xdr.Operation.OperationBody
 import org.stellar.sdk.xdr.OperationType.MANAGE_DATA
 import stellar.sdk.XDRPrimitives._
-import stellar.sdk.{PublicKey, PublicKeyOps}
+import stellar.sdk.{Encode, PublicKey, PublicKeyOps}
 
 import scala.util.Try
 
@@ -27,7 +27,9 @@ sealed trait ManageDataOperation extends Operation {
   * @param sourceAccount the account effecting this operation, if different from the owning account of the transaction
   * @see [[https://www.stellar.org/developers/horizon/reference/resources/operation.html#manage-data endpoint doc]]
   */
-case class DeleteDataOperation(name: String, sourceAccount: Option[PublicKeyOps] = None) extends ManageDataOperation
+case class DeleteDataOperation(name: String, sourceAccount: Option[PublicKeyOps] = None) extends ManageDataOperation {
+  override def encode: Stream[Byte] = Encode.int(10) ++ Encode.string(name) ++ Encode.int(0)
+}
 
 /**
   * Creates or updates a Data Entry (name/value pair) for an account.
@@ -41,6 +43,8 @@ case class WriteDataOperation(name: String, value: String, sourceAccount: Option
     body.getManageDataOp.setDataValue(dataValue(value.getBytes("UTF-8")))
     body
   }
+
+  override def encode: Stream[Byte] = Encode.int(10) ++ Encode.string(name) ++ Encode.int(1) ++ Encode.string(value)
 }
 
 

@@ -5,12 +5,12 @@ import scoverage.ScoverageKeys.coverageMinimum
 lazy val commonSettings = Seq(
   name := "scala-stellar-sdk",
   organization := "io.github.synesso",
-  scalaVersion := "2.12.7",
+  scalaVersion := "2.12.8",
   homepage := Some(url("https://github.com/synesso/scala-stellar-sdk")),
   developers := List(
     Developer("jem", "Jem Mawson", "jem.mawson@gmail.com", url = url("https://keybase.io/jem"))
   ),
-  crossScalaVersions := Seq("2.12.7"),
+  crossScalaVersions := Seq("2.12.8"),
   scalacOptions ++= Seq(
     "-Yrangepos",
     "-unchecked",
@@ -67,14 +67,14 @@ lazy val root = (project in file("."))
       "commons-codec" % "commons-codec" % "1.11",
       "net.i2p.crypto" % "eddsa" % "0.3.0",
       "com.typesafe.akka" %% "akka-http" % "10.1.5",
-      "com.typesafe.akka" %% "akka-stream" % "2.5.17",
+      "com.typesafe.akka" %% "akka-stream" % "2.5.19",
       "de.heikoseeberger" %% "akka-http-json4s" % "1.22.0",
-      "org.json4s" %% "json4s-native" % "3.6.1",
-      "com.typesafe.scala-logging" %% "scala-logging" % "3.9.0",
+      "org.json4s" %% "json4s-native" % "3.6.2",
+      "com.typesafe.scala-logging" %% "scala-logging" % "3.9.2",
       "ch.qos.logback" % "logback-classic" % "1.2.3",
-      "org.specs2" %% "specs2-core" % "4.3.5" % "test,it",
-      "org.specs2" %% "specs2-mock" % "4.3.5" % "test",
-      "org.specs2" %% "specs2-scalacheck" % "4.3.5" % "test",
+      "org.specs2" %% "specs2-core" % "4.3.6" % "test,it",
+      "org.specs2" %% "specs2-mock" % "4.3.6" % "test",
+      "org.specs2" %% "specs2-scalacheck" % "4.3.6" % "test",
       "com.github.tomakehurst" % "wiremock" % "2.19.0" % "test,it"
     )
   )

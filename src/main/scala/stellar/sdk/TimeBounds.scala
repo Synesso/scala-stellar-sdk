@@ -5,7 +5,7 @@ import java.time.Instant
 import org.stellar.sdk.xdr.{TimeBounds => XDRTimeBounds}
 import stellar.sdk.XDRPrimitives._
 
-case class TimeBounds(start: Instant, end: Instant) {
+case class TimeBounds(start: Instant, end: Instant) extends Encodable {
   assert(start.isBefore(end))
 
   def toXDR: XDRTimeBounds = {
@@ -14,6 +14,8 @@ case class TimeBounds(start: Instant, end: Instant) {
     tb.setMaxTime(uint64(end.toEpochMilli))
     tb
   }
+
+  override def encode: Stream[Byte] = Encode.long(start.toEpochMilli) ++ Encode.long(end.toEpochMilli)
 }
 
 object TimeBounds {

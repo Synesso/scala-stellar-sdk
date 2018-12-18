@@ -63,6 +63,17 @@ case class SetOptionsOperation(inflationDestination: Option[PublicKeyOps] = None
     body
   }
 
+  override def encode: Stream[Byte] =
+    Encode.int(5) ++
+      Encode.opt(inflationDestination) ++
+      Encode.optInt(clearFlags.map(_.map(_.i) + 0).map(_.reduce(_ | _))) ++
+      Encode.optInt(setFlags.map(_.map(_.i) + 0).map(_.reduce(_ | _))) ++
+      Encode.optInt(masterKeyWeight) ++
+      Encode.optInt(lowThreshold) ++
+      Encode.optInt(mediumThreshold) ++
+      Encode.optInt(highThreshold) ++
+      Encode.optString(homeDomain) ++
+      Encode.opt(signer)
 }
 
 object SetOptionsOperation {
