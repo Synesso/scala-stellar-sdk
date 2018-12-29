@@ -44,4 +44,10 @@ class ByteArraysSpec extends Specification with ArbitraryInput {
     }
   }
 
+  "base64" should {
+    "perform round trip to string" >> prop { bs: Array[Byte] =>
+      base64(base64(bs)).toSeq mustEqual bs.toSeq
+    }
+  }
+
 }

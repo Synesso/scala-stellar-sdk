@@ -5,6 +5,7 @@ import org.json4s.native.JsonMethods.parse
 import org.json4s.native.Serialization
 import org.scalacheck.Arbitrary
 import org.specs2.mutable.Specification
+import stellar.sdk.ByteArrays.base64
 import stellar.sdk.{ArbitraryInput, DomainMatchers}
 
 class PaymentOperationSpec extends Specification with ArbitraryInput with DomainMatchers with JsonSnippets {
@@ -13,10 +14,14 @@ class PaymentOperationSpec extends Specification with ArbitraryInput with Domain
   implicit val formats = Serialization.formats(NoTypeHints) + TransactedOperationDeserializer
 
   "payment operation" should {
-    "serde via xdr" >> prop { actual: PaymentOperation =>
-      Operation.fromXDR(actual.toXDR) must beSuccessfulTry.like {
-        case expected: PaymentOperation => expected must beEquivalentTo(actual)
-      }
+    "serde via xdr string" >> prop { actual: PaymentOperation =>
+      Operation.decodeXDR(base64(actual.encode)) must beEquivalentTo(actual)
+    }
+
+    "serde via xdr bytes" >> prop { actual: PaymentOperation =>
+      val (remaining, decoded) = Operation.decode.run(actual.encode).value
+      decoded mustEqual actual
+      remaining must beEmpty
     }
 
     "parse from json" >> prop { op: Transacted[PaymentOperation] =>

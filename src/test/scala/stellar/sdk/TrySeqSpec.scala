@@ -19,7 +19,7 @@ class TrySeqSpec extends Specification {
     }
   }
 
-  "sequencing a list with failures" should {
+  "sequencing a lists" should {
     "be the first failure" >> {
       sequence(Seq(
         Success(1),

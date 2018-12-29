@@ -9,6 +9,7 @@ import com.typesafe.scalalogging.LazyLogging
 import stellar.sdk.ByteArrays._
 import stellar.sdk.inet._
 import stellar.sdk.op.{Operation, PayOperation, Transacted, TransactedOperationDeserializer}
+import stellar.sdk.res._
 import stellar.sdk.resp._
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -27,7 +28,7 @@ trait Network extends LazyLogging {
     * Submit the SignedTransaction to the network and eventually receive a TransactionPostResp with the results.
     * @see [[https://www.stellar.org/developers/horizon/reference/endpoints/transactions-create.html endpoint doc]]
     */
-  def submit(txn: SignedTransaction)(implicit ec: ExecutionContext): Future[TransactionPostResp] = horizon.post(txn)
+  def submit(txn: SignedTransaction)(implicit ec: ExecutionContext): Future[TransactionPostResponse] = horizon.post(txn)
 
   /**
     * Fetch details regarding the account identified by `pubKey`.
@@ -376,8 +377,8 @@ trait Network extends LazyLogging {
     * @param transactionId transaction to fetch
     * @see [[https://www.stellar.org/developers/horizon/reference/endpoints/transactions-single.html endpoint doc]]
     */
-  def transaction(transactionId: String)(implicit ex: ExecutionContext): Future[TransactionHistoryResp] = {
-    horizon.get[TransactionHistoryResp](s"/transactions/$transactionId")
+  def transaction(transactionId: String)(implicit ex: ExecutionContext): Future[TransactionHistory] = {
+    horizon.get[TransactionHistory](s"/transactions/$transactionId")
   }
 
   /**
@@ -386,8 +387,8 @@ trait Network extends LazyLogging {
     * @param order  optional order to sort results by (defaults to `Asc`)
     * @see [[https://www.stellar.org/developers/horizon/reference/endpoints/transactions-all.html endpoint doc]]
     */
-  def transactions(cursor: HorizonCursor = Record(0), order: HorizonOrder = Asc)(implicit ex: ExecutionContext): Future[Stream[TransactionHistoryResp]] = {
-    horizon.getStream[TransactionHistoryResp]("/transactions", TransactionHistoryRespDeserializer, cursor, order)
+  def transactions(cursor: HorizonCursor = Record(0), order: HorizonOrder = Asc)(implicit ex: ExecutionContext): Future[Stream[TransactionHistory]] = {
+    horizon.getStream[TransactionHistory]("/transactions", TransactionHistoryDeserializer, cursor, order)
   }
 
   /**
@@ -395,8 +396,8 @@ trait Network extends LazyLogging {
     * @param cursor optional record id to start results from (defaults to `Now`)
     * @see [[https://www.stellar.org/developers/horizon/reference/endpoints/transactions-all.html endpoint doc]]
     */
-  def transactionSource(cursor: HorizonCursor = Now)(implicit ex: ExecutionContext): Source[TransactionHistoryResp, NotUsed] = {
-    horizon.getSource[TransactionHistoryResp]("/transactions", TransactionHistoryRespDeserializer, cursor)
+  def transactionSource(cursor: HorizonCursor = Now)(implicit ex: ExecutionContext): Source[TransactionHistory, NotUsed] = {
+    horizon.getSource[TransactionHistory]("/transactions", TransactionHistoryDeserializer, cursor)
   }
 
   /**
@@ -407,8 +408,8 @@ trait Network extends LazyLogging {
     * @see [[https://www.stellar.org/developers/horizon/reference/endpoints/transactions-for-account.html endpoint doc]]
     */
   def transactionsByAccount(pubKey: PublicKeyOps, cursor: HorizonCursor = Record(0), order: HorizonOrder = Asc)(implicit ex: ExecutionContext):
-                           Future[Stream[TransactionHistoryResp]] = {
-    horizon.getStream[TransactionHistoryResp](s"/accounts/${pubKey.accountId}/transactions", TransactionHistoryRespDeserializer, cursor, order)
+                           Future[Stream[TransactionHistory]] = {
+    horizon.getStream[TransactionHistory](s"/accounts/${pubKey.accountId}/transactions", TransactionHistoryDeserializer, cursor, order)
   }
 
   /**
@@ -417,8 +418,8 @@ trait Network extends LazyLogging {
     * @param cursor optional record id to start results from (defaults to `Now`)
     * @see [[https://www.stellar.org/developers/horizon/reference/endpoints/transactions-for-account.html endpoint doc]]
     */
-  def transactionsByAccountSource(pubKey: PublicKeyOps, cursor: HorizonCursor = Now)(implicit ex: ExecutionContext): Source[TransactionHistoryResp, NotUsed] = {
-    horizon.getSource[TransactionHistoryResp](s"/accounts/${pubKey.accountId}/transactions", TransactionHistoryRespDeserializer, cursor)
+  def transactionsByAccountSource(pubKey: PublicKeyOps, cursor: HorizonCursor = Now)(implicit ex: ExecutionContext): Source[TransactionHistory, NotUsed] = {
+    horizon.getSource[TransactionHistory](s"/accounts/${pubKey.accountId}/transactions", TransactionHistoryDeserializer, cursor)
   }
 
   /**
@@ -428,8 +429,8 @@ trait Network extends LazyLogging {
     * @see [[https://www.stellar.org/developers/horizon/reference/endpoints/transactions-for-ledger.html endpoint doc]]
     */
   def transactionsByLedger(sequenceId: Long, cursor: HorizonCursor = Record(0), order: HorizonOrder = Asc)(implicit ex: ExecutionContext):
-                          Future[Stream[TransactionHistoryResp]] = {
-    horizon.getStream[TransactionHistoryResp](s"/ledgers/$sequenceId/transactions", TransactionHistoryRespDeserializer, cursor, order)
+                          Future[Stream[TransactionHistory]] = {
+    horizon.getStream[TransactionHistory](s"/ledgers/$sequenceId/transactions", TransactionHistoryDeserializer, cursor, order)
   }
 
   /**
@@ -437,8 +438,8 @@ trait Network extends LazyLogging {
     * @param cursor optional record id to start results from (defaults to `Now`)
     * @see [[https://www.stellar.org/developers/horizon/reference/endpoints/transactions-for-ledger.html endpoint doc]]
     */
-  def transactionsByLedgerSource(sequenceId: Long, cursor: HorizonCursor = Now)(implicit ex: ExecutionContext): Source[TransactionHistoryResp, NotUsed] = {
-    horizon.getSource[TransactionHistoryResp](s"/ledgers/$sequenceId/transactions", TransactionHistoryRespDeserializer, cursor)
+  def transactionsByLedgerSource(sequenceId: Long, cursor: HorizonCursor = Now)(implicit ex: ExecutionContext): Source[TransactionHistory, NotUsed] = {
+    horizon.getSource[TransactionHistory](s"/ledgers/$sequenceId/transactions", TransactionHistoryDeserializer, cursor)
   }
 
   private def assetParams(prefix: String, asset: Asset): Map[String, String] = {
@@ -459,8 +460,8 @@ trait Network extends LazyLogging {
   */
 trait FriendBot {
   val horizon: HorizonAccess
-  def fund(pk: PublicKeyOps)(implicit ec: ExecutionContext): Future[TransactionPostResp] =
-    horizon.get[TransactionPostResp]("/friendbot", Map("addr" -> pk.accountId))
+  def fund(pk: PublicKeyOps)(implicit ec: ExecutionContext): Future[TransactionPostResponse] =
+    horizon.get[TransactionPostResponse]("/friendbot", Map("addr" -> pk.accountId))
 }
 
 case object PublicNetwork extends Network {

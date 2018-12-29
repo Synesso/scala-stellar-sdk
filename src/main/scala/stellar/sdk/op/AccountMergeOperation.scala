@@ -1,11 +1,8 @@
 package stellar.sdk.op
 
-import org.stellar.sdk.xdr.AccountID
-import org.stellar.sdk.xdr.Operation.OperationBody
-import org.stellar.sdk.xdr.OperationType.ACCOUNT_MERGE
-import stellar.sdk.{Encode, KeyPair, PublicKey, PublicKeyOps}
-
-import scala.util.Try
+import cats.data.State
+import stellar.sdk.xdr.Encode
+import stellar.sdk.{KeyPair, PublicKeyOps}
 
 /**
   * Deletes account and transfers remaining balance to destination account.
@@ -15,20 +12,9 @@ import scala.util.Try
   * @see [[https://www.stellar.org/developers/horizon/reference/resources/operation.html#account-merge endpoint doc]]
   */
 case class AccountMergeOperation(destination: PublicKeyOps, sourceAccount: Option[PublicKeyOps] = None) extends PayOperation {
-  override def toOperationBody: OperationBody = {
-    val body = new OperationBody
-    val id = new AccountID
-    id.setAccountID(destination.getXDRPublicKey)
-    body.setDestination(id)
-    body.setDiscriminant(ACCOUNT_MERGE)
-    body
-  }
-
-  override def encode: Stream[Byte] = Encode.int(8) ++ destination.encode
+  override def encode: Stream[Byte] = super.encode ++ Encode.int(8) ++ destination.encode
 }
 
 object AccountMergeOperation {
-  def from(body: OperationBody, source: Option[PublicKey]): Try[AccountMergeOperation] = Try {
-    AccountMergeOperation(KeyPair.fromXDRPublicKey(body.getDestination.getAccountID), source)
-  }
+  def decode: State[Seq[Byte], AccountMergeOperation] = KeyPair.decode.map(AccountMergeOperation(_))
 }

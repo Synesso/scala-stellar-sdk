@@ -1,12 +1,8 @@
 package stellar.sdk.op
 
-import org.stellar.sdk.xdr.Operation.OperationBody
-import org.stellar.sdk.xdr.OperationType.SET_OPTIONS
-import org.stellar.sdk.xdr.{Signer => XDRSigner, _}
-import stellar.sdk.XDRPrimitives._
-import stellar.sdk.{PublicKey, _}
-
-import scala.util.Try
+import cats.data.State
+import stellar.sdk.xdr.{Decode, Encode}
+import stellar.sdk.{Signer, _}
 
 /**
   * Modify an account, setting one or more options.
@@ -34,37 +30,9 @@ case class SetOptionsOperation(inflationDestination: Option[PublicKeyOps] = None
                                signer: Option[Signer] = None,
                                sourceAccount: Option[PublicKeyOps] = None) extends Operation {
 
-  override def toOperationBody: OperationBody = {
-    val op = new SetOptionsOp
-    inflationDestination.foreach { pk =>
-      op.setInflationDest(new AccountID)
-      op.getInflationDest.setAccountID(pk.getXDRPublicKey)
-    }
-    clearFlags.map(_.map(_.i) + 0).map(_.reduce(_ | _)).map(uint32).foreach(op.setClearFlags)
-    setFlags.map(_.map(_.i) + 0).map(_.reduce(_ | _)).map(uint32).foreach(op.setSetFlags)
-    masterKeyWeight.map(uint32).foreach(op.setMasterWeight)
-    lowThreshold.map(uint32).foreach(op.setLowThreshold)
-    mediumThreshold.map(uint32).foreach(op.setMedThreshold)
-    highThreshold.map(uint32).foreach(op.setHighThreshold)
-    homeDomain.map(str32).foreach(op.setHomeDomain)
-    signer.foreach {
-      // todo - use https://github.com/stellar/java-stellar-sdk/blob/master/src/main/java/org/stellar/sdk/Signer.java#L19-L73 to complete this
-      case AccountSigner(k, w) =>
-        val s = new XDRSigner
-        s.setKey(k.getXDRSignerKey)
-        s.setWeight(uint32(w))
-        op.setSigner(s)
-      case _ => ???
-    }
-
-    val body = new OperationBody
-    body.setDiscriminant(SET_OPTIONS)
-    body.setSetOptionsOp(op)
-    body
-  }
-
   override def encode: Stream[Byte] =
-    Encode.int(5) ++
+    super.encode ++
+      Encode.int(5) ++
       Encode.opt(inflationDestination) ++
       Encode.optInt(clearFlags.map(_.map(_.i) + 0).map(_.reduce(_ | _))) ++
       Encode.optInt(setFlags.map(_.map(_.i) + 0).map(_.reduce(_ | _))) ++
@@ -78,31 +46,20 @@ case class SetOptionsOperation(inflationDestination: Option[PublicKeyOps] = None
 
 object SetOptionsOperation {
 
-  def from(op: SetOptionsOp, source: Option[PublicKey]): Try[SetOptionsOperation] = Try {
-    SetOptionsOperation(
-      clearFlags = Option(op.getClearFlags).map(IssuerFlags.from),
-      setFlags = Option(op.getSetFlags).map(IssuerFlags.from),
-      inflationDestination = Option(op.getInflationDest).map(dest => KeyPair.fromXDRPublicKey(dest.getAccountID)),
-      masterKeyWeight = Option(op.getMasterWeight).map(_.getUint32),
-      lowThreshold = Option(op.getLowThreshold).map(_.getUint32),
-      mediumThreshold = Option(op.getMedThreshold).map(_.getUint32),
-      highThreshold = Option(op.getHighThreshold).map(_.getUint32),
-      homeDomain = Option(op.getHomeDomain).map(_.getString32),
-      signer = Option(op.getSigner).map(s => AccountSigner(KeyPair.fromPublicKey(s.getKey.getEd25519.getUint256), s.getWeight.getUint32)),
-      sourceAccount = source
-    )
-  }
+  def decode: State[Seq[Byte], SetOptionsOperation] = for {
+    inflationDestination <- Decode.opt(KeyPair.decode)
+    clearFlags <- Decode.opt(Decode.int.map(IssuerFlags.from))
+    setFlags <- Decode.opt(Decode.int.map(IssuerFlags.from))
+    masterKeyWeight <- Decode.opt(Decode.int)
+    lowThreshold <- Decode.opt(Decode.int)
+    mediumThreshold <- Decode.opt(Decode.int)
+    highThreshold <- Decode.opt(Decode.int)
+    homeDomain <- Decode.opt(Decode.string)
+    signer <- Decode.opt(Signer.decode)
+  } yield SetOptionsOperation(inflationDestination, clearFlags, setFlags, masterKeyWeight, lowThreshold,
+      mediumThreshold, highThreshold, homeDomain, signer)
 
 }
-
-/*
-    val signerKey = new SignerKey
-    signerKey.setDiscriminant(SignerKeyType.SIGNER_KEY_TYPE_ED25519)
-    val uint256 = new Uint256
-    uint256.setUint256(pk.getAbyte)
-    signerKey.setEd25519(uint256)
-
- */
 
 sealed trait IssuerFlag {
   val i: Int
@@ -129,5 +86,5 @@ object IssuerFlags {
 
   def apply(i: Int): Option[IssuerFlag] = all.find(_.i == i)
 
-  def from(i: Uint32): Set[IssuerFlag] = all.filter { f => (i.getUint32.toInt & f.i) == f.i }
+  def from(i: Int): Set[IssuerFlag] = all.filter { f => (i & f.i) == f.i }
 }

@@ -1,14 +1,11 @@
 package stellar.sdk
 
-import java.io.ByteArrayOutputStream
-import java.nio.ByteBuffer
-
-import org.stellar.sdk.xdr.Transaction.TransactionExt
-import org.stellar.sdk.xdr.{DecoratedSignature, EnvelopeType, TransactionEnvelope, XdrDataOutputStream, Transaction => XDRTransaction}
+import cats.data._
 import stellar.sdk.ByteArrays._
-import stellar.sdk.XDRPrimitives._
 import stellar.sdk.op.Operation
-import stellar.sdk.resp.TransactionPostResp
+import stellar.sdk.res.TransactionPostResponse
+import stellar.sdk.xdr.Encode.{arr, int, long, opt}
+import stellar.sdk.xdr.{Decode, Encode}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -16,10 +13,10 @@ case class Transaction(source: Account,
                        operations: Seq[Operation] = Nil,
                        memo: Memo = NoMemo,
                        timeBounds: Option[TimeBounds] = None,
-                       fee: Option[NativeAmount] = None)(implicit val network: Network) extends Encodable {
+                       fee: Option[NativeAmount] = None)(implicit val network: Network) {
 
   private val BaseFee = 100L
-  private val EnvelopeTypeTx = ByteBuffer.allocate(4).putInt(EnvelopeType.ENVELOPE_TYPE_TX.getValue).array
+  private val EnvelopeTypeTx = 2
 
   def add(op: Operation): Transaction = this.copy(operations = operations :+ op)
 
@@ -34,105 +31,83 @@ case class Transaction(source: Account,
   }
 
   def sign(key: KeyPair, otherKeys: KeyPair*): SignedTransaction = {
-    val h = hash
-    val signatures = (key +: otherKeys).map(_.signToXDR(h))
-    SignedTransaction(this, signatures, h)
+    val h = hash.toArray
+    val signatures = (key +: otherKeys).map(_.sign(h))
+    SignedTransaction(this, signatures)
   }
 
-  def hash: Array[Byte] = sha256 {
-    val os = new ByteArrayOutputStream
-    os.write(network.networkId)
-    os.write(EnvelopeTypeTx)
-    val txOs = new ByteArrayOutputStream
-    val xdrOs = new XdrDataOutputStream(txOs)
-    XDRTransaction.encode(xdrOs, toXDR)
-    os.write(txOs.toByteArray)
-    os.toByteArray
-  }
-
-  def toXDR = {
-    val txn = new XDRTransaction
-    val ext = new TransactionExt
-    ext.setDiscriminant(0)
-    txn.setExt(ext)
-    txn.setFee(uint32(calculatedFee.units.toInt))
-    txn.setSeqNum(seqNum(source.sequenceNumber))
-    txn.setSourceAccount(accountId(source.publicKey))
-    txn.setOperations(operations.toArray.map(_.toXDR))
-    txn.setMemo(memo.toXDR)
-    timeBounds.map(_.toXDR).foreach(txn.setTimeBounds)
-    txn
-  }
+  def hash: Seq[Byte] = ByteArrays.sha256(network.networkId ++ Encode.int(EnvelopeTypeTx) ++ encode)
 
   /**
     * The base64 encoding of the XDR form of this unsigned transaction.
     */
-  def encodeXDR: String = {
-    val baos = new ByteArrayOutputStream
-    val os = new XdrDataOutputStream(baos)
-    org.stellar.sdk.xdr.Transaction.encode(os, toXDR)
-    base64(baos.toByteArray)
-  }
+  def encodeXDR: String = base64(encode)
 
-  override def encode: Stream[Byte] = {
-    source.encode ++
-      calculatedFee.encode ++
-      Encode.long(source.sequenceNumber) ++
-      Encode.opt(timeBounds) ++
+  def encode: Stream[Byte] = {
+    source.publicKey.encode ++
+      int(calculatedFee.units.toInt) ++
+      long(source.sequenceNumber) ++
+      opt(timeBounds) ++
       memo.encode ++
-      Encode.varArr(operations) ++
-      Encode.int(0)
+      arr(operations) ++
+      int(0)
   }
 }
 
 object Transaction {
 
-  def fromXDR(txn: XDRTransaction)(implicit network: Network): Transaction = {
-    val account = Account(
-      KeyPair.fromXDRPublicKey(txn.getSourceAccount.getAccountID),
-      txn.getSeqNum.getSequenceNumber.getInt64
-    )
-    val operations = TrySeq.sequence(txn.getOperations.map(Operation.fromXDR)).get
-    val memo = Memo.fromXDR(txn.getMemo)
-    val timeBounds = Option(txn.getTimeBounds).map(TimeBounds.fromXDR)
-    val fee = Some(NativeAmount(txn.getFee.getUint32.longValue.toInt))
-    Transaction(account, operations, memo, timeBounds, fee)
-  }
+  // todo - sometimes it's `decodeXDR` and sometimes `from`. One or the other.
 
   /**
     * Decodes an unsigned transaction from base64-encoded XDR.
     */
-  def decodeXDR(base64: String)(implicit network: Network): Transaction = {
-    val xdrIn = XDRPrimitives.inputStream(base64)
-    fromXDR(org.stellar.sdk.xdr.Transaction.decode(xdrIn))
+  def decodeXDR(base64: String)(implicit network: Network): Transaction =
+    decode.run(ByteArrays.base64(base64)).value._2
+
+  def decode(implicit network: Network): State[Seq[Byte], Transaction] = for {
+      publicKey <- KeyPair.decode
+      fee <- Decode.int
+      seqNo <- Decode.long
+      timeBounds <- Decode.opt(TimeBounds.decode)
+      memo <- Memo.decode
+//      _ <- Decode.int.map{x => println(s"asdf $x") ; x}
+      ops <- Decode.arr(Operation.decode)
+      _ <- Decode.int
+    } yield {
+    Transaction(Account(publicKey, seqNo), ops, memo, timeBounds, Some(NativeAmount(fee)))
   }
 }
 
-case class SignedTransaction(transaction: Transaction, signatures: Seq[DecoratedSignature], hash: Array[Byte]) {
+case class SignedTransaction(transaction: Transaction, signatures: Seq[Signature]) {
 
-  def submit()(implicit ec: ExecutionContext): Future[TransactionPostResp] = {
+  def submit()(implicit ec: ExecutionContext): Future[TransactionPostResponse] = {
     transaction.network.submit(this)
   }
 
   def sign(key: KeyPair): SignedTransaction =
-    this.copy(signatures = key.signToXDR(hash) +: signatures)
-
-  def toXDR: TransactionEnvelope = {
-    val xdr = new TransactionEnvelope
-    xdr.setTx(transaction.toXDR)
-    xdr.setSignatures(signatures.toArray)
-    xdr
-  }
+    this.copy(signatures = key.sign(transaction.hash.toArray) +: signatures)
 
   /**
     * The base64 encoding of the XDR form of this signed transaction.
     */
   def encodeXDR: String = {
-    val baos = new ByteArrayOutputStream
-    val os = new XdrDataOutputStream(baos)
-    TransactionEnvelope.encode(os, toXDR)
-    base64(baos.toByteArray)
+    val z =base64(encode)
+//    println(z)
+    z
   }
+
+  /*
+
+   todo - lets decode this txn bit by bit. :(
+          or what happens if we decode automatically?
+
+closest: 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
+actual2: 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
+actual:  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
+
+
+   */
+  def encode: Stream[Byte] = transaction.encode ++ Encode.arr(signatures)
 }
 
 object SignedTransaction {
@@ -140,13 +115,12 @@ object SignedTransaction {
   /**
     * Decodes a signed transaction (aka envelope) from base64-encoded XDR.
     */
-  def decodeXDR(base64: String)(implicit network: Network): SignedTransaction = {
-    val xdrIn = XDRPrimitives.inputStream(base64)
-    val envelope = TransactionEnvelope.decode(xdrIn)
-    val txn = Transaction.fromXDR(envelope.getTx)
-    val signatures = envelope.getSignatures
-    val hash = txn.hash
-    SignedTransaction(txn, signatures, hash)
-  }
+  def decodeXDR(base64: String)(implicit network: Network) =
+    decode.run(ByteArrays.base64(base64)).value._2
+
+  def decode(implicit network: Network): State[Seq[Byte], SignedTransaction] = for {
+    txn <- Transaction.decode
+    sigs <- Decode.arr(Signature.decode)
+  } yield SignedTransaction(txn, sigs)
 
 }

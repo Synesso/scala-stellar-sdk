@@ -10,6 +10,7 @@ import stellar.sdk.Amount.lumens
 import stellar.sdk.ProxyMode.{NoProxy, RecordScript, ReplayScript}
 import stellar.sdk.inet.HorizonEntityNotFound
 import stellar.sdk.op._
+import stellar.sdk.res.TransactionHistory
 import stellar.sdk.resp._
 
 import scala.concurrent.duration._
@@ -432,10 +433,10 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
     "filter transactions by account" >> {
       val byAccount = network.transactionsByAccount(accnA).map(_.take(10).toList)
       byAccount.map(_.isEmpty) must beFalse.awaitFor(10 seconds)
-      byAccount.map(_.head) must beLike[TransactionHistoryResp] {
+      byAccount.map(_.head) must beLike[TransactionHistory] {
         case t =>
           t.account must beEquivalentTo(masterAccountKey)
-          t.feePaid mustEqual 1400
+          t.feePaid mustEqual NativeAmount(1400)
           t.operationCount mustEqual 14
           t.memo mustEqual NoMemo
       }.awaitFor(10.seconds)
@@ -445,10 +446,10 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
       (for {
         ledgerId <- network.ledgers(Now, Desc).map(_.filter(_.operationCount > 0).head.sequence)
         operation <- network.transactionsByLedger(ledgerId)
-      } yield operation) must beLike[Seq[TransactionHistoryResp]] {
+      } yield operation) must beLike[Seq[TransactionHistory]] {
         case Seq(t) =>
           t.account must beEquivalentTo(masterAccountKey)
-          t.feePaid mustEqual 10000
+          t.feePaid mustEqual NativeAmount(10000)
           t.operationCount mustEqual 100
           t.memo mustEqual NoMemo
       }.awaitFor(10.seconds)
@@ -467,7 +468,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
   "transaction source" should {
     "provide all future transactions" >> {
       val source = network.transactionSource()
-      val results: Future[Seq[TransactionHistoryResp]] = source.take(1).runWith(Sink.seq[TransactionHistoryResp])
+      val results: Future[Seq[TransactionHistory]] = source.take(1).runWith(Sink.seq[TransactionHistory])
       results.isCompleted must beFalse
       transact(InflationOperation())
       results.map(_.size) must beEqualTo(1).awaitFor(1 minute)

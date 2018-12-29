@@ -13,6 +13,12 @@ class AmountSpec extends Specification with ArbitraryInput {
     "convert base unit to display unit" >> prop { l: Long =>
       Amount.toDisplayUnits(l).toDouble mustEqual (l / math.pow(10, 7))
     }.setGen(Gen.posNum[Long])
+
+    "serde via xdr bytes" >> prop { expected: Amount =>
+      val (remaining, actual) = Amount.decode.run(expected.encode).value
+      actual mustEqual expected
+      remaining must beEmpty
+    }
   }
 
   "a number of units and a non-native asset" should {

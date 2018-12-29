@@ -5,7 +5,7 @@ import org.json4s.native.JsonMethods.parse
 import org.json4s.native.Serialization
 import org.scalacheck.Arbitrary
 import org.specs2.mutable.Specification
-import stellar.sdk.{ArbitraryInput, DomainMatchers}
+import stellar.sdk.{ArbitraryInput, ByteArrays, DomainMatchers}
 
 class BumpSequenceOperationSpec extends Specification with ArbitraryInput with DomainMatchers with JsonSnippets {
 
@@ -13,10 +13,14 @@ class BumpSequenceOperationSpec extends Specification with ArbitraryInput with D
   implicit val formats = Serialization.formats(NoTypeHints) + TransactedOperationDeserializer
 
   "bump sequence operation" should {
-    "serde via xdr" >> prop { actual: BumpSequenceOperation =>
-      Operation.fromXDR(actual.toXDR) must beSuccessfulTry.like {
-        case expected: BumpSequenceOperation => expected must beEquivalentTo(actual)
-      }
+    "serde via xdr bytes" >> prop { actual: BumpSequenceOperation =>
+      val (remaining, decoded) = Operation.decode.run(actual.encode).value
+      decoded mustEqual actual
+      remaining must beEmpty
+    }
+
+    "serde via xdr string" >> prop { actual: BumpSequenceOperation =>
+      Operation.decodeXDR(ByteArrays.base64(actual.encode)) mustEqual actual
     }
 
     "parse from json" >> prop { op: Transacted[BumpSequenceOperation] =>

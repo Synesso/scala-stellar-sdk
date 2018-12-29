@@ -7,9 +7,9 @@ import java.util.Locale
 import org.apache.commons.codec.binary.Base64
 import org.scalacheck.{Arbitrary, Gen}
 import org.specs2.ScalaCheck
-import org.stellar.sdk.xdr.{Operation => _, _}
 import stellar.sdk.ByteArrays.trimmedByteArray
 import stellar.sdk.op._
+import stellar.sdk.res.{PathPaymentResult, _}
 import stellar.sdk.resp._
 
 import scala.util.Random
@@ -54,6 +54,8 @@ trait ArbitraryInput extends ScalaCheck {
 
   implicit def arbUpdateOfferOperation: Arbitrary[UpdateOfferOperation] = Arbitrary(genUpdateOfferOperation)
 
+  implicit def arbInflationOperation: Arbitrary[InflationOperation] = Arbitrary(genInflationOperation)
+
   implicit def arbPathPaymentOperation: Arbitrary[PathPaymentOperation] = Arbitrary(genPathPaymentOperation)
 
   implicit def arbPaymentOperation: Arbitrary[PaymentOperation] = Arbitrary(genPaymentOperation)
@@ -76,8 +78,6 @@ trait ArbitraryInput extends ScalaCheck {
 
   implicit def arbSignedTransaction = Arbitrary(genSignedTransaction)
 
-  implicit def arbSignature = Arbitrary(genSignature)
-
   implicit def arbThreshold = Arbitrary(genThresholds)
 
   implicit def arbAccountResp = Arbitrary(genAccountResp)
@@ -92,13 +92,13 @@ trait ArbitraryInput extends ScalaCheck {
 
   implicit def arbTransactionPostResponse = Arbitrary(genTransactionPostSuccess)
 
-  implicit def arbTransactionHistoryResponse = Arbitrary(genTransactionHistoryResponse)
+  implicit def arbTransactionHistoryonse = Arbitrary(genTransactionHistory)
 
   implicit def arbHorizonCursor = Arbitrary(genHorizonCursor)
 
-  def genKeyPair: Gen[KeyPair] = Gen.oneOf(Seq(KeyPair.random))
+  implicit def arbOperationResuilt = Arbitrary(genOperationResult)
 
-  def genSignerKey: Gen[SignerKey] = genKeyPair.map(_.getXDRSignerKey)
+  def genKeyPair: Gen[KeyPair] = Gen.oneOf(Seq(KeyPair.random))
 
   def genPublicKey: Gen[PublicKey] = genKeyPair.map(kp => PublicKey(kp.pk))
 
@@ -347,12 +347,12 @@ trait ArbitraryInput extends ScalaCheck {
     Transaction(source, operations, memo, timeBounds)
   }
 
-  def genSignature: Gen[Signature] =
-    Gen.nonEmptyContainerOf[Array, Byte](Arbitrary.arbByte.arbitrary).map { bs: Array[Byte] =>
-      val s = new Signature
-      s.setSignature(bs)
-      s
-    }
+//  def genSignature: Gen[XDRSignature] =
+//    Gen.nonEmptyContainerOf[Array, Byte](Arbitrary.arbByte.arbitrary).map { bs: Array[Byte] =>
+//      val s = new XDRSignature
+//      s.setSignature(bs)
+//      s
+//    }
 
   def genSignedTransaction: Gen[SignedTransaction] = for {
     txn <- genTransaction
@@ -474,21 +474,21 @@ trait ArbitraryInput extends ScalaCheck {
     Trade(id, ledgerCloseTime, offerId, baseAccount, baseAmount, counterAccount, counterAmount, baseIsSeller)
   }
 
-  def genTransactionPostSuccess: Gen[TransactionProcessed] = for {
+  def genTransactionPostSuccess: Gen[TransactionApproved] = for {
     hash <- genHash
     ledger <- Gen.posNum[Long]
     envelopeXDR <- genHash
     resultXDR <- genHash
     resultMetaXDR <- genHash
-  } yield TransactionProcessed(hash, ledger, envelopeXDR, resultXDR, resultMetaXDR)
+  } yield TransactionApproved(hash, ledger, envelopeXDR, resultXDR, resultMetaXDR)
 
-  def genTransactionHistoryResponse: Gen[TransactionHistoryResp] = for {
+  def genTransactionHistory: Gen[TransactionHistory] = for {
     hash <- genHash
     ledger <- Gen.posNum[Long]
     createdAt <- genZonedDateTime
     account <- genPublicKey
     sequence <- Gen.posNum[Long]
-    feePaid <- Gen.posNum[Int]
+    feePaid <- Gen.posNum[Int].map(NativeAmount(_))
     operationCount <- Gen.posNum[Int]
     memo <- genMemo.map {
       case MemoReturnHash(bs) => MemoHash(bs)
@@ -499,10 +499,127 @@ trait ArbitraryInput extends ScalaCheck {
     resultXDR <- genHash
     resultMetaXDR <- genHash
     feeMetaXDR <- genHash
-  } yield TransactionHistoryResp(hash, ledger, createdAt, account, sequence, feePaid, operationCount,
+  } yield TransactionHistory(hash, ledger, createdAt, account, sequence, feePaid, operationCount,
     memo, signatures, envelopeXDR, resultXDR, resultMetaXDR, feeMetaXDR)
 
   def genHorizonCursor: Gen[HorizonCursor] = Gen.option(Gen.posNum[Long]).map(_.map(Record).getOrElse(Now))
+
+  // === Operation Results ===
+  def genOperationResult: Gen[OperationResult] = Gen.oneOf(
+    genAccountMergeResult, genAllowTrustResult, genBumpSequenceResult, genChangeTrustResult,
+    genCreatePassiveOfferResult, genInflationResult, genManageDataResult, genManageOfferResult,
+    genPathPaymentResult, genPaymentResult, genSetOptionsResult, genOperationNotAttemptedResult
+  )
+
+  def genOperationNotAttemptedResult: Gen[OperationResult] =
+    Gen.oneOf(BadAuthenticationResult, NoSourceAccountResult, OperationNotSupportedResult)
+
+  def genAccountMergeResult: Gen[AccountMergeResult] = Gen.oneOf(
+    genNativeAmount.map(AccountMergeSuccess), Gen.const(AccountMergeMalformed), Gen.const(AccountMergeNoAccount),
+    Gen.const(AccountMergeImmutable), Gen.const(AccountMergeHasSubEntries), Gen.const(AccountMergeSeqNumTooFar),
+    Gen.const(AccountMergeDestinationFull)
+  )
+
+  def genAllowTrustResult: Gen[AllowTrustResult] = Gen.oneOf(
+    AllowTrustSuccess, AllowTrustCannotRevoke, AllowTrustMalformed, AllowTrustNotRequired, AllowTrustNoTrustLine,
+    AllowTrustSelfNotAllowed
+  )
+
+  def genBumpSequenceResult: Gen[BumpSequenceResult] = Gen.oneOf(BumpSequenceSuccess, BumpSequenceBadSeqNo)
+
+  def genChangeTrustResult: Gen[ChangeTrustResult] = Gen.oneOf(
+    ChangeTrustSuccess, ChangeTrustInvalidLimit, ChangeTrustLowReserve, ChangeTrustMalformed,
+    ChangeTrustNoIssuer, ChangeTrustSelfNotAllowed
+  )
+
+  def genCreateAccountResult: Gen[CreateAccountResult] = Gen.oneOf(
+    CreateAccountSuccess, CreateAccountAlreadyExists, CreateAccountLowReserve, CreateAccountMalformed,
+    CreateAccountUnderfunded
+  )
+
+  def genCreatePassiveOfferResult: Gen[CreatePassiveOfferResult] = Gen.oneOf(
+    CreatePassiveOfferSuccess, CreatePassiveOfferMalformed, CreatePassiveOfferSellNoTrust, CreatePassiveOfferBuyNoTrust,
+    CreatePassiveOfferSellNoAuth, CreatePassiveOfferBuyNoAuth, CreatePassiveOfferLineFull, CreatePassiveOfferUnderfunded,
+    CreatePassiveOfferCrossSelf, CreatePassiveOfferSellNoIssuer, CreatePassiveOfferBuyNoIssuer,
+    UpdatePassiveOfferIdNotFound, CreatePassiveOfferLowReserve
+  )
+
+  def genInflationResult: Gen[InflationResult] = Gen.oneOf(
+    Gen.listOf(genInflationPayout).map(InflationSuccess), Gen.const(InflationNotDue)
+  )
+
+  def genInflationPayout: Gen[InflationPayout] = for {
+    recipient <- genPublicKey
+    amount <- genNativeAmount
+  } yield InflationPayout(recipient, amount)
+
+  def genManageDataResult: Gen[ManageDataResult] = Gen.oneOf(
+    ManageDataSuccess, ManageDataNotSupportedYet, DeleteDataNameNotFound, AddDataLowReserve, AddDataInvalidName
+  )
+
+  def genManageOfferResult: Gen[ManageOfferResult] = Gen.oneOf(
+    Gen.listOf(genOfferClaim).map(ManageOfferSuccess),
+    Gen.const(ManageOfferMalformed), Gen.const(ManageOfferBuyNoTrust), Gen.const(ManageOfferSellNoTrust),
+    Gen.const(ManageOfferBuyNoAuth), Gen.const(ManageOfferSellNoAuth),
+    Gen.const(ManageOfferBuyNoIssuer), Gen.const(ManageOfferSellNoIssuer),
+    Gen.const(ManageOfferLineFull), Gen.const(ManageOfferUnderfunded), Gen.const(ManageOfferCrossSelf),
+    Gen.const(ManageOfferLowReserve), Gen.const(UpdateOfferIdNotFound)
+  )
+
+  def genPathPaymentResult: Gen[PathPaymentResult] = Gen.oneOf(
+    genPathPaymentSuccess,
+    Gen.const(PathPaymentMalformed),
+    Gen.const(PathPaymentUnderfunded),
+    Gen.const(PathPaymentSourceNoTrust),
+    Gen.const(PathPaymentSourceNotAuthorised),
+    Gen.const(PathPaymentNoDestination),
+    Gen.const(PathPaymentDestinationNoTrust),
+    Gen.const(PathPaymentDestinationNotAuthorised),
+    Gen.const(PathPaymentDestinationLineFull),
+    genAsset.map(PathPaymentNoIssuer),
+    Gen.const(PathPaymentTooFewOffers),
+    Gen.const(PathPaymentOfferCrossesSelf),
+    Gen.const(PathPaymentSendMaxExceeded)
+  )
+
+  def genPathPaymentSuccess = for {
+    claims <- Gen.listOf(genOfferClaim)
+    destination <- genPublicKey
+    amount <- genAmount
+  }  yield PathPaymentSuccess(claims, destination, amount)
+
+  def genPaymentResult: Gen[PaymentResult] = Gen.oneOf(
+    PaymentSuccess,
+    PaymentMalformed,
+    PaymentUnderfunded,
+    PaymentSourceNoTrust,
+    PaymentSourceNotAuthorised,
+    PaymentNoDestination,
+    PaymentDestinationNoTrust,
+    PaymentDestinationNotAuthorised,
+    PaymentDestinationLineFull,
+    PaymentNoIssuer
+  )
+
+  def genSetOptionsResult: Gen[SetOptionsResult] = Gen.oneOf(
+    SetOptionsSuccess,
+    SetOptionsLowReserve,
+    SetOptionsTooManySigners,
+    SetOptionsBadFlags,
+    SetOptionsInvalidInflation,
+    SetOptionsCannotChange,
+    SetOptionsUnknownFlag,
+    SetOptionsThresholdOutOfRange,
+    SetOptionsBadSigner,
+    SetOptionsInvalidHomeDomain
+  )
+  
+  def genOfferClaim: Gen[OfferClaim] = for {
+    seller <- genPublicKey
+    offerId <- Gen.posNum[Long]
+    sold <- genAmount
+    bought <- genAmount
+  } yield OfferClaim(seller, offerId, sold, bought)
 
   def round(d: Double) = "%.7f".formatLocal(Locale.ROOT, d).toDouble
 }

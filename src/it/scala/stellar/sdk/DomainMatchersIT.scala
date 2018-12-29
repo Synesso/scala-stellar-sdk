@@ -2,10 +2,9 @@ package stellar.sdk
 
 import org.apache.commons.codec.binary.Hex
 import org.specs2.matcher.{AnyMatchers, Matcher, MustExpectations, OptionMatchers, SequenceMatchersCreation}
-import org.stellar.sdk.xdr.{DecoratedSignature, Hash, SignerKey, Uint64, Memo => XDRMemo, Operation => XDROperation, PublicKey => XDRPublicKey}
 import stellar.sdk.ByteArrays.base64
 import stellar.sdk.op._
-import stellar.sdk.resp.TransactionHistoryResp
+import stellar.sdk.res.TransactionHistory
 
 trait DomainMatchersIT extends AnyMatchers with MustExpectations with SequenceMatchersCreation with OptionMatchers {
 
@@ -37,52 +36,9 @@ trait DomainMatchersIT extends AnyMatchers with MustExpectations with SequenceMa
       Hex.encodeHex(sk.getAbyte) mustEqual Hex.encodeHex(other.sk.getAbyte)
   }
 
-  def beEquivalentTo(other: SignerKey): Matcher[SignerKey] = beLike[SignerKey] {
-    case signer: SignerKey =>
-      signer.getDiscriminant mustEqual other.getDiscriminant
-      signer.getEd25519.getUint256.toSeq mustEqual other.getEd25519.getUint256.toSeq
-  }
-
   def beEquivalentTo(other: PublicKeyOps): Matcher[PublicKeyOps] = beLike[PublicKeyOps] {
     case pk =>
       pk.accountId mustEqual other.accountId
-  }
-
-  def beEquivalentTo(other: Hash): Matcher[Hash] = beLike[Hash] {
-    case hash =>
-      if (other == null) {
-        hash must beNull
-      } else {
-        hash.getHash.toSeq mustEqual other.getHash.toSeq
-      }
-  }
-
-  def beEquivalentTo(other: Uint64): Matcher[Uint64] = beLike[Uint64] {
-    case id =>
-      if (other == null) {
-        id must beNull
-      } else {
-        other.getUint64 mustEqual id.getUint64
-      }
-  }
-
-  def beEquivalentTo(other: XDRMemo): Matcher[XDRMemo] = beLike[XDRMemo] {
-    case memo =>
-      memo.getDiscriminant mustEqual other.getDiscriminant
-      memo.getHash must beEquivalentTo(other.getHash)
-      memo.getId must beEquivalentTo(other.getId)
-      memo.getRetHash must beEquivalentTo(other.getRetHash)
-      memo.getText mustEqual other.getText
-  }
-
-  def beEquivalentTo(other: XDRPublicKey): Matcher[XDRPublicKey] = beLike[XDRPublicKey] {
-    case pk =>
-      pk.getDiscriminant mustEqual other.getDiscriminant
-      pk.getEd25519.getUint256.toSeq mustEqual other.getEd25519.getUint256.toSeq
-  }
-
-  def beEquivalentTo(other: XDROperation): Matcher[XDROperation] = beLike[XDROperation] {
-    case op => Operation.fromXDR(op) mustEqual Operation.fromXDR(other)
   }
 
   def beEquivalentTo(other: AccountMergeOperation): Matcher[AccountMergeOperation] = beLike[AccountMergeOperation] {
@@ -178,7 +134,7 @@ trait DomainMatchersIT extends AnyMatchers with MustExpectations with SequenceMa
   }
 
   def beEquivalentTo[T <: Operation](other: T): Matcher[T] = beLike {
-    case op: InflationOperation => other mustEqual InflationOperation()
+    case op: InflationOperation => other mustEqual op
     case op: AccountMergeOperation => other.asInstanceOf[AccountMergeOperation] must beEquivalentTo(op)
     case op: AllowTrustOperation => other.asInstanceOf[AllowTrustOperation] must beEquivalentTo(op)
     case op: ChangeTrustOperation => other.asInstanceOf[ChangeTrustOperation] must beEquivalentTo(op)
@@ -205,6 +161,7 @@ trait DomainMatchersIT extends AnyMatchers with MustExpectations with SequenceMa
       txn.source must beEquivalentTo(other.source)
       txn.memo mustEqual other.memo
       txn.timeBounds mustEqual other.timeBounds
+      txn.hash mustEqual other.hash
       forall(txn.operations.zip(other.operations)) {
         case (txnOp: Operation, otherOp: Operation) =>
           txnOp must beEquivalentTo(otherOp)
@@ -214,11 +171,10 @@ trait DomainMatchersIT extends AnyMatchers with MustExpectations with SequenceMa
   def beEquivalentTo(other: SignedTransaction): Matcher[SignedTransaction] = beLike {
     case stxn =>
       stxn.transaction must beEquivalentTo(other.transaction)
-      stxn.hash.toSeq mustEqual other.hash.toSeq
       forall(stxn.signatures.zip(other.signatures)) {
-        case (stxnSig: DecoratedSignature, otherSig: DecoratedSignature) =>
-          stxnSig.getHint.getSignatureHint.toSeq mustEqual otherSig.getHint.getSignatureHint.toSeq
-          stxnSig.getSignature.getSignature.toSeq mustEqual otherSig.getSignature.getSignature.toSeq
+        case (stxnSig: Signature, otherSig: Signature) =>
+          stxnSig.hint.toSeq mustEqual otherSig.hint.toSeq
+          stxnSig.data.toSeq mustEqual otherSig.data.toSeq
       }
   }
 
@@ -231,7 +187,7 @@ trait DomainMatchersIT extends AnyMatchers with MustExpectations with SequenceMa
       }
   }
 
-  def beEquivalentTo(other: TransactionHistoryResp): Matcher[TransactionHistoryResp] = beLike {
+  def beEquivalentTo(other: TransactionHistory): Matcher[TransactionHistory] = beLike {
     case thr =>
       other.memo must beEquivalentTo(thr.memo)
       other.copy(memo = thr.memo) mustEqual thr

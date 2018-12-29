@@ -1,12 +1,12 @@
 package stellar.sdk
 
-import java.io.ByteArrayOutputStream
 import java.security.{MessageDigest, SignatureException}
 import java.util
 
+import cats.data.State
 import net.i2p.crypto.eddsa._
 import net.i2p.crypto.eddsa.spec._
-import org.stellar.sdk.xdr.{PublicKey => XDRPublicKey, _}
+import stellar.sdk.xdr.{Decode, Encodable, Encode}
 
 import scala.util.Try
 
@@ -23,22 +23,24 @@ case class KeyPair(pk: EdDSAPublicKey, sk: EdDSAPrivateKey) extends PublicKeyOps
     * @param data The data to sign.
     * @return signed bytes.
     */
-  def sign(data: Array[Byte]): Array[Byte] = {
+  def sign(data: Array[Byte]): Signature = {
     val sig = new EdDSAEngine(MessageDigest.getInstance("SHA-512"))
     sig.initSign(sk)
     sig.update(data)
-    sig.sign
+
+    Signature(sig.sign, hint)
   }
 
-  /**
+  /*
     * Sign the provided data with the private key.
     *
     * @param data The data to sign.
     * @return signed data in XDR format
     */
-  def signToXDR(data: Array[Byte]): DecoratedSignature =  {
+/*
+  def signToXDR(data: Array[Byte]): DecoratedSignature = {
     val hint = signatureHint
-    val signedData = sign(data)
+    val signedData = sign(data).data
     val signature = new org.stellar.sdk.xdr.Signature
     signature.setSignature(signedData)
     val xdr = new DecoratedSignature
@@ -46,6 +48,7 @@ case class KeyPair(pk: EdDSAPublicKey, sk: EdDSAPrivateKey) extends PublicKeyOps
     xdr.setSignature(signature)
     xdr
   }
+*/
 
   override def toString: String = {
     s"""KeyPair("$accountId", "S...")"""
@@ -91,6 +94,7 @@ trait PublicKeyOps extends Encodable {
     case _: SignatureException => false
   }.get
 
+/*
   def getXDRPublicKey: XDRPublicKey = {
     val publicKey = new XDRPublicKey
     publicKey.setDiscriminant(PublicKeyType.PUBLIC_KEY_TYPE_ED25519)
@@ -99,7 +103,9 @@ trait PublicKeyOps extends Encodable {
     publicKey.setEd25519(uint256)
     publicKey
   }
+*/
 
+/*
   def getXDRSignerKey: SignerKey = {
     val signerKey = new SignerKey
     signerKey.setDiscriminant(SignerKeyType.SIGNER_KEY_TYPE_ED25519)
@@ -108,6 +114,7 @@ trait PublicKeyOps extends Encodable {
     signerKey.setEd25519(uint256)
     signerKey
   }
+*/
 
   /**
     * This key pair or verifying key without the private key.
@@ -116,8 +123,14 @@ trait PublicKeyOps extends Encodable {
 
 
   /**
+    * A four-byte code that provides a hint to the identity of this public key
+    */
+  def hint: Array[Byte] = pk.getAbyte.drop(pk.getAbyte.length - 4)
+
+  /**
     * XDR entity derived from this public key for use in signatures
     */
+/*
   val signatureHint: SignatureHint = {
     val pkStream = new ByteArrayOutputStream
     val os = new XdrDataOutputStream(pkStream)
@@ -128,8 +141,12 @@ trait PublicKeyOps extends Encodable {
     hint.setSignatureHint(hintBytes)
     hint
   }
+*/
 
-  override def encode: Stream[Byte] = Encode.int(0) ++ pk.getAbyte
+  def encode: Stream[Byte] = Encode.int(0) ++ Encode.bytes(32, pk.getAbyte)
+
+  override def toString: String = s"""PublicKey("$accountId")"""
+
 }
 
 object KeyPair {
@@ -203,7 +220,7 @@ object KeyPair {
     */
   def fromAccountId(accountId: String): PublicKey = fromPublicKey(StrKey.decodeStellarAccountId(accountId))
 
-  def fromXDRPublicKey(key: XDRPublicKey) = fromPublicKey(key.getEd25519.getUint256)
+//  def fromXDRPublicKey(key: XDRPublicKey) = fromPublicKey(key.getEd25519.getUint256)
 
   /**
     * Generates a random Stellar keypair.
@@ -214,4 +231,23 @@ object KeyPair {
     val pair = new KeyPairGenerator().generateKeyPair()
     KeyPair(pair.getPublic.asInstanceOf[EdDSAPublicKey], pair.getPrivate.asInstanceOf[EdDSAPrivateKey])
   }
+
+  def decode: State[Seq[Byte], PublicKey] = for {
+    _ <- Decode.int
+    bs <- Decode.bytes(32)
+  } yield KeyPair.fromPublicKey(bs.toArray)
+
+  def decodeXDR(base64: String): PublicKey = decode.run(ByteArrays.base64(base64)).value._2
+
+}
+
+case class Signature(data: Array[Byte], hint: Array[Byte]) extends Encodable {
+  def encode: Stream[Byte] = Encode.bytes(4, hint) ++ Encode.bytes(data)
+}
+
+object Signature {
+  def decode: State[Seq[Byte], Signature] = for {
+    hint <- Decode.bytes(4).map(_.toArray)
+    data <- Decode.bytes.map(_.toArray)
+  } yield Signature(data, hint)
 }

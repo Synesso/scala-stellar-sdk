@@ -1,12 +1,8 @@
 package stellar.sdk.op
 
-import org.stellar.sdk.xdr.Operation.OperationBody
-import org.stellar.sdk.xdr.OperationType.BUMP_SEQUENCE
-import org.stellar.sdk.xdr.{BumpSequenceOp, SequenceNumber}
-import stellar.sdk.XDRPrimitives.int64
-import stellar.sdk.{Encode, PublicKey, PublicKeyOps}
-
-import scala.util.Try
+import cats.data.State
+import stellar.sdk.{ByteArrays, PublicKeyOps}
+import stellar.sdk.xdr.{Decode, Encode}
 
 /**
   * Bumps forward the sequence number of the source account of the operation, allowing it to invalidate any transactions
@@ -19,20 +15,10 @@ import scala.util.Try
 case class BumpSequenceOperation(bumpTo: Long,
                                  sourceAccount: Option[PublicKeyOps] = None) extends Operation {
 
-  override def toOperationBody: OperationBody = {
-    val body = new OperationBody
-    body.setBumpSequenceOp(new BumpSequenceOp)
-    body.getBumpSequenceOp.setBumpTo(new SequenceNumber)
-    body.getBumpSequenceOp.getBumpTo.setSequenceNumber(int64(bumpTo))
-    body.setDiscriminant(BUMP_SEQUENCE)
-    body
-  }
-
-  override def encode: Stream[Byte] = Encode.int(11) ++ Encode.long(bumpTo)
+  override def encode: Stream[Byte] = super.encode ++ Encode.int(11) ++ Encode.long(bumpTo)
 }
 
 object BumpSequenceOperation {
-  def from(op: BumpSequenceOp, source: Option[PublicKey]): Try[Operation] = Try {
-    BumpSequenceOperation(op.getBumpTo.getSequenceNumber.getInt64, source)
-  }
+  def decode: State[Seq[Byte], BumpSequenceOperation] = Decode.long.map(BumpSequenceOperation(_))
+  def decodeXDR(base64: String): BumpSequenceOperation = decode.run(ByteArrays.base64(base64)).value._2
 }

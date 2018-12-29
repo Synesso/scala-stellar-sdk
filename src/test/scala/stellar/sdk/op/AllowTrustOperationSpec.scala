@@ -5,7 +5,7 @@ import org.json4s.native.JsonMethods.parse
 import org.json4s.native.Serialization
 import org.scalacheck.Arbitrary
 import org.specs2.mutable.Specification
-import org.stellar.sdk.xdr.{AccountID, AllowTrustOp, AssetType}
+import stellar.sdk.ByteArrays.base64
 import stellar.sdk.{ArbitraryInput, DomainMatchers, KeyPair}
 
 class AllowTrustOperationSpec extends Specification with ArbitraryInput with DomainMatchers with JsonSnippets {
@@ -14,19 +14,14 @@ class AllowTrustOperationSpec extends Specification with ArbitraryInput with Dom
   implicit val formats = Serialization.formats(NoTypeHints) + TransactedOperationDeserializer
 
   "allow trust operation" should {
-    "serde via xdr" >> prop { actual: AllowTrustOperation =>
-      Operation.fromXDR(actual.toXDR) must beSuccessfulTry.like {
-        case expected: AllowTrustOperation => expected must beEquivalentTo(actual)
-      }
+    "serde via xdr string" >> prop { actual: AllowTrustOperation =>
+      Operation.decodeXDR(base64(actual.encode)) must beEquivalentTo(actual)
     }
 
-    "should not have native asset type" >> {
-      val input = new AllowTrustOp
-      input.setAsset(new AllowTrustOp.AllowTrustOpAsset)
-      input.getAsset.setDiscriminant(AssetType.ASSET_TYPE_NATIVE)
-      input.setTrustor(new AccountID)
-      input.getTrustor.setAccountID(KeyPair.random.getXDRPublicKey)
-      AllowTrustOperation.from(input, None) must beFailedTry[AllowTrustOperation]
+    "serde via xdr bytes" >> prop { actual: AllowTrustOperation =>
+      val (remaining, decoded) = Operation.decode.run(actual.encode).value
+      decoded mustEqual actual
+      remaining must beEmpty
     }
 
     "parse from json" >> prop { op: Transacted[AllowTrustOperation] =>

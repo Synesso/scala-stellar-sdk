@@ -2,12 +2,9 @@ package stellar.sdk
 
 import org.scalacheck.Gen
 import org.specs2.mutable.Specification
-import org.stellar.sdk.xdr.TransactionEnvelope
 import stellar.sdk
 import stellar.sdk.ByteArrays.bytesToHex
 import stellar.sdk.op.{CreateAccountOperation, Operation, PaymentOperation}
-
-import scala.util.Try
 
 class TransactionSpec extends Specification with ArbitraryInput with DomainMatchers {
 
@@ -18,10 +15,17 @@ class TransactionSpec extends Specification with ArbitraryInput with DomainMatch
   }
 
   "a transaction" should {
+
+    "serde via xdr bytes" >> prop { transaction: Transaction =>
+      val (remaining, actual) = Transaction.decode.run(transaction.encode).value
+      actual must beEquivalentTo(transaction)
+      remaining must beEmpty
+    }
+
     "allow adding of operations one at a time" >> prop { (source: Account, ops: Seq[Operation]) =>
       val expected = Transaction(source, ops, NoMemo)
       val actual = ops.foldLeft(Transaction(source, memo = NoMemo)) { case (txn, op) => txn add op }
-      actual must beEquivalentTo(expected)
+      actual mustEqual expected
     }
 
     "allow signing of the transaction one signature at a time" >> prop { (transaction: Transaction, signers: Seq[KeyPair]) =>
@@ -58,12 +62,15 @@ class TransactionSpec extends Specification with ArbitraryInput with DomainMatch
     }.setGen3(Gen.nonEmptyListOf(genKeyPair))
   }
 
+/*
   "a signed transaction" should {
     "serialise to xdr" >> prop { (t: Transaction, signer: KeyPair) =>
       t.sign(signer).toXDR must haveClass[TransactionEnvelope]
     }
   }
+*/
 
+/*
   "an unsigned transaction" should {
     "serialise to xdr" >> prop { txn: Transaction =>
       val xdr = txn.toXDR
@@ -101,6 +108,7 @@ class TransactionSpec extends Specification with ArbitraryInput with DomainMatch
       }
     }
   }
+*/
 
   "decoding transaction from xdr string" should {
     "be successful for unsigned transactions" >> prop { txn: Transaction =>
@@ -125,7 +133,7 @@ class TransactionSpec extends Specification with ArbitraryInput with DomainMatch
         "5v3AAAAQHx9LVy0EsDozAxndsy+D6E2bWmTAMmnhLoFqf2FfoRAMXjC9BW16ZQlOR+wWH5PSKnz22QpAxY4gMkJvH8LCwQ="
 
       SignedTransaction.decodeXDR(sample) must beLike {
-        case SignedTransaction(txn, signatures, hash) =>
+        case SignedTransaction(txn, signatures) =>
           txn mustEqual Transaction(
             Account(
               KeyPair.fromAccountId("GAAQZS37ZXXX47SLZ7RXBNRQPFIKMRYZZXMQVFQK6GDG6GLBL6N7PBYD"),
@@ -138,10 +146,10 @@ class TransactionSpec extends Specification with ArbitraryInput with DomainMatch
             ), MemoText("Hi Zy, heres an angpao!"), None, Some(NativeAmount(100))
           )
 
-          signatures.map(_.getHint.getSignatureHint).map(bytesToHex) mustEqual Seq("615F9BF7")
-          signatures.map(_.getSignature.getSignature).map(bytesToHex) mustEqual Seq("7C7D2D5CB412C0E8CC0C6776CC" +
+          signatures.map(_.hint).map(bytesToHex(_)) mustEqual Seq("615F9BF7")
+          signatures.map(_.data).map(bytesToHex(_)) mustEqual Seq("7C7D2D5CB412C0E8CC0C6776CC" +
             "BE0FA1366D699300C9A784BA05A9FD857E84403178C2F415B5E99425391FB0587E4F48A9F3DB642903163880C909BC7F0B0B04")
-          bytesToHex(hash) mustEqual "7D91CFC50E907A677F769E6DB82BDB958D148D810955C597AA7A4B24AE97475B"
+          bytesToHex(txn.hash) mustEqual "7D91CFC50E907A677F769E6DB82BDB958D148D810955C597AA7A4B24AE97475B"
 
       }
     }

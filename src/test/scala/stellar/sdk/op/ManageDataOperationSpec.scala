@@ -6,6 +6,7 @@ import org.json4s.native.JsonMethods.parse
 import org.json4s.native.Serialization
 import org.scalacheck.Arbitrary
 import org.specs2.mutable.Specification
+import stellar.sdk.ByteArrays.base64
 import stellar.sdk.{ArbitraryInput, DomainMatchers}
 
 class ManageDataOperationSpec extends Specification with ArbitraryInput with DomainMatchers with JsonSnippets {
@@ -41,10 +42,14 @@ class ManageDataOperationSpec extends Specification with ArbitraryInput with Dom
        |}""".stripMargin
 
   "a write data operation" should {
-    "serde via xdr" >> prop { actual: WriteDataOperation =>
-      Operation.fromXDR(actual.toXDR) must beSuccessfulTry.like {
-        case expected: WriteDataOperation => expected must beEquivalentTo(actual)
-      }
+    "serde via xdr string" >> prop { actual: WriteDataOperation =>
+      Operation.decodeXDR(base64(actual.encode)) must beEquivalentTo(actual)
+    }
+
+    "serde via xdr bytes" >> prop { actual: WriteDataOperation =>
+      val (remaining, decoded) = Operation.decode.run(actual.encode).value
+      decoded mustEqual actual
+      remaining must beEmpty
     }
 
     "parse from json" >> prop { op: Transacted[WriteDataOperation] =>
@@ -53,10 +58,14 @@ class ManageDataOperationSpec extends Specification with ArbitraryInput with Dom
   }
 
   "a delete data operation" should {
-    "serde via xdr" >> prop { actual: DeleteDataOperation =>
-      Operation.fromXDR(actual.toXDR) must beSuccessfulTry.like {
-        case expected: DeleteDataOperation => expected must beEquivalentTo(actual)
-      }
+    "serde via xdr string" >> prop { actual: DeleteDataOperation =>
+      Operation.decodeXDR(base64(actual.encode)) must beEquivalentTo(actual)
+    }
+
+    "serde via xdr bytes" >> prop { actual: DeleteDataOperation =>
+      val (remaining, decoded) = Operation.decode.run(actual.encode).value
+      decoded mustEqual actual
+      remaining must beEmpty
     }
 
     "parse from json" >> prop { op: Transacted[DeleteDataOperation] =>
