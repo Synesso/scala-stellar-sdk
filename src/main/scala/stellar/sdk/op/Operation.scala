@@ -5,7 +5,7 @@ import org.apache.commons.codec.binary.Base64
 import org.json4s.DefaultFormats
 import org.json4s.JsonAST.{JArray, JObject, JValue}
 import stellar.sdk._
-import stellar.sdk.resp.ResponseParser
+import stellar.sdk.response.ResponseParser
 import stellar.sdk.xdr.{Decode, Encodable, Encode}
 
 /**

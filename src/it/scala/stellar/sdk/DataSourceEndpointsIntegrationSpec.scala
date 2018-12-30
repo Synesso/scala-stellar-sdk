@@ -6,8 +6,8 @@ import akka.stream.scaladsl.Sink
 import org.specs2.concurrent.ExecutionEnv
 import org.specs2.mutable.Specification
 import stellar.sdk.op.{Operation, PayOperation, Transacted}
-import stellar.sdk.res.TransactionHistory
-import stellar.sdk.resp.EffectResp
+import stellar.sdk.result.TransactionHistory
+import stellar.sdk.response.EffectResp
 
 import scala.concurrent.Future
 import scala.concurrent.duration._

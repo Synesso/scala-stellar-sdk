@@ -1,7 +1,7 @@
 package stellar.sdk.inet
 
 import org.specs2.mutable.Specification
-import stellar.sdk.res.TransactionRejected
+import stellar.sdk.response.TransactionRejected
 
 class TransactionRejectedSpec extends Specification {
 

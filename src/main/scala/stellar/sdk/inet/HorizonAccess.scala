@@ -20,8 +20,8 @@ import de.heikoseeberger.akkahttpjson4s.Json4sSupport
 import org.json4s.native.{JsonMethods, Serialization}
 import org.json4s.{CustomSerializer, DefaultFormats, Formats, JObject, NoTypeHints}
 import stellar.sdk.op.TransactedOperationDeserializer
-import stellar.sdk.res.{TransactionHistoryDeserializer, TransactionPostResponse, TransactionPostResponseDeserializer, TransactionResult}
-import stellar.sdk.resp._
+import stellar.sdk.response._
+import stellar.sdk.result.TransactionHistoryDeserializer
 import stellar.sdk.{HorizonCursor, HorizonOrder, OrderBookDeserializer, Record, SignedTransaction}
 
 import scala.concurrent.duration._

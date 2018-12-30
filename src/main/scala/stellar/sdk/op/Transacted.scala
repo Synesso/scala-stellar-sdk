@@ -4,7 +4,7 @@ import java.time.ZonedDateTime
 
 import org.json4s.DefaultFormats
 import org.json4s.JsonAST.JObject
-import stellar.sdk.resp.ResponseParser
+import stellar.sdk.response.ResponseParser
 
 /**
   * Provides access to additional information related to an operation after it has been transacted in the network.

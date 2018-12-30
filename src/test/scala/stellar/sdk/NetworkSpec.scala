@@ -10,8 +10,8 @@ import org.specs2.mock.Mockito
 import org.specs2.mutable.Specification
 import stellar.sdk.inet._
 import stellar.sdk.op._
-import stellar.sdk.res.{TransactionApproved, TransactionHistory, TransactionHistoryDeserializer}
-import stellar.sdk.resp._
+import stellar.sdk.response._
+import stellar.sdk.result.{TransactionHistory, TransactionHistoryDeserializer}
 
 import scala.concurrent.Future
 import scala.concurrent.duration._

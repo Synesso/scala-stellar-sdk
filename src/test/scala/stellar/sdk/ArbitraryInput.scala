@@ -9,9 +9,9 @@ import org.scalacheck.{Arbitrary, Gen}
 import org.specs2.ScalaCheck
 import stellar.sdk.ByteArrays.trimmedByteArray
 import stellar.sdk.op._
-import stellar.sdk.res.TransactionResult._
-import stellar.sdk.res.{PathPaymentResult, _}
-import stellar.sdk.resp._
+import stellar.sdk.result.TransactionResult._
+import stellar.sdk.result.{PathPaymentResult, _}
+import stellar.sdk.response._
 
 import scala.util.Random
 

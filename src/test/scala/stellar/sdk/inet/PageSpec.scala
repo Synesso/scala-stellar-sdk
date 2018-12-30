@@ -4,7 +4,7 @@ import org.json4s.DefaultFormats
 import org.json4s.JsonAST.JObject
 import org.json4s.native.JsonMethods
 import org.specs2.mutable.Specification
-import stellar.sdk.resp.ResponseParser
+import stellar.sdk.response.ResponseParser
 
 class PageSpec extends Specification {
 

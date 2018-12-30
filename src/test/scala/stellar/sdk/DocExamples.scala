@@ -10,8 +10,8 @@ import org.specs2.mock.Mockito
 import org.specs2.mutable.Specification
 import stellar.sdk.inet.HorizonAccess
 import stellar.sdk.op._
-import stellar.sdk.res.{TransactionApproved, TransactionHistory, TransactionPostResponse}
-import stellar.sdk.resp._
+import stellar.sdk.response._
+import stellar.sdk.result.TransactionHistory
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.reflect.ClassTag

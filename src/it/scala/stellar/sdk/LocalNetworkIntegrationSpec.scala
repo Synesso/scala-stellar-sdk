@@ -10,8 +10,8 @@ import stellar.sdk.Amount.lumens
 import stellar.sdk.ProxyMode.{NoProxy, RecordScript, ReplayScript}
 import stellar.sdk.inet.HorizonEntityNotFound
 import stellar.sdk.op._
-import stellar.sdk.res.TransactionHistory
-import stellar.sdk.resp._
+import stellar.sdk.result.TransactionHistory
+import stellar.sdk.response._
 
 import scala.concurrent.duration._
 import scala.concurrent.{Await, Future}

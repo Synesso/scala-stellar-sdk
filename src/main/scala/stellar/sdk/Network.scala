@@ -9,8 +9,8 @@ import com.typesafe.scalalogging.LazyLogging
 import stellar.sdk.ByteArrays._
 import stellar.sdk.inet._
 import stellar.sdk.op.{Operation, PayOperation, Transacted, TransactedOperationDeserializer}
-import stellar.sdk.res._
-import stellar.sdk.resp._
+import stellar.sdk.result._
+import stellar.sdk.response._
 
 import scala.concurrent.{ExecutionContext, Future}
 
