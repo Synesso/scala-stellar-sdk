@@ -6,27 +6,6 @@ import scala.util.Try
 
 class AssetSpec extends Specification with ArbitraryInput {
 
-  "the native asset type" should {
-    "serde correctly" >> {
-      Asset.fromXDR(NativeAsset.toXDR) must beSuccessfulTry[Asset](NativeAsset)
-    }
-  }
-
-  "non-native asset types" should {
-    "serde correctly" >> prop { code: String =>
-      val issuer = KeyPair.random
-      val asset = Asset(code, issuer)
-      Asset.fromXDR(asset.toXDR) must beSuccessfulTry[Asset].like {
-        case a: IssuedAsset4 if code.length <= 4 =>
-          a.code mustEqual code
-          a.issuer.accountId mustEqual issuer.accountId
-        case a: IssuedAsset12 =>
-          a.code mustEqual code
-          a.issuer.accountId mustEqual issuer.accountId
-      }
-    }.setGen(genCode(1, 12))
-  }
-
   "an empty code" should {
     "not allow non-native asset construction" >> {
       val issuer = KeyPair.random
@@ -77,6 +56,14 @@ class AssetSpec extends Specification with ArbitraryInput {
   "creating an amount with a non-native asset" should {
     "use the specified asset" >> prop { (bal: Long, asset: NonNativeAsset) =>
       Amount(bal, asset).asset mustEqual asset
+    }
+  }
+
+  "any asset" should {
+    "serde via xdr bytes" >> prop { expected: Asset =>
+      val (remaining, actual) = Asset.decode.run(expected.encode).value
+      actual mustEqual expected
+      remaining must beEmpty
     }
   }
 }

@@ -1,14 +1,11 @@
 package stellar.sdk
 
-import java.io.ByteArrayOutputStream
-import java.nio.ByteBuffer
-
-import org.stellar.sdk.xdr.Transaction.TransactionExt
-import org.stellar.sdk.xdr.{DecoratedSignature, EnvelopeType, TransactionEnvelope, XdrDataOutputStream, Transaction => XDRTransaction}
+import cats.data._
 import stellar.sdk.ByteArrays._
-import stellar.sdk.XDRPrimitives._
 import stellar.sdk.op.Operation
-import stellar.sdk.resp.TransactionPostResp
+import stellar.sdk.response.TransactionPostResponse
+import stellar.sdk.xdr.Encode.{arr, int, long, opt}
+import stellar.sdk.xdr.{Decode, Encodable, Encode}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -16,10 +13,10 @@ case class Transaction(source: Account,
                        operations: Seq[Operation] = Nil,
                        memo: Memo = NoMemo,
                        timeBounds: Option[TimeBounds] = None,
-                       fee: Option[NativeAmount] = None)(implicit val network: Network) {
+                       fee: Option[NativeAmount] = None)(implicit val network: Network) extends Encodable {
 
   private val BaseFee = 100L
-  private val EnvelopeTypeTx = ByteBuffer.allocate(4).putInt(EnvelopeType.ENVELOPE_TYPE_TX.getValue).array
+  private val EnvelopeTypeTx = 2
 
   def add(op: Operation): Transaction = this.copy(operations = operations :+ op)
 
@@ -34,96 +31,65 @@ case class Transaction(source: Account,
   }
 
   def sign(key: KeyPair, otherKeys: KeyPair*): SignedTransaction = {
-    val h = hash
-    val signatures = (key +: otherKeys).map(_.signToXDR(h))
-    SignedTransaction(this, signatures, h)
+    val h = hash.toArray
+    val signatures = (key +: otherKeys).map(_.sign(h))
+    SignedTransaction(this, signatures)
   }
 
-  def hash: Array[Byte] = sha256 {
-    val os = new ByteArrayOutputStream
-    os.write(network.networkId)
-    os.write(EnvelopeTypeTx)
-    val txOs = new ByteArrayOutputStream
-    val xdrOs = new XdrDataOutputStream(txOs)
-    XDRTransaction.encode(xdrOs, toXDR)
-    os.write(txOs.toByteArray)
-    os.toByteArray
-  }
-
-  def toXDR = {
-    val txn = new XDRTransaction
-    val ext = new TransactionExt
-    ext.setDiscriminant(0)
-    txn.setExt(ext)
-    txn.setFee(uint32(calculatedFee.units.toInt))
-    txn.setSeqNum(seqNum(source.sequenceNumber))
-    txn.setSourceAccount(accountId(source.publicKey))
-    txn.setOperations(operations.toArray.map(_.toXDR))
-    txn.setMemo(memo.toXDR)
-    timeBounds.map(_.toXDR).foreach(txn.setTimeBounds)
-    txn
-  }
+  def hash: Seq[Byte] = ByteArrays.sha256(network.networkId ++ Encode.int(EnvelopeTypeTx) ++ encode)
 
   /**
     * The base64 encoding of the XDR form of this unsigned transaction.
     */
-  def encodeXDR: String = {
-    val baos = new ByteArrayOutputStream
-    val os = new XdrDataOutputStream(baos)
-    org.stellar.sdk.xdr.Transaction.encode(os, toXDR)
-    base64(baos.toByteArray)
-  }
+  def encodeXDR: String = base64(encode)
 
+  def encode: Stream[Byte] = {
+    source.publicKey.encode ++
+      int(calculatedFee.units.toInt) ++
+      long(source.sequenceNumber) ++
+      opt(timeBounds) ++
+      memo.encode ++
+      arr(operations) ++
+      int(0)
+  }
 }
 
 object Transaction {
 
-  def fromXDR(txn: XDRTransaction)(implicit network: Network): Transaction = {
-    val account = Account(
-      KeyPair.fromXDRPublicKey(txn.getSourceAccount.getAccountID),
-      txn.getSeqNum.getSequenceNumber.getInt64
-    )
-    val operations = TrySeq.sequence(txn.getOperations.map(Operation.fromXDR)).get
-    val memo = Memo.fromXDR(txn.getMemo)
-    val timeBounds = Option(txn.getTimeBounds).map(TimeBounds.fromXDR)
-    val fee = Some(NativeAmount(txn.getFee.getUint32.longValue.toInt))
-    Transaction(account, operations, memo, timeBounds, fee)
-  }
-
   /**
     * Decodes an unsigned transaction from base64-encoded XDR.
     */
-  def decodeXDR(base64: String)(implicit network: Network): Transaction = {
-    val xdrIn = XDRPrimitives.inputStream(base64)
-    fromXDR(org.stellar.sdk.xdr.Transaction.decode(xdrIn))
+  def decodeXDR(base64: String)(implicit network: Network): Transaction =
+    decode.run(ByteArrays.base64(base64)).value._2
+
+  def decode(implicit network: Network): State[Seq[Byte], Transaction] = for {
+      publicKey <- KeyPair.decode
+      fee <- Decode.int
+      seqNo <- Decode.long
+      timeBounds <- Decode.opt(TimeBounds.decode)
+      memo <- Memo.decode
+      ops <- Decode.arr(Operation.decode)
+      _ <- Decode.int
+    } yield {
+    Transaction(Account(publicKey, seqNo), ops, memo, timeBounds, Some(NativeAmount(fee)))
   }
 }
 
-case class SignedTransaction(transaction: Transaction, signatures: Seq[DecoratedSignature], hash: Array[Byte]) {
+case class SignedTransaction(transaction: Transaction, signatures: Seq[Signature]) {
 
-  def submit()(implicit ec: ExecutionContext): Future[TransactionPostResp] = {
+  def submit()(implicit ec: ExecutionContext): Future[TransactionPostResponse] = {
     transaction.network.submit(this)
   }
 
   def sign(key: KeyPair): SignedTransaction =
-    this.copy(signatures = key.signToXDR(hash) +: signatures)
-
-  def toXDR: TransactionEnvelope = {
-    val xdr = new TransactionEnvelope
-    xdr.setTx(transaction.toXDR)
-    xdr.setSignatures(signatures.toArray)
-    xdr
-  }
+    this.copy(signatures = key.sign(transaction.hash.toArray) +: signatures)
 
   /**
     * The base64 encoding of the XDR form of this signed transaction.
     */
-  def encodeXDR: String = {
-    val baos = new ByteArrayOutputStream
-    val os = new XdrDataOutputStream(baos)
-    TransactionEnvelope.encode(os, toXDR)
-    base64(baos.toByteArray)
-  }
+  def encodeXDR: String = base64(encode)
+
+  def encode: Stream[Byte] = transaction.encode ++ Encode.arr(signatures)
 }
 
 object SignedTransaction {
@@ -131,13 +97,12 @@ object SignedTransaction {
   /**
     * Decodes a signed transaction (aka envelope) from base64-encoded XDR.
     */
-  def decodeXDR(base64: String)(implicit network: Network): SignedTransaction = {
-    val xdrIn = XDRPrimitives.inputStream(base64)
-    val envelope = TransactionEnvelope.decode(xdrIn)
-    val txn = Transaction.fromXDR(envelope.getTx)
-    val signatures = envelope.getSignatures
-    val hash = txn.hash
-    SignedTransaction(txn, signatures, hash)
-  }
+  def decodeXDR(base64: String)(implicit network: Network) =
+    decode.run(ByteArrays.base64(base64)).value._2
+
+  def decode(implicit network: Network): State[Seq[Byte], SignedTransaction] = for {
+    txn <- Transaction.decode
+    sigs <- Decode.arr(Signature.decode)
+  } yield SignedTransaction(txn, sigs)
 
 }

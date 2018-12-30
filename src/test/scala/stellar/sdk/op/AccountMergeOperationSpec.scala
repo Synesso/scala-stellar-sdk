@@ -5,6 +5,7 @@ import org.json4s.native.JsonMethods.parse
 import org.json4s.native.Serialization
 import org.scalacheck.Arbitrary
 import org.specs2.mutable.Specification
+import stellar.sdk.ByteArrays.base64
 import stellar.sdk.{ArbitraryInput, DomainMatchers}
 
 class AccountMergeOperationSpec extends Specification with ArbitraryInput with DomainMatchers with JsonSnippets {
@@ -13,10 +14,14 @@ class AccountMergeOperationSpec extends Specification with ArbitraryInput with D
   implicit val formats = Serialization.formats(NoTypeHints) + TransactedOperationDeserializer
 
   "account merge operation" should {
-    "serde via xdr" >> prop { actual: AccountMergeOperation =>
-      Operation.fromXDR(actual.toXDR) must beSuccessfulTry.like {
-        case expected: AccountMergeOperation => expected must beEquivalentTo(actual)
-      }
+    "serde via xdr string" >> prop { actual: AccountMergeOperation =>
+      Operation.decodeXDR(base64(actual.encode)) must beEquivalentTo(actual)
+    }
+
+    "serde via xdr bytes" >> prop { actual: AccountMergeOperation =>
+      val (remaining, decoded) = Operation.decode.run(actual.encode).value
+      decoded mustEqual actual
+      remaining must beEmpty
     }
 
     "parse from json" >> prop { op: Transacted[AccountMergeOperation] =>

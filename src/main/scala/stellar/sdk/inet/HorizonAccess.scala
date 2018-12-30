@@ -20,7 +20,8 @@ import de.heikoseeberger.akkahttpjson4s.Json4sSupport
 import org.json4s.native.{JsonMethods, Serialization}
 import org.json4s.{CustomSerializer, DefaultFormats, Formats, JObject, NoTypeHints}
 import stellar.sdk.op.TransactedOperationDeserializer
-import stellar.sdk.resp._
+import stellar.sdk.response._
+import stellar.sdk.result.TransactionHistoryDeserializer
 import stellar.sdk.{HorizonCursor, HorizonOrder, OrderBookDeserializer, Record, SignedTransaction}
 
 import scala.concurrent.duration._
@@ -37,7 +38,7 @@ trait HorizonAccess {
     override def unmarshallerContentTypes = List(`application/json`, `application/hal+json`, `application/problem+json`)
   }
 
-  def post(txn: SignedTransaction)(implicit ec: ExecutionContext): Future[TransactionPostResp]
+  def post(txn: SignedTransaction)(implicit ec: ExecutionContext): Future[TransactionPostResponse]
 
   def get[T: ClassTag](path: String, params: Map[String, String] = Map.empty)
                       (implicit ec: ExecutionContext, m: Manifest[T]): Future[T]
@@ -61,16 +62,15 @@ class Horizon(uri: URI)
 
   implicit val serialization = org.json4s.native.Serialization
   implicit val formats = Serialization.formats(NoTypeHints) + AccountRespDeserializer + DataValueRespDeserializer +
-    LedgerRespDeserializer + TransactedOperationDeserializer + OrderBookDeserializer + TransactionPostRespDeserializer +
-    TransactionHistoryRespDeserializer
+    LedgerRespDeserializer + TransactedOperationDeserializer + OrderBookDeserializer +
+    TransactionPostResponseDeserializer + TransactionHistoryDeserializer
 
-  override def post(txn: SignedTransaction)(implicit ec: ExecutionContext): Future[TransactionPostResp] = {
-    logger.debug(s"Posting {} {}", txn, txn.encodeXDR)
+  override def post(txn: SignedTransaction)(implicit ec: ExecutionContext): Future[TransactionPostResponse] = {
     for {
       envelope <- Future(txn.encodeXDR)
       request = HttpRequest(POST, Uri(s"$uri/transactions"), entity = FormData("tx" -> envelope).toEntity)
       response <- Http().singleRequest(request)
-      unwrapped <- parseOrRedirectOrError[TransactionPostResp](request, response)
+      unwrapped <- parseOrRedirectOrError[TransactionPostResponse](request, response)
     } yield unwrapped.get
   }
 

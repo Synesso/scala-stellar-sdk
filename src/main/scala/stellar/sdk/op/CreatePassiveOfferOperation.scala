@@ -1,12 +1,8 @@
 package stellar.sdk.op
 
-import org.stellar.sdk.xdr.CreatePassiveOfferOp
-import org.stellar.sdk.xdr.Operation.OperationBody
-import org.stellar.sdk.xdr.OperationType.CREATE_PASSIVE_OFFER
-import stellar.sdk.XDRPrimitives._
+import cats.data.State
+import stellar.sdk.xdr.{Decode, Encode}
 import stellar.sdk.{Amount, Asset, _}
-
-import scala.util.Try
 
 /**
   * Creates an offer that won’t consume a counter offer that exactly matches this offer.
@@ -20,29 +16,20 @@ import scala.util.Try
 case class CreatePassiveOfferOperation(selling: Amount, buying: Asset, price: Price,
                                        sourceAccount: Option[PublicKeyOps] = None) extends Operation {
 
-  override def toOperationBody: OperationBody = {
-    val op = new CreatePassiveOfferOp
-    op.setSelling(selling.asset.toXDR)
-    op.setBuying(buying.toXDR)
-    op.setAmount(int64(selling.units))
-    op.setPrice(price.toXDR)
-    val body = new OperationBody
-    body.setDiscriminant(CREATE_PASSIVE_OFFER)
-    body.setCreatePassiveOfferOp(op)
-    body
-  }
+  override def encode: Stream[Byte] =
+    super.encode ++
+      Encode.int(4) ++
+      selling.asset.encode ++
+      buying.encode ++
+      Encode.long(selling.units) ++
+      price.encode
 }
 
 object CreatePassiveOfferOperation {
-  def from(op: CreatePassiveOfferOp, source: Option[PublicKey]): Try[CreatePassiveOfferOperation] = for {
-    selling <- Asset.fromXDR(op.getSelling)
-    buying <- Asset.fromXDR(op.getBuying)
-    units = op.getAmount.getInt64.longValue
-    price = Price(
-      n = op.getPrice.getN.getInt32,
-      d = op.getPrice.getD.getInt32
-    )
-  } yield {
-    CreatePassiveOfferOperation(Amount(units, selling), buying, price, source)
-  }
+  val decode: State[Seq[Byte], CreatePassiveOfferOperation] = for {
+    sellingAsset <- Asset.decode
+    buyingAsset <- Asset.decode
+    sellingUnits <- Decode.long
+    price <- Price.decode
+  } yield CreatePassiveOfferOperation(Amount(sellingUnits, sellingAsset), buyingAsset, price)
 }

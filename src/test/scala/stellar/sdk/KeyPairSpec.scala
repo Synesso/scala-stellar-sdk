@@ -2,6 +2,7 @@ package stellar.sdk
 
 import org.apache.commons.codec.binary.Hex
 import org.specs2.mutable.Specification
+import stellar.sdk.op.{BumpSequenceOperation, Operation}
 
 class KeyPairSpec extends Specification with ArbitraryInput with DomainMatchers {
 
@@ -12,12 +13,12 @@ class KeyPairSpec extends Specification with ArbitraryInput with DomainMatchers 
 
   "signed data" should {
     "be verified by the signing key" >> prop { msg: String =>
-      keyPair.verify(msg.getBytes("UTF-8"), keyPair.sign(msg.getBytes("UTF-8"))) must beTrue
+      keyPair.verify(msg.getBytes("UTF-8"), keyPair.sign(msg.getBytes("UTF-8")).data) must beTrue
     }
 
     "be correct for concrete example" >> {
       val data = "hello world"
-      val actual = keyPair.sign(data.getBytes("UTF-8"))
+      val actual = keyPair.sign(data.getBytes("UTF-8")).data
       Hex.encodeHex(actual).mkString mustEqual sig
     }
 
@@ -58,6 +59,20 @@ class KeyPairSpec extends Specification with ArbitraryInput with DomainMatchers 
 
     "not be equal to non-PublicKeyOps instances" >> prop { pk: PublicKey =>
       pk must not(beEqualTo(pk.accountId))
+    }
+
+    "be constructable from the internal 'a-byte'" >> prop { pk: PublicKey =>
+      pk must beEqualTo(KeyPair.fromPublicKey(pk.publicKey))
+    }
+
+    "serde via xdr bytes" >> prop { pk: PublicKey =>
+      val (remaining, decoded) = KeyPair.decode.run(pk.encode).value
+      decoded must beEquivalentTo(pk)
+      remaining must beEmpty
+    }
+
+    "serde via xdr string" >> prop { pk: PublicKey =>
+      KeyPair.decodeXDR(ByteArrays.base64(pk.encode)) must beEquivalentTo(pk)
     }
   }
 }

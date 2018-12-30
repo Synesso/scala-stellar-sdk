@@ -6,7 +6,8 @@ import akka.stream.scaladsl.Sink
 import org.specs2.concurrent.ExecutionEnv
 import org.specs2.mutable.Specification
 import stellar.sdk.op.{Operation, PayOperation, Transacted}
-import stellar.sdk.resp.{EffectResp, TransactionHistoryResp}
+import stellar.sdk.result.TransactionHistory
+import stellar.sdk.response.EffectResp
 
 import scala.concurrent.Future
 import scala.concurrent.duration._
@@ -18,13 +19,13 @@ class DataSourceEndpointsIntegrationSpec(implicit ee: ExecutionEnv) extends Spec
 
   "transaction source" should {
     "provide all future transactions" >> {
-      val results: Future[Seq[TransactionHistoryResp]] = PublicNetwork.transactionSource().take(5)
-        .runWith(Sink.seq[TransactionHistoryResp])
+      val results: Future[Seq[TransactionHistory]] = PublicNetwork.transactionSource().take(5)
+        .runWith(Sink.seq[TransactionHistory])
       results.map(_.size) must beEqualTo(5).awaitFor(1 minute)
     }
     "provide transactions history" >> {
-      val results: Future[Seq[TransactionHistoryResp]] = PublicNetwork.transactionSource(Record(100)).take(5)
-        .runWith(Sink.seq[TransactionHistoryResp])
+      val results: Future[Seq[TransactionHistory]] = PublicNetwork.transactionSource(Record(100)).take(5)
+        .runWith(Sink.seq[TransactionHistory])
       results.map(_.size) must beEqualTo(5).awaitFor(1 minute)
     }
   }

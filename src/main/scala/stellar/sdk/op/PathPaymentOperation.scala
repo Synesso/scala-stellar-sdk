@@ -1,13 +1,9 @@
 package stellar.sdk.op
 
-import org.stellar.sdk.xdr.Operation.OperationBody
-import org.stellar.sdk.xdr.OperationType.PATH_PAYMENT
-import org.stellar.sdk.xdr.{PublicKey => _, _}
+import cats.data.State
 import stellar.sdk
-import stellar.sdk.TrySeq._
 import stellar.sdk._
-
-import scala.util.Try
+import stellar.sdk.xdr.{Decode, Encode}
 
 /**
   * Represents a payment from one account to another through a path. This type of payment starts as one type of asset
@@ -27,44 +23,22 @@ case class PathPaymentOperation(sendMax: Amount,
                                 path: Seq[sdk.Asset] = Nil,
                                 sourceAccount: Option[PublicKeyOps] = None) extends PayOperation {
 
-  override def toOperationBody: OperationBody = {
-    val op = new PathPaymentOp
-    op.setSendAsset(sendMax.asset.toXDR)
-    val sendMaxI = new Int64
-    sendMaxI.setInt64(sendMax.units)
-    op.setSendMax(sendMaxI)
-    val destination = new AccountID
-    destination.setAccountID(destinationAccount.getXDRPublicKey)
-    op.setDestination(destination)
-    op.setDestAsset(destinationAmount.asset.toXDR)
-    val destAmountI = new Int64
-    destAmountI.setInt64(destinationAmount.units)
-    op.setDestAmount(destAmountI)
-    op.setPath(path.map(_.toXDR).toArray)
-    val body = new OperationBody
-    body.setDiscriminant(PATH_PAYMENT)
-    body.setPathPaymentOp(op)
-    body
-  }
-
+  override def encode: Stream[Byte] =
+    super.encode ++
+      Encode.int(2) ++
+      sendMax.encode ++
+      destinationAccount.encode ++
+      destinationAmount.encode ++
+      Encode.arr(path)
 }
 
 object PathPaymentOperation {
 
-  def from(op: PathPaymentOp, source: Option[PublicKey]): Try[PathPaymentOperation] = for {
-    sendAsset <- sdk.Asset.fromXDR(op.getSendAsset)
-    destAsset <- sdk.Asset.fromXDR(op.getDestAsset)
-    path <- sequence(op.getPath.map(sdk.Asset.fromXDR))
-    pathPaymentOp <- Try {
-      PathPaymentOperation(
-        sendMax = Amount(op.getSendMax.getInt64.longValue, sendAsset),
-        destinationAccount = KeyPair.fromPublicKey(op.getDestination.getAccountID.getEd25519.getUint256),
-        destinationAmount = Amount(op.getDestAmount.getInt64.longValue(), destAsset),
-        path = path,
-        sourceAccount = source
-      )
-    }
-  } yield {
-    pathPaymentOp
-  }
+  def decode: State[Seq[Byte], PathPaymentOperation] = for {
+    sendMax <- Amount.decode
+    destAccount <- KeyPair.decode
+    destAmount <- Amount.decode
+    path <- Decode.arr(Asset.decode)
+  } yield PathPaymentOperation(sendMax, destAccount, destAmount, path)
+
 }

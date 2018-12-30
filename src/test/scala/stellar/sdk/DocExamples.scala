@@ -10,7 +10,8 @@ import org.specs2.mock.Mockito
 import org.specs2.mutable.Specification
 import stellar.sdk.inet.HorizonAccess
 import stellar.sdk.op._
-import stellar.sdk.resp._
+import stellar.sdk.response._
+import stellar.sdk.result.TransactionHistory
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.reflect.ClassTag
@@ -248,11 +249,11 @@ class DocExamples(implicit ee: ExecutionEnv)  extends Specification with Mockito
 
       // #transaction_query_examples
       // details of a specific transaction
-      val transaction: Future[TransactionHistoryResp] =
+      val transaction: Future[TransactionHistory] =
         TestNetwork.transaction(transactionIdString)
 
       // stream of all transactions
-      val transactions: Future[Stream[TransactionHistoryResp]] =
+      val transactions: Future[Stream[TransactionHistory]] =
       TestNetwork.transactions()
 
       // stream of transactions affecting the specified account
@@ -267,7 +268,7 @@ class DocExamples(implicit ee: ExecutionEnv)  extends Specification with Mockito
       TestNetwork.transactionSource().runForeach(txn => println(txn.hash))
 
       // a source of transactions for a given account
-      val accnTxnSource: Source[TransactionHistoryResp, NotUsed] =
+      val accnTxnSource: Source[TransactionHistory, NotUsed] =
         TestNetwork.transactionsByAccountSource(publicKey)
 
       // a source of transactions for ledger #3,
@@ -339,7 +340,7 @@ class DocExamples(implicit ee: ExecutionEnv)  extends Specification with Mockito
       val operation = PaymentOperation(aliceKey, Amount.lumens(100))
       // #transaction_submit_example
       val transaction = Transaction(account).add(operation).sign(sourceKey)
-      val response: Future[TransactionPostResp] = transaction.submit()
+      val response: Future[TransactionPostResponse] = transaction.submit()
       // #transaction_submit_example
       ok
     }
@@ -349,7 +350,8 @@ class DocExamples(implicit ee: ExecutionEnv)  extends Specification with Mockito
       val operation = PaymentOperation(aliceKey, Amount.lumens(100))
       // #transaction_response_example
       Transaction(account).add(operation).sign(sourceKey).submit().foreach {
-        response => println(response.result.getFeeCharged)
+        case ok: TransactionApproved => println(ok.feeCharged)
+        case ko => println(ko)
       }
       // #transaction_response_example
       ok
@@ -359,8 +361,8 @@ class DocExamples(implicit ee: ExecutionEnv)  extends Specification with Mockito
   class DoNothingNetwork extends Network {
     override val passphrase: String = "Scala SDK do-nothing network"
     override val horizon: HorizonAccess = new HorizonAccess {
-      override def post(txn: SignedTransaction)(implicit ec: ExecutionContext): Future[TransactionPostResp] =
-        mock[Future[TransactionPostResp]]
+      override def post(txn: SignedTransaction)(implicit ec: ExecutionContext): Future[TransactionPostResponse] =
+        mock[Future[TransactionPostResponse]]
 
       override def get[T: ClassTag](path: String, params: Map[String, String])
                                    (implicit ec: ExecutionContext, m: Manifest[T]): Future[T] =

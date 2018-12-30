@@ -120,7 +120,7 @@ By default the results will be in ascending order from the earliest record. This
 `cursor` and `order` parameters.
 
 Transactions are the fundamental unit of change in the network and are composed of at least one and at most 100 operations.
-These queries return validated transactions, in the form of @scaladoc[TransactionHistoryResp](stellar.sdk.resp.TransactionHistoryResp)onses
+These queries return validated transactions, in the form of @scaladoc[TransactionHistory](stellar.sdk.resp.TransactionHistory)onses
 (as opposed to transactions that are composed and submitted to the network).
 
 @@snip [DocExamples.scala](../../test/scala/stellar/sdk/DocExamples.scala) { #transaction_query_examples }

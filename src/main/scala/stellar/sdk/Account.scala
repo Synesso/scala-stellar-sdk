@@ -6,3 +6,4 @@ package stellar.sdk
 case class Account(publicKey: PublicKeyOps, sequenceNumber: Long) {
   def withIncSeq: Account = this.copy(sequenceNumber = this.sequenceNumber + 1)
 }
+

@@ -2,7 +2,6 @@ package stellar.sdk
 
 import org.specs2.concurrent.ExecutionEnv
 import org.specs2.mutable.Specification
-import org.stellar.sdk.xdr.CreateAccountResultCode
 
 import scala.concurrent.duration._
 import scala.util.Try
@@ -16,9 +15,7 @@ class FriendBotSpec(implicit ee: ExecutionEnv) extends Specification {
       val response = TestNetwork.fund(kp)
       // #friendbot_example
 
-
-      val result = response.map(_.result.getResult.getResults.head.getTr.getCreateAccountResult.getDiscriminant)
-      result must beEqualTo(CreateAccountResultCode.CREATE_ACCOUNT_SUCCESS).awaitFor(1 minute)
+      response.map(_.isSuccess must beTrue).awaitFor(1 minute)
     }
 
     "be used to serialise a transaction" >> {

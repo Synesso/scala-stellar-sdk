@@ -75,7 +75,7 @@ account. This is similar to the [Operations](#operations) query methods, but wil
 ### Transactions
 
 Transactions are the fundamental unit of change in the network and are composed of at least one and at most 100 operations.
-These sources stream validated transactions, in the form of @scaladoc[TransactionHistoryResp](stellar.sdk.resp.TransactionHistoryResp)onses
+These sources stream validated transactions, in the form of @scaladoc[TransactionHistory](stellar.sdk.resp.TransactionHistory)onses
 (as opposed to transactions that are composed and submitted to the network).
 
 @@snip [DocExamples.scala](../../test/scala/stellar/sdk/DocExamples.scala) { #transaction_source_examples }

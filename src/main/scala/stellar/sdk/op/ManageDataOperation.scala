@@ -1,24 +1,11 @@
 package stellar.sdk.op
 
-import org.stellar.sdk.xdr.ManageDataOp
-import org.stellar.sdk.xdr.Operation.OperationBody
-import org.stellar.sdk.xdr.OperationType.MANAGE_DATA
-import stellar.sdk.XDRPrimitives._
-import stellar.sdk.{PublicKey, PublicKeyOps}
-
-import scala.util.Try
+import cats.data.State
+import stellar.sdk.PublicKeyOps
+import stellar.sdk.xdr.{Decode, Encode}
 
 sealed trait ManageDataOperation extends Operation {
   val name: String
-
-  override def toOperationBody: OperationBody = {
-    val op = new ManageDataOp
-    op.setDataName(str64(name))
-    val body = new OperationBody
-    body.setDiscriminant(MANAGE_DATA)
-    body.setManageDataOp(op)
-    body
-  }
 }
 
 /**
@@ -27,7 +14,9 @@ sealed trait ManageDataOperation extends Operation {
   * @param sourceAccount the account effecting this operation, if different from the owning account of the transaction
   * @see [[https://www.stellar.org/developers/horizon/reference/resources/operation.html#manage-data endpoint doc]]
   */
-case class DeleteDataOperation(name: String, sourceAccount: Option[PublicKeyOps] = None) extends ManageDataOperation
+case class DeleteDataOperation(name: String, sourceAccount: Option[PublicKeyOps] = None) extends ManageDataOperation {
+  override def encode: Stream[Byte] = super.encode ++ Encode.int(10) ++ Encode.string(name) ++ Encode.int(0)
+}
 
 /**
   * Creates or updates a Data Entry (name/value pair) for an account.
@@ -36,21 +25,22 @@ case class DeleteDataOperation(name: String, sourceAccount: Option[PublicKeyOps]
   * @see [[https://www.stellar.org/developers/horizon/reference/resources/operation.html#manage-data endpoint doc]]
   */
 case class WriteDataOperation(name: String, value: String, sourceAccount: Option[PublicKeyOps] = None) extends ManageDataOperation {
-  override def toOperationBody: OperationBody = {
-    val body = super.toOperationBody
-    body.getManageDataOp.setDataValue(dataValue(value.getBytes("UTF-8")))
-    body
-  }
+  override def encode: Stream[Byte] =
+    super.encode ++
+      Encode.int(10) ++
+      Encode.string(name) ++
+      Encode.int(1) ++
+      Encode.string(value)
 }
 
 
 object ManageDataOperation {
-  def from(op: ManageDataOp, source: Option[PublicKey]): Try[ManageDataOperation] = Try {
-    val name = op.getDataName.getString64
-    Option(op.getDataValue) match {
-      case Some(value) => WriteDataOperation(name, new String(value.getDataValue, "UTF-8"), source)
-      case _ => DeleteDataOperation(name, source)
-    }
+  def decode: State[Seq[Byte], ManageDataOperation] = for {
+    name <- Decode.string
+    value <- Decode.opt(Decode.string)
+  } yield value match {
+    case Some(v) => WriteDataOperation(name, v)
+    case None => DeleteDataOperation(name)
   }
 
 }

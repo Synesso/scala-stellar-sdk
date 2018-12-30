@@ -3,7 +3,7 @@ package stellar.sdk
 import org.json4s.JsonAST.JObject
 import org.json4s.native.JsonMethods._
 import org.json4s.{DefaultFormats, JValue}
-import stellar.sdk.resp.ResponseParser
+import stellar.sdk.response.ResponseParser
 
 case class OrderBook(selling: Asset, buying: Asset, bids: Seq[Order], asks: Seq[Order])
 

@@ -1,57 +1,50 @@
 package stellar.sdk.op
 
+import cats.data.State
 import org.apache.commons.codec.binary.Base64
 import org.json4s.DefaultFormats
 import org.json4s.JsonAST.{JArray, JObject, JValue}
-import org.stellar.sdk.xdr.Operation.OperationBody
-import org.stellar.sdk.xdr.OperationType._
-import org.stellar.sdk.xdr.{AccountID, Operation => XDROp}
 import stellar.sdk._
-import stellar.sdk.resp.ResponseParser
-
-import scala.util.{Success, Try}
+import stellar.sdk.response.ResponseParser
+import stellar.sdk.xdr.{Decode, Encodable, Encode}
 
 /**
   * An Operation represents a change to the ledger. It is the action, as opposed to the effects resulting from that action.
   */
-trait Operation {
+trait Operation extends Encodable {
   val sourceAccount: Option[PublicKeyOps]
-
-  def toOperationBody: OperationBody
-
-  def toXDR: XDROp = {
-    val op = new org.stellar.sdk.xdr.Operation()
-    sourceAccount.foreach { source =>
-      op.setSourceAccount(new AccountID)
-      op.getSourceAccount.setAccountID(source.getXDRPublicKey)
-    }
-    op.setBody(toOperationBody)
-    op
-  }
+  override def encode: Stream[Byte] = Encode.opt(sourceAccount)
 }
 
 object Operation {
 
-  val ONE = BigDecimal(10).pow(7)
-
-  // todo - these should not be Trys because any received xdr object should be correct
-  def fromXDR(op: XDROp): Try[Operation] = {
-    val source = Option(op.getSourceAccount).map(_.getAccountID).map(KeyPair.fromXDRPublicKey)
-    op.getBody.getDiscriminant match {
-      case ALLOW_TRUST => AllowTrustOperation.from(op.getBody.getAllowTrustOp, source)
-      case CHANGE_TRUST => ChangeTrustOperation.from(op.getBody.getChangeTrustOp, source)
-      case CREATE_ACCOUNT => CreateAccountOperation.from(op.getBody.getCreateAccountOp, source)
-      case PATH_PAYMENT => PathPaymentOperation.from(op.getBody.getPathPaymentOp, source)
-      case PAYMENT => PaymentOperation.from(op.getBody.getPaymentOp, source)
-      case SET_OPTIONS => SetOptionsOperation.from(op.getBody.getSetOptionsOp, source)
-      case MANAGE_OFFER => ManageOfferOperation.from(op.getBody.getManageOfferOp, source)
-      case CREATE_PASSIVE_OFFER => CreatePassiveOfferOperation.from(op.getBody.getCreatePassiveOfferOp, source)
-      case ACCOUNT_MERGE => AccountMergeOperation.from(op.getBody, source)
-      case INFLATION => Success(InflationOperation(source))
-      case MANAGE_DATA => ManageDataOperation.from(op.getBody.getManageDataOp, source)
-      case BUMP_SEQUENCE => BumpSequenceOperation.from(op.getBody.getBumpSequenceOp, source)
+  val decode: State[Seq[Byte], Operation] =
+    Decode.opt(KeyPair.decode).flatMap { source =>
+      Decode.int.flatMap {
+        case 0 => widen(CreateAccountOperation.decode.map(_.copy(sourceAccount = source)))
+        case 1 => widen(PaymentOperation.decode.map(_.copy(sourceAccount = source)))
+        case 2 => widen(PathPaymentOperation.decode.map(_.copy(sourceAccount = source)))
+        case 3 => widen(ManageOfferOperation.decode.map {
+          case x: CreateOfferOperation => x.copy(sourceAccount = source)
+          case x: UpdateOfferOperation => x.copy(sourceAccount = source)
+          case x: DeleteOfferOperation => x.copy(sourceAccount = source)
+        })
+        case 4 => widen(CreatePassiveOfferOperation.decode.map(_.copy(sourceAccount = source)))
+        case 5 => widen(SetOptionsOperation.decode.map(_.copy(sourceAccount = source)))
+        case 6 => widen(ChangeTrustOperation.decode.map(_.copy(sourceAccount = source)))
+        case 7 => widen(AllowTrustOperation.decode.map(_.copy(sourceAccount = source)))
+        case 8 => widen(AccountMergeOperation.decode.map(_.copy(sourceAccount = source)))
+        case 9 => State.pure(InflationOperation(sourceAccount = source))
+        case 10 => widen(ManageDataOperation.decode.map {
+          case x: DeleteDataOperation => x.copy(sourceAccount = source)
+          case x: WriteDataOperation => x.copy(sourceAccount = source)
+        })
+        case 11 => widen(BumpSequenceOperation.decode.map(_.copy(sourceAccount = source)))
+      }
     }
-  }
+  private def widen[A, W, O <: W](s: State[A, O]): State[A, W] = s.map(w => w: W)
+
+  def decodeXDR(base64: String): Operation = decode.run(ByteArrays.base64(base64)).value._2
 }
 
 object OperationDeserializer extends ResponseParser[Operation]({ o: JObject =>

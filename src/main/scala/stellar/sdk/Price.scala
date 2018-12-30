@@ -2,17 +2,18 @@ package stellar.sdk
 
 import java.util.Locale
 
-import org.stellar.sdk.xdr.{Price => XDRPrice}
-import stellar.sdk.XDRPrimitives._
+import cats.data.State
+import stellar.sdk.xdr.{Decode, Encode}
 
 case class Price(n: Int, d: Int) {
-  def toXDR = {
-    val xdr = new XDRPrice
-    xdr.setN(int32(n))
-    xdr.setD(int32(d))
-    xdr
-  }
-
   def asDecimalString = "%.7f".formatLocal(Locale.ROOT, n * 1.0 / d * 1.0)
 
+  def encode: Stream[Byte] = Encode.int(n) ++ Encode.int(d)
+}
+
+object Price {
+  def decode: State[Seq[Byte], Price] = for {
+    n <- Decode.int
+    d <- Decode.int
+  } yield Price(n, d)
 }

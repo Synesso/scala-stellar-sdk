@@ -1,14 +1,10 @@
 package stellar.sdk
 
-import org.stellar.sdk.xdr.AssetType._
-import org.stellar.sdk.xdr.{AccountID, AssetType, Asset => XDRAsset}
+import cats.data.State
 import stellar.sdk.ByteArrays._
+import stellar.sdk.xdr.{Decode, Encodable, Encode}
 
-import scala.util.Try
-
-sealed trait Asset {
-  def toXDR: XDRAsset
-}
+sealed trait Asset extends Encodable
 
 object Asset {
   def apply(code: String, issuer: PublicKeyOps): NonNativeAsset = {
@@ -16,27 +12,15 @@ object Asset {
     if (code.length <= 4) IssuedAsset4.of(code, issuer) else IssuedAsset12.of(code, issuer)
   }
 
-  def fromXDR(xdr: XDRAsset): Try[Asset] = Try {
-    xdr.getDiscriminant match {
-      case ASSET_TYPE_NATIVE => NativeAsset
-      case ASSET_TYPE_CREDIT_ALPHANUM4 =>
-        val code = paddedByteArrayToString(xdr.getAlphaNum4.getAssetCode)
-        val issuer = KeyPair.fromXDRPublicKey(xdr.getAlphaNum4.getIssuer.getAccountID)
-        IssuedAsset4.of(code, issuer)
-      case ASSET_TYPE_CREDIT_ALPHANUM12 =>
-        val code = paddedByteArrayToString(xdr.getAlphaNum12.getAssetCode)
-        val issuer = KeyPair.fromXDRPublicKey(xdr.getAlphaNum12.getIssuer.getAccountID)
-        IssuedAsset12.of(code, issuer)
-    }
+  val decode: State[Seq[Byte], Asset] = Decode.int flatMap {
+    case 0 => State.pure(NativeAsset)
+    case 1 => IssuedAsset4.decode.map(x => x: Asset)
+    case 2 => IssuedAsset12.decode.map(x => x: Asset)
   }
 }
 
 case object NativeAsset extends Asset {
-  override val toXDR: XDRAsset = {
-    val xdr = new XDRAsset
-    xdr.setDiscriminant(ASSET_TYPE_NATIVE)
-    xdr
-  }
+  override def encode: Stream[Byte] = Encode.int(0)
 }
 
 trait NonNativeAsset extends Asset {
@@ -54,23 +38,22 @@ case class IssuedAsset4 private(code: String, issuer: PublicKeyOps) extends NonN
   assert(code.nonEmpty, s"Asset's code '$code' cannot be empty")
   assert(code.length <= 4, s"Asset's code '$code' should have length no greater than 4")
 
-  override def toXDR: XDRAsset = {
-    val xdr = new XDRAsset
-    xdr.setDiscriminant(AssetType.ASSET_TYPE_CREDIT_ALPHANUM4)
-    val credit = new XDRAsset.AssetAlphaNum4
-    credit.setAssetCode(paddedByteArray(code, 4))
-    val accountID = new AccountID
-    accountID.setAccountID(issuer.getXDRPublicKey)
-    credit.setIssuer(accountID)
-    xdr.setAlphaNum4(credit)
-    xdr
-  }
-
   override val typeString = "credit_alphanum4"
+
+  def encode: Stream[Byte] = {
+    val codeBytes = paddedByteArray(code, 4)
+    Encode.int(1) ++ Encode.bytes(4, codeBytes) ++ issuer.encode
+  }
 }
 
 object IssuedAsset4 {
   def of(code: String, issuer: PublicKeyOps): IssuedAsset4 = IssuedAsset4(code, issuer.asPublicKey)
+
+  def decode: State[Seq[Byte], IssuedAsset4] = for {
+    bs <- Decode.bytes(4)
+    issuer <- KeyPair.decode
+    code = paddedByteArrayToString(bs.toArray)
+  } yield IssuedAsset4(code, issuer)
 }
 
 
@@ -82,21 +65,20 @@ object IssuedAsset4 {
 case class IssuedAsset12 private (code: String, issuer: PublicKeyOps) extends NonNativeAsset {
   assert(code.length >= 5 && code.length <= 12, s"Asset's code '$code' should have length between 5 & 12 inclusive")
 
-  override def toXDR: XDRAsset = {
-    val xdr = new XDRAsset
-    xdr.setDiscriminant(AssetType.ASSET_TYPE_CREDIT_ALPHANUM12)
-    val credit = new XDRAsset.AssetAlphaNum12
-    credit.setAssetCode(paddedByteArray(code, 12))
-    val accountID = new AccountID
-    accountID.setAccountID(issuer.getXDRPublicKey)
-    credit.setIssuer(accountID)
-    xdr.setAlphaNum12(credit)
-    xdr
-  }
-
   override val typeString = "credit_alphanum12"
+
+  def encode: Stream[Byte] = {
+    val codeBytes = paddedByteArray(code, 12)
+    Encode.int(2) ++ Encode.bytes(12, codeBytes) ++ issuer.encode
+  }
 }
 
 object IssuedAsset12 {
   def of(code: String, keyPair: PublicKeyOps): IssuedAsset12 = IssuedAsset12(code, keyPair.asPublicKey)
+
+  def decode: State[Seq[Byte], IssuedAsset12] = for {
+    bs <- Decode.bytes(12)
+    issuer <- KeyPair.decode
+    code = paddedByteArrayToString(bs.toArray)
+  } yield IssuedAsset12(code, issuer)
 }

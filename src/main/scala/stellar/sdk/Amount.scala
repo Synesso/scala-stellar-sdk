@@ -3,13 +3,18 @@ package stellar.sdk
 import java.math.{MathContext, RoundingMode}
 import java.util.Locale
 
+import cats.data.State
+import stellar.sdk.xdr.{Decode, Encodable, Encode}
+
 import scala.util.Try
 
-trait Amount {
+trait Amount extends Encodable {
   val units: Long
   val asset: Asset
 
   def toHumanValue: Double = units / math.pow(10, Amount.decimalPlaces)
+
+  def encode: Stream[Byte] = asset.encode ++ Encode.long(units)
 }
 
 case class NativeAmount(units: Long) extends Amount {
@@ -46,4 +51,13 @@ object Amount {
   def lumens(units: Double): NativeAmount = toBaseUnits(units).map(NativeAmount).getOrElse(
     throw new IllegalArgumentException(s"Too many digits in fractional portion of $units. Limit is $decimalPlaces")
   )
+
+  def decode: State[Seq[Byte], Amount] = for {
+    asset <- Asset.decode
+    units <- Decode.long
+  } yield apply(units, asset)
+}
+
+object IssuedAmount {
+  def decode: State[Seq[Byte], IssuedAmount] = Amount.decode.map(x => x.asInstanceOf[IssuedAmount])
 }
