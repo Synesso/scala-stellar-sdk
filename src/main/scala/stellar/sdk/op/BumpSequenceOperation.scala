@@ -20,5 +20,4 @@ case class BumpSequenceOperation(bumpTo: Long,
 
 object BumpSequenceOperation {
   def decode: State[Seq[Byte], BumpSequenceOperation] = Decode.long.map(BumpSequenceOperation(_))
-  def decodeXDR(base64: String): BumpSequenceOperation = decode.run(ByteArrays.base64(base64)).value._2
 }

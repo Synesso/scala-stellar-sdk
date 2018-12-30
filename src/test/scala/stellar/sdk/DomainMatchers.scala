@@ -1,10 +1,12 @@
 package stellar.sdk
 
+import cats.data.State
 import org.apache.commons.codec.binary.Hex
 import org.specs2.matcher.{AnyMatchers, Matcher, MustExpectations, OptionMatchers, SequenceMatchersCreation}
 import stellar.sdk.ByteArrays.base64
 import stellar.sdk.op._
 import stellar.sdk.res.TransactionHistory
+import stellar.sdk.xdr.Encodable
 
 trait DomainMatchers extends AnyMatchers with MustExpectations with SequenceMatchersCreation with OptionMatchers {
 
@@ -39,6 +41,16 @@ trait DomainMatchers extends AnyMatchers with MustExpectations with SequenceMatc
   def beEquivalentTo(other: PublicKeyOps): Matcher[PublicKeyOps] = beLike[PublicKeyOps] {
     case pk =>
       pk.accountId mustEqual other.accountId
+  }
+
+  def beEquivalentTo(other: Signer): Matcher[Signer] = beLike[Signer] {
+    case AccountSigner(kp, weight) => other match {
+      case AccountSigner(otherKP, otherWeight) =>
+        kp must beEquivalentTo(otherKP)
+        weight mustEqual otherWeight
+      case _ => kp mustEqual other // will fail
+    }
+    case x => other mustEqual x
   }
 
   def beEquivalentTo(other: AccountMergeOperation): Matcher[AccountMergeOperation] = beLike[AccountMergeOperation] {
@@ -193,4 +205,11 @@ trait DomainMatchers extends AnyMatchers with MustExpectations with SequenceMatc
       other.copy(memo = thr.memo) mustEqual thr
   }
 
+  def serdeUsing[E <: Encodable](decoder: State[Seq[Byte], E]): Matcher[E] = beLike {
+    case expected: Encodable =>
+      val encoded = expected.encode
+      val (remaining, actual) = decoder.run(encoded).value
+      actual mustEqual expected
+      remaining must beEmpty
+  }
 }

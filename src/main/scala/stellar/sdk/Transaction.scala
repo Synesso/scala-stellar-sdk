@@ -5,7 +5,7 @@ import stellar.sdk.ByteArrays._
 import stellar.sdk.op.Operation
 import stellar.sdk.res.TransactionPostResponse
 import stellar.sdk.xdr.Encode.{arr, int, long, opt}
-import stellar.sdk.xdr.{Decode, Encode}
+import stellar.sdk.xdr.{Decode, Encodable, Encode}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -13,7 +13,7 @@ case class Transaction(source: Account,
                        operations: Seq[Operation] = Nil,
                        memo: Memo = NoMemo,
                        timeBounds: Option[TimeBounds] = None,
-                       fee: Option[NativeAmount] = None)(implicit val network: Network) {
+                       fee: Option[NativeAmount] = None)(implicit val network: Network) extends Encodable {
 
   private val BaseFee = 100L
   private val EnvelopeTypeTx = 2

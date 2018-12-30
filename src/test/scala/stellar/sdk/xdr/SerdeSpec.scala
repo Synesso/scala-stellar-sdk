@@ -1,5 +1,6 @@
 package stellar.sdk.xdr
 
+import java.io.EOFException
 import java.nio.charset.Charset
 
 import cats.data.State
@@ -90,6 +91,21 @@ class SerdeSpec extends Specification with ScalaCheck {
       Encode.string("12345") mustEqual Encode.int(5) ++ "12345".getBytes(Charset.forName("UTF-8")) ++ Seq(0, 0, 0)
       Encode.string("123456") mustEqual Encode.int(6) ++ "123456".getBytes(Charset.forName("UTF-8")) ++ Seq(0, 0)
       Encode.string("1234567") mustEqual Encode.int(7) ++ "1234567".getBytes(Charset.forName("UTF-8")) :+ 0
+    }
+  }
+
+  "decoding" should {
+    "fail if there are insufficient bytes for an int" >> {
+      Decode.int.run(Seq(0, 0, 0)).value must throwA[EOFException]
+    }
+    "fail if there are insufficient bytes for a long" >> {
+      Decode.long.run(Seq(0, 0, 0, 0, 0, 0, 0)).value must throwA[EOFException]
+    }
+    "fail if there are insufficient bytes given the declared length" >> {
+      Decode.bytes.run(Seq(0, 0, 0, 4, 1, 1, 1)).value must throwA[EOFException]
+    }
+    "fail if the string has insufficient padding bytes" >> {
+      Decode.string.run(Seq(0, 0, 0, 1, 99, 0)).value must throwA[EOFException]
     }
   }
 

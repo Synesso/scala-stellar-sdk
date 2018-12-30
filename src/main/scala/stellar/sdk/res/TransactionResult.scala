@@ -17,12 +17,12 @@ case class TransactionSuccess(feeCharged: NativeAmount, operationResults: Seq[Op
 
   def encode: Stream[Byte] =
     Encode.long(feeCharged.units) ++
-      Encode.int(0)
+      Encode.int(0) ++
       Encode.arr(operationResults) ++
       Encode.int(0)
 }
 
-sealed trait TransactionNotSuccessful {
+sealed trait TransactionNotSuccessful extends Encodable {
   val isSuccess: Boolean = false
 }
 
@@ -49,7 +49,7 @@ case class TransactionNotAttempted(reason: NotAttempted, feeCharged: NativeAmoun
 
   def encode: Stream[Byte] =
       Encode.long(feeCharged.units) ++
-      Encode.int(reason.id)
+      Encode.int(reason.id) ++
       Encode.int(0)
 }
 
@@ -70,7 +70,6 @@ object TransactionResult {
   }
 
   sealed abstract class Code(val id: Int) {
-    def encode: Stream[Byte] = Encode.int(id)
     val decodeOperationResults: State[Seq[Byte], Seq[OperationResult]] = Decode.arr(OperationResult.decode)
   }
 

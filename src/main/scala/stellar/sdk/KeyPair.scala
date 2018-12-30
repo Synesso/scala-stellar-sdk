@@ -31,25 +31,6 @@ case class KeyPair(pk: EdDSAPublicKey, sk: EdDSAPrivateKey) extends PublicKeyOps
     Signature(sig.sign, hint)
   }
 
-  /*
-    * Sign the provided data with the private key.
-    *
-    * @param data The data to sign.
-    * @return signed data in XDR format
-    */
-/*
-  def signToXDR(data: Array[Byte]): DecoratedSignature = {
-    val hint = signatureHint
-    val signedData = sign(data).data
-    val signature = new org.stellar.sdk.xdr.Signature
-    signature.setSignature(signedData)
-    val xdr = new DecoratedSignature
-    xdr.setHint(hint)
-    xdr.setSignature(signature)
-    xdr
-  }
-*/
-
   override def toString: String = {
     s"""KeyPair("$accountId", "S...")"""
   }
@@ -64,8 +45,7 @@ case class PublicKey(pk: EdDSAPublicKey) extends PublicKeyOps {
     case _ => false
   }
 
-  override def toString: String = s"PublicKey($accountId)"
-
+  override def toString: String = s"""PublicKey("$accountId")"""
 }
 
 trait PublicKeyOps extends Encodable {
@@ -94,28 +74,6 @@ trait PublicKeyOps extends Encodable {
     case _: SignatureException => false
   }.get
 
-/*
-  def getXDRPublicKey: XDRPublicKey = {
-    val publicKey = new XDRPublicKey
-    publicKey.setDiscriminant(PublicKeyType.PUBLIC_KEY_TYPE_ED25519)
-    val uint256 = new Uint256
-    uint256.setUint256(pk.getAbyte)
-    publicKey.setEd25519(uint256)
-    publicKey
-  }
-*/
-
-/*
-  def getXDRSignerKey: SignerKey = {
-    val signerKey = new SignerKey
-    signerKey.setDiscriminant(SignerKeyType.SIGNER_KEY_TYPE_ED25519)
-    val uint256 = new Uint256
-    uint256.setUint256(pk.getAbyte)
-    signerKey.setEd25519(uint256)
-    signerKey
-  }
-*/
-
   /**
     * This key pair or verifying key without the private key.
     */
@@ -127,26 +85,7 @@ trait PublicKeyOps extends Encodable {
     */
   def hint: Array[Byte] = pk.getAbyte.drop(pk.getAbyte.length - 4)
 
-  /**
-    * XDR entity derived from this public key for use in signatures
-    */
-/*
-  val signatureHint: SignatureHint = {
-    val pkStream = new ByteArrayOutputStream
-    val os = new XdrDataOutputStream(pkStream)
-    XDRPublicKey.encode(os, getXDRPublicKey)
-    val pkBytes = pkStream.toByteArray
-    val hintBytes = util.Arrays.copyOfRange(pkBytes, pkBytes.length - 4, pkBytes.length)
-    val hint = new SignatureHint
-    hint.setSignatureHint(hintBytes)
-    hint
-  }
-*/
-
   def encode: Stream[Byte] = Encode.int(0) ++ Encode.bytes(32, pk.getAbyte)
-
-  override def toString: String = s"""PublicKey("$accountId")"""
-
 }
 
 object KeyPair {

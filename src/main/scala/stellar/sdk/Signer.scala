@@ -24,9 +24,13 @@ case class AccountSigner(key: PublicKeyOps, weight: Int) extends Signer {
 }
 
 case class PreAuthTxnSigner(hash: String, weight: Int) extends Signer {
-  def encode: Stream[Byte] = Encode.int(1) ++ Encode.bytes(32, ByteArrays.base64(hash)) ++ Encode.int(weight)
+  val bytes = ByteArrays.base64(hash)
+  require(bytes.length == 32)
+  def encode: Stream[Byte] = Encode.int(1) ++ Encode.bytes(32, bytes) ++ Encode.int(weight)
 }
 
 case class HashSigner(hash: String, weight: Int) extends Signer {
-  def encode: Stream[Byte] = Encode.int(2) ++ Encode.bytes(32, ByteArrays.base64(hash)) ++ Encode.int(weight)
+  val bytes = ByteArrays.base64(hash)
+  require(bytes.length == 32)
+  def encode: Stream[Byte] = Encode.int(2) ++ Encode.bytes(32, bytes) ++ Encode.int(weight)
 }

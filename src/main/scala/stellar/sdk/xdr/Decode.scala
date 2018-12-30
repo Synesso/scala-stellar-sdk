@@ -12,13 +12,13 @@ object Decode {
   val int: State[Seq[Byte], Int] = State[Seq[Byte], Int] {
     case bs if bs.length >= 4 =>
       bs.drop(4) -> ByteBuffer.wrap(bs.take(4).toArray).getInt
-    case _ => throw new EOFException()
+    case _ => throw new EOFException("Insufficient data remains to parse an int")
   }
 
   val long: State[Seq[Byte], Long] = State[Seq[Byte], Long] {
     case bs if bs.length >= 8 =>
       bs.drop(8) -> ByteBuffer.wrap(bs.take(8).toArray).getLong
-    case _ => throw new EOFException()
+    case _ => throw new EOFException("Insufficient data remains to parse a long")
   }
 
   val instant: State[Seq[Byte], Instant] = long.map(Instant.ofEpochMilli)
@@ -27,7 +27,7 @@ object Decode {
 
   def bytes(len: Int): State[Seq[Byte], Seq[Byte]] = State[Seq[Byte], Seq[Byte]] {
     case bs if bs.length >= len => bs.drop(len) -> bs.take(len)
-    case _ => sys.error(s"Insufficient data remains to parse $len bytes")
+    case _ => throw new EOFException(s"Insufficient data remains to parse $len bytes")
   }
 
   val bytes: State[Seq[Byte], Seq[Byte]] = for {

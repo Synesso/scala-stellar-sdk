@@ -9,6 +9,7 @@ import org.scalacheck.{Arbitrary, Gen}
 import org.specs2.ScalaCheck
 import stellar.sdk.ByteArrays.trimmedByteArray
 import stellar.sdk.op._
+import stellar.sdk.res.TransactionResult._
 import stellar.sdk.res.{PathPaymentResult, _}
 import stellar.sdk.resp._
 
@@ -92,11 +93,43 @@ trait ArbitraryInput extends ScalaCheck {
 
   implicit def arbTransactionPostResponse = Arbitrary(genTransactionPostSuccess)
 
-  implicit def arbTransactionHistoryonse = Arbitrary(genTransactionHistory)
+  implicit def arbTransactionHistory = Arbitrary(genTransactionHistory)
 
   implicit def arbHorizonCursor = Arbitrary(genHorizonCursor)
 
-  implicit def arbOperationResuilt = Arbitrary(genOperationResult)
+  implicit def arbOperationResult = Arbitrary(genOperationResult)
+  
+  implicit def arbAccountMergeResult = Arbitrary(genAccountMergeResult)
+
+  implicit def arbAllowTrustResult = Arbitrary(genAllowTrustResult)
+
+  implicit def arbBumpSequenceResult = Arbitrary(genBumpSequenceResult)
+
+  implicit def arbChangeTrustResult = Arbitrary(genChangeTrustResult)
+
+  implicit def arbCreateAccountResult = Arbitrary(genCreateAccountResult)
+
+  implicit def arbCreatePassiveOfferResult = Arbitrary(genCreatePassiveOfferResult)
+
+  implicit def arbInflationResult = Arbitrary(genInflationResult)
+
+  implicit def arbManageDataResult = Arbitrary(genManageDataResult)
+
+  implicit def arbManageOfferResult = Arbitrary(genManageOfferResult)
+
+  implicit def arbPathPaymentResult = Arbitrary(genPathPaymentResult)
+
+  implicit def arbPaymentResult = Arbitrary(genPaymentResult)
+
+  implicit def arbSetOptionsResult = Arbitrary(genSetOptionsResult)
+
+  implicit def arbTransactionResult = Arbitrary(genTransactionResult)
+
+  implicit def arbTransactionNotSuccessful = Arbitrary(genTransactionNotSuccessful)
+
+  implicit def arbSigner = Arbitrary(genSigner)
+
+  def round(d: Double) = "%.7f".formatLocal(Locale.ROOT, d).toDouble
 
   def genKeyPair: Gen[KeyPair] = Gen.oneOf(Seq(KeyPair.random))
 
@@ -367,7 +400,8 @@ trait ArbitraryInput extends ScalaCheck {
     Thresholds(low, med, high)
   }
 
-  def genHash = Gen.identifier.map(_.getBytes("UTF-8")).map(Base64.encodeBase64String)
+  def genHash: Gen[String] = Gen.containerOfN[Array, Char](32, Gen.alphaNumChar)
+    .map(_.map(_.toByte)).map(Base64.encodeBase64String)
 
   def genAccountResp: Gen[AccountResp] = for {
     id <- genPublicKey
@@ -621,5 +655,25 @@ trait ArbitraryInput extends ScalaCheck {
     bought <- genAmount
   } yield OfferClaim(seller, offerId, sold, bought)
 
-  def round(d: Double) = "%.7f".formatLocal(Locale.ROOT, d).toDouble
+  def genTransactionResult: Gen[TransactionResult] =
+    Gen.oneOf(genTransactionSuccess, genTransactionFailure, genTransactionNotAttempted)
+
+  def genTransactionSuccess: Gen[TransactionSuccess] = for {
+    fee <- genNativeAmount
+    opResults <- Gen.nonEmptyListOf(genOperationResult)
+  } yield TransactionSuccess(fee, opResults)
+
+  def genTransactionNotSuccessful: Gen[TransactionNotSuccessful] =
+    Gen.oneOf(genTransactionFailure, genTransactionNotAttempted)
+
+  def genTransactionFailure: Gen[TransactionFailure] = for {
+    fee <- genNativeAmount
+    opResults <- Gen.nonEmptyListOf(genOperationResult)
+  } yield TransactionFailure(fee, opResults)
+
+  def genTransactionNotAttempted: Gen[TransactionNotAttempted] = for {
+    reason <- Gen.oneOf(SubmittedTooEarly, SubmittedTooLate, NoOperations, BadSequenceNumber, BadAuthorisation,
+      InsufficientBalance, SourceAccountNotFound, InsufficientFee, UnusedSignatures, UnspecifiedInternalError)
+    fee <- genNativeAmount
+  } yield TransactionNotAttempted(reason, fee)
 }
