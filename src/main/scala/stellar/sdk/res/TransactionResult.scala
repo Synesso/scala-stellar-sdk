@@ -108,7 +108,7 @@ object TransactionResult {
       case -9 => InsufficientFee
       case -10 => UnusedSignatures
       case -11 => UnspecifiedInternalError
-      case _ => sys.error(s"TransactionResult code=$i is unknown")
+      case _ => sys.error(s"TransactionResult code $i is unknown")
     }
   }
 }
