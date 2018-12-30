@@ -31,7 +31,6 @@ case class InflationPayout(recipient: PublicKey, amount: NativeAmount) extends E
 }
 
 object InflationPayout {
-  // todo - serde spec
   val decode: State[Seq[Byte], InflationPayout] = for {
     recipient <- KeyPair.decode
     units <- Decode.long

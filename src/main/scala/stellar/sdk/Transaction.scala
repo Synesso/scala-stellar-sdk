@@ -56,8 +56,6 @@ case class Transaction(source: Account,
 
 object Transaction {
 
-  // todo - sometimes it's `decodeXDR` and sometimes `from`. One or the other.
-
   /**
     * Decodes an unsigned transaction from base64-encoded XDR.
     */

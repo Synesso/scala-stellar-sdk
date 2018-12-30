@@ -4,7 +4,6 @@ import java.nio.ByteBuffer
 import java.nio.charset.Charset
 import java.time.Instant
 
-// todo - Every implementing class should have a serde spec
 trait Encodable {
   def encode: Stream[Byte]
 }

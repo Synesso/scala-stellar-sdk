@@ -9,7 +9,6 @@ case class OfferClaim(seller: PublicKey, offerId: Long, sold: Amount, bought: Am
 }
 
 object OfferClaim {
-  // todo - spec
   val decode: State[Seq[Byte], OfferClaim] = for {
     seller <- KeyPair.decode
     offerId <- Decode.long

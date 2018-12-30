@@ -159,8 +159,6 @@ object KeyPair {
     */
   def fromAccountId(accountId: String): PublicKey = fromPublicKey(StrKey.decodeStellarAccountId(accountId))
 
-//  def fromXDRPublicKey(key: XDRPublicKey) = fromPublicKey(key.getEd25519.getUint256)
-
   /**
     * Generates a random Stellar keypair.
     *
