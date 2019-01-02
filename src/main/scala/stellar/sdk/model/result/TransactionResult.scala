@@ -23,15 +23,14 @@ case class TransactionSuccess(feeCharged: NativeAmount, operationResults: Seq[Op
       Encode.int(0)
 }
 
-sealed trait TransactionNotSuccessful extends Encodable {
+sealed trait TransactionNotSuccessful extends TransactionResult {
   val isSuccess: Boolean = false
 }
 
 /**
   * The transaction was attempted, but one or more operations failed (and none were applied).
   */
-case class TransactionFailure(feeCharged: NativeAmount, operationResults: Seq[OperationResult])
-  extends TransactionResult with TransactionNotSuccessful {
+case class TransactionFailure(feeCharged: NativeAmount, operationResults: Seq[OperationResult]) extends TransactionNotSuccessful {
 
   def encode: Stream[Byte] =
     Encode.long(feeCharged.units) ++
@@ -43,8 +42,7 @@ case class TransactionFailure(feeCharged: NativeAmount, operationResults: Seq[Op
 /**
   * The transaction was not attempted for the reason given.
   */
-case class TransactionNotAttempted(reason: NotAttempted, feeCharged: NativeAmount)
-  extends TransactionResult with TransactionNotSuccessful {
+case class TransactionNotAttempted(reason: NotAttempted, feeCharged: NativeAmount) extends TransactionNotSuccessful {
 
   val resultCode: Int = reason.id
 
