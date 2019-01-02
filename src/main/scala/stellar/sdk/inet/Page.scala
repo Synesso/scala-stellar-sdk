@@ -2,7 +2,7 @@ package stellar.sdk.inet
 
 import org.json4s.JsonAST.JArray
 import org.json4s.{DefaultFormats, Formats, JObject, JValue}
-import stellar.sdk.response.ResponseParser
+import stellar.sdk.model.response.ResponseParser
 
 /**
   * A page of results

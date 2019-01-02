@@ -4,7 +4,7 @@ import org.scalacheck.Gen
 import org.specs2.mutable.Specification
 import stellar.sdk
 import stellar.sdk.ByteArrays.bytesToHex
-import stellar.sdk.op.{CreateAccountOperation, Operation, PaymentOperation}
+import stellar.sdk.model.op.{CreateAccountOperation, Operation, PaymentOperation}
 
 class TransactionSpec extends Specification with ArbitraryInput with DomainMatchers {
 

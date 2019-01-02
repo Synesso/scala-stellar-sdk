@@ -6,7 +6,7 @@ import java.util
 import cats.data.State
 import net.i2p.crypto.eddsa._
 import net.i2p.crypto.eddsa.spec._
-import stellar.sdk.xdr.{Decode, Encodable, Encode}
+import stellar.sdk.model.xdr.{Decode, Encodable, Encode}
 
 import scala.util.Try
 

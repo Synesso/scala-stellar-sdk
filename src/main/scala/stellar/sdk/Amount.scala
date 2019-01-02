@@ -4,7 +4,7 @@ import java.math.{MathContext, RoundingMode}
 import java.util.Locale
 
 import cats.data.State
-import stellar.sdk.xdr.{Decode, Encodable, Encode}
+import stellar.sdk.model.xdr.{Decode, Encodable, Encode}
 
 import scala.util.Try
 

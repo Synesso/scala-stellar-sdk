@@ -5,9 +5,9 @@ import akka.stream.ActorMaterializer
 import akka.stream.scaladsl.Sink
 import org.specs2.concurrent.ExecutionEnv
 import org.specs2.mutable.Specification
-import stellar.sdk.op.{Operation, PayOperation, Transacted}
-import stellar.sdk.result.TransactionHistory
-import stellar.sdk.response.EffectResp
+import stellar.sdk.model.op.{Operation, PayOperation, Transacted}
+import stellar.sdk.model.result.TransactionHistory
+import stellar.sdk.model.response.EffectResponse
 
 import scala.concurrent.Future
 import scala.concurrent.duration._
@@ -54,11 +54,11 @@ class DataSourceEndpointsIntegrationSpec(implicit ee: ExecutionEnv) extends Spec
 
   "event source" should {
     "provide all future events" >> {
-      val results = PublicNetwork.effectsSource().take(3).runWith(Sink.seq[EffectResp])
+      val results = PublicNetwork.effectsSource().take(3).runWith(Sink.seq[EffectResponse])
       results.map(_.size) must beEqualTo(3).awaitFor(1 minute)
     }
     "provide event history" >> {
-      val results = PublicNetwork.effectsSource(Record(1400)).take(15).runWith(Sink.seq[EffectResp])
+      val results = PublicNetwork.effectsSource(Record(1400)).take(15).runWith(Sink.seq[EffectResponse])
       results.map(_.size) must beEqualTo(15).awaitFor(1 minute)
     }
   }

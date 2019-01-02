@@ -26,7 +26,7 @@ As this example shows, transactions require additional data before they can be s
 
 ### Operations
 
-Without any @scaladoc[Operation](stellar.sdk.op.Operation)s, a transaction is not very useful. There can be as few as
+Without any @scaladoc[Operation](stellar.sdk.model.op.Operation)s, a transaction is not very useful. There can be as few as
 one and as many and one hundred operations added to each Transaction. These can be provided when constructing the
 Transaction.
 
@@ -38,21 +38,21 @@ Or they can be added afterwards.
 
 The available operations are:
 
-* @scaladoc[AccountMerge](stellar.sdk.op.AccountMergeOperation)
-* @scaladoc[AllowTrust](stellar.sdk.op.AllowTrustOperation)
-* @scaladoc[BumpSequence](stellar.sdk.op.BumpSequenceOperation)
-* @scaladoc[ChangeTrust](stellar.sdk.op.ChangeTrustOperation)
-* @scaladoc[CreateAccount](stellar.sdk.op.CreateAccountOperation)
-* @scaladoc[CreateOffer](stellar.sdk.op.CreateOfferOperation)
-* @scaladoc[CreatePassiveOffer](stellar.sdk.op.CreatePassiveOfferOperation)
-* @scaladoc[DeleteData](stellar.sdk.op.DeleteDataOperation)
-* @scaladoc[DeleteOffer](stellar.sdk.op.DeleteOfferOperation)
-* @scaladoc[Inflation](stellar.sdk.op.InflationOperation)
-* @scaladoc[PathPayment](stellar.sdk.op.PathPaymentOperation)
-* @scaladoc[Payment](stellar.sdk.op.PaymentOperation)
-* @scaladoc[SetOptions](stellar.sdk.op.SetOptionsOperation)
-* @scaladoc[UpdateOffer](stellar.sdk.op.UpdateOfferOperation)
-* @scaladoc[WriteData](stellar.sdk.op.WriteDataOperation)
+* @scaladoc[AccountMerge](stellar.sdk.model.op.AccountMergeOperation)
+* @scaladoc[AllowTrust](stellar.sdk.model.op.AllowTrustOperation)
+* @scaladoc[BumpSequence](stellar.sdk.model.op.BumpSequenceOperation)
+* @scaladoc[ChangeTrust](stellar.sdk.model.op.ChangeTrustOperation)
+* @scaladoc[CreateAccount](stellar.sdk.model.op.CreateAccountOperation)
+* @scaladoc[CreateOffer](stellar.sdk.model.op.CreateOfferOperation)
+* @scaladoc[CreatePassiveOffer](stellar.sdk.model.op.CreatePassiveOfferOperation)
+* @scaladoc[DeleteData](stellar.sdk.model.op.DeleteDataOperation)
+* @scaladoc[DeleteOffer](stellar.sdk.model.op.DeleteOfferOperation)
+* @scaladoc[Inflation](stellar.sdk.model.op.InflationOperation)
+* @scaladoc[PathPayment](stellar.sdk.model.op.PathPaymentOperation)
+* @scaladoc[Payment](stellar.sdk.model.op.PaymentOperation)
+* @scaladoc[SetOptions](stellar.sdk.model.op.SetOptionsOperation)
+* @scaladoc[UpdateOffer](stellar.sdk.model.op.UpdateOfferOperation)
+* @scaladoc[WriteData](stellar.sdk.model.op.WriteDataOperation)
 
 Operations need not originate from the same account as the transaction. In this way a single transaction can be issued that
 affects multiple accounts. This enables techniques such as the

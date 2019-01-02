@@ -9,9 +9,9 @@ import org.specs2.concurrent.ExecutionEnv
 import org.specs2.mock.Mockito
 import org.specs2.mutable.Specification
 import stellar.sdk.inet.HorizonAccess
-import stellar.sdk.op._
-import stellar.sdk.response._
-import stellar.sdk.result.TransactionHistory
+import stellar.sdk.model.op._
+import stellar.sdk.model.response._
+import stellar.sdk.model.result.TransactionHistory
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.reflect.ClassTag
@@ -38,7 +38,7 @@ class DocExamples(implicit ee: ExecutionEnv)  extends Specification with Mockito
       val publicKey = KeyPair.fromAccountId(accountId)
 
       // account details
-      val accountDetails: Future[AccountResp] = TestNetwork.account(publicKey)
+      val accountDetails: Future[AccountResponse] = TestNetwork.account(publicKey)
 
       // account datum value
       val accountData: Future[String] = TestNetwork.accountData(publicKey, "data_key")
@@ -50,21 +50,21 @@ class DocExamples(implicit ee: ExecutionEnv)  extends Specification with Mockito
     "be present for assets" >> {
       // #asset_query_examples
       // stream of all assets from all issuers
-      val allAssets: Future[Stream[AssetResp]] = TestNetwork.assets()
+      val allAssets: Future[Stream[AssetResponse]] = TestNetwork.assets()
 
       // stream of the last 20 assets created
       val last20Assets =
         TestNetwork.assets(cursor = Now, order = Desc).map(_.take(20))
 
       // stream of assets with the code HUG
-      val hugAssets: Future[Stream[AssetResp]] = TestNetwork.assets(code = Some("HUG"))
+      val hugAssets: Future[Stream[AssetResponse]] = TestNetwork.assets(code = Some("HUG"))
 
       // stream of assets from the specified issuer
-      val issuerAssets: Future[Stream[AssetResp]] =
+      val issuerAssets: Future[Stream[AssetResponse]] =
         TestNetwork.assets(issuer = Some(publicKey))
 
       // Stream (of max length 1) of HUG assets from the issuer
-      val issuersHugAsset: Future[Stream[AssetResp]] =
+      val issuersHugAsset: Future[Stream[AssetResponse]] =
         TestNetwork.assets(code = Some("HUG"), issuer = Some(publicKey))
       // #asset_query_examples
       ok
@@ -73,7 +73,7 @@ class DocExamples(implicit ee: ExecutionEnv)  extends Specification with Mockito
     "be present for effects" >> {
       // #effect_query_examples
       // stream of all effects
-      val allEffects: Future[Stream[EffectResp]] = TestNetwork.effects()
+      val allEffects: Future[Stream[EffectResponse]] = TestNetwork.effects()
 
       // stream of the last 20 effects
       val last20Effects =
@@ -83,11 +83,11 @@ class DocExamples(implicit ee: ExecutionEnv)  extends Specification with Mockito
       val effectsForAccount = TestNetwork.effectsByAccount(publicKey)
 
       // stream of effects related to a specific transaction hash
-      val effectsForTxn: Future[Stream[EffectResp]] =
+      val effectsForTxn: Future[Stream[EffectResponse]] =
         TestNetwork.effectsByTransaction("f00cafe...")
 
       // stream of effects related to a specific operation id
-      val effectsForOperationId: Future[Stream[EffectResp]] =
+      val effectsForOperationId: Future[Stream[EffectResponse]] =
         TestNetwork.effectsByOperation(123L)
 
       // stream of effects for a specific ledger
@@ -96,7 +96,7 @@ class DocExamples(implicit ee: ExecutionEnv)  extends Specification with Mockito
 
       // #effect_source_examples
       // a source of all new effects
-      val effectsSource: Source[EffectResp, NotUsed] = TestNetwork.effectsSource()
+      val effectsSource: Source[EffectResponse, NotUsed] = TestNetwork.effectsSource()
 
       // a source of all new effects for a given account
       val effectsForAccountSource = TestNetwork.effectsByAccountSource(publicKey)
@@ -108,10 +108,10 @@ class DocExamples(implicit ee: ExecutionEnv)  extends Specification with Mockito
     "be present for ledgers" >> {
       // #ledger_query_examples
       // details of a specific ledger
-      val ledger: Future[LedgerResp] = TestNetwork.ledger(1234)
+      val ledger: Future[LedgerResponse] = TestNetwork.ledger(1234)
 
       // stream of all ledgers
-      val ledgers: Future[Stream[LedgerResp]] = TestNetwork.ledgers()
+      val ledgers: Future[Stream[LedgerResponse]] = TestNetwork.ledgers()
 
       // stream of the last 20 ledgers
       val last20Ledgers =
@@ -120,7 +120,7 @@ class DocExamples(implicit ee: ExecutionEnv)  extends Specification with Mockito
 
       // #ledger_source_examples
       // a source of all new ledgers
-      val ledgersSource: Source[LedgerResp, NotUsed] = TestNetwork.ledgersSource()
+      val ledgersSource: Source[LedgerResponse, NotUsed] = TestNetwork.ledgersSource()
       // #ledger_source_examples
 
       ok
@@ -129,7 +129,7 @@ class DocExamples(implicit ee: ExecutionEnv)  extends Specification with Mockito
     "be present for offers" >> {
       // #offer_query_examples
       // all offers for a specified account
-      val offersByAccount: Future[Stream[OfferResp]] =
+      val offersByAccount: Future[Stream[OfferResponse]] =
       TestNetwork.offersByAccount(publicKey)
 
       // most recent offers from a specified account
@@ -138,7 +138,7 @@ class DocExamples(implicit ee: ExecutionEnv)  extends Specification with Mockito
       // #offer_query_examples
 
       // #offer_source_examples
-      val offersByAccountSource: Source[OfferResp, NotUsed] =
+      val offersByAccountSource: Source[OfferResponse, NotUsed] =
         TestNetwork.offersByAccountSource(publicKey)
       // #offer_source_examples
       ok
@@ -367,7 +367,7 @@ class DocExamples(implicit ee: ExecutionEnv)  extends Specification with Mockito
       override def get[T: ClassTag](path: String, params: Map[String, String])
                                    (implicit ec: ExecutionContext, m: Manifest[T]): Future[T] =
         if (path.endsWith("data/data_key")) {
-          Future(DataValueResp("00").asInstanceOf[T])(ec)
+          Future(DataValueResponse("00").asInstanceOf[T])(ec)
         } else {
           mock[Future[T]]
         }

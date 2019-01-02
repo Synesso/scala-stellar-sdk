@@ -9,9 +9,9 @@ import org.specs2.concurrent.ExecutionEnv
 import org.specs2.mock.Mockito
 import org.specs2.mutable.Specification
 import stellar.sdk.inet._
-import stellar.sdk.op._
-import stellar.sdk.response._
-import stellar.sdk.result.{TransactionHistory, TransactionHistoryDeserializer}
+import stellar.sdk.model.op._
+import stellar.sdk.model.response._
+import stellar.sdk.model.result.{TransactionHistory, TransactionHistoryDeserializer}
 
 import scala.concurrent.Future
 import scala.concurrent.duration._
@@ -54,195 +54,195 @@ class NetworkSpec(implicit ee: ExecutionEnv) extends Specification with Arbitrar
 
     "fetch account details by account id" >> prop { pk: PublicKey =>
       val network = new MockNetwork
-      val response = mock[AccountResp]
+      val response = mock[AccountResponse]
       val expected = Future(response)
-      network.horizon.get[AccountResp](s"/accounts/${pk.accountId}") returns expected
+      network.horizon.get[AccountResponse](s"/accounts/${pk.accountId}") returns expected
       network.account(pk) mustEqual expected
     }
 
     "fetch data for an account by account id and key" >> prop { (pk: PublicKey, key: String, value: String) =>
       val network = new MockNetwork
-      val response = DataValueResp(ByteArrays.base64(value.getBytes("UTF-8")))
+      val response = DataValueResponse(ByteArrays.base64(value.getBytes("UTF-8")))
       val expected = Future(response)
-      network.horizon.get[DataValueResp](s"/accounts/${pk.accountId}/data/$key") returns expected
+      network.horizon.get[DataValueResponse](s"/accounts/${pk.accountId}/data/$key") returns expected
       network.accountData(pk, key) must beEqualTo(value).await
     }
 
     "fetch assets by code and/or issuer" >> prop { (code: Option[String], issuer: Option[PublicKey]) =>
       val network = new MockNetwork
-      val response = mock[Stream[AssetResp]]
+      val response = mock[Stream[AssetResponse]]
       val expected = Future(response)
       val params = Seq(code.map("asset_code" -> _), issuer.map("asset_issuer" -> _.accountId)).flatten.toMap
-      network.horizon.getStream[AssetResp](s"/assets", AssetRespDeserializer, Record(0), Asc, params) returns expected
+      network.horizon.getStream[AssetResponse](s"/assets", AssetRespDeserializer, Record(0), Asc, params) returns expected
       network.assets(code, issuer) mustEqual expected
     }
 
     "fetch descending assets by code and/or issuer" >> prop { (code: Option[String], issuer: Option[PublicKey]) =>
       val network = new MockNetwork
-      val response = mock[Stream[AssetResp]]
+      val response = mock[Stream[AssetResponse]]
       val expected = Future(response)
       val params = Seq(code.map("asset_code" -> _), issuer.map("asset_issuer" -> _.accountId)).flatten.toMap
-      network.horizon.getStream[AssetResp](s"/assets", AssetRespDeserializer, Record(0), Desc, params) returns expected
+      network.horizon.getStream[AssetResponse](s"/assets", AssetRespDeserializer, Record(0), Desc, params) returns expected
       network.assets(code, issuer, Record(0), Desc) mustEqual expected
     }
 
     "fetch all effects" >> {
       val network = new MockNetwork
-      val response = mock[Stream[EffectResp]]
+      val response = mock[Stream[EffectResponse]]
       val expected = Future(response)
-      network.horizon.getStream[EffectResp](s"/effects", EffectRespDeserializer, Record(0), Asc) returns expected
+      network.horizon.getStream[EffectResponse](s"/effects", EffectResponseDeserializer, Record(0), Asc) returns expected
       network.effects() mustEqual expected
     }
 
     "provide source of all effects" >> prop { cursor: HorizonCursor =>
       val network = new MockNetwork
-      val op = mock[EffectResp]
-      val expectedSource: Source[EffectResp, NotUsed] = Source.fromFuture(Future(op))
-      network.horizon.getSource("/effects", EffectRespDeserializer, cursor) returns expectedSource
+      val op = mock[EffectResponse]
+      val expectedSource: Source[EffectResponse, NotUsed] = Source.fromFuture(Future(op))
+      network.horizon.getSource("/effects", EffectResponseDeserializer, cursor) returns expectedSource
       network.effectsSource(cursor).toMat(Sink.seq)(Keep.right).run must beEqualTo(Seq(op)).awaitFor(10.seconds)
     }
 
     "fetch all effects descending" >> {
       val network = new MockNetwork
-      val response = mock[Stream[EffectResp]]
+      val response = mock[Stream[EffectResponse]]
       val expected = Future(response)
-      network.horizon.getStream[EffectResp](s"/effects", EffectRespDeserializer, Record(0), Desc) returns expected
+      network.horizon.getStream[EffectResponse](s"/effects", EffectResponseDeserializer, Record(0), Desc) returns expected
       network.effects(Record(0), Desc) mustEqual expected
     }
 
     "fetch effects descending beginning from now" >> {
       val network = new MockNetwork
-      val response = mock[Stream[EffectResp]]
+      val response = mock[Stream[EffectResponse]]
       val expected = Future(response)
-      network.horizon.getStream[EffectResp](s"/effects", EffectRespDeserializer, Now, Desc) returns expected
+      network.horizon.getStream[EffectResponse](s"/effects", EffectResponseDeserializer, Now, Desc) returns expected
       network.effects(Now, Desc) mustEqual expected
     }
 
     "fetch effects by account" >> prop { account: PublicKey =>
       val network = new MockNetwork
-      val response = mock[Stream[EffectResp]]
+      val response = mock[Stream[EffectResponse]]
       val expected = Future(response)
-      network.horizon.getStream[EffectResp](s"/accounts/${account.accountId}/effects", EffectRespDeserializer, Record(0), Asc) returns expected
+      network.horizon.getStream[EffectResponse](s"/accounts/${account.accountId}/effects", EffectResponseDeserializer, Record(0), Asc) returns expected
       network.effectsByAccount(account) mustEqual expected
     }
 
     "provide source of all effects filtered by account" >> prop { (account: PublicKey, cursor: HorizonCursor) =>
       val network = new MockNetwork
-      val op = mock[EffectResp]
-      val expectedSource: Source[EffectResp, NotUsed] = Source.fromFuture(Future(op))
-      network.horizon.getSource(s"/accounts/${account.accountId}/effects", EffectRespDeserializer, cursor) returns expectedSource
+      val op = mock[EffectResponse]
+      val expectedSource: Source[EffectResponse, NotUsed] = Source.fromFuture(Future(op))
+      network.horizon.getSource(s"/accounts/${account.accountId}/effects", EffectResponseDeserializer, cursor) returns expectedSource
       network.effectsByAccountSource(account, cursor).toMat(Sink.seq)(Keep.right).run must beEqualTo(Seq(op)).awaitFor(10.seconds)
     }
 
     "fetch descending effects by account" >> prop { account: PublicKey =>
       val network = new MockNetwork
-      val response = mock[Stream[EffectResp]]
+      val response = mock[Stream[EffectResponse]]
       val expected = Future(response)
-      network.horizon.getStream[EffectResp](s"/accounts/${account.accountId}/effects", EffectRespDeserializer, Record(0), Desc) returns expected
+      network.horizon.getStream[EffectResponse](s"/accounts/${account.accountId}/effects", EffectResponseDeserializer, Record(0), Desc) returns expected
       network.effectsByAccount(account, Record(0), Desc) mustEqual expected
     }
 
     "fetch descending effects by account beginning from now" >> prop { account: PublicKey =>
       val network = new MockNetwork
-      val response = mock[Stream[EffectResp]]
+      val response = mock[Stream[EffectResponse]]
       val expected = Future(response)
-      network.horizon.getStream[EffectResp](s"/accounts/${account.accountId}/effects", EffectRespDeserializer, Now, Desc) returns expected
+      network.horizon.getStream[EffectResponse](s"/accounts/${account.accountId}/effects", EffectResponseDeserializer, Now, Desc) returns expected
       network.effectsByAccount(account, Now, Desc) mustEqual expected
     }
 
     "fetch effects by operation" >> prop { operationId: Long =>
       val network = new MockNetwork
-      val response = mock[Stream[EffectResp]]
+      val response = mock[Stream[EffectResponse]]
       val expected = Future(response)
-      network.horizon.getStream[EffectResp](s"/operations/$operationId/effects", EffectRespDeserializer, Record(0), Asc) returns expected
+      network.horizon.getStream[EffectResponse](s"/operations/$operationId/effects", EffectResponseDeserializer, Record(0), Asc) returns expected
       network.effectsByOperation(operationId) mustEqual expected
     }.setGen(Gen.posNum[Long])
 
     "fetch effects by ledger" >> prop { ledgerId: Long =>
       val network = new MockNetwork
-      val response = mock[Stream[EffectResp]]
+      val response = mock[Stream[EffectResponse]]
       val expected = Future(response)
-      network.horizon.getStream[EffectResp](s"/ledgers/$ledgerId/effects", EffectRespDeserializer, Record(0), Asc) returns expected
+      network.horizon.getStream[EffectResponse](s"/ledgers/$ledgerId/effects", EffectResponseDeserializer, Record(0), Asc) returns expected
       network.effectsByLedger(ledgerId) mustEqual expected
     }.setGen(Gen.posNum[Long])
 
     "fetch stream of ledgers" >> {
       val network = new MockNetwork
-      val response = mock[Stream[LedgerResp]]
+      val response = mock[Stream[LedgerResponse]]
       val expected = Future(response)
-      network.horizon.getStream[LedgerResp](s"/ledgers", LedgerRespDeserializer, Record(0), Asc) returns expected
+      network.horizon.getStream[LedgerResponse](s"/ledgers", LedgerRespDeserializer, Record(0), Asc) returns expected
       network.ledgers() mustEqual expected
     }
 
     "provide a source of ledgers" >> prop { cursor: HorizonCursor =>
       val network = new MockNetwork
-      val op = mock[LedgerResp]
-      val expectedSource: Source[LedgerResp, NotUsed] = Source.fromFuture(Future(op))
+      val op = mock[LedgerResponse]
+      val expectedSource: Source[LedgerResponse, NotUsed] = Source.fromFuture(Future(op))
       network.horizon.getSource("/ledgers", LedgerRespDeserializer, cursor) returns expectedSource
       network.ledgersSource(cursor).toMat(Sink.seq)(Keep.right).run must beEqualTo(Seq(op)).awaitFor(10.seconds)
     }
 
     "fetch details of a single ledger" >> prop { ledgerId: Long =>
       val network = new MockNetwork
-      val response = mock[LedgerResp]
+      val response = mock[LedgerResponse]
       val expected = Future(response)
-      network.horizon.get[LedgerResp](s"/ledgers/$ledgerId") returns expected
+      network.horizon.get[LedgerResponse](s"/ledgers/$ledgerId") returns expected
       network.ledger(ledgerId) mustEqual expected
     }.setGen(Gen.posNum[Long])
 
     "fetch effects by transaction hash" >> prop { txnHash: String =>
       val network = new MockNetwork
-      val response = mock[Stream[EffectResp]]
+      val response = mock[Stream[EffectResponse]]
       val expected = Future(response)
-      network.horizon.getStream[EffectResp](s"/transactions/$txnHash/effects", EffectRespDeserializer, Record(0), Asc) returns expected
+      network.horizon.getStream[EffectResponse](s"/transactions/$txnHash/effects", EffectResponseDeserializer, Record(0), Asc) returns expected
       network.effectsByTransaction(txnHash) mustEqual expected
     }.setGen(genHash)
 
     "fetch offers for an account" >> prop { account: PublicKey =>
       val network = new MockNetwork
-      val response = mock[Stream[OfferResp]]
+      val response = mock[Stream[OfferResponse]]
       val expected = Future(response)
-      network.horizon.getStream[OfferResp](s"/accounts/${account.accountId}/offers", OfferRespDeserializer, Record(0), Asc) returns expected
+      network.horizon.getStream[OfferResponse](s"/accounts/${account.accountId}/offers", OfferRespDeserializer, Record(0), Asc) returns expected
       network.offersByAccount(account) mustEqual expected
     }
 
     "provide a source of offers for an account" >> prop { (account: PublicKey, cursor: HorizonCursor) =>
       val network = new MockNetwork
-      val op = mock[OfferResp]
-      val expectedSource: Source[OfferResp, NotUsed] = Source.fromFuture(Future(op))
+      val op = mock[OfferResponse]
+      val expectedSource: Source[OfferResponse, NotUsed] = Source.fromFuture(Future(op))
       network.horizon.getSource(s"/accounts/${account.accountId}/offers", OfferRespDeserializer, cursor) returns expectedSource
       network.offersByAccountSource(account, cursor).toMat(Sink.seq)(Keep.right).run must beEqualTo(Seq(op)).awaitFor(10.seconds)
     }
 
     "fetch offers for an account starting at a defined cursor" >> prop { account: PublicKey =>
       val network = new MockNetwork
-      val response = mock[Stream[OfferResp]]
+      val response = mock[Stream[OfferResponse]]
       val expected = Future(response)
-      network.horizon.getStream[OfferResp](s"/accounts/${account.accountId}/offers", OfferRespDeserializer, Record(123), Asc) returns expected
+      network.horizon.getStream[OfferResponse](s"/accounts/${account.accountId}/offers", OfferRespDeserializer, Record(123), Asc) returns expected
       network.offersByAccount(account, Record(123), Asc) mustEqual expected
     }
 
     "fetch descending offers for an account" >> prop { account: PublicKey =>
       val network = new MockNetwork
-      val response = mock[Stream[OfferResp]]
+      val response = mock[Stream[OfferResponse]]
       val expected = Future(response)
-      network.horizon.getStream[OfferResp](s"/accounts/${account.accountId}/offers", OfferRespDeserializer, Record(0), Desc) returns expected
+      network.horizon.getStream[OfferResponse](s"/accounts/${account.accountId}/offers", OfferRespDeserializer, Record(0), Desc) returns expected
       network.offersByAccount(account, Record(0), Desc) mustEqual expected
     }
 
     "fetch descending offers for an account beginning from now" >> prop { account: PublicKey =>
       val network = new MockNetwork
-      val response = mock[Stream[OfferResp]]
+      val response = mock[Stream[OfferResponse]]
       val expected = Future(response)
-      network.horizon.getStream[OfferResp](s"/accounts/${account.accountId}/offers", OfferRespDeserializer, Now, Desc) returns expected
+      network.horizon.getStream[OfferResponse](s"/accounts/${account.accountId}/offers", OfferRespDeserializer, Now, Desc) returns expected
       network.offersByAccount(account, Now, Desc) mustEqual expected
     }
 
     "fetch ascending offers for an account beginning from now" >> prop { account: PublicKey =>
       val network = new MockNetwork
-      val response = mock[Stream[OfferResp]]
+      val response = mock[Stream[OfferResponse]]
       val expected = Future(response)
-      network.horizon.getStream[OfferResp](s"/accounts/${account.accountId}/offers", OfferRespDeserializer, Now, Asc) returns expected
+      network.horizon.getStream[OfferResponse](s"/accounts/${account.accountId}/offers", OfferRespDeserializer, Now, Asc) returns expected
       network.offersByAccount(account, Now, Asc) mustEqual expected
     }
 

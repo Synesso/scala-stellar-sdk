@@ -8,10 +8,10 @@ import org.apache.commons.codec.binary.Base64
 import org.scalacheck.{Arbitrary, Gen}
 import org.specs2.ScalaCheck
 import stellar.sdk.ByteArrays.trimmedByteArray
-import stellar.sdk.op._
-import stellar.sdk.result.TransactionResult._
-import stellar.sdk.result.{PathPaymentResult, _}
-import stellar.sdk.response._
+import stellar.sdk.model.op._
+import stellar.sdk.model.result.TransactionResult._
+import stellar.sdk.model.result.{PathPaymentResult, _}
+import stellar.sdk.model.response._
 
 import scala.util.Random
 
@@ -403,7 +403,7 @@ trait ArbitraryInput extends ScalaCheck {
   def genHash: Gen[String] = Gen.containerOfN[Array, Char](32, Gen.alphaNumChar)
     .map(_.map(_.toByte)).map(Base64.encodeBase64String)
 
-  def genAccountResp: Gen[AccountResp] = for {
+  def genAccountResp: Gen[AccountResponse] = for {
     id <- genPublicKey
     lastSequence <- Gen.posNum[Long]
     subEntryCount <- Gen.posNum[Int]
@@ -412,7 +412,7 @@ trait ArbitraryInput extends ScalaCheck {
     authRevocable <- Gen.oneOf(true, false)
     balances <- Gen.nonEmptyListOf(genBalance)
     signers <- Gen.nonEmptyListOf(genSigner)
-  } yield AccountResp(id, lastSequence, subEntryCount, thresholds, authRequired, authRevocable, balances, signers)
+  } yield AccountResponse(id, lastSequence, subEntryCount, thresholds, authRequired, authRevocable, balances, signers)
 
   def genSigner: Gen[Signer] = Gen.oneOf(genAccountSigner, genHashSigner, genPreAuthTxnSigner)
 
@@ -438,7 +438,7 @@ trait ArbitraryInput extends ScalaCheck {
     weight <- Gen.posNum[Int]
   } yield PreAuthTxnSigner(hash, weight)
 
-  def genLedgerResp: Gen[LedgerResp] = for {
+  def genLedgerResp: Gen[LedgerResponse] = for {
     id <- Gen.identifier
     hash <- genHash
     previousHash <- Gen.option(genHash)
@@ -452,11 +452,11 @@ trait ArbitraryInput extends ScalaCheck {
     baseReserve <- Gen.posNum[Long]
     maxTxSetSize <- Gen.posNum[Int]
   } yield {
-    LedgerResp(id, hash, previousHash, sequence, transactionCount, operationCount, closedAt, totalCoins, feePool,
+    LedgerResponse(id, hash, previousHash, sequence, transactionCount, operationCount, closedAt, totalCoins, feePool,
       baseFee, baseReserve, maxTxSetSize)
   }
 
-  def genOfferResp: Gen[OfferResp] = for {
+  def genOfferResp: Gen[OfferResponse] = for {
     id <- Gen.posNum[Long]
     seller <- genPublicKey
     selling <- genAmount
@@ -465,7 +465,7 @@ trait ArbitraryInput extends ScalaCheck {
     lastModifiedLedger <- Gen.posNum[Long]
     lastModifiedTime <- genZonedDateTime
   } yield {
-    OfferResp(id, seller, selling, buying, price, lastModifiedLedger, lastModifiedTime)
+    OfferResponse(id, seller, selling, buying, price, lastModifiedLedger, lastModifiedTime)
   }
 
   def genTransacted[O <: Operation](genOp: Gen[O]): Gen[Transacted[O]] = for {

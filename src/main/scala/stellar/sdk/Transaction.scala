@@ -2,10 +2,10 @@ package stellar.sdk
 
 import cats.data._
 import stellar.sdk.ByteArrays._
-import stellar.sdk.op.Operation
-import stellar.sdk.response.TransactionPostResponse
-import stellar.sdk.xdr.Encode.{arr, int, long, opt}
-import stellar.sdk.xdr.{Decode, Encodable, Encode}
+import stellar.sdk.model.op.Operation
+import stellar.sdk.model.response.TransactionPostResponse
+import stellar.sdk.model.xdr.Encode.{arr, int, long, opt}
+import stellar.sdk.model.xdr.{Decode, Encodable, Encode}
 
 import scala.concurrent.{ExecutionContext, Future}
 

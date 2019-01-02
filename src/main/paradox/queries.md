@@ -73,7 +73,7 @@ By default the results will be in ascending order from the earliest record. This
 @scaladoc[Operations](stellar.sdk.resp.Operation) are changes to the ledger. They represent the action, as opposed to
 the effects resulting from the action.
 
-Operations returned by these queries are wrapped in the @scaladoc[Transacted](stellar.sdk.op.Transacted) type. This indicates
+Operations returned by these queries are wrapped in the @scaladoc[Transacted](stellar.sdk.model.op.Transacted) type. This indicates
 that the operation has been part of a successful transaction, and provides details about that transaction.
 
 By default the results will be in ascending order from the earliest record. This behaviour can be modified with the
@@ -94,7 +94,7 @@ depth limited to the value of the `limit` param, which defaults to `20`.
 
 ### Payments
 
-@scaladoc[Payments](stellar.sdk.op.PayOperation) are the subset of Operations that cause payments to be made to an
+@scaladoc[Payments](stellar.sdk.model.op.PayOperation) are the subset of Operations that cause payments to be made to an
 account. This is similar to the [Operations](#operations) query methods, but will only return `CreateAccount` and
 `Payment` operations.
 

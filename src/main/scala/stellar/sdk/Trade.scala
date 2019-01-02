@@ -4,7 +4,7 @@ import java.time.ZonedDateTime
 
 import org.json4s.DefaultFormats
 import org.json4s.JsonAST.JObject
-import stellar.sdk.response.ResponseParser
+import stellar.sdk.model.response.ResponseParser
 
 case class Trade(id: String, ledgerCloseTime: ZonedDateTime, offerId: Long,
                  baseAccount: PublicKeyOps, baseAmount: Amount,

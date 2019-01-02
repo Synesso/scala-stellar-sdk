@@ -3,8 +3,8 @@ package stellar.sdk
 import org.apache.commons.codec.binary.Hex
 import org.specs2.matcher.{AnyMatchers, Matcher, MustExpectations, OptionMatchers, SequenceMatchersCreation}
 import stellar.sdk.ByteArrays.base64
-import stellar.sdk.op._
-import stellar.sdk.result.TransactionHistory
+import stellar.sdk.model.op._
+import stellar.sdk.model.result.TransactionHistory
 
 trait DomainMatchersIT extends AnyMatchers with MustExpectations with SequenceMatchersCreation with OptionMatchers {
 

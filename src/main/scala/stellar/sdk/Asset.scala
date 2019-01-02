@@ -2,7 +2,7 @@ package stellar.sdk
 
 import cats.data.State
 import stellar.sdk.ByteArrays._
-import stellar.sdk.xdr.{Decode, Encodable, Encode}
+import stellar.sdk.model.xdr.{Decode, Encodable, Encode}
 
 sealed trait Asset extends Encodable
 

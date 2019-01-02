@@ -9,9 +9,9 @@ import org.specs2.mutable.Specification
 import stellar.sdk.Amount.lumens
 import stellar.sdk.ProxyMode.{NoProxy, RecordScript, ReplayScript}
 import stellar.sdk.inet.HorizonEntityNotFound
-import stellar.sdk.op._
-import stellar.sdk.result.TransactionHistory
-import stellar.sdk.response._
+import stellar.sdk.model.op._
+import stellar.sdk.model.result.TransactionHistory
+import stellar.sdk.model.response._
 
 import scala.concurrent.duration._
 import scala.concurrent.{Await, Future}
@@ -142,8 +142,8 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
 
   "account endpoint" should {
     "fetch account response details" >> {
-      network.account(accnA) must beLike[AccountResp] {
-        case AccountResp(id, _, _, _, _, _, balances, _) =>
+      network.account(accnA) must beLike[AccountResponse] {
+        case AccountResponse(id, _, _, _, _, _, balances, _) =>
           id mustEqual accnA
           balances must containTheSameElementsAs(Seq(
             Balance(lumens(1000.000495), buyingLiabilities = 1600),
@@ -199,10 +199,10 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
     "list all assets" >> {
       val eventualResps = network.assets().map(_.toSeq)
       eventualResps must containTheSameElementsAs(Seq(
-        AssetResp(Asset("Aardvark", accnA), 0, 0, authRequired = true, authRevocable = true),
-        AssetResp(Asset("Beaver", accnA), 0, 0, authRequired = true, authRevocable = true),
-        AssetResp(Asset("Chinchilla", accnA), 1, 1, authRequired = true, authRevocable = true),
-        AssetResp(Asset("Chinchilla", masterAccountKey), 1, 1, authRequired = false, authRevocable = false)
+        AssetResponse(Asset("Aardvark", accnA), 0, 0, authRequired = true, authRevocable = true),
+        AssetResponse(Asset("Beaver", accnA), 0, 0, authRequired = true, authRevocable = true),
+        AssetResponse(Asset("Chinchilla", accnA), 1, 1, authRequired = true, authRevocable = true),
+        AssetResponse(Asset("Chinchilla", masterAccountKey), 1, 1, authRequired = false, authRevocable = false)
       )).awaitFor(10 seconds)
     }
 
@@ -235,7 +235,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
     "filter effects by account" >> {
       val byAccount = network.effectsByAccount(accnA).map(_.take(10).toList)
       byAccount.map(_.size) must beEqualTo(10).awaitFor(10 seconds)
-      byAccount.map(_.head) must beLike[EffectResp] {
+      byAccount.map(_.head) must beLike[EffectResponse] {
         case EffectAccountCreated(_, account, startingBalance) =>
           account.accountId mustEqual accnA.accountId
           startingBalance mustEqual lumens(1000)
@@ -244,7 +244,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
 
     "filter effects by ledger" >> {
       val byLedger = network.effectsByLedger(0).map(_.toList)
-      byLedger.map(_.head) must beLike[EffectResp] {
+      byLedger.map(_.head) must beLike[EffectResponse] {
         case EffectAccountCreated(_, account, startingBalance) =>
           account.accountId mustEqual accnA.accountId
           startingBalance mustEqual lumens(1000)
@@ -253,7 +253,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
 
     "filter effects by transaction hash" >> {
       val byTransaction = network.effectsByTransaction("a631c8617c47b735967352755ac305f4230fdfc4385c2d8815934cdc41877cff").map(_.toList)
-      byTransaction must beLike[List[EffectResp]] {
+      byTransaction must beLike[List[EffectResponse]] {
         case List(
         EffectAccountDebited(_, accn1, amount1),
         EffectAccountCredited(_, accn2, amount2),
@@ -275,7 +275,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
       (for {
         operationId <- network.operations().map(_.find(_.operation == AccountMergeOperation(accnB, Some(accnC))).get.id)
         byOperation <- network.effectsByOperation(operationId).map(_.toSeq)
-      } yield byOperation) must beLike[Seq[EffectResp]] {
+      } yield byOperation) must beLike[Seq[EffectResponse]] {
         case Seq(
         EffectAccountDebited(_, accn1, amount1),
         EffectAccountCredited(_, accn2, amount2),
@@ -299,7 +299,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
         l <- network.ledger(seq)
       } yield l
 
-      firstLedger.zip(ledger) must beLike[(LedgerResp, LedgerResp)] {
+      firstLedger.zip(ledger) must beLike[(LedgerResponse, LedgerResponse)] {
         case (l, r) => l mustEqual r
       }.awaitFor(10.seconds)
     }
@@ -307,7 +307,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
 
   "offer endpoint" should {
     "list offers by account" >> {
-      network.offersByAccount(accnB).map(_.toSeq) must beLike[Seq[OfferResp]] {
+      network.offersByAccount(accnB).map(_.toSeq) must beLike[Seq[OfferResponse]] {
         case Seq(only) =>
           only.id mustEqual 2
           only.seller must beEquivalentTo(accnB)
