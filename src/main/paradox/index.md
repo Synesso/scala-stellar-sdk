@@ -55,6 +55,9 @@ Please enjoy the [scaladoc](api/stellar/sdk) for this release.
 > At this stage, classes and interfaces are likely to be refined. Minor releases may break backwards compatibility
 with minimal notice until v1.0.0.
 
+Check the [CHANGELOG](https://github.com/Synesso/scala-stellar-sdk/blob/master/CHANGELOG.md#changelog) for details of
+breaking changes.
+
 
 ## Contributing
 

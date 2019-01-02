@@ -92,11 +92,11 @@ Transactions can be serialized to a base64-encoding of their XDR form. This is a
 that is compatible across all supporting Stellar libraries and tooling. Given this, it is possible to save and load
 transaction state via XDR strings.
 
-@@snip [DocExamples.scala](../../test/scala/stellar/sdk/TransactionSpec.scala) { #xdr_serde_example }
+@@snip [DocExamples.scala](../../test/scala/stellar/sdk/model/TransactionSpec.scala) { #xdr_serde_example }
 
 Transactions with signatures are a different data structure (signatures are included in an envelope along with the transaction)
 and need to be decoded via a similar method on `SignedTransaction`.
 
-@@snip [DocExamples.scala](../../test/scala/stellar/sdk/TransactionSpec.scala) { #xdr_signed_serde_example }
+@@snip [DocExamples.scala](../../test/scala/stellar/sdk/model/TransactionSpec.scala) { #xdr_signed_serde_example }
 
 Continue reading to learn how to obtain historical data from network via @ref:[Queries](queries.md).
