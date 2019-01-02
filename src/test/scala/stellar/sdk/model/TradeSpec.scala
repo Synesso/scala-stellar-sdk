@@ -1,9 +1,10 @@
-package stellar.sdk
+package stellar.sdk.model
 
 import org.json4s.NoTypeHints
 import org.json4s.native.JsonMethods.parse
 import org.json4s.native.Serialization
 import org.specs2.mutable.Specification
+import stellar.sdk.ArbitraryInput
 import stellar.sdk.model.op.JsonSnippets
 
 class TradeSpec extends Specification with ArbitraryInput with JsonSnippets {

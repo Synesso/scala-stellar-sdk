@@ -3,7 +3,8 @@ package stellar.sdk
 import cats.data.State
 import org.apache.commons.codec.binary.Hex
 import org.specs2.matcher.{AnyMatchers, Matcher, MustExpectations, OptionMatchers, SequenceMatchersCreation}
-import stellar.sdk.ByteArrays.base64
+import stellar.sdk.model._
+import stellar.sdk.util.ByteArrays.base64
 import stellar.sdk.model.op._
 import stellar.sdk.model.result.TransactionHistory
 import stellar.sdk.model.xdr.Encodable

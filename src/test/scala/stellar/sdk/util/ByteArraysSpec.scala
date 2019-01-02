@@ -1,10 +1,11 @@
-package stellar.sdk
+package stellar.sdk.util
 
 import java.math.BigInteger
 
 import org.scalacheck.Gen
 import org.specs2.mutable.Specification
-import stellar.sdk.ByteArrays._
+import stellar.sdk.ArbitraryInput
+import stellar.sdk.util.ByteArrays._
 
 import scala.util.Try
 

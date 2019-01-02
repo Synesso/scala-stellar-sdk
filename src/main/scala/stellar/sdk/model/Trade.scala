@@ -1,10 +1,11 @@
-package stellar.sdk
+package stellar.sdk.model
 
 import java.time.ZonedDateTime
 
 import org.json4s.DefaultFormats
 import org.json4s.JsonAST.JObject
 import stellar.sdk.model.response.ResponseParser
+import stellar.sdk.{KeyPair, PublicKeyOps}
 
 case class Trade(id: String, ledgerCloseTime: ZonedDateTime, offerId: Long,
                  baseAccount: PublicKeyOps, baseAmount: Amount,

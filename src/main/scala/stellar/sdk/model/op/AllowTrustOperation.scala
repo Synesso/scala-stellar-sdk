@@ -1,8 +1,9 @@
 package stellar.sdk.model.op
 
 import cats.data.State
-import stellar.sdk.ByteArrays._
+import stellar.sdk.util.ByteArrays._
 import stellar.sdk.model.xdr.{Decode, Encode}
+import stellar.sdk.util.ByteArrays
 import stellar.sdk.{KeyPair, _}
 
 /**

@@ -4,9 +4,10 @@ import java.time.ZonedDateTime
 
 import org.json4s.DefaultFormats
 import org.json4s.JsonAST.JObject
-import stellar.sdk.ByteArrays.base64
-import stellar.sdk.{KeyPair, Memo, MemoHash, MemoId, MemoText, NativeAmount, NoMemo, PublicKey}
+import stellar.sdk.model._
 import stellar.sdk.model.response.ResponseParser
+import stellar.sdk.util.ByteArrays.base64
+import stellar.sdk.{KeyPair, PublicKey}
 
 /**
   * A transaction that has been included in the ledger sometime in the past.

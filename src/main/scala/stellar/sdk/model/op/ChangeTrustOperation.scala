@@ -2,6 +2,7 @@ package stellar.sdk.model.op
 
 import cats.data.State
 import stellar.sdk._
+import stellar.sdk.model.IssuedAmount
 import stellar.sdk.model.xdr.Encode
 
 /**

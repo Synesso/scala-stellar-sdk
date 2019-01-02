@@ -1,4 +1,4 @@
-package stellar.sdk
+package stellar.sdk.model
 
 import org.specs2.ScalaCheck
 import org.specs2.mutable.Specification

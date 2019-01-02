@@ -1,7 +1,8 @@
-package stellar.sdk
+package stellar.sdk.model
 
 import org.scalacheck.Gen
 import org.specs2.mutable.Specification
+import stellar.sdk.ArbitraryInput
 
 class AmountSpec extends Specification with ArbitraryInput {
 

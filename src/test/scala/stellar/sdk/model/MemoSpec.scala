@@ -1,12 +1,10 @@
-package stellar.sdk
-
-import java.io.{ByteArrayInputStream, ByteArrayOutputStream}
+package stellar.sdk.model
 
 import org.scalacheck.Arbitrary._
 import org.scalacheck.Gen
-import org.specs2.matcher.Matcher
 import org.specs2.mutable.Specification
-import stellar.sdk.ByteArrays._
+import stellar.sdk.util.ByteArrays._
+import stellar.sdk.{ArbitraryInput, DomainMatchers}
 
 class MemoSpec extends Specification with ArbitraryInput with DomainMatchers {
 

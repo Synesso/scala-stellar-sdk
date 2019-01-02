@@ -6,8 +6,9 @@ import java.nio.charset.StandardCharsets.UTF_8
 import akka.NotUsed
 import akka.stream.scaladsl.Source
 import com.typesafe.scalalogging.LazyLogging
-import stellar.sdk.ByteArrays._
+import stellar.sdk.util.ByteArrays._
 import stellar.sdk.inet._
+import stellar.sdk.model._
 import stellar.sdk.model.op.{Operation, PayOperation, Transacted, TransactedOperationDeserializer}
 import stellar.sdk.model.result._
 import stellar.sdk.model.response._
@@ -464,35 +465,3 @@ trait FriendBot {
     horizon.get[TransactionPostResponse]("/friendbot", Map("addr" -> pk.accountId))
 }
 
-/**
-  * The public Stellar production network.
-  */
-case object PublicNetwork extends Network {
-  override val passphrase = "Public Global Stellar Network ; September 2015"
-  val horizon = new Horizon(URI.create("https://horizon.stellar.org"))
-}
-
-/**
-  * The public Stellar test network.
-  */
-case object TestNetwork extends Network with FriendBot {
-  override val passphrase = "Test SDF Network ; September 2015"
-  val horizon = new Horizon(URI.create("https://horizon-testnet.stellar.org"))
-}
-
-/**
-  * A network that represents the stand-alone docker image for Horizon & core.
-  *
-  * @see [[https://github.com/stellar/docker-stellar-core-horizon]]
-  */
-case class StandaloneNetwork(port: Int = 8000) extends Network with FriendBot {
-  override val passphrase: String = "Standalone Network ; February 2017"
-  override val horizon: HorizonAccess = new Horizon(URI.create(s"http://localhost:$port"))
-}
-
-/**
-  * A network that represents the stand-alone docker image for Horizon & core, on the default docker port of 8000.
-  *
-  * @see [[https://github.com/stellar/docker-stellar-core-horizon]]
-  */
-object StandaloneNetwork extends StandaloneNetwork(8000)

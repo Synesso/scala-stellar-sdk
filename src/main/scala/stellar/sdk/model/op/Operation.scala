@@ -5,8 +5,10 @@ import org.apache.commons.codec.binary.Base64
 import org.json4s.DefaultFormats
 import org.json4s.JsonAST.{JArray, JObject, JValue}
 import stellar.sdk._
+import stellar.sdk.model._
 import stellar.sdk.model.response.ResponseParser
 import stellar.sdk.model.xdr.{Decode, Encodable, Encode}
+import stellar.sdk.util.ByteArrays
 
 /**
   * An Operation represents a change to the ledger. It is the action, as opposed to the effects resulting from that action.

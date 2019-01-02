@@ -2,8 +2,9 @@ package stellar.sdk.model.response
 
 import org.json4s.DefaultFormats
 import org.json4s.JsonAST.{JArray, JObject}
-import stellar.sdk.Amount.toBaseUnits
+import stellar.sdk.model.Amount.toBaseUnits
 import stellar.sdk._
+import stellar.sdk.model._
 
 // e.g. https://horizon-testnet.stellar.org/accounts/GDGUM5IKSJIFQEHXAWGQD2IWT2OUD6YTY4U7D7SSZLO23BVWHAFL54YN
 case class AccountResponse(id: PublicKey,

@@ -1,9 +1,9 @@
 package stellar.sdk.model.op
 
 import cats.data.State
-import stellar.sdk
 import stellar.sdk._
 import stellar.sdk.model.xdr.{Decode, Encode}
+import stellar.sdk.model.{Amount, Asset}
 
 /**
   * Represents a payment from one account to another through a path. This type of payment starts as one type of asset
@@ -20,7 +20,7 @@ import stellar.sdk.model.xdr.{Decode, Encode}
 case class PathPaymentOperation(sendMax: Amount,
                                 destinationAccount: PublicKeyOps,
                                 destinationAmount: Amount,
-                                path: Seq[sdk.Asset] = Nil,
+                                path: Seq[Asset] = Nil,
                                 sourceAccount: Option[PublicKeyOps] = None) extends PayOperation {
 
   override def encode: Stream[Byte] =

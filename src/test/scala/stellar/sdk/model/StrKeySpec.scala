@@ -1,7 +1,7 @@
-package stellar.sdk
+package stellar.sdk.model
 
 import org.specs2.mutable.Specification
-import stellar.sdk.StrKey._
+import stellar.sdk.model.StrKey._
 
 class StrKeySpec extends Specification {
 

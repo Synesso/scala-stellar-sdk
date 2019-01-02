@@ -1,8 +1,9 @@
-package stellar.sdk
+package stellar.sdk.model
 
 import cats.data.State
-import stellar.sdk.ByteArrays._
 import stellar.sdk.model.xdr.{Decode, Encodable, Encode}
+import stellar.sdk.util.ByteArrays._
+import stellar.sdk.{KeyPair, PublicKeyOps}
 
 sealed trait Asset extends Encodable
 

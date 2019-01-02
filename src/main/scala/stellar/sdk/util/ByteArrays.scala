@@ -1,4 +1,4 @@
-package stellar.sdk
+package stellar.sdk.util
 
 import java.security.MessageDigest
 

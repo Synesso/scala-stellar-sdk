@@ -1,17 +1,20 @@
 package stellar.sdk
 
 import java.io.File
+import java.net.URI
 
 import com.github.tomakehurst.wiremock.WireMockServer
 import org.json4s.JsonDSL._
 import org.specs2.concurrent.ExecutionEnv
 import org.specs2.mutable.Specification
-import stellar.sdk.Amount.lumens
 import stellar.sdk.ProxyMode.{NoProxy, RecordScript, ReplayScript}
 import stellar.sdk.inet.HorizonEntityNotFound
+import stellar.sdk.model.Amount.lumens
+import stellar.sdk.model._
 import stellar.sdk.model.op._
 import stellar.sdk.model.result.TransactionHistory
 import stellar.sdk.model.response._
+import stellar.sdk.util.ByteArrays
 
 import scala.concurrent.duration._
 import scala.concurrent.{Await, Future}
@@ -44,7 +47,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
       None
   }
 
-  private implicit val network = StandaloneNetwork(if (mode == NoProxy) 8000 else 8080)
+  private implicit val network = StandaloneNetwork(URI.create(s"http://localhost:${if (mode == NoProxy) 8000 else 8080}"))
   val masterAccountKey = network.masterAccount
   var masterAccount = Await.result(network.account(masterAccountKey).map(_.toAccount), 10.seconds)
 
@@ -62,7 +65,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
         case xs =>
           val opAccountIds = xs.flatMap(_.sourceAccount).map(_.accountId).toSet
           val signatories = accounts.filter(a => opAccountIds.contains(a.accountId))
-          val signedTransaction = xs.foldLeft(Transaction(masterAccount))(_ add _).sign(masterAccountKey)
+          val signedTransaction = xs.foldLeft(model.Transaction(masterAccount))(_ add _).sign(masterAccountKey)
           val trp = signatories.foldLeft(signedTransaction)(_ sign _).submit()
           Await.result(trp, 5 minutes)
           masterAccount = masterAccount.withIncSeq
@@ -122,8 +125,8 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
         // #payment_example
           for {
             sourceAccount <- network.account(payerKeyPair)
-            response <- Transaction(sourceAccount)
-              .add(PaymentOperation(payeePublicKey, Amount.lumens(5000)))
+            response <- model.Transaction(sourceAccount)
+              .add(PaymentOperation(payeePublicKey, lumens(5000)))
               .sign(payerKeyPair)
               .submit()
           } yield response

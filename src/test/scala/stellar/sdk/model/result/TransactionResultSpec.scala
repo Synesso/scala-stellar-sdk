@@ -1,8 +1,9 @@
 package stellar.sdk.model.result
 
 import org.specs2.mutable.Specification
+import stellar.sdk.model.NativeAmount
 import stellar.sdk.model.result.TransactionResult._
-import stellar.sdk.{ArbitraryInput, ByteArrays, DomainMatchers, NativeAmount}
+import stellar.sdk.{ArbitraryInput, DomainMatchers}
 
 import scala.util.Try
 

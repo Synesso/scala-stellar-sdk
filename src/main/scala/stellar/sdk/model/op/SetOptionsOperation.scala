@@ -1,8 +1,9 @@
 package stellar.sdk.model.op
 
 import cats.data.State
+import stellar.sdk.{KeyPair, PublicKeyOps}
+import stellar.sdk.model.Signer
 import stellar.sdk.model.xdr.{Decode, Encode}
-import stellar.sdk.{Signer, _}
 
 /**
   * Modify an account, setting one or more options.

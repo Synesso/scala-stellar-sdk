@@ -5,7 +5,8 @@ import org.json4s.native.JsonMethods.parse
 import org.json4s.native.Serialization
 import org.scalacheck.Arbitrary
 import org.specs2.mutable.Specification
-import stellar.sdk.{ArbitraryInput, ByteArrays, DomainMatchers}
+import stellar.sdk.util.ByteArrays
+import stellar.sdk.{ArbitraryInput, DomainMatchers}
 
 class BumpSequenceOperationSpec extends Specification with ArbitraryInput with DomainMatchers with JsonSnippets {
 

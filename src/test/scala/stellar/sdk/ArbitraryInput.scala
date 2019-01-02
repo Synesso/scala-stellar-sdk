@@ -7,7 +7,8 @@ import java.util.Locale
 import org.apache.commons.codec.binary.Base64
 import org.scalacheck.{Arbitrary, Gen}
 import org.specs2.ScalaCheck
-import stellar.sdk.ByteArrays.trimmedByteArray
+import stellar.sdk.model._
+import stellar.sdk.util.ByteArrays.trimmedByteArray
 import stellar.sdk.model.op._
 import stellar.sdk.model.result.TransactionResult._
 import stellar.sdk.model.result.{PathPaymentResult, _}

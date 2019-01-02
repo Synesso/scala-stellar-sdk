@@ -1,9 +1,9 @@
-package stellar.sdk
+package stellar.sdk.model
 
 import java.nio.charset.StandardCharsets.UTF_8
 
 import cats.data.State
-import stellar.sdk.ByteArrays._
+import stellar.sdk.util.ByteArrays._
 import stellar.sdk.model.xdr.{Decode, Encode}
 
 import scala.util.Try

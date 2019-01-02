@@ -5,6 +5,7 @@ import akka.stream.ActorMaterializer
 import akka.stream.scaladsl.Sink
 import org.specs2.concurrent.ExecutionEnv
 import org.specs2.mutable.Specification
+import stellar.sdk.model.Record
 import stellar.sdk.model.op.{Operation, PayOperation, Transacted}
 import stellar.sdk.model.result.TransactionHistory
 import stellar.sdk.model.response.EffectResponse

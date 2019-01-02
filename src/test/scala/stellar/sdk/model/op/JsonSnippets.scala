@@ -3,7 +3,7 @@ package stellar.sdk.model.op
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
-import stellar.sdk.{Amount, Asset, NonNativeAsset}
+import stellar.sdk.model.{Amount, Asset, NonNativeAsset}
 
 trait JsonSnippets {
   val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")

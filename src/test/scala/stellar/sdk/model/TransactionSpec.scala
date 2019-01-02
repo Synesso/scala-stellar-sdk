@@ -1,16 +1,16 @@
-package stellar.sdk
+package stellar.sdk.model
 
 import org.scalacheck.Gen
 import org.specs2.mutable.Specification
-import stellar.sdk
-import stellar.sdk.ByteArrays.bytesToHex
 import stellar.sdk.model.op.{CreateAccountOperation, Operation, PaymentOperation}
+import stellar.sdk.util.ByteArrays.bytesToHex
+import stellar.sdk.{ArbitraryInput, DomainMatchers, KeyPair, model}
 
 class TransactionSpec extends Specification with ArbitraryInput with DomainMatchers {
 
   "a transaction fee" should {
     "be equal to 100 * the quantity of operations" >> prop { (source: Account, ops: Seq[Operation]) =>
-      Transaction(source, ops, NoMemo).calculatedFee mustEqual NativeAmount(ops.size * 100)
+      model.Transaction(source, ops, NoMemo).calculatedFee mustEqual NativeAmount(ops.size * 100)
     }.setGen2(Gen.nonEmptyListOf(genOperation))
   }
 
@@ -23,8 +23,8 @@ class TransactionSpec extends Specification with ArbitraryInput with DomainMatch
     }
 
     "allow adding of operations one at a time" >> prop { (source: Account, ops: Seq[Operation]) =>
-      val expected = Transaction(source, ops, NoMemo)
-      val actual = ops.foldLeft(Transaction(source, memo = NoMemo)) { case (txn, op) => txn add op }
+      val expected = model.Transaction(source, ops, NoMemo)
+      val actual = ops.foldLeft(model.Transaction(source, memo = NoMemo)) { case (txn, op) => txn add op }
       actual mustEqual expected
     }
 
@@ -44,7 +44,7 @@ class TransactionSpec extends Specification with ArbitraryInput with DomainMatch
       val seqNum = 2908908335136769L
 
       val account = Account(source, seqNum)
-      val txn = sdk.Transaction(
+      val txn = Transaction(
         source = account,
         operations = Seq(CreateAccountOperation(dest, NativeAmount(20000000000L)))
       ).sign(source)
@@ -57,7 +57,7 @@ class TransactionSpec extends Specification with ArbitraryInput with DomainMatch
 
   "signing a transaction" should {
     "add a signature to that transaction" >> prop { (source: Account, op: Operation, signers: Seq[KeyPair]) =>
-      val signatures = Transaction(source, Seq(op), NoMemo).sign(signers.head, signers.tail: _*).signatures
+      val signatures = model.Transaction(source, Seq(op), NoMemo).sign(signers.head, signers.tail: _*).signatures
       signatures must haveSize(signers.length)
     }.setGen3(Gen.nonEmptyListOf(genKeyPair))
   }

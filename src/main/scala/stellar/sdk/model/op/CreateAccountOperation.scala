@@ -2,7 +2,8 @@ package stellar.sdk.model.op
 
 import cats.data.State
 import stellar.sdk.model.xdr.{Decode, Encode}
-import stellar.sdk.{KeyPair, NativeAmount, PublicKeyOps, _}
+import stellar.sdk.model.{Amount, NativeAmount}
+import stellar.sdk.{KeyPair, PublicKeyOps}
 
 /**
   * Funds and creates a new account.

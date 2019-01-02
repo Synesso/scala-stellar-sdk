@@ -1,7 +1,7 @@
 package stellar.sdk.model.result
 
 import cats.data.State
-import stellar.sdk.NativeAmount
+import stellar.sdk.model.NativeAmount
 import stellar.sdk.model.xdr.{Decode, Encode}
 
 sealed abstract class AccountMergeResult(val opResultCode: Int) extends ProcessedOperationResult(opCode = 8)

@@ -3,6 +3,7 @@ package stellar.sdk.model.response
 import org.json4s.DefaultFormats
 import org.json4s.JsonAST.JObject
 import stellar.sdk._
+import stellar.sdk.model.{Amount, IssuedAsset12, IssuedAsset4, NonNativeAsset}
 
 case class AssetResponse(asset: NonNativeAsset, amount: Long, numAccounts: Int, authRequired: Boolean, authRevocable: Boolean)
 

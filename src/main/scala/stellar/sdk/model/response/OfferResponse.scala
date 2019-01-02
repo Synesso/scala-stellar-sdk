@@ -5,6 +5,7 @@ import java.time.ZonedDateTime
 import org.json4s.DefaultFormats
 import org.json4s.JsonAST.JObject
 import stellar.sdk._
+import stellar.sdk.model._
 
 case class OfferResponse(id: Long, seller: PublicKeyOps, selling: Amount, buying: Asset, price: Price,
                          lastModifiedLedger: Long, lastModifiedTime: ZonedDateTime)

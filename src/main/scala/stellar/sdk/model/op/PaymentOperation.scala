@@ -1,8 +1,9 @@
 package stellar.sdk.model.op
 
 import cats.data.State
+import stellar.sdk.model.Amount
 import stellar.sdk.model.xdr.Encode
-import stellar.sdk.{Amount, KeyPair, PublicKeyOps}
+import stellar.sdk.{KeyPair, PublicKeyOps}
 
 /**
   * Represents a payment from one account to another. This payment can be either a simple native asset payment or a

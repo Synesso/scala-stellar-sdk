@@ -1,12 +1,14 @@
 package stellar.sdk
 
 import java.security.{MessageDigest, SignatureException}
-import java.util
+import java.util.Arrays
 
 import cats.data.State
 import net.i2p.crypto.eddsa._
 import net.i2p.crypto.eddsa.spec._
+import stellar.sdk.model.StrKey
 import stellar.sdk.model.xdr.{Decode, Encodable, Encode}
+import stellar.sdk.util.ByteArrays
 
 import scala.util.Try
 
@@ -88,6 +90,7 @@ trait PublicKeyOps extends Encodable {
   def encode: Stream[Byte] = Encode.int(0) ++ Encode.bytes(32, pk.getAbyte)
 }
 
+//noinspection ReferenceMustBePrefixed
 object KeyPair {
 
   private val ed25519 = EdDSANamedCurveTable.getByName("ed25519")
@@ -101,7 +104,7 @@ object KeyPair {
   def fromSecretSeed(seed: Array[Char]): KeyPair = {
     val decoded = StrKey.decodeStellarSecretSeed(seed)
     val kp = fromSecretSeed(decoded)
-    util.Arrays.fill(decoded, 0.toByte)
+    Arrays.fill(decoded, 0.toByte)
     kp
   }
 
@@ -117,7 +120,7 @@ object KeyPair {
     val charSeed = seed.toCharArray
     val decoded = StrKey.decodeStellarSecretSeed(charSeed)
     val kp = fromSecretSeed(decoded)
-    util.Arrays.fill(charSeed, ' ')
+    Arrays.fill(charSeed, ' ')
     kp
   }
 

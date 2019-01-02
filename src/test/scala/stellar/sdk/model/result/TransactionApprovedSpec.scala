@@ -2,7 +2,9 @@ package stellar.sdk.model.result
 
 import org.specs2.mutable.Specification
 import stellar.sdk.model.response.TransactionApproved
-import stellar.sdk.{ArbitraryInput, ByteArrays, NativeAmount}
+import stellar.sdk.util.ByteArrays
+import stellar.sdk.ArbitraryInput
+import stellar.sdk.model.NativeAmount
 
 class TransactionApprovedSpec extends Specification with ArbitraryInput {
 

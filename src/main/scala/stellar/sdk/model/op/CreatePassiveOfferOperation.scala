@@ -2,7 +2,8 @@ package stellar.sdk.model.op
 
 import cats.data.State
 import stellar.sdk.model.xdr.{Decode, Encode}
-import stellar.sdk.{Amount, Asset, _}
+import stellar.sdk.PublicKeyOps
+import stellar.sdk.model.{Amount, Asset, Price}
 
 /**
   * Creates an offer that won’t consume a counter offer that exactly matches this offer.

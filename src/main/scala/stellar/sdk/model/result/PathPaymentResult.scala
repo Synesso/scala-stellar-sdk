@@ -1,7 +1,8 @@
 package stellar.sdk.model.result
 
 import cats.data.State
-import stellar.sdk.{Amount, Asset, KeyPair, PublicKey}
+import stellar.sdk.model.{Amount, Asset}
+import stellar.sdk.{KeyPair, PublicKey}
 import stellar.sdk.model.xdr.{Decode, Encode}
 
 sealed abstract class PathPaymentResult(val opResultCode: Int) extends ProcessedOperationResult(opCode = 2)

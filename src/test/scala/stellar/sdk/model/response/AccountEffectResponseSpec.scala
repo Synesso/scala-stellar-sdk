@@ -8,6 +8,7 @@ import org.json4s.native.Serialization
 import org.scalacheck.Gen
 import org.specs2.mutable.Specification
 import stellar.sdk._
+import stellar.sdk.model._
 
 class AccountEffectResponseSpec extends Specification with ArbitraryInput {
 

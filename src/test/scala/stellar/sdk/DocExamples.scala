@@ -9,6 +9,7 @@ import org.specs2.concurrent.ExecutionEnv
 import org.specs2.mock.Mockito
 import org.specs2.mutable.Specification
 import stellar.sdk.inet.HorizonAccess
+import stellar.sdk.model._
 import stellar.sdk.model.op._
 import stellar.sdk.model.response._
 import stellar.sdk.model.result.TransactionHistory

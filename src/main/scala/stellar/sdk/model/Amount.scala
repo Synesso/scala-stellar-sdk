@@ -1,4 +1,4 @@
-package stellar.sdk
+package stellar.sdk.model
 
 import java.math.{MathContext, RoundingMode}
 import java.util.Locale

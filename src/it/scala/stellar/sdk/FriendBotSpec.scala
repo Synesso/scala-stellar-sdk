@@ -2,6 +2,7 @@ package stellar.sdk
 
 import org.specs2.concurrent.ExecutionEnv
 import org.specs2.mutable.Specification
+import stellar.sdk.model.{Account, Transaction}
 
 import scala.concurrent.duration._
 import scala.util.Try

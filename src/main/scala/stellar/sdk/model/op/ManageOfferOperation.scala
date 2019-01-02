@@ -1,10 +1,9 @@
 package stellar.sdk.model.op
 
 import cats.data.State
+import stellar.sdk.PublicKeyOps
 import stellar.sdk.model.xdr.{Decode, Encode}
-import stellar.sdk.{Amount, Asset, _}
-
-import scala.util.Try
+import stellar.sdk.model.{Amount, Asset, Price}
 
 sealed trait ManageOfferOperation extends Operation {
   val offerId: Long = 0

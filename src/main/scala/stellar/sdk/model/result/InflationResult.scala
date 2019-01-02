@@ -1,8 +1,9 @@
 package stellar.sdk.model.result
 
 import cats.data.State
+import stellar.sdk.model.NativeAmount
 import stellar.sdk.model.xdr.{Decode, Encodable, Encode}
-import stellar.sdk.{KeyPair, NativeAmount, PublicKey}
+import stellar.sdk.{KeyPair, PublicKey}
 
 sealed abstract class InflationResult(val opResultCode: Int) extends ProcessedOperationResult(opCode = 9)
 

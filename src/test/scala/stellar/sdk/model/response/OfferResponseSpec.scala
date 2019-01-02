@@ -8,7 +8,8 @@ import org.json4s.NoTypeHints
 import org.json4s.native.JsonMethods.parse
 import org.json4s.native.Serialization
 import org.specs2.mutable.Specification
-import stellar.sdk.{Amount, ArbitraryInput, Asset, NonNativeAsset}
+import stellar.sdk.model.{Amount, Asset, NonNativeAsset}
+import stellar.sdk.ArbitraryInput
 
 class OfferResponseSpec extends Specification with ArbitraryInput {
 

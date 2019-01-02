@@ -4,7 +4,7 @@ import java.time.ZonedDateTime
 
 import org.json4s.DefaultFormats
 import org.json4s.JsonAST.JObject
-import stellar.sdk.Amount
+import stellar.sdk.model.Amount
 
 case class LedgerResponse(id: String, hash: String, previousHash: Option[String], sequence: Long, transactionCount: Int,
                           operationCount: Int, closedAt: ZonedDateTime, totalCoins: Double, feePool: Double, baseFee: Long,

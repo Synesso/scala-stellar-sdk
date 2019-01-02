@@ -4,6 +4,7 @@ import org.json4s.DefaultFormats
 import org.json4s.JsonAST.JObject
 import org.json4s.native.JsonMethods._
 import stellar.sdk._
+import stellar.sdk.model._
 
 sealed trait EffectResponse {
   val id: String

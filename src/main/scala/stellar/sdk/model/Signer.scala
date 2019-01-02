@@ -1,7 +1,9 @@
-package stellar.sdk
+package stellar.sdk.model
 
 import cats.data.State
+import stellar.sdk.{KeyPair, PublicKeyOps}
 import stellar.sdk.model.xdr.{Decode, Encodable, Encode}
+import stellar.sdk.util.ByteArrays
 
 sealed trait Signer extends Encodable {
   val weight: Int

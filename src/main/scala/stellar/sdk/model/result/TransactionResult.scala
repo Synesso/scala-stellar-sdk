@@ -1,9 +1,10 @@
 package stellar.sdk.model.result
 
 import cats.data.State
-import stellar.sdk.{ByteArrays, NativeAmount}
+import stellar.sdk.model.NativeAmount
 import stellar.sdk.model.result.TransactionResult.NotAttempted
 import stellar.sdk.model.xdr.{Decode, Encodable, Encode}
+import stellar.sdk.util.ByteArrays
 
 sealed trait TransactionResult extends Encodable {
   val isSuccess: Boolean

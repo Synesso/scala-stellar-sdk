@@ -5,7 +5,7 @@ import org.json4s.native.JsonMethods.parse
 import org.json4s.native.Serialization
 import org.scalacheck.Arbitrary
 import org.specs2.mutable.Specification
-import stellar.sdk.ByteArrays.base64
+import stellar.sdk.util.ByteArrays.base64
 import stellar.sdk.{ArbitraryInput, DomainMatchers}
 
 class CreateAccountOperationSpec extends Specification with ArbitraryInput with DomainMatchers with JsonSnippets {

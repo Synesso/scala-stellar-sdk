@@ -19,10 +19,10 @@ import com.typesafe.scalalogging.LazyLogging
 import de.heikoseeberger.akkahttpjson4s.Json4sSupport
 import org.json4s.native.{JsonMethods, Serialization}
 import org.json4s.{CustomSerializer, DefaultFormats, Formats, JObject, NoTypeHints}
+import stellar.sdk.model._
 import stellar.sdk.model.op.TransactedOperationDeserializer
 import stellar.sdk.model.response._
 import stellar.sdk.model.result.TransactionHistoryDeserializer
-import stellar.sdk.{HorizonCursor, HorizonOrder, OrderBookDeserializer, Record, SignedTransaction}
 
 import scala.concurrent.duration._
 import scala.concurrent.{Await, ExecutionContext, Future}

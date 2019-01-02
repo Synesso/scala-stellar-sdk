@@ -4,11 +4,12 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
 import org.specs2.mutable.Specification
-import stellar.sdk.ByteArrays.{base64, bytesToHex}
+import stellar.sdk.util.ByteArrays.{base64, bytesToHex}
 import stellar.sdk._
 import stellar.sdk.model.op.CreateAccountOperation
 import stellar.sdk.model.result._
 import org.json4s.JsonDSL._
+import stellar.sdk.model._
 
 class TransactionResponseSpec extends Specification with ArbitraryInput with DomainMatchers {
 

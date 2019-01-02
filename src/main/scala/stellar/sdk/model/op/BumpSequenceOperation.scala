@@ -1,7 +1,7 @@
 package stellar.sdk.model.op
 
 import cats.data.State
-import stellar.sdk.{ByteArrays, PublicKeyOps}
+import stellar.sdk.PublicKeyOps
 import stellar.sdk.model.xdr.{Decode, Encode}
 
 /**

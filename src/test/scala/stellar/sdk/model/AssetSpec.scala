@@ -1,6 +1,7 @@
-package stellar.sdk
+package stellar.sdk.model
 
 import org.specs2.mutable.Specification
+import stellar.sdk.{ArbitraryInput, KeyPair}
 
 import scala.util.Try
 

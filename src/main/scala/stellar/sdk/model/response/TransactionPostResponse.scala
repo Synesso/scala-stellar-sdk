@@ -2,8 +2,9 @@ package stellar.sdk.model.response
 
 import org.json4s.DefaultFormats
 import org.json4s.JsonAST.JObject
+import stellar.sdk.Network
 import stellar.sdk.model.result._
-import stellar.sdk.{NativeAmount, Network, SignedTransaction}
+import stellar.sdk.model.{NativeAmount, SignedTransaction}
 
 sealed abstract class TransactionPostResponse(envelopeXDR: String, resultXDR: String) {
   val isSuccess: Boolean

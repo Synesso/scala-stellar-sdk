@@ -4,8 +4,9 @@ import org.json4s.NoTypeHints
 import org.json4s.native.JsonMethods._
 import org.json4s.native.Serialization
 import org.specs2.mutable.Specification
-import stellar.sdk.Amount.lumens
 import stellar.sdk._
+import stellar.sdk.model.Amount.lumens
+import stellar.sdk.model._
 
 class AccountResponseSpec extends Specification with ArbitraryInput {
 

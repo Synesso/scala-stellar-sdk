@@ -3,6 +3,7 @@ package stellar.sdk
 import org.apache.commons.codec.binary.Hex
 import org.specs2.mutable.Specification
 import stellar.sdk.model.op.{BumpSequenceOperation, Operation}
+import stellar.sdk.util.ByteArrays
 
 class KeyPairSpec extends Specification with ArbitraryInput with DomainMatchers {
 

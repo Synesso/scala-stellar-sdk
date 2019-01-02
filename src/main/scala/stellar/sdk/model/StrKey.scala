@@ -1,12 +1,13 @@
-package stellar.sdk
+package stellar.sdk.model
 
 import java.io.ByteArrayOutputStream
-import java.util
+import java.util.Arrays
 
 import org.apache.commons.codec.binary.Base32
 
 import scala.annotation.tailrec
 
+//noinspection ReferenceMustBePrefixed
 object StrKey {
 
   sealed trait VersionByte {
@@ -46,22 +47,22 @@ object StrKey {
     }
     val decoded = new Base32().decode(bytes)
     val decodedVersionByte = decoded.head
-    val payload = util.Arrays.copyOfRange(decoded, 0, decoded.length - 2)
-    val data = util.Arrays.copyOfRange(payload, 1, payload.length)
-    val checksum = util.Arrays.copyOfRange(decoded, decoded.length - 2, decoded.length)
+    val payload = Arrays.copyOfRange(decoded, 0, decoded.length - 2)
+    val data = Arrays.copyOfRange(payload, 1, payload.length)
+    val checksum = Arrays.copyOfRange(decoded, decoded.length - 2, decoded.length)
 
     if (decodedVersionByte != vb.value) {
       throw new FormatException("Version byte is invalid")
     }
 
-    if (!util.Arrays.equals(calculateChecksum(payload), checksum)) {
+    if (!Arrays.equals(calculateChecksum(payload), checksum)) {
       throw new FormatException("Checksum invalid")
     }
 
     if (Seed.value == decodedVersionByte) {
-      util.Arrays.fill(bytes, 0.toByte)
-      util.Arrays.fill(decoded, 0.toByte)
-      util.Arrays.fill(payload, 0.toByte)
+      Arrays.fill(bytes, 0.toByte)
+      Arrays.fill(decoded, 0.toByte)
+      Arrays.fill(payload, 0.toByte)
     }
 
     data
@@ -78,9 +79,9 @@ object StrKey {
     val bytesEncoded = new Base32().encode(notYetEncoded)
     val charsEncoded = bytesEncoded.map(_.toChar)
     if (vb == Seed) {
-      util.Arrays.fill(notYetEncoded, 0.toByte)
-      util.Arrays.fill(payload, 0.toByte)
-      util.Arrays.fill(bytesEncoded, 0.toByte)
+      Arrays.fill(notYetEncoded, 0.toByte)
+      Arrays.fill(payload, 0.toByte)
+      Arrays.fill(bytesEncoded, 0.toByte)
     }
     charsEncoded
   }
@@ -113,4 +114,3 @@ object StrKey {
 
 
 }
-
