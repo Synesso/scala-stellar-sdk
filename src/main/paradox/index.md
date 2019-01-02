@@ -64,7 +64,7 @@ breaking changes.
 Contributions are warmly welcomed. Please feel free to contribute by reporting [issues](https://github.com/Synesso/scala-stellar-sdk/issues)
 you find, or by suggesting changes to the code. Or feel free to add your own features/issues to that list.
 
-Let's chat about any of this on the [Stellar-public Slack](https://stellar-public.slack.com/) #dev channel. My username
+Let's chat about any of this on the [Stellar KeyBase channel](https://keybase.io/team/stellar.public) #dev channel. My username
 is [@jem](https://keybase.io/jem).
 
 
