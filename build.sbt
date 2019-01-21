@@ -66,9 +66,9 @@ lazy val root = (project in file("."))
     libraryDependencies ++= List(
       "commons-codec" % "commons-codec" % "1.11",
       "net.i2p.crypto" % "eddsa" % "0.3.0",
-      "com.typesafe.akka" %% "akka-http" % "10.1.6",
+      "com.typesafe.akka" %% "akka-http" % "10.1.7",
       "com.typesafe.akka" %% "akka-stream" % "2.5.19",
-      "de.heikoseeberger" %% "akka-http-json4s" % "1.23.0",
+      "de.heikoseeberger" %% "akka-http-json4s" % "1.24.3",
       "org.json4s" %% "json4s-native" % "3.6.3",
       "com.typesafe.scala-logging" %% "scala-logging" % "3.9.2",
       "ch.qos.logback" % "logback-classic" % "1.2.3",

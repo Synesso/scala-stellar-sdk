@@ -10,7 +10,7 @@ import stellar.sdk.model.StrKey
 import stellar.sdk.model.xdr.{Decode, Encodable, Encode}
 import stellar.sdk.util.ByteArrays
 
-import scala.util.Try
+import scala.util.{Failure, Success, Try}
 
 case class KeyPair(pk: EdDSAPublicKey, sk: EdDSAPrivateKey) extends PublicKeyOps {
 
@@ -160,7 +160,10 @@ object KeyPair {
     * @param accountId The strkey encoded Stellar account ID.
     * @return { @link PublicKey}
     */
-  def fromAccountId(accountId: String): PublicKey = fromPublicKey(StrKey.decodeStellarAccountId(accountId))
+  def fromAccountId(accountId: String): PublicKey = Try(fromPublicKey(StrKey.decodeStellarAccountId(accountId))) match {
+    case Success(pk) => pk
+    case Failure(t) => throw InvalidAccountId(accountId, t)
+  }
 
   /**
     * Generates a random Stellar keypair.
@@ -191,3 +194,5 @@ object Signature {
     data <- Decode.bytes.map(_.toArray)
   } yield Signature(data, hint)
 }
+
+case class InvalidAccountId(id: String, cause: Throwable) extends RuntimeException(id, cause)

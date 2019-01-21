@@ -2,6 +2,7 @@ package stellar.sdk
 
 import org.apache.commons.codec.binary.Hex
 import org.specs2.mutable.Specification
+import stellar.sdk.model.FormatException
 import stellar.sdk.model.op.{BumpSequenceOperation, Operation}
 import stellar.sdk.util.ByteArrays
 
@@ -46,6 +47,13 @@ class KeyPairSpec extends Specification with ArbitraryInput with DomainMatchers 
       KeyPair.fromSecretSeed(kp.secretSeed) must beEquivalentTo(kp)
       KeyPair.fromSecretSeed(kp.secretSeed.mkString) must beEquivalentTo(kp)
       KeyPair.fromAccountId(kp.accountId) must beEquivalentTo(kp.asPublicKey)
+    }
+
+    "not be constructed from an invalid account id" >> {
+      val badId = "GACZHAQLFECAHDSFDQPCOAD6ITVWR7BUZAIRRUGOAPLECX74O6223A4G"
+      KeyPair.fromAccountId(badId) must throwA[InvalidAccountId].like {
+        case e: InvalidAccountId => e.getMessage mustEqual badId
+      }
     }
   }
 
