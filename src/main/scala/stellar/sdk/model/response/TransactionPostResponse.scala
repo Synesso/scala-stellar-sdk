@@ -8,7 +8,16 @@ import stellar.sdk.model.{NativeAmount, SignedTransaction}
 
 sealed abstract class TransactionPostResponse(envelopeXDR: String, resultXDR: String) {
   val isSuccess: Boolean
+
   def transaction(implicit network: Network): SignedTransaction = SignedTransaction.decodeXDR(envelopeXDR)
+
+  def feeCharged: NativeAmount
+
+  /**
+    * Whether the fee-paying account's sequence number was incremented. This is inferred to be true when the fee is
+    * not zero.
+    */
+  def sequenceIncremented: Boolean = feeCharged.units != 0
 }
 
 /**
@@ -26,7 +35,6 @@ case class TransactionApproved(hash: String, ledger: Long,
   def feeCharged: NativeAmount = result.feeCharged
 
   def operationResults: Seq[OperationResult] = result.operationResults
-
 }
 
 /**
@@ -42,10 +50,7 @@ case class TransactionRejected(status: Int, detail: String,
   // -- unroll nested XDR deserialised object into this object for convenience
   lazy val result: TransactionNotSuccessful = TransactionResult.decodeXDR(resultXDR).asInstanceOf[TransactionNotSuccessful]
 
-  def feeCharged: NativeAmount = result match {
-    case TransactionFailure(fee, _) => fee
-    case _ => NativeAmount(0)
-  }
+  def feeCharged: NativeAmount = result.feeCharged
 }
 
 

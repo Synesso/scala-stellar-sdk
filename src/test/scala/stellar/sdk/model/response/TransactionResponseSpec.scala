@@ -49,6 +49,24 @@ class TransactionResponseSpec extends Specification with ArbitraryInput with Dom
         }
     }
 
+    "consider sequence number updated on approval when the fee charged is not zero" >> {
+      val approval = TransactionApproved("", 1, "", "AAAAAAAAAGQAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAB////+wAAAAA=", "")
+      approval.feeCharged mustEqual NativeAmount(100)
+      approval.sequenceIncremented must beTrue
+    }
+
+    "consider sequence number updated on rejection when the fee charged is not zero" >> {
+      val rejection = TransactionRejected(1, "", "", Nil, "", "AAAAAAAAAGT////7AAAAAA==")
+      rejection.feeCharged mustEqual NativeAmount(100)
+      rejection.sequenceIncremented must beTrue
+    }
+
+    "consider sequence number not updated on rejection when the fee charged is zero" >> {
+      val rejection = TransactionRejected(1, "", "", Nil, "", "AAAAAAAAAAD////7AAAAAA==")
+      rejection.feeCharged mustEqual NativeAmount(0)
+      rejection.sequenceIncremented must beFalse
+    }
+
     // todo - reimplement
 /*
     "provide access to the XDR Transaction Result Meta" >> {

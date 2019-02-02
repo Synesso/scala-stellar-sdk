@@ -11,14 +11,13 @@ class TransactionRejectedSpec extends Specification with ArbitraryInput {
   "an approved transaction result" should {
     "provide direct access to the fee charged" >> prop { result: TransactionNotSuccessful =>
       val resultXDR = ByteArrays.base64(result.encode)
-      TransactionRejected(400, "", "", Nil, "", resultXDR).feeCharged must beLike[NativeAmount] { case amnt =>
-        result match {
-          case TransactionFailure(fee, _) => amnt mustEqual fee
-          case _ => amnt mustEqual NativeAmount(0)
-        }
-      }
+      TransactionRejected(400, "", "", Nil, "", resultXDR).feeCharged mustEqual result.feeCharged
+    }
+
+    "indicate whether the sequence was updated based upon presence of fee" >> prop { result: TransactionNotSuccessful =>
+      val resultXDR = ByteArrays.base64(result.encode)
+      val rejection = TransactionRejected(400, "", "", Nil, "", resultXDR)
+      rejection.sequenceIncremented mustEqual result.feeCharged != NativeAmount(0)
     }
   }
-
-
 }

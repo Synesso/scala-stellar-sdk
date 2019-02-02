@@ -2,12 +2,13 @@ package stellar.sdk.model.result
 
 import cats.data.State
 import stellar.sdk.model.NativeAmount
-import stellar.sdk.model.result.TransactionResult.NotAttempted
+import stellar.sdk.model.result.TransactionResult.Code
 import stellar.sdk.model.xdr.{Decode, Encodable, Encode}
 import stellar.sdk.util.ByteArrays
 
 sealed trait TransactionResult extends Encodable {
   val isSuccess: Boolean
+  def sequenceUpdated: Boolean
 }
 
 /**
@@ -15,6 +16,8 @@ sealed trait TransactionResult extends Encodable {
   */
 case class TransactionSuccess(feeCharged: NativeAmount, operationResults: Seq[OperationResult]) extends TransactionResult {
   val isSuccess: Boolean = true
+
+  def sequenceUpdated: Boolean = true
 
   def encode: Stream[Byte] =
     Encode.long(feeCharged.units) ++
@@ -24,14 +27,16 @@ case class TransactionSuccess(feeCharged: NativeAmount, operationResults: Seq[Op
 }
 
 sealed trait TransactionNotSuccessful extends TransactionResult {
+  val feeCharged: NativeAmount
   val isSuccess: Boolean = false
+  def sequenceUpdated: Boolean = feeCharged.units != 0
 }
 
+
 /**
-  * The transaction was attempted, but one or more operations failed (and none were applied).
+  * The transaction failed when processing the operations.
   */
 case class TransactionFailure(feeCharged: NativeAmount, operationResults: Seq[OperationResult]) extends TransactionNotSuccessful {
-
   def encode: Stream[Byte] =
     Encode.long(feeCharged.units) ++
       Encode.int(-1) ++
@@ -40,10 +45,9 @@ case class TransactionFailure(feeCharged: NativeAmount, operationResults: Seq[Op
 }
 
 /**
-  * The transaction was not attempted for the reason given.
+  * The transaction failed for the reason given prior to any operations being attempted.
   */
-case class TransactionNotAttempted(reason: NotAttempted, feeCharged: NativeAmount) extends TransactionNotSuccessful {
-
+case class TransactionNotAttempted(reason: Code, feeCharged: NativeAmount) extends TransactionNotSuccessful {
   val resultCode: Int = reason.id
 
   def encode: Stream[Byte] =
@@ -65,14 +69,14 @@ object TransactionResult {
   } yield result match {
     case Successful => TransactionSuccess(feeCharged, operationResults)
     case OperationsFailed => TransactionFailure(feeCharged, operationResults)
-    case reason: NotAttempted => TransactionNotAttempted(reason, feeCharged)
+    case reason: OperationsNotAttempted => TransactionNotAttempted(reason, feeCharged)
   }
 
   sealed abstract class Code(val id: Int) {
     val decodeOperationResults: State[Seq[Byte], Seq[OperationResult]] = Decode.arr(OperationResult.decode)
   }
 
-  sealed trait NotAttempted {
+  sealed trait OperationsNotAttempted {
     this: Code =>
     val id: Int
     override val decodeOperationResults: State[Seq[Byte], Seq[OperationResult]] = State.pure(Nil)
@@ -80,16 +84,16 @@ object TransactionResult {
 
   case object Successful extends Code(0)
   case object OperationsFailed extends Code(-1)
-  case object SubmittedTooEarly extends Code(-2) with NotAttempted
-  case object SubmittedTooLate extends Code(-3) with NotAttempted
-  case object NoOperations extends Code(-4) with NotAttempted
-  case object BadSequenceNumber extends Code(-5) with NotAttempted
-  case object BadAuthorisation extends Code(-6) with NotAttempted
-  case object InsufficientBalance extends Code(-7) with NotAttempted
-  case object SourceAccountNotFound extends Code(-8) with NotAttempted
-  case object InsufficientFee extends Code(-9) with NotAttempted
-  case object UnusedSignatures extends Code(-10) with NotAttempted
-  case object UnspecifiedInternalError extends Code(-11) with NotAttempted
+  case object SubmittedTooEarly extends Code(-2) with OperationsNotAttempted
+  case object SubmittedTooLate extends Code(-3) with OperationsNotAttempted
+  case object NoOperations extends Code(-4) with OperationsNotAttempted
+  case object BadSequenceNumber extends Code(-5) with OperationsNotAttempted
+  case object BadAuthorisation extends Code(-6) with OperationsNotAttempted
+  case object InsufficientBalance extends Code(-7) with OperationsNotAttempted
+  case object SourceAccountNotFound extends Code(-8) with OperationsNotAttempted
+  case object InsufficientFee extends Code(-9) with OperationsNotAttempted
+  case object UnusedSignatures extends Code(-10) with OperationsNotAttempted
+  case object UnspecifiedInternalError extends Code(-11) with OperationsNotAttempted
 
   object Code {
     def decode: State[Seq[Byte], Code] = Decode.int.map(apply)

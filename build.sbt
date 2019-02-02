@@ -67,16 +67,16 @@ lazy val root = (project in file("."))
       "commons-codec" % "commons-codec" % "1.11",
       "net.i2p.crypto" % "eddsa" % "0.3.0",
       "com.typesafe.akka" %% "akka-http" % "10.1.7",
-      "com.typesafe.akka" %% "akka-stream" % "2.5.19",
-      "de.heikoseeberger" %% "akka-http-json4s" % "1.24.3",
-      "org.json4s" %% "json4s-native" % "3.6.3",
+      "com.typesafe.akka" %% "akka-stream" % "2.5.20",
+      "de.heikoseeberger" %% "akka-http-json4s" % "1.25.2",
+      "org.json4s" %% "json4s-native" % "3.6.4",
       "com.typesafe.scala-logging" %% "scala-logging" % "3.9.2",
       "ch.qos.logback" % "logback-classic" % "1.2.3",
-      "org.typelevel" %% "cats-core" % "1.5.0",
-      "org.specs2" %% "specs2-core" % "4.3.6" % "test,it",
-      "org.specs2" %% "specs2-mock" % "4.3.6" % "test",
-      "org.specs2" %% "specs2-scalacheck" % "4.3.6" % "test",
-      "com.github.tomakehurst" % "wiremock" % "2.20.0" % "test,it"
+      "org.typelevel" %% "cats-core" % "1.6.0",
+      "org.specs2" %% "specs2-core" % "4.4.1" % "test,it",
+      "org.specs2" %% "specs2-mock" % "4.4.1" % "test",
+      "org.specs2" %% "specs2-scalacheck" % "4.4.1" % "test",
+      "com.github.tomakehurst" % "wiremock" % "2.21.0" % "test,it"
     )
   )
 
