@@ -126,6 +126,8 @@ trait ArbitraryInput extends ScalaCheck {
 
   implicit def arbTransactionResult = Arbitrary(genTransactionResult)
 
+  implicit def arbTransactionSuccess = Arbitrary(genTransactionSuccess)
+
   implicit def arbTransactionNotSuccessful = Arbitrary(genTransactionNotSuccessful)
 
   implicit def arbSigner = Arbitrary(genSigner)

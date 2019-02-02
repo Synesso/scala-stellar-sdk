@@ -28,6 +28,12 @@ class TransactionResultSpec extends Specification with ArbitraryInput with Domai
     }
   }
 
+  "a transaction success" should {
+    "always mark sequenceUpdates as true" >> prop { t: TransactionSuccess =>
+      t.sequenceUpdated must beTrue
+    }
+  }
+
   "An XDR transaction failure" should {
     "be decodable for failure due to bad operation" >> {
       TransactionResult.decodeXDR("AAAAAAAAAGT/////AAAAAQAAAAAAAAAB/////AAAAAA=") mustEqual
@@ -75,6 +81,12 @@ class TransactionResultSpec extends Specification with ArbitraryInput with Domai
     }
     "return failure when not decodable" >> {
       Try(TransactionResult.decodeXDR("foo")) must beFailedTry[TransactionResult]
+    }
+  }
+
+  "a transaction not successful" should {
+    "mark sequenceUpdates as true only when fee is not zero" >> prop { t: TransactionNotSuccessful =>
+      t.sequenceUpdated mustEqual t.feeCharged.units != 0
     }
   }
 
