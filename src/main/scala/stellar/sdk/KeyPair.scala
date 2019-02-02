@@ -118,10 +118,15 @@ object KeyPair {
     */
   def fromSecretSeed(seed: String): KeyPair = {
     val charSeed = seed.toCharArray
-    val decoded = StrKey.decodeStellarSecretSeed(charSeed)
-    val kp = fromSecretSeed(decoded)
-    Arrays.fill(charSeed, ' ')
-    kp
+    Try {
+      val decoded = StrKey.decodeStellarSecretSeed(charSeed)
+      val kp = fromSecretSeed(decoded)
+      Arrays.fill(charSeed, ' ')
+      kp
+    } match {
+      case Failure(t) => throw InvalidSecretSeed(t)
+      case Success(kp) => kp
+    }
   }
 
   /**
@@ -196,3 +201,4 @@ object Signature {
 }
 
 case class InvalidAccountId(id: String, cause: Throwable) extends RuntimeException(id, cause)
+case class InvalidSecretSeed(cause: Throwable) extends RuntimeException(cause)

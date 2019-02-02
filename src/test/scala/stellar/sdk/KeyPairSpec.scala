@@ -55,6 +55,11 @@ class KeyPairSpec extends Specification with ArbitraryInput with DomainMatchers 
         case e: InvalidAccountId => e.getMessage mustEqual badId
       }
     }
+
+    "not be constructed from an invalid secret seed" >> {
+      val nickCave = ""
+      KeyPair.fromSecretSeed(nickCave) must throwAn[InvalidSecretSeed]
+    }
   }
 
   "a public key" should {
