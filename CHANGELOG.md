@@ -25,7 +25,7 @@ As this project is pre 1.0, breaking changes may happen for minor version bumps.
 * Complete removal of generated XDR classes in favour of domain objects handling their own XDR encoding.
     This means operations such as `TransactionResult.decodeXDR` will now return instances of domain objects
     newly created in this release which can be used in pattern matches. These classes incorporate all of the 
-    XDR encoded information in a user-friendly form and have the following heirarchy:
+    XDR encoded information in a user-friendly form and have the following hierarchy:
     * `TransactionResult` (trait)
         * `TransactionSuccess`
         * `TransactionNotSuccessful` (trait)
