@@ -571,8 +571,8 @@
                         <a href="SetOptionsUnknownFlag$.html" title="SetOptions operation failed because the flag being altered does not exist.">SetOptionsUnknownFlag</a>
                       </li><li class="current-entities indented4">
                         <span class="separator"></span>
-                        <a class="class" href="TransactionFailure.html" title="The transaction was attempted, but one or more operations failed (and none were applied)."></a>
-                        <a href="TransactionFailure.html" title="The transaction was attempted, but one or more operations failed (and none were applied).">TransactionFailure</a>
+                        <a class="class" href="TransactionFailure.html" title="The transaction failed when processing the operations."></a>
+                        <a href="TransactionFailure.html" title="The transaction failed when processing the operations.">TransactionFailure</a>
                       </li><li class="current-entities indented4">
                         <span class="separator"></span>
                         <a class="class" href="TransactionHistory.html" title="A transaction that has been included in the ledger sometime in the past."></a>
@@ -583,8 +583,8 @@
                         <a href="TransactionHistoryDeserializer$.html" title="">TransactionHistoryDeserializer</a>
                       </li><li class="current-entities indented4">
                         <span class="separator"></span>
-                        <a class="class" href="TransactionNotAttempted.html" title="The transaction was not attempted for the reason given."></a>
-                        <a href="TransactionNotAttempted.html" title="The transaction was not attempted for the reason given.">TransactionNotAttempted</a>
+                        <a class="class" href="TransactionNotAttempted.html" title="The transaction failed for the reason given prior to any operations being attempted."></a>
+                        <a href="TransactionNotAttempted.html" title="The transaction failed for the reason given prior to any operations being attempted.">TransactionNotAttempted</a>
                       </li><li class="current-entities indented4">
                         <span class="separator"></span>
                         <a class="trait" href="" title=""></a>
@@ -708,6 +708,22 @@
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../xdr/Encodable.html" class="extype" name="stellar.sdk.model.xdr.Encodable">Encodable</a></dd></dl></div>
+    </li><li name="stellar.sdk.model.result.TransactionNotSuccessful#feeCharged" visbl="pub" class="indented0 " data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="feeCharged:stellar.sdk.model.NativeAmount"></a><a id="feeCharged:NativeAmount"></a>
+      <span class="permalink">
+      <a href="../../../../stellar/sdk/model/result/TransactionNotSuccessful.html#feeCharged:stellar.sdk.model.NativeAmount" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier">abstract </span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">feeCharged</span><span class="result">: <a href="../NativeAmount.html" class="extype" name="stellar.sdk.model.NativeAmount">NativeAmount</a></span>
+      </span>
+      
+      
     </li></ol>
             </div>
 
@@ -980,6 +996,22 @@
                 <span class="name">@native</span><span class="args">()</span>
               
         </dd></dl></div>
+    </li><li name="stellar.sdk.model.result.TransactionNotSuccessful#sequenceUpdated" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="sequenceUpdated:Boolean"></a>
+      <span class="permalink">
+      <a href="../../../../stellar/sdk/model/result/TransactionNotSuccessful.html#sequenceUpdated:Boolean" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">sequenceUpdated</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+      </span>
+      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="stellar.sdk.model.result.TransactionNotSuccessful">TransactionNotSuccessful</a> → <a href="TransactionResult.html" class="extype" name="stellar.sdk.model.result.TransactionResult">TransactionResult</a></dd></dl></div>
     </li><li name="scala.AnyRef#synchronized" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="synchronized[T0](x$1:=&gt;T0):T0"></a><a id="synchronized[T0](⇒T0):T0"></a>
       <span class="permalink">

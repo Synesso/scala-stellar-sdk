@@ -571,8 +571,8 @@
                         <a href="SetOptionsUnknownFlag$.html" title="SetOptions operation failed because the flag being altered does not exist.">SetOptionsUnknownFlag</a>
                       </li><li class="current-entities indented4">
                         <span class="separator"></span>
-                        <a class="class" href="TransactionFailure.html" title="The transaction was attempted, but one or more operations failed (and none were applied)."></a>
-                        <a href="TransactionFailure.html" title="The transaction was attempted, but one or more operations failed (and none were applied).">TransactionFailure</a>
+                        <a class="class" href="TransactionFailure.html" title="The transaction failed when processing the operations."></a>
+                        <a href="TransactionFailure.html" title="The transaction failed when processing the operations.">TransactionFailure</a>
                       </li><li class="current-entities indented4">
                         <span class="separator"></span>
                         <a class="class" href="TransactionHistory.html" title="A transaction that has been included in the ledger sometime in the past."></a>
@@ -583,8 +583,8 @@
                         <a href="TransactionHistoryDeserializer$.html" title="">TransactionHistoryDeserializer</a>
                       </li><li class="current-entities indented4">
                         <span class="separator"></span>
-                        <a class="class" href="TransactionNotAttempted.html" title="The transaction was not attempted for the reason given."></a>
-                        <a href="TransactionNotAttempted.html" title="The transaction was not attempted for the reason given.">TransactionNotAttempted</a>
+                        <a class="class" href="TransactionNotAttempted.html" title="The transaction failed for the reason given prior to any operations being attempted."></a>
+                        <a href="TransactionNotAttempted.html" title="The transaction failed for the reason given prior to any operations being attempted.">TransactionNotAttempted</a>
                       </li><li class="current-entities indented4">
                         <span class="separator"></span>
                         <a class="trait" href="TransactionNotSuccessful.html" title=""></a>
@@ -703,10 +703,10 @@
       </span>
       
       
-    </li><li name="stellar.sdk.model.result.TransactionResult.NotAttempted" visbl="pub" class="indented0 " data-isabs="true" fullComment="no" group="Ungrouped">
-      <a id="NotAttemptedextendsAnyRef"></a><a id="NotAttempted:NotAttempted"></a>
+    </li><li name="stellar.sdk.model.result.TransactionResult.OperationsNotAttempted" visbl="pub" class="indented0 " data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="OperationsNotAttemptedextendsAnyRef"></a><a id="OperationsNotAttempted:OperationsNotAttempted"></a>
       <span class="permalink">
-      <a href="../../../../stellar/sdk/model/result/TransactionResult$.html#NotAttemptedextendsAnyRef" title="Permalink">
+      <a href="../../../../stellar/sdk/model/result/TransactionResult$.html#OperationsNotAttemptedextendsAnyRef" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -715,7 +715,7 @@
         <span class="kind">trait</span>
       </span>
       <span class="symbol">
-        <a title="" href="TransactionResult$$NotAttempted.html"><span class="name">NotAttempted</span></a><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+        <a title="" href="TransactionResult$$OperationsNotAttempted.html"><span class="name">OperationsNotAttempted</span></a><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
       </span>
       
       
@@ -1121,7 +1121,7 @@
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a title="" href="TransactionResult$$BadAuthorisation$.html"><span class="name">BadAuthorisation</span></a><span class="result"> extends <a href="TransactionResult$$Code.html" class="extype" name="stellar.sdk.model.result.TransactionResult.Code">Code</a> with <a href="TransactionResult$$NotAttempted.html" class="extype" name="stellar.sdk.model.result.TransactionResult.NotAttempted">NotAttempted</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a title="" href="TransactionResult$$BadAuthorisation$.html"><span class="name">BadAuthorisation</span></a><span class="result"> extends <a href="TransactionResult$$Code.html" class="extype" name="stellar.sdk.model.result.TransactionResult.Code">Code</a> with <a href="TransactionResult$$OperationsNotAttempted.html" class="extype" name="stellar.sdk.model.result.TransactionResult.OperationsNotAttempted">OperationsNotAttempted</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       
       
@@ -1137,7 +1137,7 @@
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a title="" href="TransactionResult$$BadSequenceNumber$.html"><span class="name">BadSequenceNumber</span></a><span class="result"> extends <a href="TransactionResult$$Code.html" class="extype" name="stellar.sdk.model.result.TransactionResult.Code">Code</a> with <a href="TransactionResult$$NotAttempted.html" class="extype" name="stellar.sdk.model.result.TransactionResult.NotAttempted">NotAttempted</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a title="" href="TransactionResult$$BadSequenceNumber$.html"><span class="name">BadSequenceNumber</span></a><span class="result"> extends <a href="TransactionResult$$Code.html" class="extype" name="stellar.sdk.model.result.TransactionResult.Code">Code</a> with <a href="TransactionResult$$OperationsNotAttempted.html" class="extype" name="stellar.sdk.model.result.TransactionResult.OperationsNotAttempted">OperationsNotAttempted</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       
       
@@ -1169,7 +1169,7 @@
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a title="" href="TransactionResult$$InsufficientBalance$.html"><span class="name">InsufficientBalance</span></a><span class="result"> extends <a href="TransactionResult$$Code.html" class="extype" name="stellar.sdk.model.result.TransactionResult.Code">Code</a> with <a href="TransactionResult$$NotAttempted.html" class="extype" name="stellar.sdk.model.result.TransactionResult.NotAttempted">NotAttempted</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a title="" href="TransactionResult$$InsufficientBalance$.html"><span class="name">InsufficientBalance</span></a><span class="result"> extends <a href="TransactionResult$$Code.html" class="extype" name="stellar.sdk.model.result.TransactionResult.Code">Code</a> with <a href="TransactionResult$$OperationsNotAttempted.html" class="extype" name="stellar.sdk.model.result.TransactionResult.OperationsNotAttempted">OperationsNotAttempted</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       
       
@@ -1185,7 +1185,7 @@
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a title="" href="TransactionResult$$InsufficientFee$.html"><span class="name">InsufficientFee</span></a><span class="result"> extends <a href="TransactionResult$$Code.html" class="extype" name="stellar.sdk.model.result.TransactionResult.Code">Code</a> with <a href="TransactionResult$$NotAttempted.html" class="extype" name="stellar.sdk.model.result.TransactionResult.NotAttempted">NotAttempted</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a title="" href="TransactionResult$$InsufficientFee$.html"><span class="name">InsufficientFee</span></a><span class="result"> extends <a href="TransactionResult$$Code.html" class="extype" name="stellar.sdk.model.result.TransactionResult.Code">Code</a> with <a href="TransactionResult$$OperationsNotAttempted.html" class="extype" name="stellar.sdk.model.result.TransactionResult.OperationsNotAttempted">OperationsNotAttempted</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       
       
@@ -1201,7 +1201,7 @@
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a title="" href="TransactionResult$$NoOperations$.html"><span class="name">NoOperations</span></a><span class="result"> extends <a href="TransactionResult$$Code.html" class="extype" name="stellar.sdk.model.result.TransactionResult.Code">Code</a> with <a href="TransactionResult$$NotAttempted.html" class="extype" name="stellar.sdk.model.result.TransactionResult.NotAttempted">NotAttempted</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a title="" href="TransactionResult$$NoOperations$.html"><span class="name">NoOperations</span></a><span class="result"> extends <a href="TransactionResult$$Code.html" class="extype" name="stellar.sdk.model.result.TransactionResult.Code">Code</a> with <a href="TransactionResult$$OperationsNotAttempted.html" class="extype" name="stellar.sdk.model.result.TransactionResult.OperationsNotAttempted">OperationsNotAttempted</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       
       
@@ -1233,7 +1233,7 @@
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a title="" href="TransactionResult$$SourceAccountNotFound$.html"><span class="name">SourceAccountNotFound</span></a><span class="result"> extends <a href="TransactionResult$$Code.html" class="extype" name="stellar.sdk.model.result.TransactionResult.Code">Code</a> with <a href="TransactionResult$$NotAttempted.html" class="extype" name="stellar.sdk.model.result.TransactionResult.NotAttempted">NotAttempted</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a title="" href="TransactionResult$$SourceAccountNotFound$.html"><span class="name">SourceAccountNotFound</span></a><span class="result"> extends <a href="TransactionResult$$Code.html" class="extype" name="stellar.sdk.model.result.TransactionResult.Code">Code</a> with <a href="TransactionResult$$OperationsNotAttempted.html" class="extype" name="stellar.sdk.model.result.TransactionResult.OperationsNotAttempted">OperationsNotAttempted</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       
       
@@ -1249,7 +1249,7 @@
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a title="" href="TransactionResult$$SubmittedTooEarly$.html"><span class="name">SubmittedTooEarly</span></a><span class="result"> extends <a href="TransactionResult$$Code.html" class="extype" name="stellar.sdk.model.result.TransactionResult.Code">Code</a> with <a href="TransactionResult$$NotAttempted.html" class="extype" name="stellar.sdk.model.result.TransactionResult.NotAttempted">NotAttempted</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a title="" href="TransactionResult$$SubmittedTooEarly$.html"><span class="name">SubmittedTooEarly</span></a><span class="result"> extends <a href="TransactionResult$$Code.html" class="extype" name="stellar.sdk.model.result.TransactionResult.Code">Code</a> with <a href="TransactionResult$$OperationsNotAttempted.html" class="extype" name="stellar.sdk.model.result.TransactionResult.OperationsNotAttempted">OperationsNotAttempted</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       
       
@@ -1265,7 +1265,7 @@
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a title="" href="TransactionResult$$SubmittedTooLate$.html"><span class="name">SubmittedTooLate</span></a><span class="result"> extends <a href="TransactionResult$$Code.html" class="extype" name="stellar.sdk.model.result.TransactionResult.Code">Code</a> with <a href="TransactionResult$$NotAttempted.html" class="extype" name="stellar.sdk.model.result.TransactionResult.NotAttempted">NotAttempted</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a title="" href="TransactionResult$$SubmittedTooLate$.html"><span class="name">SubmittedTooLate</span></a><span class="result"> extends <a href="TransactionResult$$Code.html" class="extype" name="stellar.sdk.model.result.TransactionResult.Code">Code</a> with <a href="TransactionResult$$OperationsNotAttempted.html" class="extype" name="stellar.sdk.model.result.TransactionResult.OperationsNotAttempted">OperationsNotAttempted</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       
       
@@ -1297,7 +1297,7 @@
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a title="" href="TransactionResult$$UnspecifiedInternalError$.html"><span class="name">UnspecifiedInternalError</span></a><span class="result"> extends <a href="TransactionResult$$Code.html" class="extype" name="stellar.sdk.model.result.TransactionResult.Code">Code</a> with <a href="TransactionResult$$NotAttempted.html" class="extype" name="stellar.sdk.model.result.TransactionResult.NotAttempted">NotAttempted</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a title="" href="TransactionResult$$UnspecifiedInternalError$.html"><span class="name">UnspecifiedInternalError</span></a><span class="result"> extends <a href="TransactionResult$$Code.html" class="extype" name="stellar.sdk.model.result.TransactionResult.Code">Code</a> with <a href="TransactionResult$$OperationsNotAttempted.html" class="extype" name="stellar.sdk.model.result.TransactionResult.OperationsNotAttempted">OperationsNotAttempted</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       
       
@@ -1313,7 +1313,7 @@
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a title="" href="TransactionResult$$UnusedSignatures$.html"><span class="name">UnusedSignatures</span></a><span class="result"> extends <a href="TransactionResult$$Code.html" class="extype" name="stellar.sdk.model.result.TransactionResult.Code">Code</a> with <a href="TransactionResult$$NotAttempted.html" class="extype" name="stellar.sdk.model.result.TransactionResult.NotAttempted">NotAttempted</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a title="" href="TransactionResult$$UnusedSignatures$.html"><span class="name">UnusedSignatures</span></a><span class="result"> extends <a href="TransactionResult$$Code.html" class="extype" name="stellar.sdk.model.result.TransactionResult.Code">Code</a> with <a href="TransactionResult$$OperationsNotAttempted.html" class="extype" name="stellar.sdk.model.result.TransactionResult.OperationsNotAttempted">OperationsNotAttempted</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       
       

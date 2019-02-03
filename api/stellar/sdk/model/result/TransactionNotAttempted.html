@@ -571,8 +571,8 @@
                         <a href="SetOptionsUnknownFlag$.html" title="SetOptions operation failed because the flag being altered does not exist.">SetOptionsUnknownFlag</a>
                       </li><li class="current-entities indented4">
                         <span class="separator"></span>
-                        <a class="class" href="TransactionFailure.html" title="The transaction was attempted, but one or more operations failed (and none were applied)."></a>
-                        <a href="TransactionFailure.html" title="The transaction was attempted, but one or more operations failed (and none were applied).">TransactionFailure</a>
+                        <a class="class" href="TransactionFailure.html" title="The transaction failed when processing the operations."></a>
+                        <a href="TransactionFailure.html" title="The transaction failed when processing the operations.">TransactionFailure</a>
                       </li><li class="current-entities indented4">
                         <span class="separator"></span>
                         <a class="class" href="TransactionHistory.html" title="A transaction that has been included in the ledger sometime in the past."></a>
@@ -583,8 +583,8 @@
                         <a href="TransactionHistoryDeserializer$.html" title="">TransactionHistoryDeserializer</a>
                       </li><li class="current-entities indented4">
                         <span class="separator"></span>
-                        <a class="class" href="" title="The transaction was not attempted for the reason given."></a>
-                        <a href="" title="The transaction was not attempted for the reason given.">TransactionNotAttempted</a>
+                        <a class="class" href="" title="The transaction failed for the reason given prior to any operations being attempted."></a>
+                        <a href="" title="The transaction failed for the reason given prior to any operations being attempted.">TransactionNotAttempted</a>
                       </li><li class="current-entities indented4">
                         <span class="separator"></span>
                         <a class="trait" href="TransactionNotSuccessful.html" title=""></a>
@@ -628,12 +628,12 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <span class="name">TransactionNotAttempted</span><span class="params">(<span name="reason">reason: <a href="TransactionResult$$NotAttempted.html" class="extype" name="stellar.sdk.model.result.TransactionResult.NotAttempted">NotAttempted</a></span>, <span name="feeCharged">feeCharged: <a href="../NativeAmount.html" class="extype" name="stellar.sdk.model.NativeAmount">NativeAmount</a></span>)</span><span class="result"> extends <a href="TransactionNotSuccessful.html" class="extype" name="stellar.sdk.model.result.TransactionNotSuccessful">TransactionNotSuccessful</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <span class="name">TransactionNotAttempted</span><span class="params">(<span name="reason">reason: <a href="TransactionResult$$Code.html" class="extype" name="stellar.sdk.model.result.TransactionResult.Code">Code</a></span>, <span name="feeCharged">feeCharged: <a href="../NativeAmount.html" class="extype" name="stellar.sdk.model.NativeAmount">NativeAmount</a></span>)</span><span class="result"> extends <a href="TransactionNotSuccessful.html" class="extype" name="stellar.sdk.model.result.TransactionNotSuccessful">TransactionNotSuccessful</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4>
 
       
-          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>The transaction was not attempted for the reason given.
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>The transaction failed for the reason given prior to any operations being attempted.
 </p></div><div class="toggleContainer block">
           <span class="toggle">
             Linear Supertypes
@@ -685,9 +685,9 @@
         <div id="constructors" class="members">
               <h3>Instance Constructors</h3>
               <ol><li name="stellar.sdk.model.result.TransactionNotAttempted#&lt;init&gt;" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="&lt;init&gt;(reason:stellar.sdk.model.result.TransactionResult.NotAttempted,feeCharged:stellar.sdk.model.NativeAmount):stellar.sdk.model.result.TransactionNotAttempted"></a><a id="&lt;init&gt;:TransactionNotAttempted"></a>
+      <a id="&lt;init&gt;(reason:stellar.sdk.model.result.TransactionResult.Code,feeCharged:stellar.sdk.model.NativeAmount):stellar.sdk.model.result.TransactionNotAttempted"></a><a id="&lt;init&gt;:TransactionNotAttempted"></a>
       <span class="permalink">
-      <a href="../../../../stellar/sdk/model/result/TransactionNotAttempted.html#&lt;init&gt;(reason:stellar.sdk.model.result.TransactionResult.NotAttempted,feeCharged:stellar.sdk.model.NativeAmount):stellar.sdk.model.result.TransactionNotAttempted" title="Permalink">
+      <a href="../../../../stellar/sdk/model/result/TransactionNotAttempted.html#&lt;init&gt;(reason:stellar.sdk.model.result.TransactionResult.Code,feeCharged:stellar.sdk.model.NativeAmount):stellar.sdk.model.result.TransactionNotAttempted" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -696,7 +696,7 @@
         <span class="kind">new</span>
       </span>
       <span class="symbol">
-        <span class="name">TransactionNotAttempted</span><span class="params">(<span name="reason">reason: <a href="TransactionResult$$NotAttempted.html" class="extype" name="stellar.sdk.model.result.TransactionResult.NotAttempted">NotAttempted</a></span>, <span name="feeCharged">feeCharged: <a href="../NativeAmount.html" class="extype" name="stellar.sdk.model.NativeAmount">NativeAmount</a></span>)</span>
+        <span class="name">TransactionNotAttempted</span><span class="params">(<span name="reason">reason: <a href="TransactionResult$$Code.html" class="extype" name="stellar.sdk.model.result.TransactionResult.Code">Code</a></span>, <span name="feeCharged">feeCharged: <a href="../NativeAmount.html" class="extype" name="stellar.sdk.model.NativeAmount">NativeAmount</a></span>)</span>
       </span>
       
       
@@ -830,7 +830,7 @@
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
-    </li><li name="stellar.sdk.model.result.TransactionNotAttempted#feeCharged" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+    </li><li name="stellar.sdk.model.result.TransactionNotAttempted#feeCharged" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="feeCharged:stellar.sdk.model.NativeAmount"></a><a id="feeCharged:NativeAmount"></a>
       <span class="permalink">
       <a href="../../../../stellar/sdk/model/result/TransactionNotAttempted.html#feeCharged:stellar.sdk.model.NativeAmount" title="Permalink">
@@ -845,7 +845,7 @@
         <span class="name">feeCharged</span><span class="result">: <a href="../NativeAmount.html" class="extype" name="stellar.sdk.model.NativeAmount">NativeAmount</a></span>
       </span>
       
-      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="stellar.sdk.model.result.TransactionNotAttempted">TransactionNotAttempted</a> → <a href="TransactionNotSuccessful.html" class="extype" name="stellar.sdk.model.result.TransactionNotSuccessful">TransactionNotSuccessful</a></dd></dl></div>
     </li><li name="scala.AnyRef#finalize" visbl="prt" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="finalize():Unit"></a>
       <span class="permalink">
@@ -974,9 +974,9 @@
               
         </dd></dl></div>
     </li><li name="stellar.sdk.model.result.TransactionNotAttempted#reason" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="reason:stellar.sdk.model.result.TransactionResult.NotAttempted"></a><a id="reason:NotAttempted"></a>
+      <a id="reason:stellar.sdk.model.result.TransactionResult.Code"></a><a id="reason:Code"></a>
       <span class="permalink">
-      <a href="../../../../stellar/sdk/model/result/TransactionNotAttempted.html#reason:stellar.sdk.model.result.TransactionResult.NotAttempted" title="Permalink">
+      <a href="../../../../stellar/sdk/model/result/TransactionNotAttempted.html#reason:stellar.sdk.model.result.TransactionResult.Code" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -985,7 +985,7 @@
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">reason</span><span class="result">: <a href="TransactionResult$$NotAttempted.html" class="extype" name="stellar.sdk.model.result.TransactionResult.NotAttempted">NotAttempted</a></span>
+        <span class="name">reason</span><span class="result">: <a href="TransactionResult$$Code.html" class="extype" name="stellar.sdk.model.result.TransactionResult.Code">Code</a></span>
       </span>
       
       
@@ -1005,6 +1005,22 @@
       </span>
       
       
+    </li><li name="stellar.sdk.model.result.TransactionNotSuccessful#sequenceUpdated" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="sequenceUpdated:Boolean"></a>
+      <span class="permalink">
+      <a href="../../../../stellar/sdk/model/result/TransactionNotAttempted.html#sequenceUpdated:Boolean" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">sequenceUpdated</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+      </span>
+      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="TransactionNotSuccessful.html" class="extype" name="stellar.sdk.model.result.TransactionNotSuccessful">TransactionNotSuccessful</a> → <a href="TransactionResult.html" class="extype" name="stellar.sdk.model.result.TransactionResult">TransactionResult</a></dd></dl></div>
     </li><li name="scala.AnyRef#synchronized" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="synchronized[T0](x$1:=&gt;T0):T0"></a><a id="synchronized[T0](⇒T0):T0"></a>
       <span class="permalink">

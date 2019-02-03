@@ -603,8 +603,8 @@
                         <a href="SetOptionsUnknownFlag$.html" title="SetOptions operation failed because the flag being altered does not exist.">SetOptionsUnknownFlag</a>
                       </li><li class="current-entities indented4">
                         <span class="separator"></span>
-                        <a class="class" href="TransactionFailure.html" title="The transaction was attempted, but one or more operations failed (and none were applied)."></a>
-                        <a href="TransactionFailure.html" title="The transaction was attempted, but one or more operations failed (and none were applied).">TransactionFailure</a>
+                        <a class="class" href="TransactionFailure.html" title="The transaction failed when processing the operations."></a>
+                        <a href="TransactionFailure.html" title="The transaction failed when processing the operations.">TransactionFailure</a>
                       </li><li class="current-entities indented4">
                         <span class="separator"></span>
                         <a class="class" href="TransactionHistory.html" title="A transaction that has been included in the ledger sometime in the past."></a>
@@ -615,8 +615,8 @@
                         <a href="TransactionHistoryDeserializer$.html" title="">TransactionHistoryDeserializer</a>
                       </li><li class="current-entities indented4">
                         <span class="separator"></span>
-                        <a class="class" href="TransactionNotAttempted.html" title="The transaction was not attempted for the reason given."></a>
-                        <a href="TransactionNotAttempted.html" title="The transaction was not attempted for the reason given.">TransactionNotAttempted</a>
+                        <a class="class" href="TransactionNotAttempted.html" title="The transaction failed for the reason given prior to any operations being attempted."></a>
+                        <a href="TransactionNotAttempted.html" title="The transaction failed for the reason given prior to any operations being attempted.">TransactionNotAttempted</a>
                       </li><li class="current-entities indented4">
                         <span class="separator"></span>
                         <a class="trait" href="TransactionNotSuccessful.html" title=""></a>
@@ -1064,10 +1064,10 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a title="The transaction was attempted, but one or more operations failed (and none were applied)." href="TransactionFailure.html"><span class="name">TransactionFailure</span></a><span class="params">(<span name="feeCharged">feeCharged: <a href="../NativeAmount.html" class="extype" name="stellar.sdk.model.NativeAmount">NativeAmount</a></span>, <span name="operationResults">operationResults: <span class="extype" name="scala.Seq">Seq</span>[<a href="OperationResult.html" class="extype" name="stellar.sdk.model.result.OperationResult">OperationResult</a>]</span>)</span><span class="result"> extends <a href="TransactionNotSuccessful.html" class="extype" name="stellar.sdk.model.result.TransactionNotSuccessful">TransactionNotSuccessful</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a title="The transaction failed when processing the operations." href="TransactionFailure.html"><span class="name">TransactionFailure</span></a><span class="params">(<span name="feeCharged">feeCharged: <a href="../NativeAmount.html" class="extype" name="stellar.sdk.model.NativeAmount">NativeAmount</a></span>, <span name="operationResults">operationResults: <span class="extype" name="scala.Seq">Seq</span>[<a href="OperationResult.html" class="extype" name="stellar.sdk.model.result.OperationResult">OperationResult</a>]</span>)</span><span class="result"> extends <a href="TransactionNotSuccessful.html" class="extype" name="stellar.sdk.model.result.TransactionNotSuccessful">TransactionNotSuccessful</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       
-      <p class="shortcomment cmt">The transaction was attempted, but one or more operations failed (and none were applied).</p>
+      <p class="shortcomment cmt">The transaction failed when processing the operations.</p>
     </li><li name="stellar.sdk.model.result.TransactionHistory" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="TransactionHistoryextendsProductwithSerializable"></a><a id="TransactionHistory:TransactionHistory"></a>
       <span class="permalink">
@@ -1096,10 +1096,10 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a title="The transaction was not attempted for the reason given." href="TransactionNotAttempted.html"><span class="name">TransactionNotAttempted</span></a><span class="params">(<span name="reason">reason: <a href="TransactionResult$$NotAttempted.html" class="extype" name="stellar.sdk.model.result.TransactionResult.NotAttempted">NotAttempted</a></span>, <span name="feeCharged">feeCharged: <a href="../NativeAmount.html" class="extype" name="stellar.sdk.model.NativeAmount">NativeAmount</a></span>)</span><span class="result"> extends <a href="TransactionNotSuccessful.html" class="extype" name="stellar.sdk.model.result.TransactionNotSuccessful">TransactionNotSuccessful</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a title="The transaction failed for the reason given prior to any operations being attempted." href="TransactionNotAttempted.html"><span class="name">TransactionNotAttempted</span></a><span class="params">(<span name="reason">reason: <a href="TransactionResult$$Code.html" class="extype" name="stellar.sdk.model.result.TransactionResult.Code">Code</a></span>, <span name="feeCharged">feeCharged: <a href="../NativeAmount.html" class="extype" name="stellar.sdk.model.NativeAmount">NativeAmount</a></span>)</span><span class="result"> extends <a href="TransactionNotSuccessful.html" class="extype" name="stellar.sdk.model.result.TransactionNotSuccessful">TransactionNotSuccessful</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       
-      <p class="shortcomment cmt">The transaction was not attempted for the reason given.</p>
+      <p class="shortcomment cmt">The transaction failed for the reason given prior to any operations being attempted.</p>
     </li><li name="stellar.sdk.model.result.TransactionNotSuccessful" visbl="pub" class="indented0 " data-isabs="true" fullComment="no" group="Ungrouped">
       <a id="TransactionNotSuccessfulextendsTransactionResult"></a><a id="TransactionNotSuccessful:TransactionNotSuccessful"></a>
       <span class="permalink">
