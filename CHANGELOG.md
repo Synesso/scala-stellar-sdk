@@ -2,6 +2,18 @@
 
 As this project is pre 1.0, breaking changes may happen for minor version bumps. A breaking change will get clearly notified in this log.
 
+## 0.5.1
+
+* Introduction of new value on `TransactionResponses`  - `def sequenceUpdated: Boolean`. This indicates whether the client
+    should consider the sequence number to have incremented as a result of the transaction posting. It's always
+    true when the transaction was successful. But it's only sometimes true if the transaction failed as it depends upon
+    whether the transaction passed pre-consensus validation.
+
+* Attempts to construct a KeyPair with a bad account id will now throw `InvalidAccountId`.
+
+* Attempts to construct a KeyPair with a bad secret seed will now throw `InvalidSecretSeed`.
+
+
 ## 0.5.0
 
 ### Breaking changes
