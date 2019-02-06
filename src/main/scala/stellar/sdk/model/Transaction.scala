@@ -11,16 +11,11 @@ import stellar.sdk.{KeyPair, Network, Signature}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-sealed trait Signable[T] {
-  def sign(kp: KeyPair, others: KeyPair*): T
-}
-
 case class Transaction(source: Account,
                        operations: Seq[Operation] = Nil,
                        memo: Memo = NoMemo,
                        timeBounds: Option[TimeBounds] = None,
-                       fee: Option[NativeAmount] = None)(implicit val network: Network)
-  extends Signable[SignedTransaction] with Encodable {
+                       fee: Option[NativeAmount] = None)(implicit val network: Network) extends Encodable {
 
   private val BaseFee = 100L
   private val EnvelopeTypeTx = 2
@@ -82,16 +77,14 @@ object Transaction {
   }
 }
 
-case class SignedTransaction(transaction: Transaction, signatures: Seq[Signature]) extends Signable[SignedTransaction] {
+case class SignedTransaction(transaction: Transaction, signatures: Seq[Signature]) {
 
   def submit()(implicit ec: ExecutionContext): Future[TransactionPostResponse] = {
     transaction.network.submit(this)
   }
 
-  def sign(key: KeyPair, otherKeys: KeyPair*): SignedTransaction = {
-    val sigs = (key +: otherKeys).map(_.sign(transaction.hash.toArray))
-    copy(signatures = (sigs ++: signatures).distinct)
-  }
+  def sign(key: KeyPair): SignedTransaction =
+    this.copy(signatures = key.sign(transaction.hash.toArray) +: signatures)
 
   /**
     * The base64 encoding of the XDR form of this signed transaction.
