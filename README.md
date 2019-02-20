@@ -1,7 +1,8 @@
+# Stellar SDK for Scala
+
 [![Travis](https://travis-ci.org/Synesso/scala-stellar-sdk.svg?branch=master)](https://travis-ci.org/Synesso/scala-stellar-sdk)
 [![codecov](https://codecov.io/gh/Synesso/scala-stellar-sdk/branch/master/graph/badge.svg)](https://codecov.io/gh/Synesso/scala-stellar-sdk)
-
-# Stellar SDK for Scala
+[![Join chat at https://gitter.im/scala-stellar-sdk/community](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/scala-stellar-sdk/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 Please see the [SDK documentation](https://synesso.github.io/scala-stellar-sdk) for details.
 
