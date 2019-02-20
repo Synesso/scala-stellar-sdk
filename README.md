@@ -4,6 +4,9 @@
 [![codecov](https://codecov.io/gh/Synesso/scala-stellar-sdk/branch/master/graph/badge.svg)](https://codecov.io/gh/Synesso/scala-stellar-sdk)
 [![Join chat at https://gitter.im/scala-stellar-sdk/community](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/scala-stellar-sdk/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
+This is the SDK for performing [Stellar](https://stellar.org/) operations via Scala. It provides the ability to access the Stellar network 
+via Horizon instances to build and submit transactions, query the state of the network and stream updates.
+
 Please see the [SDK documentation](https://synesso.github.io/scala-stellar-sdk) for details.
 
 ## License
