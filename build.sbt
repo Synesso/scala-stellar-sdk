@@ -64,10 +64,10 @@ lazy val root = (project in file("."))
     Defaults.itSettings,
     target in Compile in doc := target.value / "paradox" / "site" / "main" / "api",
     libraryDependencies ++= List(
-      "commons-codec" % "commons-codec" % "1.11",
+      "commons-codec" % "commons-codec" % "1.12",
       "net.i2p.crypto" % "eddsa" % "0.3.0",
       "com.typesafe.akka" %% "akka-http" % "10.1.7",
-      "com.typesafe.akka" %% "akka-stream" % "2.5.20",
+      "com.typesafe.akka" %% "akka-stream" % "2.5.21",
       "de.heikoseeberger" %% "akka-http-json4s" % "1.25.2",
       "org.json4s" %% "json4s-native" % "3.6.4",
       "com.typesafe.scala-logging" %% "scala-logging" % "3.9.2",
