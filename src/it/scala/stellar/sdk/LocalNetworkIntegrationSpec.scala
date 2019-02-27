@@ -27,7 +27,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
   sequential
 
   // Set to NoProxy when writing tests; RecordScript when creating stub mappings; ReplayScript for all other times.
-  val mode = ReplayScript
+  val mode = NoProxy
 
   val proxy: Option[WireMockServer] = mode match {
     case NoProxy =>

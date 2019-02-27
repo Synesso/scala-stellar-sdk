@@ -118,7 +118,6 @@ class AccountResponseSpec extends Specification with ArbitraryInput {
           |  ],
           |  "signers": [
           |    {
-          |      "public_key": "GBU6GMZZ2KTQ33CHNVPAWWEJ22ZHLYGBGO3LIBKNANXUMNEOFROZKO62",
           |      "weight": 1,
           |      "key": "GBU6GMZZ2KTQ33CHNVPAWWEJ22ZHLYGBGO3LIBKNANXUMNEOFROZKO62",
           |      "type": "ed25519_public_key"
