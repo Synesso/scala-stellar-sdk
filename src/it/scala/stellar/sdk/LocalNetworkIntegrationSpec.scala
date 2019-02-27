@@ -21,7 +21,6 @@ import scala.concurrent.{Await, Future}
 import scala.sys.process._
 
 /**
-  * Requires a newly launched stand-alone instance of stellar when running in NoProxy mode.
   * @see src/it/bin/stellar_standalone.sh
   */
 class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specification with DomainMatchersIT {

@@ -21,13 +21,14 @@ if [[ "$1" == true ]]; then
 fi
 
 docker stop stellar
-docker run --rm -d -p "8000:8000" -p "11626:11626" $db_port --name stellar synesso/stellar:v10 --standalone
+docker run --rm -d -p "8000:8000" -p "11626:11626" $db_port --name stellar stellar/quickstart:v10-stable --standalone
 while ! container_started; do
   sleep 1
 done
 echo "Container started"
 
-curl -s "http://localhost:11626/upgrades?mode=set&protocolversion=10&upgradetime=1970-01-01T00:00:00Z"
+upgrade_response=$(curl -s "http://localhost:11626/upgrades?mode=set&protocolversion=10&upgradetime=1970-01-01T00:00:00Z")
+echo ${upgrade_response}
 while ! service_upgraded; do
   sleep 1
 done
