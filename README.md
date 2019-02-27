@@ -26,6 +26,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 val kp = KeyPair.random
 val response = TestNetwork.fund(kp)
 ```
+You can try this right now [in your browser](https://scastie.scala-lang.org/ekyYbw9lS3GSnIkrbN2ozw).
 
 Here's the code necessary to fetch an account's sequence number and submit a payment operation to the network.
 
@@ -40,7 +41,7 @@ for {
 } yield response
 ```
 
-Please see the full [SDK documentation](https://synesso.github.io/scala-stellar-sdk) for complete details.
+Please see the full [SDK documentation](https://synesso.github.io/scala-stellar-sdk) for further examples and full API details.
 
 
 ## Getting Help
@@ -56,6 +57,8 @@ There are a few ways to get help using this SDK.
 ## Contributing
 
 If you'd like to contribute new ideas, bug fixes or help to build out a planned feature, please take a look at the [current open issues](https://github.com/Synesso/scala-stellar-sdk/issues), or join the [gitter channel](https://gitter.im/scala-stellar-sdk/community) to discuss your thoughts.
+
+If you've found this SDK helpful and you'd like to donate, the address is [![Donate](https://img.shields.io/keybase/xlm/jem.svg)](https://keybase.io/jem)
 
 ## Ack
 
