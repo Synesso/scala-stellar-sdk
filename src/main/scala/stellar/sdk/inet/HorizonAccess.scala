@@ -119,7 +119,7 @@ class Horizon(uri: URI)
       "limit" -> "100"
     ))
     val requestUri = Uri(s"$uri$path").withQuery(query)
-    
+
     def next(p: Page[T]): Future[Option[Page[T]]] =
       (getPage(Uri(p.nextLink).withPort(requestUri.effectivePort)): Future[Page[T]]).map(Some(_))
 

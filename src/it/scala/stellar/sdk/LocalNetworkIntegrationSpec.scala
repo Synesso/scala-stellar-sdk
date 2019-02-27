@@ -19,10 +19,8 @@ import stellar.sdk.util.ByteArrays
 import scala.concurrent.duration._
 import scala.concurrent.{Await, Future}
 import scala.sys.process._
+import scala.util.{Failure, Success}
 
-/**
-  * @see src/it/bin/stellar_standalone.sh
-  */
 class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specification with DomainMatchersIT {
   sequential
 
@@ -385,9 +383,10 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
   "payments endpoint" should {
     "filter payments by account" >> {
       network.paymentsByAccount(accnA) must beLike[Seq[Transacted[PayOperation]]] {
-        case a +: b +: oneHundredPayments =>
+        case a +: b +: c +: oneHundredPayments =>
            a.operation must beEquivalentTo(CreateAccountOperation(accnA, lumens(1000), Some(masterAccountKey)))
            b.operation must beEquivalentTo(PaymentOperation(accnB, IssuedAmount(555, Asset("Aardvark", accnA)), Some(accnA)))
+           c.operation must beEquivalentTo(PaymentOperation(accnB, lumens(5000), Some(accnA)))
           oneHundredPayments must haveSize(100)
       }.awaitFor(10.seconds)
     }

@@ -446,7 +446,8 @@ trait ArbitraryInput extends ScalaCheck {
     hash <- genHash
     previousHash <- Gen.option(genHash)
     sequence <- Gen.posNum[Long]
-    transactionCount <- Gen.posNum[Int]
+    successTransactionCount <- Gen.choose(0, 100)
+    failedTransactionCount <- Gen.choose(0, 100 - successTransactionCount)
     operationCount <- Gen.posNum[Int]
     closedAt: ZonedDateTime <- genZonedDateTime
     totalCoins <- Gen.posNum[Double].map(round)
@@ -455,8 +456,8 @@ trait ArbitraryInput extends ScalaCheck {
     baseReserve <- Gen.posNum[Long]
     maxTxSetSize <- Gen.posNum[Int]
   } yield {
-    LedgerResponse(id, hash, previousHash, sequence, transactionCount, operationCount, closedAt, totalCoins, feePool,
-      baseFee, baseReserve, maxTxSetSize)
+    LedgerResponse(id, hash, previousHash, sequence, successTransactionCount, failedTransactionCount, operationCount,
+      closedAt, totalCoins, feePool, baseFee, baseReserve, maxTxSetSize)
   }
 
   def genOfferResp: Gen[OfferResponse] = for {

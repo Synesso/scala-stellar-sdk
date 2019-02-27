@@ -17,15 +17,23 @@ function service_upgraded {
 }
 
 if [[ "$1" == true ]]; then
-  db_port='-p 5432:5432'
+  db_port='-p 5433:5432'
 fi
 
 docker stop stellar
-docker run --rm -d -p "8000:8000" -p "11626:11626" $db_port --name stellar stellar/quickstart:v10-stable --standalone
+sleep 1
+docker run --rm -d -e LOG_LEVEL="debug" -e DISABLE_ASSET_STATS="false" -p "8000:8000" -p "11626:11626" $db_port \
+    --name stellar synesso/stellar:v0.17.0 --standalone
 while ! container_started; do
   sleep 1
 done
 echo "Container started"
+
+root_doc=$(curl -s "http://localhost:8000/")
+horizon_version=$(echo $root_doc | jq -r .horizon_version)
+core_protocol_version=$(echo $root_doc | jq -r .core_supported_protocol_version)
+echo "Horizon version: ${horizon_version}"
+echo "Protocol:        ${core_protocol_version}"
 
 upgrade_response=$(curl -s "http://localhost:11626/upgrades?mode=set&protocolversion=10&upgradetime=1970-01-01T00:00:00Z")
 echo ${upgrade_response}

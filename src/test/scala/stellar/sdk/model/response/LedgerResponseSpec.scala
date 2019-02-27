@@ -47,7 +47,8 @@ class LedgerResponseSpec extends Specification with ArbitraryInput {
            |  "hash": "${lr.hash}",
            |  ${lr.previousHash.map(h => s""""prev_hash": "$h",""").getOrElse("")}
            |  "sequence": ${lr.sequence},
-           |  "transaction_count": ${lr.transactionCount},
+           |  "successful_transaction_count": ${lr.successTransactionCount},
+           |  "failed_transaction_count": ${lr.failureTransactionCount},
            |  "operation_count": ${lr.operationCount},
            |  "closed_at": "${formatter.format(lr.closedAt)}",
            |  "total_coins": "${lr.totalCoins}",
@@ -63,6 +64,10 @@ class LedgerResponseSpec extends Specification with ArbitraryInput {
         actual.copy(closedAt = lr.closedAt) mustEqual lr
         actual.closedAt.toInstant.toEpochMilli mustEqual lr.closedAt.toInstant.toEpochMilli
       }
+    }
+
+    "calculate transaction count as sum of failed and successful transactions" >> prop { lr: LedgerResponse =>
+      lr.transactionCount mustEqual lr.failureTransactionCount + lr.successTransactionCount
     }
   }
 

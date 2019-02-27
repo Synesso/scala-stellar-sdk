@@ -6,9 +6,13 @@ import org.json4s.DefaultFormats
 import org.json4s.JsonAST.JObject
 import stellar.sdk.model.Amount
 
-case class LedgerResponse(id: String, hash: String, previousHash: Option[String], sequence: Long, transactionCount: Int,
-                          operationCount: Int, closedAt: ZonedDateTime, totalCoins: Double, feePool: Double, baseFee: Long,
-                          baseReserve: Long, maxTxSetSize: Int)
+case class LedgerResponse(id: String, hash: String, previousHash: Option[String], sequence: Long, successTransactionCount: Int,
+                          failureTransactionCount: Int, operationCount: Int, closedAt: ZonedDateTime, totalCoins: Double, feePool: Double, baseFee: Long,
+                          baseReserve: Long, maxTxSetSize: Int) {
+
+  def transactionCount: Int = successTransactionCount + failureTransactionCount
+
+}
 
 object LedgerRespDeserializer extends ResponseParser[LedgerResponse]({ o: JObject =>
   implicit val formats = DefaultFormats
@@ -18,7 +22,8 @@ object LedgerRespDeserializer extends ResponseParser[LedgerResponse]({ o: JObjec
     hash = (o \ "hash").extract[String],
     previousHash = (o \ "prev_hash").extractOpt[String],
     sequence = (o \ "sequence").extract[Long],
-    transactionCount = (o \ "transaction_count").extract[Int],
+    successTransactionCount = (o \ "successful_transaction_count").extract[Int],
+    failureTransactionCount = (o \ "failed_transaction_count").extract[Int],
     operationCount = (o \ "operation_count").extract[Int],
     closedAt = ZonedDateTime.parse((o \ "closed_at").extract[String]),
     totalCoins = (o \ "total_coins").extract[String].toDouble,
