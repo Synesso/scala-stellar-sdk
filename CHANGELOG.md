@@ -2,6 +2,20 @@
 
 As this project is pre 1.0, breaking changes may happen for minor version bumps. A breaking change will get clearly notified in this log.
 
+
+## 0.5.2
+
+### Change
+
+- Change to `LedgerResponse` fields to match updates in Horizon v0.17.0. The fields `successTransactionCount` and
+    `failureTransactionCount` were added. The field `transactionCount` remains as a method defined in terms
+    of the new fields. [#57](https://github.com/Synesso/scala-stellar-sdk/issues/57)
+
+### Fixed
+
+- `AccountResponse` parsing. The JSON field `public_key` was replaced with `key`. [#57](https://github.com/Synesso/scala-stellar-sdk/issues/57)
+
+
 ## 0.5.1
 
 * Introduction of new value on `TransactionResponses`  - `def sequenceUpdated: Boolean`. This indicates whether the client
@@ -16,7 +30,7 @@ As this project is pre 1.0, breaking changes may happen for minor version bumps.
 
 ## 0.5.0
 
-### Breaking changes
+### Breaking Changes
 * Restructuring of transaction submission response types.
     * `TransactionPostResponse` (abstract)
         * `TransactionApproved`
