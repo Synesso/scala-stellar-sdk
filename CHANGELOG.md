@@ -2,6 +2,9 @@
 
 As this project is pre 1.0, breaking changes may happen for minor version bumps. A breaking change will get clearly notified in this log.
 
+## Next version
+
+_Nothing yet_
 
 ## 0.5.2
 
