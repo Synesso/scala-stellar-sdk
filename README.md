@@ -14,13 +14,13 @@ You can do what you like with this software, as long as you include the required
 
 Add the [latest dependency](https://mvnrepository.com/artifact/io.github.synesso/scala-stellar-sdk) to your build tool. Here's how it might look in `build.sbt`
 
-```
+```scala
 libraryDependencies += "io.github.synesso" %% "scala-stellar-sdk" % "0.5.1"
 ```
 
 From there, it is a simple affair to create and fund a new account on the test network.
 
-```
+```scala
 import stellar.sdk._
 import scala.concurrent.ExecutionContext.Implicits.global
 val kp = KeyPair.random
@@ -30,7 +30,7 @@ You can try this right now [in your browser](https://scastie.scala-lang.org/ekyY
 
 Here's the code necessary to fetch an account's sequence number and submit a payment operation to the network.
 
-```
+```scala
 implicit val network = TestNetwork
 for {
   sourceAccount <- network.account(payerKeyPair)
