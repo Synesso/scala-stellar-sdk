@@ -312,7 +312,7 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <span class="name">LedgerResponse</span><span class="params">(<span name="id">id: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="hash">hash: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="previousHash">previousHash: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>, <span name="sequence">sequence: <span class="extype" name="scala.Long">Long</span></span>, <span name="transactionCount">transactionCount: <span class="extype" name="scala.Int">Int</span></span>, <span name="operationCount">operationCount: <span class="extype" name="scala.Int">Int</span></span>, <span name="closedAt">closedAt: <span class="extype" name="java.time.ZonedDateTime">ZonedDateTime</span></span>, <span name="totalCoins">totalCoins: <span class="extype" name="scala.Double">Double</span></span>, <span name="feePool">feePool: <span class="extype" name="scala.Double">Double</span></span>, <span name="baseFee">baseFee: <span class="extype" name="scala.Long">Long</span></span>, <span name="baseReserve">baseReserve: <span class="extype" name="scala.Long">Long</span></span>, <span name="maxTxSetSize">maxTxSetSize: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <span class="name">LedgerResponse</span><span class="params">(<span name="id">id: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="hash">hash: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="previousHash">previousHash: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>, <span name="sequence">sequence: <span class="extype" name="scala.Long">Long</span></span>, <span name="successTransactionCount">successTransactionCount: <span class="extype" name="scala.Int">Int</span></span>, <span name="failureTransactionCount">failureTransactionCount: <span class="extype" name="scala.Int">Int</span></span>, <span name="operationCount">operationCount: <span class="extype" name="scala.Int">Int</span></span>, <span name="closedAt">closedAt: <span class="extype" name="java.time.ZonedDateTime">ZonedDateTime</span></span>, <span name="totalCoins">totalCoins: <span class="extype" name="scala.Double">Double</span></span>, <span name="feePool">feePool: <span class="extype" name="scala.Double">Double</span></span>, <span name="baseFee">baseFee: <span class="extype" name="scala.Long">Long</span></span>, <span name="baseReserve">baseReserve: <span class="extype" name="scala.Long">Long</span></span>, <span name="maxTxSetSize">maxTxSetSize: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4>
 
@@ -368,9 +368,9 @@
         <div id="constructors" class="members">
               <h3>Instance Constructors</h3>
               <ol><li name="stellar.sdk.model.response.LedgerResponse#&lt;init&gt;" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="&lt;init&gt;(id:String,hash:String,previousHash:Option[String],sequence:Long,transactionCount:Int,operationCount:Int,closedAt:java.time.ZonedDateTime,totalCoins:Double,feePool:Double,baseFee:Long,baseReserve:Long,maxTxSetSize:Int):stellar.sdk.model.response.LedgerResponse"></a><a id="&lt;init&gt;:LedgerResponse"></a>
+      <a id="&lt;init&gt;(id:String,hash:String,previousHash:Option[String],sequence:Long,successTransactionCount:Int,failureTransactionCount:Int,operationCount:Int,closedAt:java.time.ZonedDateTime,totalCoins:Double,feePool:Double,baseFee:Long,baseReserve:Long,maxTxSetSize:Int):stellar.sdk.model.response.LedgerResponse"></a><a id="&lt;init&gt;:LedgerResponse"></a>
       <span class="permalink">
-      <a href="../../../../stellar/sdk/model/response/LedgerResponse.html#&lt;init&gt;(id:String,hash:String,previousHash:Option[String],sequence:Long,transactionCount:Int,operationCount:Int,closedAt:java.time.ZonedDateTime,totalCoins:Double,feePool:Double,baseFee:Long,baseReserve:Long,maxTxSetSize:Int):stellar.sdk.model.response.LedgerResponse" title="Permalink">
+      <a href="../../../../stellar/sdk/model/response/LedgerResponse.html#&lt;init&gt;(id:String,hash:String,previousHash:Option[String],sequence:Long,successTransactionCount:Int,failureTransactionCount:Int,operationCount:Int,closedAt:java.time.ZonedDateTime,totalCoins:Double,feePool:Double,baseFee:Long,baseReserve:Long,maxTxSetSize:Int):stellar.sdk.model.response.LedgerResponse" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -379,7 +379,7 @@
         <span class="kind">new</span>
       </span>
       <span class="symbol">
-        <span class="name">LedgerResponse</span><span class="params">(<span name="id">id: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="hash">hash: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="previousHash">previousHash: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>, <span name="sequence">sequence: <span class="extype" name="scala.Long">Long</span></span>, <span name="transactionCount">transactionCount: <span class="extype" name="scala.Int">Int</span></span>, <span name="operationCount">operationCount: <span class="extype" name="scala.Int">Int</span></span>, <span name="closedAt">closedAt: <span class="extype" name="java.time.ZonedDateTime">ZonedDateTime</span></span>, <span name="totalCoins">totalCoins: <span class="extype" name="scala.Double">Double</span></span>, <span name="feePool">feePool: <span class="extype" name="scala.Double">Double</span></span>, <span name="baseFee">baseFee: <span class="extype" name="scala.Long">Long</span></span>, <span name="baseReserve">baseReserve: <span class="extype" name="scala.Long">Long</span></span>, <span name="maxTxSetSize">maxTxSetSize: <span class="extype" name="scala.Int">Int</span></span>)</span>
+        <span class="name">LedgerResponse</span><span class="params">(<span name="id">id: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="hash">hash: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="previousHash">previousHash: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>, <span name="sequence">sequence: <span class="extype" name="scala.Long">Long</span></span>, <span name="successTransactionCount">successTransactionCount: <span class="extype" name="scala.Int">Int</span></span>, <span name="failureTransactionCount">failureTransactionCount: <span class="extype" name="scala.Int">Int</span></span>, <span name="operationCount">operationCount: <span class="extype" name="scala.Int">Int</span></span>, <span name="closedAt">closedAt: <span class="extype" name="java.time.ZonedDateTime">ZonedDateTime</span></span>, <span name="totalCoins">totalCoins: <span class="extype" name="scala.Double">Double</span></span>, <span name="feePool">feePool: <span class="extype" name="scala.Double">Double</span></span>, <span name="baseFee">baseFee: <span class="extype" name="scala.Long">Long</span></span>, <span name="baseReserve">baseReserve: <span class="extype" name="scala.Long">Long</span></span>, <span name="maxTxSetSize">maxTxSetSize: <span class="extype" name="scala.Int">Int</span></span>)</span>
       </span>
       
       
@@ -545,6 +545,22 @@
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
+    </li><li name="stellar.sdk.model.response.LedgerResponse#failureTransactionCount" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="failureTransactionCount:Int"></a>
+      <span class="permalink">
+      <a href="../../../../stellar/sdk/model/response/LedgerResponse.html#failureTransactionCount:Int" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">failureTransactionCount</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
+      </span>
+      
+      
     </li><li name="stellar.sdk.model.response.LedgerResponse#feePool" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="feePool:Double"></a>
       <span class="permalink">
@@ -768,6 +784,22 @@
       </span>
       
       
+    </li><li name="stellar.sdk.model.response.LedgerResponse#successTransactionCount" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="successTransactionCount:Int"></a>
+      <span class="permalink">
+      <a href="../../../../stellar/sdk/model/response/LedgerResponse.html#successTransactionCount:Int" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">successTransactionCount</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
+      </span>
+      
+      
     </li><li name="scala.AnyRef#synchronized" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="synchronized[T0](x$1:=&gt;T0):T0"></a><a id="synchronized[T0](⇒T0):T0"></a>
       <span class="permalink">
@@ -809,7 +841,7 @@
     </span>
       <span class="modifier_kind">
         <span class="modifier"></span>
-        <span class="kind">val</span>
+        <span class="kind">def</span>
       </span>
       <span class="symbol">
         <span class="name">transactionCount</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>

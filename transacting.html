@@ -134,7 +134,7 @@ synesso/scala-stellar-sdk
 <ul style="display: none">
 <li class="md-nav__item md-version" id="project.version">
 <label class="md-nav__link" for="__version">
-<i class="md-icon" title="Version">label_outline</i> 0.5.1
+<i class="md-icon" title="Version">label_outline</i> 0.5.2
 </label>
 </li>
 </ul>
@@ -167,12 +167,12 @@ synesso/scala-stellar-sdk
 <h2><a href="#creating" name="creating" class="anchor"><span class="anchor-link"></span></a>Creating</h2>
 <p>Every transaction must originate from an existing account on the network and correctly specify the next <a href="https://www.stellar.org/developers/guides/concepts/accounts.html#sequence-number">sequence number</a>. Creating a new <code>Transaction</code> instance requires these two values, wrapped in an <a href="https://synesso.github.io/scala-stellar-sdk/api/stellar/sdk/Account.html">Account</a>.</p>
 <p>Additionally, a <code>Network</code> must be implicit in scope. The choice of network will affect how the transaction is serialised.</p>
-<pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/Synesso/scala-stellar-sdk/tree/v0.5.1/src/it/scala/stellar/sdk/FriendBotSpec.scala#L27-L29" target="_blank" title="Go to snippet source"></a><code class="language-scala">implicit val network = TestNetwork
+<pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/Synesso/scala-stellar-sdk/tree/v0.5.2/src/it/scala/stellar/sdk/FriendBotSpec.scala#L27-L29" target="_blank" title="Go to snippet source"></a><code class="language-scala">implicit val network = TestNetwork
 val account = Account(accn, sequence)
 Transaction(account)</code></pre>
 <h3><a href="#sequence-number" name="sequence-number" class="anchor"><span class="anchor-link"></span></a>Sequence Number</h3>
 <p>The sequence number for a new account is the id of the ledger in which is was created. The id increments by one with every submitted transaction. In simple architectures, it is possible to keep track of the next sequence number without querying the network. However, if this is not possible, or the number is unknown, you can directly substitute the response from the <a href="queries.html#accounts">account query</a> into the <code>Transaction</code> constructor.</p>
-<pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/Synesso/scala-stellar-sdk/tree/v0.5.1/src/it/scala/stellar/sdk/LocalNetworkIntegrationSpec.scala#L126-L132" target="_blank" title="Go to snippet source"></a><code class="language-scala">for {
+<pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/Synesso/scala-stellar-sdk/tree/v0.5.2/src/it/scala/stellar/sdk/LocalNetworkIntegrationSpec.scala#L123-L129" target="_blank" title="Go to snippet source"></a><code class="language-scala">for {
   sourceAccount &lt;- network.account(payerKeyPair)
   response &lt;- model.Transaction(sourceAccount)
     .add(PaymentOperation(payeePublicKey, lumens(5000)))
@@ -182,14 +182,14 @@ Transaction(account)</code></pre>
 <p>As this example shows, transactions require additional data before they can be successfully processed.</p>
 <h3><a href="#operations" name="operations" class="anchor"><span class="anchor-link"></span></a>Operations</h3>
 <p>Without any <a href="https://synesso.github.io/scala-stellar-sdk/api/stellar/sdk/model/op/Operation.html">Operation</a>s, a transaction is not very useful. There can be as few as one and as many and one hundred operations added to each Transaction. These can be provided when constructing the Transaction.</p>
-<pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/Synesso/scala-stellar-sdk/tree/v0.5.1/src/test/scala/stellar/sdk/DocExamples.scala#L293-L298" target="_blank" title="Go to snippet source"></a><code class="language-scala">val account = Account(sourceKey, nextSequenceNumber)
+<pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/Synesso/scala-stellar-sdk/tree/v0.5.2/src/test/scala/stellar/sdk/DocExamples.scala#L293-L298" target="_blank" title="Go to snippet source"></a><code class="language-scala">val account = Account(sourceKey, nextSequenceNumber)
 val txn = Transaction(account, Seq(
   CreateAccountOperation(aliceKey),
   CreateAccountOperation(bobKey),
   PaymentOperation(charlieKey, Amount.lumens(42))
 ))</code></pre>
 <p>Or they can be added afterwards.</p>
-<pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/Synesso/scala-stellar-sdk/tree/v0.5.1/src/test/scala/stellar/sdk/DocExamples.scala#L306-L314" target="_blank" title="Go to snippet source"></a><code class="language-scala">val txn = Transaction(account)
+<pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/Synesso/scala-stellar-sdk/tree/v0.5.2/src/test/scala/stellar/sdk/DocExamples.scala#L306-L314" target="_blank" title="Go to snippet source"></a><code class="language-scala">val txn = Transaction(account)
   .add(PaymentOperation(aliceKey, Amount.lumens(100)))
   .add(PaymentOperation(bobKey, Amount.lumens(77)))
   .add(PaymentOperation(charlieKey, Amount.lumens(4.08)))
@@ -219,40 +219,40 @@ val txn = Transaction(account, Seq(
 <p>Operations need not originate from the same account as the transaction. In this way a single transaction can be issued that affects multiple accounts. This enables techniques such as the <a href="https://www.lumenauts.com/blog/boosting-tps-with-stellar-channels">channel pattern</a>. Each operation has an optional constructor parameter <code>sourceAccount: Option[PublicKey]</code> where the source account can be specified.</p>
 <h3><a href="#signatures" name="signatures" class="anchor"><span class="anchor-link"></span></a>Signatures</h3>
 <p>Before a transaction will be accepted by the network, it must be signed with at least one key. In the most basic case, the transaction only needs to be signed by the source account. This is done by calling <code>.sign(KeyPair)</code>.</p>
-<pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/Synesso/scala-stellar-sdk/tree/v0.5.1/src/test/scala/stellar/sdk/DocExamples.scala#L323-L324" target="_blank" title="Go to snippet source"></a><code class="language-scala">val transaction = Transaction(account).add(operation)
+<pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/Synesso/scala-stellar-sdk/tree/v0.5.2/src/test/scala/stellar/sdk/DocExamples.scala#L323-L324" target="_blank" title="Go to snippet source"></a><code class="language-scala">val transaction = Transaction(account).add(operation)
 val signedTransaction: SignedTransaction = transaction.sign(sourceKey)</code></pre>
 <p>It may be that the source account has been modified to require more than one signature. Or, as mentioned earlier, one or more of the operations may affect other accounts. In either of these cases, the transaction will not be valid until it has received all necessary signatures.</p>
-<pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/Synesso/scala-stellar-sdk/tree/v0.5.1/src/test/scala/stellar/sdk/DocExamples.scala#L333-L334" target="_blank" title="Go to snippet source"></a><code class="language-scala">val transaction = Transaction(jointAccount).add(operation)
+<pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/Synesso/scala-stellar-sdk/tree/v0.5.2/src/test/scala/stellar/sdk/DocExamples.scala#L333-L334" target="_blank" title="Go to snippet source"></a><code class="language-scala">val transaction = Transaction(jointAccount).add(operation)
 val signedTransaction: SignedTransaction = transaction.sign(aliceKey, bobKey)</code></pre>
 <p>Additionally, a transaction will fail if it has too many signatures.</p>
 <h2><a href="#submitting" name="submitting" class="anchor"><span class="anchor-link"></span></a>Submitting</h2>
 <p>Once a transaction is signed (and therefore is of type <code>SignedTransaction</code>) it can be submitted to the network.</p>
-<pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/Synesso/scala-stellar-sdk/tree/v0.5.1/src/test/scala/stellar/sdk/DocExamples.scala#L343-L344" target="_blank" title="Go to snippet source"></a><code class="language-scala">val transaction = Transaction(account).add(operation).sign(sourceKey)
+<pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/Synesso/scala-stellar-sdk/tree/v0.5.2/src/test/scala/stellar/sdk/DocExamples.scala#L343-L344" target="_blank" title="Go to snippet source"></a><code class="language-scala">val transaction = Transaction(account).add(operation).sign(sourceKey)
 val response: Future[TransactionPostResponse] = transaction.submit()</code></pre>
 <p>The eventual resulting <a href="https://synesso.github.io/scala-stellar-sdk/api/stellar/sdk/resp/TransactionPostResp.html">TransactionPostResp</a> contains metadata about the processed transaction, including the full results encoded as <a href="https://www.stellar.org/developers/guides/concepts/xdr.html">XDR</a>. Additionally, the XDR can be decoded on the fly by calling the relevant convenience methods.</p>
-<pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/Synesso/scala-stellar-sdk/tree/v0.5.1/src/test/scala/stellar/sdk/DocExamples.scala#L353-L356" target="_blank" title="Go to snippet source"></a><code class="language-scala">Transaction(account).add(operation).sign(sourceKey).submit().foreach {
+<pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/Synesso/scala-stellar-sdk/tree/v0.5.2/src/test/scala/stellar/sdk/DocExamples.scala#L353-L356" target="_blank" title="Go to snippet source"></a><code class="language-scala">Transaction(account).add(operation).sign(sourceKey).submit().foreach {
   case ok: TransactionApproved =&gt; println(ok.feeCharged)
   case ko =&gt; println(ko)
 }</code></pre>
 <h2><a href="#xdr" name="xdr" class="anchor"><span class="anchor-link"></span></a>XDR</h2>
 <p>Transactions can be serialized to a base64-encoding of their XDR form. This is a strictly-defined format for transactions that is compatible across all supporting Stellar libraries and tooling. Given this, it is possible to save and load transaction state via XDR strings.</p>
-<pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/Synesso/scala-stellar-sdk/tree/v0.5.1/src/test/scala/stellar/sdk/model/TransactionSpec.scala#L116-L118" target="_blank" title="Go to snippet source"></a><code class="language-scala">val encoded: String = txn.encodeXDR
+<pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/Synesso/scala-stellar-sdk/tree/v0.5.2/src/test/scala/stellar/sdk/model/TransactionSpec.scala#L116-L118" target="_blank" title="Go to snippet source"></a><code class="language-scala">val encoded: String = txn.encodeXDR
 val decoded: Transaction = Transaction.decodeXDR(encoded)
 decoded must beEquivalentTo(txn)</code></pre>
 <p>Transactions with signatures are a different data structure (signatures are included in an envelope along with the transaction) and need to be decoded via a similar method on <code>SignedTransaction</code>.</p>
-<pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/Synesso/scala-stellar-sdk/tree/v0.5.1/src/test/scala/stellar/sdk/model/TransactionSpec.scala#L124-L126" target="_blank" title="Go to snippet source"></a><code class="language-scala">val encoded: String = signedTxn.encodeXDR
+<pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/Synesso/scala-stellar-sdk/tree/v0.5.2/src/test/scala/stellar/sdk/model/TransactionSpec.scala#L124-L126" target="_blank" title="Go to snippet source"></a><code class="language-scala">val encoded: String = signedTxn.encodeXDR
 val decoded: SignedTransaction = SignedTransaction.decodeXDR(encoded)
 decoded must beEquivalentTo(signedTxn)</code></pre>
 <p>Continue reading to learn how to obtain historical data from network via <a href="queries.html">Queries</a>.</p>
 </div>
 <div>
-<a href="https://github.com/Synesso/scala-stellar-sdk/tree/v0.5.1/src/main/paradox/transacting.md" title="Edit this page" class="md-source-file md-edit">
+<a href="https://github.com/Synesso/scala-stellar-sdk/tree/v0.5.2/src/main/paradox/transacting.md" title="Edit this page" class="md-source-file md-edit">
 Edit this page
 </a>
 </div>
 <div class="print-only">
 <span class="md-source-file md-version">
-0.5.1
+0.5.2
 </span>
 </div>
 </article>
