@@ -8,7 +8,7 @@ _Nothing yet_
 
 ## 0.5.2
 
-### Change
+### Changed
 
 - Change to `LedgerResponse` fields to match updates in Horizon v0.17.0. The fields `successTransactionCount` and
     `failureTransactionCount` were added. The field `transactionCount` remains as a method defined in terms
