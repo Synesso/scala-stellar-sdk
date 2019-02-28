@@ -72,7 +72,7 @@ class Horizon(uri: URI)
     for {
       envelope <- Future(txn.encodeXDR)
       request = HttpRequest(POST, Uri(s"$uri/transactions"), entity = FormData("tx" -> envelope).toEntity)
-        .withHeaders(clientNameHeader, clientVersionHeader)
+        .addHeader(clientNameHeader).addHeader(clientVersionHeader)
       response <- Http().singleRequest(request)
       unwrapped <- parseOrRedirectOrError[TransactionPostResponse](request, response)
     } yield unwrapped.get
@@ -83,7 +83,7 @@ class Horizon(uri: URI)
     val requestUri = Uri(s"$uri$path").withQuery(Query(params))
     logger.debug(s"Getting {}", requestUri)
 
-    val request = HttpRequest(GET, requestUri).withHeaders(clientNameHeader, clientVersionHeader)
+    val request = HttpRequest(GET, requestUri).addHeader(clientNameHeader).addHeader(clientVersionHeader)
     for {
       response <- Http().singleRequest(request)
       unwrapped <- parseOrRedirectOrError(request, response)
@@ -150,7 +150,7 @@ class Horizon(uri: URI)
 
     logger.debug(s"Getting $uri")
     for {
-      response <- Http().singleRequest(HttpRequest(GET, uri).withHeaders(clientNameHeader, clientVersionHeader))
+      response <- Http().singleRequest(HttpRequest(GET, uri).addHeader(clientNameHeader).addHeader(clientVersionHeader))
       unwrapped <- Unmarshal(response).to[RawPage]
     } yield unwrapped.parse[T]
   }
@@ -170,7 +170,7 @@ class Horizon(uri: URI)
     }
 
     def send(req: HttpRequest): Future[HttpResponse] =
-      Http().singleRequest(req/*.withHeaders(clientNameHeader, clientVersionHeader)*/)
+      Http().singleRequest(req.addHeader(clientNameHeader).addHeader(clientVersionHeader))
 
     val eventSource: Source[ServerSentEvent, NotUsed] =
       EventSource(requestUri, send, lastEventId, unmarshaller = BigEventUnmarshalling)
