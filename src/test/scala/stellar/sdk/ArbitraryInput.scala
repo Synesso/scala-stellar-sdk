@@ -132,6 +132,8 @@ trait ArbitraryInput extends ScalaCheck {
 
   implicit def arbSigner = Arbitrary(genSigner)
 
+  implicit def arbFeeStatsResponse = Arbitrary(genFeeStatsResponse)
+
   def round(d: Double) = "%.7f".formatLocal(Locale.ROOT, d).toDouble
 
   def genKeyPair: Gen[KeyPair] = Gen.oneOf(Seq(KeyPair.random))
@@ -680,4 +682,14 @@ trait ArbitraryInput extends ScalaCheck {
       InsufficientBalance, SourceAccountNotFound, InsufficientFee, UnusedSignatures, UnspecifiedInternalError)
     fee <- genNativeAmount
   } yield TransactionNotAttempted(reason, fee)
+
+  def genFeeStatsResponse: Gen[FeeStatsResponse] = for {
+    lastLedger <- Gen.posNum[Long]
+    lastLedgerBaseFee <- genNativeAmount
+    ledgerCapacityUsage <- Gen.choose(0.0, 1.0)
+    minAcceptedFee <- genNativeAmount
+    modeAcceptedFee <- genNativeAmount
+    percentiles <- Gen.listOfN(11, genNativeAmount).map(_.sortBy(_.units))
+    acceptedFeePercentiles = Seq(10, 20, 30, 40, 50, 60, 70 ,80, 90, 95, 99).zip(percentiles).toMap
+  } yield FeeStatsResponse(lastLedger, lastLedgerBaseFee, ledgerCapacityUsage, minAcceptedFee, modeAcceptedFee, acceptedFeePercentiles)
 }
