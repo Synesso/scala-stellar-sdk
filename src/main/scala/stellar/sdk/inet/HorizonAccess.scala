@@ -19,6 +19,7 @@ import com.typesafe.scalalogging.LazyLogging
 import de.heikoseeberger.akkahttpjson4s.Json4sSupport
 import org.json4s.native.{JsonMethods, Serialization}
 import org.json4s.{CustomSerializer, DefaultFormats, Formats, JObject, NoTypeHints}
+import stellar.sdk.BuildInfo
 import stellar.sdk.model._
 import stellar.sdk.model.op.TransactedOperationDeserializer
 import stellar.sdk.model.response._
@@ -57,6 +58,8 @@ class Horizon(uri: URI)
 
   import HalJsonSupport._
 
+  private val clientNameHeader = RawHeader("X-Client-Name", BuildInfo.name)
+  private val clientVersionHeader = RawHeader("X-Client-Version", BuildInfo.version)
   implicit val materializer = ActorMaterializer()
   implicit val executionContext = system.dispatcher
 
@@ -69,6 +72,7 @@ class Horizon(uri: URI)
     for {
       envelope <- Future(txn.encodeXDR)
       request = HttpRequest(POST, Uri(s"$uri/transactions"), entity = FormData("tx" -> envelope).toEntity)
+        .withHeaders(clientNameHeader, clientVersionHeader)
       response <- Http().singleRequest(request)
       unwrapped <- parseOrRedirectOrError[TransactionPostResponse](request, response)
     } yield unwrapped.get
@@ -79,7 +83,7 @@ class Horizon(uri: URI)
     val requestUri = Uri(s"$uri$path").withQuery(Query(params))
     logger.debug(s"Getting {}", requestUri)
 
-    val request = HttpRequest(GET, requestUri)
+    val request = HttpRequest(GET, requestUri).withHeaders(clientNameHeader, clientVersionHeader)
     for {
       response <- Http().singleRequest(request)
       unwrapped <- parseOrRedirectOrError(request, response)
@@ -146,7 +150,7 @@ class Horizon(uri: URI)
 
     logger.debug(s"Getting $uri")
     for {
-      response <- Http().singleRequest(HttpRequest(GET, uri))
+      response <- Http().singleRequest(HttpRequest(GET, uri).withHeaders(clientNameHeader, clientVersionHeader))
       unwrapped <- Unmarshal(response).to[RawPage]
     } yield unwrapped.parse[T]
   }
@@ -165,8 +169,11 @@ class Horizon(uri: URI)
       case _ => None
     }
 
+    def send(req: HttpRequest): Future[HttpResponse] =
+      Http().singleRequest(req/*.withHeaders(clientNameHeader, clientVersionHeader)*/)
+
     val eventSource: Source[ServerSentEvent, NotUsed] =
-      EventSource(requestUri, Http().singleRequest(_), lastEventId, unmarshaller = BigEventUnmarshalling)
+      EventSource(requestUri, send, lastEventId, unmarshaller = BigEventUnmarshalling)
 
     eventSource.mapConcat{ case ServerSentEvent(data, eventType, _, _) =>
       (if (eventType.contains("open")) None else Some(data)).to[collection.immutable.Iterable]

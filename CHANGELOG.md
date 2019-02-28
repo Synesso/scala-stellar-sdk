@@ -4,7 +4,11 @@ As this project is pre 1.0, breaking changes may happen for minor version bumps.
 
 ## Next version
 
-_Nothing yet_
+### Added
+
+- Included client request headers `X-Client-Name` and `X-Client-Version` so that Horizon instances can tell when a 
+    request comes from the Scala SDK. [#59](https://github.com/Synesso/scala-stellar-sdk/issues/59)
+    
 
 ## 0.5.2
 

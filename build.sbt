@@ -34,20 +34,24 @@ lazy val commonSettings = Seq(
 lazy val root = (project in file("."))
   .enablePlugins(GitVersioning)
   .enablePlugins(SitePlugin).settings(
-  siteSourceDirectory := target.value / "paradox" / "site" / "main"
-)
-  .enablePlugins(GhpagesPlugin).settings(
-  git.remoteRepo := "git@github.com:synesso/scala-stellar-sdk.git"
-)
-  .enablePlugins(ParadoxPlugin).settings(
-  paradoxProperties ++= Map(
-    "name" -> name.value,
-    "organization" -> organization.value,
-    "version" -> version.value,
-    "scalaBinaryVersion" -> scalaBinaryVersion.value,
-    "scaladoc.stellar.base_url" -> "https://synesso.github.io/scala-stellar-sdk/api"
+    siteSourceDirectory := target.value / "paradox" / "site" / "main"
   )
-)
+  .enablePlugins(GhpagesPlugin).settings(
+    git.remoteRepo := "git@github.com:synesso/scala-stellar-sdk.git"
+  )
+  .enablePlugins(BuildInfoPlugin).settings(
+    buildInfoKeys := Seq[BuildInfoKey](name, version, scalaVersion, sbtVersion),
+    buildInfoPackage := "stellar.sdk"
+  )
+  .enablePlugins(ParadoxPlugin).settings(
+    paradoxProperties ++= Map(
+      "name" -> name.value,
+      "organization" -> organization.value,
+      "version" -> version.value,
+      "scalaBinaryVersion" -> scalaBinaryVersion.value,
+      "scaladoc.stellar.base_url" -> "https://synesso.github.io/scala-stellar-sdk/api"
+    )
+  )
   .enablePlugins(ParadoxMaterialThemePlugin).settings(
   paradoxMaterialTheme in Compile ~= {
     _

@@ -61,4 +61,6 @@ class HorizonSpec(implicit ec: ExecutionEnv) extends Specification with Mockito 
     }
   }
 
+
+
 }
