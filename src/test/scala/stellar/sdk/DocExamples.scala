@@ -17,7 +17,7 @@ import stellar.sdk.model.result.TransactionHistory
 import scala.concurrent.{ExecutionContext, Future}
 import scala.reflect.ClassTag
 
-class DocExamples(implicit ee: ExecutionEnv)  extends Specification with Mockito {
+class DocExamples(implicit ee: ExecutionEnv) extends Specification with Mockito {
 
   //noinspection ScalaUnusedSymbol
   // $COVERAGE-OFF$
@@ -25,6 +25,7 @@ class DocExamples(implicit ee: ExecutionEnv)  extends Specification with Mockito
   // #sources_implicit_setup
   implicit val system = ActorSystem("stellar-sources")
   implicit val materializer = ActorMaterializer()
+
   import system.dispatcher
   // #sources_implicit_setup
 
@@ -102,6 +103,16 @@ class DocExamples(implicit ee: ExecutionEnv)  extends Specification with Mockito
       // a source of all new effects for a given account
       val effectsForAccountSource = TestNetwork.effectsByAccountSource(publicKey)
       // #effect_source_examples
+
+      ok
+    }
+
+    "be present for fee_stats" >> {
+      // #fee_stats_query_example
+      val feeStats: Future[FeeStatsResponse] = TestNetwork.feeStats()
+      val minAcceptedFee: Future[NativeAmount] = feeStats.map(_.minAcceptedFee)
+      val percentileFee99: Future[NativeAmount] = feeStats.map(_.acceptedFeePercentiles(99))
+      // #fee_stats_query_example
 
       ok
     }
@@ -255,7 +266,7 @@ class DocExamples(implicit ee: ExecutionEnv)  extends Specification with Mockito
 
       // stream of all transactions
       val transactions: Future[Stream[TransactionHistory]] =
-      TestNetwork.transactions()
+        TestNetwork.transactions()
 
       // stream of transactions affecting the specified account
       val accountTxns = TestNetwork.transactionsByAccount(publicKey)
@@ -382,6 +393,7 @@ class DocExamples(implicit ee: ExecutionEnv)  extends Specification with Mockito
 
     }
   }
+
   // $COVERAGE-ON$
 
 }

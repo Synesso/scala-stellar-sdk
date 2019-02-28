@@ -59,6 +59,7 @@ import scala.concurrent.duration.{Duration, FiniteDuration}
   *}}}
   */
 // $COVERAGE-OFF$ - this aint my bag, baby. It will be removed when https://github.com/akka/akka-http/pull/2193 is released.
+// in akka-http v10.1.8 https://github.com/akka/akka-http/milestone/47
 object EventSource {
 
   type EventSource = Source[ServerSentEvent, NotUsed]

@@ -443,6 +443,13 @@ trait Network extends LazyLogging {
     horizon.getSource[TransactionHistory](s"/ledgers/$sequenceId/transactions", TransactionHistoryDeserializer, cursor)
   }
 
+  /**
+    * Returns the fee statistics for the last ledger.
+    * @see [[https://www.stellar.org/developers/horizon/reference/endpoints/fee-stats.html endpoint doc]]
+    */
+  def feeStats()(implicit ex: ExecutionContext): Future[FeeStatsResponse] =
+    horizon.get[FeeStatsResponse]("/fee_stats")
+
   private def assetParams(prefix: String, asset: Asset): Map[String, String] = {
     asset match {
       case NativeAsset => Map(s"${prefix}_asset_type" -> "native")

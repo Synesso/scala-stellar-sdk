@@ -543,6 +543,12 @@ class NetworkSpec(implicit ee: ExecutionEnv) extends Specification with Arbitrar
       network.horizon.getSource(s"/ledgers/$ledgerId/transactions", TransactionHistoryDeserializer, Now) returns expected
       network.transactionsByLedgerSource(ledgerId) mustEqual expected
     }
+
+    "provide fee stats" >> prop { fs: FeeStatsResponse =>
+      val network = new MockNetwork
+      network.horizon.get[FeeStatsResponse]("/fee_stats") returns Future(fs)
+      network.feeStats must beEqualTo(fs).await
+    }
   }
 
   class MockNetwork extends Network {
