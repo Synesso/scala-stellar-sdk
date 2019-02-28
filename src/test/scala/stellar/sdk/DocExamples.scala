@@ -106,6 +106,16 @@ class DocExamples(implicit ee: ExecutionEnv)  extends Specification with Mockito
       ok
     }
 
+    "be present for fee_stats" >> {
+      // #fee_stats_query_example
+      val feeStats: Future[FeeStatsResponse] = TestNetwork.feeStats()
+      val minAcceptedFee: Future[NativeAmount] = feeStats.map(_.minAcceptedFee)
+      val percentileFee99: Future[NativeAmount] = feeStats.map(_.acceptedFeePercentiles(99))
+      // #fee_stats_query_example
+
+        ok
+    }
+
     "be present for ledgers" >> {
       // #ledger_query_examples
       // details of a specific ledger

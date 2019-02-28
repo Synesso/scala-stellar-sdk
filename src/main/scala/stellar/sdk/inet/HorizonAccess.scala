@@ -66,7 +66,7 @@ class Horizon(uri: URI)
   implicit val serialization = org.json4s.native.Serialization
   implicit val formats = Serialization.formats(NoTypeHints) + AccountRespDeserializer + DataValueRespDeserializer +
     LedgerRespDeserializer + TransactedOperationDeserializer + OrderBookDeserializer +
-    TransactionPostResponseDeserializer + TransactionHistoryDeserializer
+    TransactionPostResponseDeserializer + TransactionHistoryDeserializer + FeeStatsRespDeserializer
 
   override def post(txn: SignedTransaction)(implicit ec: ExecutionContext): Future[TransactionPostResponse] = {
     for {

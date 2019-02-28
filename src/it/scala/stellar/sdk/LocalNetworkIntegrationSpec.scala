@@ -457,6 +457,14 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
     }
   }
 
+  "fee stats endpoint" should {
+    "return the stats for the last ledger" >> {
+      network.feeStats() must beLike[FeeStatsResponse]({ case fsr =>
+          fsr.minAcceptedFee mustEqual NativeAmount(100)
+      }).awaitFor(10 seconds)
+    }
+  }
+
   // Integration tests for SSE endpoints are pending one of the following fixes:
   // * Horizon Docker image doesn't hang randomly at ledger close; or
   // * Wiremock supports mocking of SSE.

@@ -43,6 +43,15 @@ By default the results will be in ascending order from the earliest record. This
 @@snip [DocExamples.scala](../../test/scala/stellar/sdk/DocExamples.scala) { #effect_query_examples }
 
 
+### Fee Statistics
+
+When transacting, it is possible to nominate a fee that is greater than the base fee. Transactions paying higher fees
+are prioritised at times of high load.
+
+This parameterless endpoint provides statistics about the fees paid during the last known ledger.
+
+@@snip [DocExamples.scala](../../test/scala/stellar/sdk/DocExamples.scala) { #fee_stats_query_example }
+
 ### Ledgers
 
 @scaladoc[Ledgers](stellar.sdk.resp.LedgerResp) represent the state of the network at any time. They are created
