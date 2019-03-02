@@ -7,6 +7,9 @@ lazy val commonSettings = Seq(
   organization := "io.github.synesso",
   scalaVersion := "2.12.8",
   homepage := Some(url("https://github.com/synesso/scala-stellar-sdk")),
+  startYear := Some(2018),
+  description := "Perform Stellar (distributed payments platform) operations from your Scala application. " +
+    "Build and submit transactions, query the state of the network and stream updates.",
   developers := List(
     Developer("jem", "Jem Mawson", "jem.mawson@gmail.com", url = url("https://keybase.io/jem"))
   ),
@@ -21,7 +24,7 @@ lazy val commonSettings = Seq(
     "UTF-8",
     "-target:jvm-1.8"),
   fork := true,
-  coverageMinimum := 98,
+  coverageMinimum := 99,
   coverageFailOnMinimum := true,
   licenses += ("Apache-2.0", url("https://opensource.org/licenses/Apache-2.0")),
   bintrayRepository := "mvn",
