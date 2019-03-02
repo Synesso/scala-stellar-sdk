@@ -1,22 +1,21 @@
 package stellar.sdk
 
-import java.net.URI
 import java.nio.charset.StandardCharsets.UTF_8
 
 import akka.NotUsed
 import akka.stream.scaladsl.Source
 import com.typesafe.scalalogging.LazyLogging
-import stellar.sdk.util.ByteArrays._
 import stellar.sdk.inet._
 import stellar.sdk.model._
 import stellar.sdk.model.op.{Operation, PayOperation, Transacted, TransactedOperationDeserializer}
-import stellar.sdk.model.result._
 import stellar.sdk.model.response._
+import stellar.sdk.model.result._
+import stellar.sdk.util.ByteArrays._
 
 import scala.concurrent.{ExecutionContext, Future}
 
 trait Network extends LazyLogging {
-  val passphrase: String
+  def passphrase: String
   lazy val networkId: Array[Byte] = sha256(passphrase.getBytes(UTF_8))
   val horizon: HorizonAccess
 
@@ -24,6 +23,11 @@ trait Network extends LazyLogging {
     * The keypair for the master account for this network
     */
   lazy val masterAccount: KeyPair = KeyPair.fromSecretSeed(networkId)
+
+  /**
+    * Fetches information on the Horizon and Core version underlying this network.
+    */
+  def info()(implicit ec: ExecutionContext): Future[NetworkInfo] = horizon.get[NetworkInfo]("/")
 
   /**
     * Submit the SignedTransaction to the network and eventually receive a TransactionPostResp with the results.

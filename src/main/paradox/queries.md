@@ -66,6 +66,15 @@ By default the results will be in ascending order from the earliest record. This
 @@snip [DocExamples.scala](../../test/scala/stellar/sdk/DocExamples.scala) { #ledger_query_examples }
 
 
+### Network Info
+
+Meta information about the network itself is available via the `info()` endpoint. Data provided in the response includes
+the network passphrase, software versions for Horizon and Core, the current and max supported core protocol versions,
+and the earliest and latest ledger ids.
+
+@@snip [DocExamples.scala](../../test/scala/stellar/sdk/DocExamples.scala) { #network_info_example }
+
+
 ### Offers
 
 @scaladoc[Offers](stellar.sdk.resp.OfferResp) can be issued by accounts to buy or sell assets. Querying for offers

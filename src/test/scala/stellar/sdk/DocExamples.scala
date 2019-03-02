@@ -138,6 +138,15 @@ class DocExamples(implicit ee: ExecutionEnv) extends Specification with Mockito 
       ok
     }
 
+    "be present for network info" >> {
+      // #network_info_example
+      val info: Future[NetworkInfo] = TestNetwork.info()
+      val passphrase: Future[String] = info.map(_.passphrase)
+      // #network_info_example
+
+      ok
+    }
+
     "be present for offers" >> {
       // #offer_query_examples
       // all offers for a specified account

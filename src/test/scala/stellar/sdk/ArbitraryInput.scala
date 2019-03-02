@@ -134,6 +134,8 @@ trait ArbitraryInput extends ScalaCheck {
 
   implicit def arbFeeStatsResponse = Arbitrary(genFeeStatsResponse)
 
+  implicit def arbNetworkInfo = Arbitrary(genNetworkInfo)
+
   def round(d: Double) = "%.7f".formatLocal(Locale.ROOT, d).toDouble
 
   def genKeyPair: Gen[KeyPair] = Gen.oneOf(Seq(KeyPair.random))
@@ -692,4 +694,14 @@ trait ArbitraryInput extends ScalaCheck {
     percentiles <- Gen.listOfN(11, genNativeAmount).map(_.sortBy(_.units))
     acceptedFeePercentiles = Seq(10, 20, 30, 40, 50, 60, 70 ,80, 90, 95, 99).zip(percentiles).toMap
   } yield FeeStatsResponse(lastLedger, lastLedgerBaseFee, ledgerCapacityUsage, minAcceptedFee, modeAcceptedFee, acceptedFeePercentiles)
+
+  def genNetworkInfo: Gen[NetworkInfo] = for {
+    horizonVersion <- Gen.identifier
+    coreVersion <- Gen.identifier
+    earliestLedger <- Gen.choose(1, 99999)
+    latestLedger <- Gen.choose(100000, 99999999999L)
+    passphrase <- Arbitrary.arbString.arbitrary
+    currentProtocolVersion <- Gen.choose(0, 100)
+    supportedProtocolVersion <- Gen.choose(0, 100)
+  } yield NetworkInfo(horizonVersion, coreVersion, earliestLedger, latestLedger, passphrase, currentProtocolVersion, supportedProtocolVersion)
 }
