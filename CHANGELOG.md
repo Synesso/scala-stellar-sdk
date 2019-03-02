@@ -12,7 +12,9 @@ As this project is pre 1.0, breaking changes may happen for minor version bumps.
 
 - Included client request headers `X-Client-Name` and `X-Client-Version` so that Horizon instances can tell when a 
     request comes from the Scala SDK. [#59](https://github.com/Synesso/scala-stellar-sdk/issues/59)
-    
+
+- Added `Network.info()` method to return the values in the Horizon root document including Horizon & Core versions,
+    network passphrase, protocol supported, etc. [#56](https://github.com/Synesso/scala-stellar-sdk/issues/56)
 
 ## 0.5.2
 

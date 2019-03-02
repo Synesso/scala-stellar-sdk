@@ -30,6 +30,10 @@ class NetworkSpec(implicit ee: ExecutionEnv) extends Specification with Arbitrar
       BigInt(1, TestNetwork.networkId).toString(16).toUpperCase mustEqual
         "CEE0302D59844D32BDCA915C8203DD44B33FBB7EDC19051EA37ABEDF28ECD472"
     }
+
+    "provide network info" >> {
+      TestNetwork.info() must not(throwAn[Exception]).awaitFor(10.seconds)
+    }
   }
 
   "public network" should {
@@ -45,6 +49,13 @@ class NetworkSpec(implicit ee: ExecutionEnv) extends Specification with Arbitrar
       val networkAccountId = "GBRPYHIL2CI3FNQ4BXLFMNDLFJUNPU2HY3ZMFSHONUCEOASW7QC7OX2H"
       TestNetwork.masterAccount.accountId mustEqual networkAccountId
       KeyPair.fromSecretSeed(TestNetwork.masterAccount.secretSeed).accountId  mustEqual networkAccountId
+    }
+
+    "provide underlying network info" >> prop { info: NetworkInfo =>
+      val network = new MockNetwork
+      val expected = Future(info)
+      network.horizon.get[NetworkInfo]("/") returns expected
+      network.info() mustEqual expected
     }
 
     "submit a signed transaction" >> prop { txn: SignedTransaction =>
