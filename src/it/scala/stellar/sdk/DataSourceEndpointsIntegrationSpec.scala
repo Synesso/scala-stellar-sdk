@@ -20,9 +20,9 @@ class DataSourceEndpointsIntegrationSpec(implicit ee: ExecutionEnv) extends Spec
 
   "transaction source" should {
     "provide all future transactions" >> {
-      val results: Future[Seq[TransactionHistory]] = PublicNetwork.transactionSource().take(5)
+      val results: Future[Seq[TransactionHistory]] = PublicNetwork.transactionSource().take(3)
         .runWith(Sink.seq[TransactionHistory])
-      results.map(_.size) must beEqualTo(5).awaitFor(1 minute)
+      results.map(_.size) must beEqualTo(3).awaitFor(1 minute)
     }
     "provide transactions history" >> {
       val results: Future[Seq[TransactionHistory]] = PublicNetwork.transactionSource(Record(100)).take(5)
