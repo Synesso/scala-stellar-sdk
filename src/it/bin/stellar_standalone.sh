@@ -23,7 +23,7 @@ fi
 docker stop stellar
 sleep 1
 docker run --rm -d -e LOG_LEVEL="debug" -e DISABLE_ASSET_STATS="false" -p "8000:8000" -p "11626:11626" $db_port \
-    --name stellar synesso/stellar:v0.17.0 --standalone
+    --name stellar synesso/stellar:v0.17.3 --standalone
 while ! container_started; do
   sleep 1
 done

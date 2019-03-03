@@ -3,6 +3,9 @@ package stellar.sdk
 import java.io.File
 import java.net.URI
 
+import akka.actor.ActorSystem
+import akka.stream.ActorMaterializer
+import akka.stream.scaladsl.Sink
 import com.github.tomakehurst.wiremock.WireMockServer
 import org.json4s.JsonDSL._
 import org.specs2.concurrent.ExecutionEnv
@@ -383,10 +386,9 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
   "payments endpoint" should {
     "filter payments by account" >> {
       network.paymentsByAccount(accnA) must beLike[Seq[Transacted[PayOperation]]] {
-        case a +: b +: c +: oneHundredPayments =>
-           a.operation must beEquivalentTo(CreateAccountOperation(accnA, lumens(1000), Some(masterAccountKey)))
-           b.operation must beEquivalentTo(PaymentOperation(accnB, IssuedAmount(555, Asset("Aardvark", accnA)), Some(accnA)))
-           c.operation must beEquivalentTo(PaymentOperation(accnB, lumens(5000), Some(accnA)))
+        case a +: b +: oneHundredPayments =>
+          a.operation must beEquivalentTo(CreateAccountOperation(accnA, lumens(1000), Some(masterAccountKey)))
+          b.operation must beEquivalentTo(PaymentOperation(accnB, IssuedAmount(555, Asset("Aardvark", accnA)), Some(accnA)))
           oneHundredPayments must haveSize(100)
       }.awaitFor(10.seconds)
     }
@@ -465,12 +467,6 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
     }
   }
 
-  // Integration tests for SSE endpoints are pending one of the following fixes:
-  // * Horizon Docker image doesn't hang randomly at ledger close; or
-  // * Wiremock supports mocking of SSE.
-  // The following works in `NoProxy` mode.
-/*
-
   implicit val system = ActorSystem("local-network-integration-spec")
   implicit val materializer = ActorMaterializer()
 
@@ -483,7 +479,6 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
       results.map(_.size) must beEqualTo(1).awaitFor(1 minute)
     }
   }
-*/
 
   step {
     proxy.foreach(_.stopRecording())
