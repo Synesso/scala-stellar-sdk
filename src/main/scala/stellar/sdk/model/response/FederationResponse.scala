@@ -2,11 +2,9 @@ package stellar.sdk.model.response
 
 import org.json4s.DefaultFormats
 import org.json4s.JsonAST.JObject
-import org.json4s.native.JsonMethods
-import stellar.sdk.{KeyPair, PublicKey}
 import stellar.sdk.model._
-import stellar.sdk.util.ByteArrays
 import stellar.sdk.util.ByteArrays.{hexToBytes, trimmedByteArray}
+import stellar.sdk.{KeyPair, PublicKey}
 
 case class FederationResponse(address: String,
                               account: PublicKey,
@@ -20,7 +18,8 @@ object FederationResponseDeserialiser extends ResponseParser[FederationResponse]
   FederationResponse(
     // reference server erroneously fails to set `stellar_address` for forward lookups
     address = (o \ "stellar_address").extractOpt[String].orNull,
-    account = KeyPair.fromAccountId((o \ "account_id").extract[String]),
+    // reference server erroneously fails to set `account_id` for reverse lookups
+    account = (o \ "account_id").extractOpt[String].map(KeyPair.fromAccountId).orNull,
     memo = (o \ "memo_type").extractOpt[String] match {
       case Some("id") => MemoId((o \ "memo").extract[String].toLong)
       case Some("text") => MemoText((o \ "memo").extract[String])

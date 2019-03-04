@@ -22,6 +22,11 @@ class FederationServer(val base: Uri, path: Path)
     get[FederationResponse](path, Map("q" -> name, "type" -> "name"))
       .map(_.map(_.copy(address = name)))
   }
+
+  def byAccount(account: PublicKey)(implicit ec: ExecutionContext): Future[Option[FederationResponse]] = {
+    get[FederationResponse](path, Map("q" -> account.accountId, "type" -> "id"))
+      .map(_.map(_.copy(account = account)))
+  }
 }
 
 object FederationServer {
