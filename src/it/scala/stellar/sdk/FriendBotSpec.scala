@@ -17,8 +17,8 @@ class FriendBotSpec(implicit ee: ExecutionEnv) extends Specification {
       // #friendbot_example
 
       response.map(_.isSuccess must beTrue).awaitFor(1 minute)
-    }.pendingUntilFixed("It's out of funds")
-
+    }
+    
     "be used to serialise a transaction" >> {
       val accn = KeyPair.fromPassphrase("an account")
       val sequence = 1
