@@ -4,10 +4,10 @@ import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.model.HttpMethods.GET
 import akka.http.scaladsl.model.MediaTypes.`application/json`
-import akka.http.scaladsl.model.StatusCodes.NotFound
+import akka.http.scaladsl.model.StatusCodes.{NotFound, Redirection}
 import akka.http.scaladsl.model.Uri.{Path, Query}
 import akka.http.scaladsl.model._
-import akka.http.scaladsl.model.headers.RawHeader
+import akka.http.scaladsl.model.headers.{Location, RawHeader}
 import akka.http.scaladsl.unmarshalling.{Unmarshal, Unmarshaller}
 import akka.stream.ActorMaterializer
 import com.typesafe.scalalogging.LazyLogging
@@ -43,11 +43,10 @@ trait WebClient extends LazyLogging {
     (implicit ec: ExecutionContext, formats: Formats, m: Manifest[T]): Future[Option[T]] = {
 
     val requestUri = base.withPath(path).withQuery(Query(params))
-    logger.debug(s"Getting {}", requestUri)
 
     val request = HttpRequest(GET, requestUri).addHeader(clientNameHeader).addHeader(clientVersionHeader)
     for {
-      response <- Http().singleRequest(request)
+      response <- singleRequest(request)
       unwrapped <- parse[T](request, response)(unmarshaller[T])
     } yield unwrapped
   }
@@ -59,7 +58,15 @@ trait WebClient extends LazyLogging {
 
     status match {
       case NotFound => Future(None)
+      case _ if status.isRedirection =>
+        val request_ = request.copy(uri = response.header[Location].get.uri.withQuery(request.uri.query()))
+        singleRequest(request_).flatMap(parse(request_, _))
       case _ => Unmarshal(entity).to[T].map(Some(_))
     }
+  }
+
+  private def singleRequest(request: HttpRequest): Future[HttpResponse] = {
+    logger.debug(s"Getting {}", request.uri)
+    Http().singleRequest(request)
   }
 }

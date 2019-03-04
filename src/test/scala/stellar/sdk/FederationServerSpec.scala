@@ -10,6 +10,8 @@ import org.specs2.mutable.Specification
 import org.specs2.specification.AfterAll
 import stellar.sdk.model._
 import stellar.sdk.model.response.FederationResponse
+
+import scala.annotation.tailrec
 import scala.concurrent.duration._
 
 class FederationServerSpec(implicit ec: ExecutionEnv) extends Specification with Mockito with ArbitraryInput with AfterAll {
@@ -17,7 +19,7 @@ class FederationServerSpec(implicit ec: ExecutionEnv) extends Specification with
   val server = new StubServer()
   override def afterAll(): Unit = server.stop()
 
-  private def toJson(fr: FederationResponse, withAddress: Boolean): String = {
+  private def toJson(fr: FederationResponse, withAddress: Boolean = true): String = {
 
     val memo: Option[JObject] = fr.memo match {
       case NoMemo => None
@@ -33,16 +35,39 @@ class FederationServerSpec(implicit ec: ExecutionEnv) extends Specification with
     compact(render(doc))
   }
 
-  "federation server" should {
-    "return response by name" >> prop { (path: String, fr: FederationResponse, withAddress: Boolean) =>
-      server.expectGet(path, Map("q" -> fr.address, "type" -> "name"), toJson(fr, withAddress))
-      FederationServer(s"http://localhost:8002/$path").byName(fr.address) must beSome(fr).awaitFor(10.seconds)
-    }.setArbitrary1(Arbitrary(Gen.identifier))
+  @tailrec
+  private def sample: FederationResponse = {
+    genFederationResponse.sample match {
+      case Some(r) => r
+      case None => sample
+    }
+  }
 
-    "return nothing when the account does not exist" >> prop { (path: String, name: String) =>
-      server.forgetGet(path, Map("q" -> name, "type" -> "name"))
-      FederationServer(s"http://localhost:8002/$path").byName(name) must beNone.awaitFor(10.seconds)
-    }.setArbitraries(Arbitrary(Gen.identifier), Arbitrary(Gen.identifier))
+  "federation server" should {
+    "return response by name" >> {
+      val fr = sample
+      server.expectGet("fed.json", Map("q" -> fr.address, "type" -> "name"), toJson(fr))
+      FederationServer(s"http://localhost:8002/fed.json").byName(fr.address) must beSome(fr).awaitFor(10.seconds)
+    }
+
+    "return response by name when server does not provide the address" >> {
+      val fr = sample
+      server.expectGet("fed.json", Map("q" -> fr.address, "type" -> "name"), toJson(fr, withAddress = false))
+      FederationServer(s"http://localhost:8002/fed.json").byName(fr.address) must beSome(fr).awaitFor(10.seconds)
+    }
+
+    "return nothing when the account does not exist" >> {
+      val name = Gen.identifier.sample.get
+      server.forgetGet("fed.json", Map("q" -> name, "type" -> "name"))
+      FederationServer(s"http://localhost:8002/fed.json").byName(name) must beNone.awaitFor(10.seconds)
+    }
+
+    "handle redirect" >> {
+      val fr = sample
+      server.expectGetRedirect("http://localhost:8002", "federation", "fed.json",
+        Map("q" -> fr.address, "type" -> "name"), toJson(fr))
+      FederationServer("http://localhost:8002/fed.json").byName(fr.address) must beSome(fr).awaitFor(10.seconds)
+    }
   }
 
 }
