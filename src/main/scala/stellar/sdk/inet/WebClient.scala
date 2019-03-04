@@ -17,6 +17,7 @@ import stellar.sdk.BuildInfo
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.reflect.ClassTag
+import scala.util.Failure
 
 trait WebClient extends LazyLogging {
 
@@ -61,6 +62,8 @@ trait WebClient extends LazyLogging {
       case _ if status.isRedirection =>
         val request_ = request.copy(uri = response.header[Location].get.uri.withQuery(request.uri.query()))
         singleRequest(request_).flatMap(parse(request_, _))
+      case _ if status.isFailure =>
+        Unmarshal(entity).to[String].map(e => throw WebClientException(s"${status.reason} - $e"))
       case _ => Unmarshal(entity).to[T].map(Some(_))
     }
   }
@@ -70,3 +73,5 @@ trait WebClient extends LazyLogging {
     Http().singleRequest(request)
   }
 }
+
+case class WebClientException(serverMessage: String) extends Exception(serverMessage)

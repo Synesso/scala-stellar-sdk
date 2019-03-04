@@ -38,6 +38,10 @@ class StubServer(port: Int = 8002)(implicit ec: ExecutionContext) extends Direct
     updateState(viaPath, params, ReplyWithRedirect(s"$base/$pathString"))
   }
 
+  def errorOnGet(pathString: String, params: Map[String, String]): Unit = {
+    updateState(pathString, params, FreakOut)
+  }
+
   val route: Route = ctx => {
     val routes = state.map { case (pathString, responses) =>
       get {
@@ -48,6 +52,7 @@ class StubServer(port: Int = 8002)(implicit ec: ExecutionContext) extends Direct
               case ReplyWithJson(response) =>
                 complete(HttpResponse(entity = response).mapEntity(_.withContentType(`application/json`)))
               case ReplyWithRedirect(to) => redirect(to, StatusCodes.PermanentRedirect)
+              case FreakOut => complete(HttpResponse(StatusCodes.InternalServerError, entity = "I'm freaking out man"))
             }.getOrElse(
               complete(HttpResponse(404, entity = "No such expectation"))
             )
@@ -68,4 +73,5 @@ class StubServer(port: Int = 8002)(implicit ec: ExecutionContext) extends Direct
   case object ReplyWithNothing extends Reply
   case class ReplyWithJson(s: String) extends Reply
   case class ReplyWithRedirect(to: String) extends Reply
+  case object FreakOut extends Reply
 }

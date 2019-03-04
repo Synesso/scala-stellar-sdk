@@ -8,6 +8,7 @@ import org.specs2.concurrent.ExecutionEnv
 import org.specs2.mock.Mockito
 import org.specs2.mutable.Specification
 import org.specs2.specification.AfterAll
+import stellar.sdk.inet.WebClientException
 import stellar.sdk.model._
 import stellar.sdk.model.response.FederationResponse
 
@@ -72,7 +73,9 @@ class FederationServerSpec(implicit ec: ExecutionEnv) extends Specification with
     }
 
     "handle server error when fetching response by name" >> {
-      pending
+      val name = Gen.identifier.sample.get
+      server.errorOnGet("fed.json", Map("q" -> name, "type" -> "name"))
+      FederationServer(s"http://localhost:8002/fed.json").byName(name) must throwA[WebClientException].awaitFor(10.seconds)
     }
 
     "handle invalid document response when fetching response by name" >> {
@@ -102,6 +105,16 @@ class FederationServerSpec(implicit ec: ExecutionEnv) extends Specification with
       server.expectGetRedirect("http://localhost:8002", "federation", "fed.json",
         Map("q" -> fr.account.accountId, "type" -> "id"), toJson(fr))
       FederationServer("http://localhost:8002/fed.json").byAccount(fr.account) must beSome(fr).awaitFor(10.seconds)
+    }
+
+    "handle server error when fetching response by account" >> {
+      val account = genPublicKey.sample.get
+      server.errorOnGet("fed.json", Map("q" -> account.accountId, "type" -> "id"))
+      FederationServer(s"http://localhost:8002/fed.json").byAccount(account) must throwA[WebClientException].awaitFor(10.seconds)
+    }
+
+    "handle invalid document response when fetching response by account" >> {
+      pending
     }
   }
 
