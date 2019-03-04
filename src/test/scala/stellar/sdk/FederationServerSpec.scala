@@ -8,7 +8,7 @@ import org.specs2.concurrent.ExecutionEnv
 import org.specs2.mock.Mockito
 import org.specs2.mutable.Specification
 import org.specs2.specification.AfterAll
-import stellar.sdk.inet.WebClientException
+import stellar.sdk.inet.RestException
 import stellar.sdk.model._
 import stellar.sdk.model.response.FederationResponse
 
@@ -75,11 +75,19 @@ class FederationServerSpec(implicit ec: ExecutionEnv) extends Specification with
     "handle server error when fetching response by name" >> {
       val name = Gen.identifier.sample.get
       server.errorOnGet("fed.json", Map("q" -> name, "type" -> "name"))
-      FederationServer(s"http://localhost:8002/fed.json").byName(name) must throwA[WebClientException].awaitFor(10.seconds)
+      FederationServer(s"http://localhost:8002/fed.json").byName(name) must throwA[RestException].awaitFor(10.seconds)
     }
 
     "handle invalid document response when fetching response by name" >> {
-      pending
+      val name = Gen.identifier.sample.get
+      server.expectGet("fed.json", Map("q" -> name, "type" -> "name"), """{"something":"else"}""")
+      FederationServer(s"http://localhost:8002/fed.json").byName(name) must throwA[RestException].awaitFor(10.seconds)
+    }
+
+    "handle invalid non-document response when fetching response by name" >> {
+      val name = Gen.identifier.sample.get
+      server.expectGet("fed.json", Map("q" -> name, "type" -> "name"), "hobnobs")
+      FederationServer(s"http://localhost:8002/fed.json").byName(name) must throwA[RestException].awaitFor(10.seconds)
     }
 
     "return response by account" >> {
@@ -110,11 +118,19 @@ class FederationServerSpec(implicit ec: ExecutionEnv) extends Specification with
     "handle server error when fetching response by account" >> {
       val account = genPublicKey.sample.get
       server.errorOnGet("fed.json", Map("q" -> account.accountId, "type" -> "id"))
-      FederationServer(s"http://localhost:8002/fed.json").byAccount(account) must throwA[WebClientException].awaitFor(10.seconds)
+      FederationServer(s"http://localhost:8002/fed.json").byAccount(account) must throwA[RestException].awaitFor(10.seconds)
     }
 
     "handle invalid document response when fetching response by account" >> {
-      pending
+      val account = genPublicKey.sample.get
+      server.expectGet("fed.json", Map("q" -> account.accountId, "type" -> "id"), """{"something":"else"}""")
+      FederationServer(s"http://localhost:8002/fed.json").byAccount(account) must throwA[RestException].awaitFor(10.seconds)
+    }
+
+    "handle invalid non-document response when fetching response by account" >> {
+      val account = genPublicKey.sample.get
+      server.expectGet("fed.json", Map("q" -> account.accountId, "type" -> "id"), "dachshunds")
+      FederationServer(s"http://localhost:8002/fed.json").byAccount(account) must throwA[RestException].awaitFor(10.seconds)
     }
   }
 
