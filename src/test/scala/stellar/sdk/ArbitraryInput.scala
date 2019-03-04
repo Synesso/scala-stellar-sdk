@@ -136,6 +136,8 @@ trait ArbitraryInput extends ScalaCheck {
 
   implicit def arbNetworkInfo = Arbitrary(genNetworkInfo)
 
+  implicit def arbFederationResponse = Arbitrary(genFederationResponse)
+
   def round(d: Double) = "%.7f".formatLocal(Locale.ROOT, d).toDouble
 
   def genKeyPair: Gen[KeyPair] = Gen.oneOf(Seq(KeyPair.random))
@@ -704,4 +706,10 @@ trait ArbitraryInput extends ScalaCheck {
     currentProtocolVersion <- Gen.choose(0, 100)
     supportedProtocolVersion <- Gen.choose(0, 100)
   } yield NetworkInfo(horizonVersion, coreVersion, earliestLedger, latestLedger, passphrase, currentProtocolVersion, supportedProtocolVersion)
+
+  def genFederationResponse: Gen[FederationResponse] = for {
+    name <- Gen.identifier
+    account <- genPublicKey
+    memo <- genMemo.suchThat(m => !m.isInstanceOf[MemoReturnHash])
+  } yield FederationResponse(name, account, memo)
 }
