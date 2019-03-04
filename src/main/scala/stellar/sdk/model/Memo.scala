@@ -42,15 +42,15 @@ case class MemoId(id: Long) extends Memo {
 
 trait MemoWithHash extends Memo {
   val Length = 32
-  val bs: Array[Byte]
-  val bytes = paddedByteArray(bs, Length)
+  val bs: Seq[Byte]
+  val bytes = paddedByteArray(bs.toArray, Length)
 
   def hex: String = bytesToHex(bytes)
 
   def hexTrim: String = bytesToHex(bs)
 }
 
-case class MemoHash(bs: Array[Byte]) extends MemoWithHash {
+case class MemoHash(bs: Seq[Byte]) extends MemoWithHash {
   assert(bs.length <= Length, s"Hash exceeded limit (${bytes.length}/$Length bytes)")
 
   override def encode: Stream[Byte] = Encode.int(3) ++ Encode.bytes(bs)
@@ -60,7 +60,7 @@ object MemoHash {
   def from(hex: String): Try[MemoHash] = Try(MemoHash(hexToBytes(hex)))
 }
 
-case class MemoReturnHash(bs: Array[Byte]) extends MemoWithHash {
+case class MemoReturnHash(bs: Seq[Byte]) extends MemoWithHash {
   assert(bs.length <= Length, s"Hash exceeded limit (${bytes.length}/$Length bytes)")
 
   override def encode: Stream[Byte] = Encode.int(4) ++ Encode.bytes(bs)

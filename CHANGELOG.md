@@ -6,15 +6,20 @@ As this project is pre 1.0, breaking changes may happen for minor version bumps.
 
 ### Added
 
+- Federation Server integration. [#6](https://github.com/Synesso/scala-stellar-sdk/issues/6) 
+    - Look up the account details by federated name with `FederationServer.byName`.
+    - Or perform a reverse lookup, where it is supported by the server, with `FederationServer.byAccount`.
+
 - Added `Network.feeStats()` method to return the fee statistics from the most recent ledger, as per the [`fee_stats`
     endpoint](https://www.stellar.org/developers/horizon/reference/endpoints/fee-stats.html).
     [#58](https://github.com/Synesso/scala-stellar-sdk/issues/58)
 
-- Included client request headers `X-Client-Name` and `X-Client-Version` so that Horizon instances can tell when a 
-    request comes from the Scala SDK. [#59](https://github.com/Synesso/scala-stellar-sdk/issues/59)
-
 - Added `Network.info()` method to return the values in the Horizon root document including Horizon & Core versions,
     network passphrase, protocol supported, etc. [#56](https://github.com/Synesso/scala-stellar-sdk/issues/56)
+
+- Included client request headers `X-Client-Name` and `X-Client-Version` so that Horizon instances & Federation Servers
+    can tell when a request comes from the Scala SDK. [#59](https://github.com/Synesso/scala-stellar-sdk/issues/59)
+
 
 ## 0.5.2
 
