@@ -18,7 +18,7 @@ class FriendBotSpec(implicit ee: ExecutionEnv) extends Specification {
 
       response.map(_.isSuccess must beTrue).awaitFor(1 minute)
     }
-    
+
     "be used to serialise a transaction" >> {
       val accn = KeyPair.fromPassphrase("an account")
       val sequence = 1

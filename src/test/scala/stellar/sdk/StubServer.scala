@@ -19,8 +19,16 @@ class StubServer(port: Int = 8002)(implicit ec: ExecutionContext) extends Direct
   //                              path        params               response
   @volatile var state = Map.empty[String, Map[Map[String, String], ResponseEntity]]
 
-  def expectGet(pathString: String, params: Map[String, String], response: String): Unit = state = {
-    state.updated(pathString, state.getOrElse(pathString, Map.empty).updated(params, response))
+  def expectGet(pathString: String, params: Map[String, String], response: String): Unit = this.synchronized {
+    state = {
+      state.updated(pathString, state.getOrElse(pathString, Map.empty).updated(params, response))
+    }
+  }
+
+  def forgetGet(pathString: String, params: Map[String, String]): Unit = this.synchronized {
+    state = {
+      state.updated(pathString, state.getOrElse(pathString, Map.empty).filterKeys(_ != params))
+    }
   }
 
   val route: Route = ctx => {

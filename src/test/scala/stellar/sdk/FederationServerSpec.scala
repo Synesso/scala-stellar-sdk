@@ -14,8 +14,6 @@ import scala.concurrent.duration._
 
 class FederationServerSpec(implicit ec: ExecutionEnv) extends Specification with Mockito with ArbitraryInput with AfterAll {
 
-  sequential
-
   val server = new StubServer()
   override def afterAll(): Unit = server.stop()
 
@@ -40,6 +38,11 @@ class FederationServerSpec(implicit ec: ExecutionEnv) extends Specification with
       server.expectGet(path, Map("q" -> fr.address, "type" -> "name"), toJson(fr, withAddress))
       FederationServer(s"http://localhost:8002/$path").byName(fr.address) must beSome(fr).awaitFor(10.seconds)
     }.setArbitrary1(Arbitrary(Gen.identifier))
+
+    "return nothing when the account does not exist" >> prop { (path: String, name: String) =>
+      server.forgetGet(path, Map("q" -> name, "type" -> "name"))
+      FederationServer(s"http://localhost:8002/$path").byName(name) must beNone.awaitFor(10.seconds)
+    }.setArbitraries(Arbitrary(Gen.identifier), Arbitrary(Gen.identifier))
   }
 
 }

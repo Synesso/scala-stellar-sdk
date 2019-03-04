@@ -19,7 +19,7 @@ class FederationServer(val base: Uri, path: Path)
   implicit val formats = Serialization.formats(NoTypeHints) + FederationResponseDeserialiser
 
   def byName(name: String)(implicit ec: ExecutionContext): Future[Option[FederationResponse]] = {
-    get[Option[FederationResponse]](path, Map("q" -> name, "type" -> "name"))
+    get[FederationResponse](path, Map("q" -> name, "type" -> "name"))
       .map(_.map(_.copy(address = name)))
   }
 }

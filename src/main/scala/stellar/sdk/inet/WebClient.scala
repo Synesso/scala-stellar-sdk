@@ -4,6 +4,7 @@ import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.model.HttpMethods.GET
 import akka.http.scaladsl.model.MediaTypes.`application/json`
+import akka.http.scaladsl.model.StatusCodes.NotFound
 import akka.http.scaladsl.model.Uri.{Path, Query}
 import akka.http.scaladsl.model._
 import akka.http.scaladsl.model.headers.RawHeader
@@ -39,7 +40,7 @@ trait WebClient extends LazyLogging {
   import HalJsonSupport._
 
   def get[T: ClassTag](path: Path, params: Map[String, String] = Map.empty)
-    (implicit ec: ExecutionContext, formats: Formats, m: Manifest[T]): Future[T] = {
+    (implicit ec: ExecutionContext, formats: Formats, m: Manifest[T]): Future[Option[T]] = {
 
     val requestUri = base.withPath(path).withQuery(Query(params))
     logger.debug(s"Getting {}", requestUri)
@@ -52,11 +53,13 @@ trait WebClient extends LazyLogging {
   }
 
   private def parse[T](request: HttpRequest, response: HttpResponse)
-                      (implicit um: Unmarshaller[ResponseEntity, T]): Future[T] = {
+                      (implicit um: Unmarshaller[ResponseEntity, T]): Future[Option[T]] = {
 
     val HttpResponse(status, _, entity, _) = response
 
-    Unmarshal(entity).to[T]
-
+    status match {
+      case NotFound => Future(None)
+      case _ => Unmarshal(entity).to[T].map(Some(_))
+    }
   }
 }
