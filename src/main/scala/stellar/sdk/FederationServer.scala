@@ -17,6 +17,7 @@ class FederationServer(val base: Uri, path: Path)
   extends WebClient with LazyLogging {
 
   implicit val formats = Serialization.formats(NoTypeHints) + FederationResponseDeserialiser
+  import HalJsonSupport._
 
   def byName(name: String)(implicit ec: ExecutionContext): Future[Option[FederationResponse]] = {
     get[FederationResponse](path, Map("q" -> name, "type" -> "name"))

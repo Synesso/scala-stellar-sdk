@@ -22,7 +22,7 @@ class DataSourceEndpointsIntegrationSpec(implicit ee: ExecutionEnv) extends Spec
     "provide all future transactions" >> {
       val results: Future[Seq[TransactionHistory]] = PublicNetwork.transactionSource().take(3)
         .runWith(Sink.seq[TransactionHistory])
-      results.map(_.size) must beEqualTo(3).awaitFor(1 minute)
+      results.map(_.size) must beEqualTo(3).awaitFor(3 minutes)
     }
     "provide transactions history" >> {
       val results: Future[Seq[TransactionHistory]] = PublicNetwork.transactionSource(Record(100)).take(5)
@@ -34,7 +34,7 @@ class DataSourceEndpointsIntegrationSpec(implicit ee: ExecutionEnv) extends Spec
   "payment operation source" should {
     "provide all future payment operations" >> {
       val results = PublicNetwork.paymentsSource().take(3).runWith(Sink.seq[Transacted[PayOperation]])
-      results.map(_.size) must beEqualTo(3).awaitFor(1 minute)
+      results.map(_.size) must beEqualTo(3).awaitFor(3 minutes)
     }
     "provide pay operation history" >> {
       val results = PublicNetwork.paymentsSource(Record(300)).take(10).runWith(Sink.seq[Transacted[PayOperation]])
@@ -45,7 +45,7 @@ class DataSourceEndpointsIntegrationSpec(implicit ee: ExecutionEnv) extends Spec
   "operation source" should {
     "provide all future operations" >> {
       val results = PublicNetwork.operationsSource().take(3).runWith(Sink.seq[Transacted[Operation]])
-      results.map(_.size) must beEqualTo(3).awaitFor(1 minute)
+      results.map(_.size) must beEqualTo(3).awaitFor(3 minutes)
     }
     "provide operation history" >> {
       val results = PublicNetwork.operationsSource(Record(900)).take(10).runWith(Sink.seq[Transacted[Operation]])
@@ -56,7 +56,7 @@ class DataSourceEndpointsIntegrationSpec(implicit ee: ExecutionEnv) extends Spec
   "event source" should {
     "provide all future events" >> {
       val results = PublicNetwork.effectsSource().take(3).runWith(Sink.seq[EffectResponse])
-      results.map(_.size) must beEqualTo(3).awaitFor(1 minute)
+      results.map(_.size) must beEqualTo(3).awaitFor(3 minutes)
     }
     "provide event history" >> {
       val results = PublicNetwork.effectsSource(Record(1400)).take(15).runWith(Sink.seq[EffectResponse])
