@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta http-equiv="x-ua-compatible" content="ie=edge">
-<meta name="description" content="scala-stellar-sdk">
+<meta name="description" content="Perform Stellar (distributed payments platform) operations from your Scala application. Build and submit transactions, query the state of the network and stream updates.">
 <meta name="generator" content="Paradox, paradox-material-theme=0.6.0, mkdocs-material=3.0.3">
 
 <meta name="lang:clipboard.copy" content="Copy to clipboard">
@@ -18,7 +18,7 @@
 <meta name="lang:search.tokenizer" content="">
 
 
-<meta name="description" content="scala-stellar-sdk">
+<meta name="description" content="Perform Stellar (distributed payments platform) operations from your Scala application. Build and submit transactions, query the state of the network and stream updates.">
 <link rel="shortcut icon" href="assets/images/favicon.png">
 <title>Stellar SDK for Scala</title>
 <link rel="stylesheet" href="assets/stylesheets/application.451f80e5.css">
@@ -113,6 +113,7 @@ synesso/scala-stellar-sdk
 </div>
 <ul>
   <li><a href="transacting.html" class="page">Transacting</a></li>
+  <li><a href="key_pairs.html" class="page">Key Pairs</a></li>
   <li><a href="queries.html" class="page">Queries</a></li>
   <li><a href="sources.html" class="page">Sources</a></li>
 </ul>
@@ -132,7 +133,7 @@ synesso/scala-stellar-sdk
 <ul style="display: none">
 <li class="md-nav__item md-version" id="project.version">
 <label class="md-nav__link" for="__version">
-<i class="md-icon" title="Version">label_outline</i> 0.5.2
+<i class="md-icon" title="Version">label_outline</i> e76a53a2adde66119134dcbe19550e33a124f0f0
 </label>
 </li>
 </ul>
@@ -162,37 +163,31 @@ synesso/scala-stellar-sdk
 <div class="md-content__searchable">
 <h1><a href="#stellar-sdk-for-scala" name="stellar-sdk-for-scala" class="anchor"><span class="anchor-link"></span></a>Stellar SDK for Scala</h1>
 <p>This is the SDK for performing <a href="https://www.stellar.org/">Stellar</a> operations via Scala. It provides the ability to access the Stellar network via Horizon instances to build and submit transactions, query the state of the network and stream updates.</p>
-<p>Scala developers may prefer to use this SDK because:</p>
-<ul>
-  <li>it has a simple, Scala-centric API</li>
-  <li>its operations are asynchronous by default</li>
-  <li>it uses explicit type hierarchies instead of primitives</li>
-  <li>it is tested to near 100% coverage with generative testing</li>
-</ul>
+<p>Scala developers may prefer to use this SDK because because it provides a more natural API for Scala developers than the official Java SDK</p>
 <p>The code throughout this documentation is compiled against Scala 2.12.</p>
 <h2><a href="#quick-start" name="quick-start" class="anchor"><span class="anchor-link"></span></a>Quick-start</h2>
-<p>Add the SDK via your dependency management tool.</p><dl class="dependency"><dt>sbt</dt><dd><pre class="prettyprint"><code class="language-scala">libraryDependencies += "io.github.synesso" %% "scala-stellar-sdk" % "0.5.2"</code></pre></dd><dt>Maven</dt><dd><pre class="prettyprint"><code class="language-xml">&lt;dependency&gt;
+<p>Add the SDK via your dependency management tool.</p><dl class="dependency"><dt>sbt</dt><dd><pre class="prettyprint"><code class="language-scala">libraryDependencies += "io.github.synesso" %% "scala-stellar-sdk" % "e76a53a2adde66119134dcbe19550e33a124f0f0"</code></pre></dd><dt>Maven</dt><dd><pre class="prettyprint"><code class="language-xml">&lt;dependency&gt;
   &lt;groupId&gt;io.github.synesso&lt;/groupId&gt;
   &lt;artifactId&gt;scala-stellar-sdk_2.12&lt;/artifactId&gt;
-  &lt;version&gt;0.5.2&lt;/version&gt;
+  &lt;version&gt;e76a53a2adde66119134dcbe19550e33a124f0f0&lt;/version&gt;
 &lt;/dependency&gt;</code></pre></dd><dt>Gradle</dt><dd><pre class="prettyprint"><code class="language-gradle">dependencies {
-  compile group: 'io.github.synesso', name: 'scala-stellar-sdk_2.12', version: '0.5.2'
+  compile group: 'io.github.synesso', name: 'scala-stellar-sdk_2.12', version: 'e76a53a2adde66119134dcbe19550e33a124f0f0'
 }</code></pre></dd></dl>
 <p>Creating an account on the public test network.</p>
-<pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/Synesso/scala-stellar-sdk/tree/v0.5.2/src/it/scala/stellar/sdk/FriendBotSpec.scala#L15-L16" target="_blank" title="Go to snippet source"></a><code class="language-scala">val kp = KeyPair.random
+<pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/Synesso/scala-stellar-sdk/tree/ve76a53a2adde66119134dcbe19550e33a124f0f0/src/it/scala/stellar/sdk/FriendBotSpec.scala#L15-L16" target="_blank" title="Go to snippet source"></a><code class="language-scala">val kp = KeyPair.random
 val response = TestNetwork.fund(kp)</code></pre>
 <p>Fetching the details of an account.</p>
-<pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/Synesso/scala-stellar-sdk/tree/v0.5.2/src/it/scala/stellar/sdk/LocalNetworkIntegrationSpec.scala#L167-L168" target="_blank" title="Go to snippet source"></a><code class="language-scala">val account: Future[Account] = network.account(kp).map(_.toAccount)
+<pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/Synesso/scala-stellar-sdk/tree/ve76a53a2adde66119134dcbe19550e33a124f0f0/src/it/scala/stellar/sdk/LocalNetworkIntegrationSpec.scala#L170-L171" target="_blank" title="Go to snippet source"></a><code class="language-scala">val account: Future[Account] = network.account(kp).map(_.toAccount)
 val nextSeqNo: Future[Long] = account.map(_.sequenceNumber)</code></pre>
 <p>Submitting a payment.</p>
-<pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/Synesso/scala-stellar-sdk/tree/v0.5.2/src/it/scala/stellar/sdk/LocalNetworkIntegrationSpec.scala#L123-L129" target="_blank" title="Go to snippet source"></a><code class="language-scala">for {
+<pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/Synesso/scala-stellar-sdk/tree/ve76a53a2adde66119134dcbe19550e33a124f0f0/src/it/scala/stellar/sdk/LocalNetworkIntegrationSpec.scala#L126-L132" target="_blank" title="Go to snippet source"></a><code class="language-scala">for {
   sourceAccount &lt;- network.account(payerKeyPair)
   response &lt;- model.Transaction(sourceAccount)
     .add(PaymentOperation(payeePublicKey, lumens(5000)))
     .sign(payerKeyPair)
     .submit()
 } yield response</code></pre>
-<p>For more detailed coverage, continue by reading about <a href="transacting.html">Transacting</a>.</p>
+<p>For more detailed coverage, continue by reading about <a href="key_pairs.html">KeyPairs</a>.</p>
 <h2><a href="#api" name="api" class="anchor"><span class="anchor-link"></span></a>API</h2>
 <p>Please enjoy the <a href="api/stellar/sdk">scaladoc</a> for this release.</p>
 <blockquote>
@@ -205,13 +200,13 @@ val nextSeqNo: Future[Long] = account.map(_.sequenceNumber)</code></pre>
 <p>Let&rsquo;s chat about any of this on the <a href="https://keybase.io/team/stellar.public">Stellar KeyBase channel</a> #dev channel. My username is <a href="https://keybase.io/jem">@jem</a>.</p>
 </div>
 <div>
-<a href="https://github.com/Synesso/scala-stellar-sdk/tree/v0.5.2/src/main/paradox/index.md" title="Edit this page" class="md-source-file md-edit">
+<a href="https://github.com/Synesso/scala-stellar-sdk/tree/ve76a53a2adde66119134dcbe19550e33a124f0f0/src/main/paradox/index.md" title="Edit this page" class="md-source-file md-edit">
 Edit this page
 </a>
 </div>
 <div class="print-only">
 <span class="md-source-file md-version">
-0.5.2
+e76a53a2adde66119134dcbe19550e33a124f0f0
 </span>
 </div>
 </article>

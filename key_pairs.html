@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="x-ua-compatible" content="ie=edge">
+<meta name="description" content="Perform Stellar (distributed payments platform) operations from your Scala application. Build and submit transactions, query the state of the network and stream updates.">
+<meta name="generator" content="Paradox, paradox-material-theme=0.6.0, mkdocs-material=3.0.3">
+
+<meta name="lang:clipboard.copy" content="Copy to clipboard">
+<meta name="lang:clipboard.copied" content="Copied to clipboard">
+<meta name="lang:search.language" content="">
+<meta name="lang:search.pipeline.stopwords" content="true">
+<meta name="lang:search.pipeline.trimmer" content="true">
+<meta name="lang:search.result.none" content="No matching documents">
+<meta name="lang:search.result.one" content="1 matching document">
+<meta name="lang:search.result.other" content="# matching documents">
+<meta name="lang:search.tokenizer" content="">
+
+
+<meta name="description" content="Perform Stellar (distributed payments platform) operations from your Scala application. Build and submit transactions, query the state of the network and stream updates.">
+<link rel="shortcut icon" href="assets/images/favicon.png">
+<title>Key Pairs · Stellar SDK for Scala</title>
+<link rel="stylesheet" href="assets/stylesheets/application.451f80e5.css">
+<link rel="stylesheet" href="lib/material__tabs/dist/mdc.tabs.min.css">
+<link rel="stylesheet" href="lib/prettify/prettify.css">
+<script src="assets/javascripts/modernizr.1aa3b519.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700|Roboto+Mono">
+<style>
+body,input{font-family:"Roboto","Helvetica Neue",Helvetica,Arial,sans-serif}
+code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}
+</style>
+<link rel="stylesheet" href="assets/fonts/font-awesome.css">
+<link rel="stylesheet" href="assets/fonts/material-icons.css">
+<link rel="stylesheet" href="assets/stylesheets/paradox-material-theme.css">
+</head>
+<body
+>
+<input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+<input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+<label class="md-overlay" data-md-component="overlay" for="__drawer"></label>
+<header class="md-header" data-md-component="header">
+<nav class="md-header-nav md-grid">
+<div class="md-flex">
+<div class="md-flex__cell md-flex__cell--shrink">
+<a href="index.html" title="Stellar SDK for Scala" class="md-header-nav__button md-logo">
+<i class="md-icon">local_library</i>
+</a>
+</div>
+<div class="md-flex__cell md-flex__cell--shrink">
+<label class="md-icon md-icon--menu md-header-nav__button" for="__drawer"></label>
+</div>
+<div class="md-flex__cell md-flex__cell--stretch">
+<div class="md-flex__ellipsis md-header-nav__title" data-md-component="title">
+<span class="md-header-nav__topic">
+Stellar SDK for Scala
+</span>
+<span class="md-header-nav__topic">
+Key Pairs
+</span>
+</div>
+</div>
+<form name="search" style="display: none">
+<input type="text" name="query">
+</form>
+<div class="md-flex__cell md-flex__cell--shrink">
+<div class="md-header-nav__source">
+<a href="https://github.com/synesso/scala-stellar-sdk"
+title="Go to repository"
+class="md-source"
+data-md-source="github">
+<div class="md-source__icon">
+<i class="fa fa-github"></i>
+</div>
+<div class="md-source__repository">
+synesso/scala-stellar-sdk
+</div>
+</a>
+
+</div>
+</div>
+</div>
+</nav>
+</header>
+
+<div class="md-container">
+<main class="md-main">
+<div class="md-main__inner md-grid" data-md-component="container">
+<div class="md-sidebar md-sidebar--primary" data-md-component="navigation">
+<div class="md-sidebar__scrollwrap">
+<div class="md-sidebar__inner">
+<nav class="md-nav md-nav--primary" data-md-level="0" style="visibility: hidden">
+<label class="md-nav__title md-nav__title--site" for="drawer">
+<a href="index.html" title="Stellar SDK for Scala" class="md-nav__button md-logo">
+<span class="md-nav__button md-logo">
+<i class="md-icon">local_library</i>
+</a>
+<a href="index.html" title="Stellar SDK for Scala">
+Stellar SDK for Scala
+</a>
+</label>
+<div class="md-nav__source">
+<a href="https://github.com/synesso/scala-stellar-sdk"
+title="Go to repository"
+class="md-source"
+data-md-source="github">
+<div class="md-source__icon">
+<i class="fa fa-github"></i>
+</div>
+<div class="md-source__repository">
+synesso/scala-stellar-sdk
+</div>
+</a>
+
+</div>
+<ul>
+  <li><a href="transacting.html" class="page">Transacting</a></li>
+  <li><a href="key_pairs.html" class="active page">Key Pairs</a></li>
+  <li><a href="queries.html" class="page">Queries</a></li>
+  <li><a href="sources.html" class="page">Sources</a></li>
+</ul>
+<nav class="md-nav md-nav--secondary">
+<label class="md-nav__title" for="__toc">Table of contents</label>
+<ul>
+  <li><a href="key_pairs.html#key-pairs" class="header">Key Pairs</a>
+  <ul>
+    <li><a href="key_pairs.html#randomly" class="header">Randomly</a></li>
+    <li><a href="key_pairs.html#by-key" class="header">By Key</a></li>
+    <li><a href="key_pairs.html#by-passphrase" class="header">By Passphrase</a></li>
+    <li><a href="key_pairs.html#by-federated-address" class="header">By Federated Address</a></li>
+  </ul></li>
+</ul>
+</nav>
+
+</nav>
+<ul style="display: none">
+<li class="md-nav__item md-version" id="project.version">
+<label class="md-nav__link" for="__version">
+<i class="md-icon" title="Version">label_outline</i> e76a53a2adde66119134dcbe19550e33a124f0f0
+</label>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
+<div class="md-sidebar__scrollwrap">
+<div class="md-sidebar__inner">
+<nav class="md-nav md-nav--secondary">
+<label class="md-nav__title" for="__toc">Table of contents</label>
+<ul>
+  <li><a href="key_pairs.html#key-pairs" class="header">Key Pairs</a>
+  <ul>
+    <li><a href="key_pairs.html#randomly" class="header">Randomly</a></li>
+    <li><a href="key_pairs.html#by-key" class="header">By Key</a></li>
+    <li><a href="key_pairs.html#by-passphrase" class="header">By Passphrase</a></li>
+    <li><a href="key_pairs.html#by-federated-address" class="header">By Federated Address</a></li>
+  </ul></li>
+</ul>
+</nav>
+
+</div>
+</div>
+</div>
+<div class="md-content">
+<article class="md-content__inner md-typeset">
+<div class="md-content__searchable">
+<h1><a href="#key-pairs" name="key-pairs" class="anchor"><span class="anchor-link"></span></a>Key Pairs</h1>
+<p>Accounts in Stellar are identified by a cryptographic key pair. </p>
+<p>The public key, also known as the <strong>account id</strong>, can safely be shared with anybody. It is 52 characters long and begins with a <code>G</code>.</p>
+<p>The private key, referred to as the <strong>secret seed</strong>, should be kept private &amp; secure. It is also 52 characters long, but begins with an <code>S</code>.</p>
+<p>For example, the following is a randomly generated account key pair. (This is an example only, do not use this.) </p>
+<pre><code>Account id:  GD2HMF3BKITMXISCPTU7VVTFXDY5WSQK4QNIUATNCXVKBNWZP7FWZOXG
+Secret Seed: SDHXK2UNHTXVW2MZSOVOPYUKVXD3PEVKMNQZZGPODQMR67YTKWMOC732
+</code></pre>
+<p>The knowledge of a key pair does not imply that the account exists on any Stellar network. In other words, when you call <code>KeyPair.random</code>, this does not create an account. To do that, you need to issue a transaction that contains a <code>CreateAccountOperation</code>, as explained in <a href="transacting.html">Transacting</a>.</p>
+<p>There are actually two kinds of <code>KeyPair</code> objects in the SDK.</p>
+<ul>
+  <li><a href="https://synesso.github.io/scala-stellar-sdk/api/stellar/sdk/KeyPair.html">KeyPair</a> represents the public and secret components, and can be used for operations that require proof of the secret portion, such as transaction signing.</li>
+  <li><a href="https://synesso.github.io/scala-stellar-sdk/api/stellar/sdk/PublicKey.html">PublicKey</a> represents only the public component. This is used to refer to accounts other than your own, such as the counterparty of a payment.</li>
+</ul>
+<p>As the account id can be derived from the secret seed, there is no object which models the secret seed without the account id. </p>
+<p>The SDK provides several ways to create or resolve <code>KeyPair</code>s and <code>PublicKey</code>s.</p>
+<h3><a href="#randomly" name="randomly" class="anchor"><span class="anchor-link"></span></a>Randomly</h3>
+<p>A random <code>KeyPair</code> is generated when you call <code>KeyPair.random</code>.</p>
+<pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/Synesso/scala-stellar-sdk/tree/ve76a53a2adde66119134dcbe19550e33a124f0f0/src/test/scala/stellar/sdk/DocExamples.scala#L333" target="_blank" title="Go to snippet source"></a><code class="language-scala">KeyPair.random</code></pre>
+<p>The chance of receiving a key pair that has been seen before is <a href="https://stellar.stackexchange.com/a/772/111">so miniscule</a> that you might reasonably assume that any randomly generated pair is effectively unique.</p>
+<h3><a href="#by-key" name="by-key" class="anchor"><span class="anchor-link"></span></a>By Key</h3>
+<p>If you know the secret seed (private key), then you can reconstitute the <code>KeyPair</code>.</p>
+<pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/Synesso/scala-stellar-sdk/tree/ve76a53a2adde66119134dcbe19550e33a124f0f0/src/test/scala/stellar/sdk/DocExamples.scala#L310-L321" target="_blank" title="Go to snippet source"></a><code class="language-scala">// Provide the secret seed as a String
+val keyPair = KeyPair.fromSecretSeed(
+  &quot;SDHXK2UNHTXVW2MZSOVOPYUKVXD3PEVKMNQZZGPODQMR67YTKWMOC732&quot;)
+
+// or an Array[Char]
+KeyPair.fromSecretSeed(
+  &quot;SDHXK2UNHTXVW2MZSOVOPYUKVXD3PEVKMNQZZGPODQMR67YTKWMOC732&quot;.toCharArray)
+
+// or a raw 32 byte seed
+KeyPair.fromSecretSeed(
+  Hex.decodeHex(&quot;1123740522f11bfef6b3671f51e159ccf589ccf8965262dd5f97d1721d383dd4&quot;)
+)</code></pre>
+<p>If you only know the account id (public key), you can create the <code>PublicKey</code>.</p>
+<pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/Synesso/scala-stellar-sdk/tree/ve76a53a2adde66119134dcbe19550e33a124f0f0/src/test/scala/stellar/sdk/DocExamples.scala#L36-L37" target="_blank" title="Go to snippet source"></a><code class="language-scala">val accountId = &quot;GCXYKQF35XWATRB6AWDDV2Y322IFU2ACYYN5M2YB44IBWAIITQ4RYPXK&quot;
+val publicKey = KeyPair.fromAccountId(accountId)</code></pre>
+<h3><a href="#by-passphrase" name="by-passphrase" class="anchor"><span class="anchor-link"></span></a>By Passphrase</h3>
+<p>As a substitute for a valid secret seed, any passphrase can be used to deterministically derive a <code>KeyPair</code>. </p>
+<pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/Synesso/scala-stellar-sdk/tree/ve76a53a2adde66119134dcbe19550e33a124f0f0/src/test/scala/stellar/sdk/KeyPairSpec.scala#L86-L88" target="_blank" title="Go to snippet source"></a><code class="language-scala">val kp = KeyPair.fromPassphrase(
+  &quot;But, the Babel fish is a dead giveaway isn&#39;t it?&quot;
+)</code></pre>
+<h3><a href="#by-federated-address" name="by-federated-address" class="anchor"><span class="anchor-link"></span></a>By Federated Address</h3>
+<p>As a convenience, accounts may also be identified by a human-readable address known as a <a href="https://www.lumenauts.com/guides/what-are-federated-stellar-addresses">Federated Address</a>. These are in the format <code>NAME*DOMAIN</code>.</p>
+<p>Federated addresses can be resolved using the <code>fromAddress</code> method. Because the actual public key is retrieved from the network, this method returns a <code>Future[PublicKey]</code> and may fail.</p>
+<pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/Synesso/scala-stellar-sdk/tree/ve76a53a2adde66119134dcbe19550e33a124f0f0/src/test/scala/stellar/sdk/KeyPairSpec.scala#L107" target="_blank" title="Go to snippet source"></a><code class="language-scala">val resolved: Future[PublicKey] = KeyPair.fromAddress(&quot;jem*keybase.io&quot;)</code></pre>
+<p>That&rsquo;s all you need to know about <code>KeyPair</code>s. Continue reading to learn about how to inspect Stellar networks via <a href="queries.html">Queries</a>.</p>
+</div>
+<div>
+<a href="https://github.com/Synesso/scala-stellar-sdk/tree/ve76a53a2adde66119134dcbe19550e33a124f0f0/src/main/paradox/key_pairs.md" title="Edit this page" class="md-source-file md-edit">
+Edit this page
+</a>
+</div>
+<div class="print-only">
+<span class="md-source-file md-version">
+e76a53a2adde66119134dcbe19550e33a124f0f0
+</span>
+</div>
+</article>
+</div>
+</div>
+</main>
+<footer class="md-footer">
+<div class="md-footer-nav">
+<nav class="md-footer-nav__inner md-grid">
+<a href="transacting.html" title="Transacting" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+<div class="md-flex__cell md-flex__cell--shrink">
+<i class="md-icon md-icon--arrow-back md-footer-nav__button"></i>
+</div>
+<div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
+<span class="md-flex__ellipsis">
+<span class="md-footer-nav__direction">
+Previous
+</span>
+Transacting
+</span>
+</div>
+</a>
+<a href="queries.html" title="Queries" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
+<div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
+<span class="md-flex__ellipsis">
+<span class="md-footer-nav__direction">
+Next
+</span>
+Queries
+</span>
+</div>
+<div class="md-flex__cell md-flex__cell--shrink">
+<i class="md-icon md-icon--arrow-forward md-footer-nav__button"></i>
+</div>
+</a>
+</nav>
+</div>
+<div class="md-footer-meta md-typeset">
+<div class="md-footer-meta__inner md-grid">
+<div class="md-footer-copyright">
+Powered by
+<a href="https://github.com/lightbend/paradox">Paradox</a>
+and
+<a href="https://jonas.github.io/paradox-material-theme/">Paradox Material Theme</a>
+
+</div>
+<div class="md-footer-social">
+<a href="https://github.com/synesso" class="md-footer-social__link fa fa-github"></a><a href="https://keybase.io/jem" class="md-footer-social__link fa fa-globe"></a>
+</div>
+
+</div>
+</div>
+</footer>
+
+</div>
+<script src="assets/javascripts/application.583bbe55.js"></script>
+<script src="assets/javascripts/paradox-material-theme.js"></script>
+<script>app.initialize({version:"0.17",url:{base:"."}})</script>
+<script type="text/javascript" src="lib/prettify/prettify.js"></script>
+<script type="text/javascript" src="lib/prettify/lang-scala.js"></script>
+<script type="text/javascript">
+document.addEventListener("DOMContentLoaded", function(event) {
+window.prettyPrint && prettyPrint();
+});
+</script>
+</body>
+</html>

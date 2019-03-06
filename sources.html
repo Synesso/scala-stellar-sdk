@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta http-equiv="x-ua-compatible" content="ie=edge">
-<meta name="description" content="scala-stellar-sdk">
+<meta name="description" content="Perform Stellar (distributed payments platform) operations from your Scala application. Build and submit transactions, query the state of the network and stream updates.">
 <meta name="generator" content="Paradox, paradox-material-theme=0.6.0, mkdocs-material=3.0.3">
 
 <meta name="lang:clipboard.copy" content="Copy to clipboard">
@@ -18,7 +18,7 @@
 <meta name="lang:search.tokenizer" content="">
 
 
-<meta name="description" content="scala-stellar-sdk">
+<meta name="description" content="Perform Stellar (distributed payments platform) operations from your Scala application. Build and submit transactions, query the state of the network and stream updates.">
 <link rel="shortcut icon" href="assets/images/favicon.png">
 <title>Sources · Stellar SDK for Scala</title>
 <link rel="stylesheet" href="assets/stylesheets/application.451f80e5.css">
@@ -115,6 +115,7 @@ synesso/scala-stellar-sdk
 </div>
 <ul>
   <li><a href="transacting.html" class="page">Transacting</a></li>
+  <li><a href="key_pairs.html" class="page">Key Pairs</a></li>
   <li><a href="queries.html" class="page">Queries</a></li>
   <li><a href="sources.html" class="active page">Sources</a></li>
 </ul>
@@ -138,7 +139,7 @@ synesso/scala-stellar-sdk
 <ul style="display: none">
 <li class="md-nav__item md-version" id="project.version">
 <label class="md-nav__link" for="__version">
-<i class="md-icon" title="Version">label_outline</i> 0.5.2
+<i class="md-icon" title="Version">label_outline</i> e76a53a2adde66119134dcbe19550e33a124f0f0
 </label>
 </li>
 </ul>
@@ -174,11 +175,12 @@ synesso/scala-stellar-sdk
 <p>Many of the of the APIs made available via <a href="queries.html">Queries</a> are also available in a streaming mode. Access to the streaming endpoints is made available on the <a href="https://synesso.github.io/scala-stellar-sdk/api/stellar/sdk/Network.html">Network</a> interface by way of <code>*Source</code> methods. Whereas queries provide access to historical data, sources can be used to subscribe to updates from the network in near real-time.</p>
 <p><code>Sources</code> are a concept native to <a href="https://doc.akka.io/docs/akka/current/stream/stream-flows-and-basics.html#introduction">Akka Streams</a>. They provide resilient access to upstream data and support backpressure should the data be arriving faster than the application is capable of processing.</p>
 <p>Before sources can be used, an actor system and materializer need to be brought into implicit scope.</p>
-<pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/Synesso/scala-stellar-sdk/tree/v0.5.2/src/test/scala/stellar/sdk/DocExamples.scala#L26-L28" target="_blank" title="Go to snippet source"></a><code class="language-scala">implicit val system = ActorSystem(&quot;stellar-sources&quot;)
+<pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/Synesso/scala-stellar-sdk/tree/ve76a53a2adde66119134dcbe19550e33a124f0f0/src/test/scala/stellar/sdk/DocExamples.scala#L27-L30" target="_blank" title="Go to snippet source"></a><code class="language-scala">implicit val system = ActorSystem(&quot;stellar-sources&quot;)
 implicit val materializer = ActorMaterializer()
+
 import system.dispatcher</code></pre>
 <p>Once done, sources may be used as a method for subscribing to updates. For example:</p>
-<pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/Synesso/scala-stellar-sdk/tree/v0.5.2/src/test/scala/stellar/sdk/DocExamples.scala#L268-L277" target="_blank" title="Go to snippet source"></a><code class="language-scala">// print each new transaction&#39;s hash
+<pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/Synesso/scala-stellar-sdk/tree/ve76a53a2adde66119134dcbe19550e33a124f0f0/src/test/scala/stellar/sdk/DocExamples.scala#L291-L300" target="_blank" title="Go to snippet source"></a><code class="language-scala">// print each new transaction&#39;s hash
 TestNetwork.transactionSource().runForeach(txn =&gt; println(txn.hash))
 
 // a source of transactions for a given account
@@ -191,43 +193,43 @@ val ledgerTxnSource = TestNetwork.transactionsByLedgerSource(1, Record(0))</code
 <p>Like queries, sources fall into several categories.</p>
 <h3><a href="#effects" name="effects" class="anchor"><span class="anchor-link"></span></a>Effects</h3>
 <p><a href="https://synesso.github.io/scala-stellar-sdk/api/stellar/sdk/resp/EffectResp.html">Effects</a> are the changes that have been effected on the network as a result of operations successfully processed.</p>
-<pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/Synesso/scala-stellar-sdk/tree/v0.5.2/src/test/scala/stellar/sdk/DocExamples.scala#L99-L103" target="_blank" title="Go to snippet source"></a><code class="language-scala">// a source of all new effects
+<pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/Synesso/scala-stellar-sdk/tree/ve76a53a2adde66119134dcbe19550e33a124f0f0/src/test/scala/stellar/sdk/DocExamples.scala#L103-L107" target="_blank" title="Go to snippet source"></a><code class="language-scala">// a source of all new effects
 val effectsSource: Source[EffectResponse, NotUsed] = TestNetwork.effectsSource()
 
 // a source of all new effects for a given account
 val effectsForAccountSource = TestNetwork.effectsByAccountSource(publicKey)</code></pre>
 <h3><a href="#ledgers" name="ledgers" class="anchor"><span class="anchor-link"></span></a>Ledgers</h3>
 <p><a href="https://synesso.github.io/scala-stellar-sdk/api/stellar/sdk/resp/LedgerResp.html">Ledgers</a> represent the state of the network at any time. They are created sequentially as the state of the network changes.</p>
-<pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/Synesso/scala-stellar-sdk/tree/v0.5.2/src/test/scala/stellar/sdk/DocExamples.scala#L123-L124" target="_blank" title="Go to snippet source"></a><code class="language-scala">// a source of all new ledgers
+<pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/Synesso/scala-stellar-sdk/tree/ve76a53a2adde66119134dcbe19550e33a124f0f0/src/test/scala/stellar/sdk/DocExamples.scala#L137-L138" target="_blank" title="Go to snippet source"></a><code class="language-scala">// a source of all new ledgers
 val ledgersSource: Source[LedgerResponse, NotUsed] = TestNetwork.ledgersSource()</code></pre>
 <h3><a href="#offers" name="offers" class="anchor"><span class="anchor-link"></span></a>Offers</h3>
 <p><a href="https://synesso.github.io/scala-stellar-sdk/api/stellar/sdk/resp/OfferResp.html">Offers</a> can be issued by accounts to buy or sell assets. Sources for offers is available only by account.</p>
-<pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/Synesso/scala-stellar-sdk/tree/v0.5.2/src/test/scala/stellar/sdk/DocExamples.scala#L142-L143" target="_blank" title="Go to snippet source"></a><code class="language-scala">val offersByAccountSource: Source[OfferResponse, NotUsed] =
+<pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/Synesso/scala-stellar-sdk/tree/ve76a53a2adde66119134dcbe19550e33a124f0f0/src/test/scala/stellar/sdk/DocExamples.scala#L165-L166" target="_blank" title="Go to snippet source"></a><code class="language-scala">val offersByAccountSource: Source[OfferResponse, NotUsed] =
   TestNetwork.offersByAccountSource(publicKey)</code></pre>
 <h3><a href="#operations" name="operations" class="anchor"><span class="anchor-link"></span></a>Operations</h3>
 <p><a href="https://synesso.github.io/scala-stellar-sdk/api/stellar/sdk/resp/Operation.html">Operations</a> are changes to the ledger. They represent the action, as opposed to the effects resulting from the action.</p>
 <p>Operations returned by these queries are wrapped in the <a href="https://synesso.github.io/scala-stellar-sdk/api/stellar/sdk/model/op/Transacted.html">Transacted</a> type. This indicates that the operation has been part of a successful transaction, and provides details about that transaction.</p>
-<pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/Synesso/scala-stellar-sdk/tree/v0.5.2/src/test/scala/stellar/sdk/DocExamples.scala#L170-L174" target="_blank" title="Go to snippet source"></a><code class="language-scala">// a source of all new operations
+<pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/Synesso/scala-stellar-sdk/tree/ve76a53a2adde66119134dcbe19550e33a124f0f0/src/test/scala/stellar/sdk/DocExamples.scala#L193-L197" target="_blank" title="Go to snippet source"></a><code class="language-scala">// a source of all new operations
 val operationsSource: Source[Transacted[Operation], NotUsed] = TestNetwork.operationsSource()
 
 // a source of all new operations involving a specified account
 val operationsByAccountSource = TestNetwork.operationsByAccountSource(publicKey)</code></pre>
 <h3><a href="#orderbooks" name="orderbooks" class="anchor"><span class="anchor-link"></span></a>OrderBooks</h3>
 <p><a href="https://synesso.github.io/scala-stellar-sdk/api/stellar/sdk/OrderBook.html">OrderBooks</a> include all the offers to buy or sell a specific asset. The source for an orderbook will present offers for that pair.</p>
-<pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/Synesso/scala-stellar-sdk/tree/v0.5.2/src/test/scala/stellar/sdk/DocExamples.scala#L197-L200" target="_blank" title="Go to snippet source"></a><code class="language-scala">val beerForHugsBigOrderBookSource: Source[OrderBook, NotUsed] = TestNetwork.orderBookSource(
+<pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/Synesso/scala-stellar-sdk/tree/ve76a53a2adde66119134dcbe19550e33a124f0f0/src/test/scala/stellar/sdk/DocExamples.scala#L220-L223" target="_blank" title="Go to snippet source"></a><code class="language-scala">val beerForHugsBigOrderBookSource: Source[OrderBook, NotUsed] = TestNetwork.orderBookSource(
   selling = Asset(&quot;FabulousBeer&quot;, publicKey),
   buying = Asset(&quot;HUG&quot;, publicKey),
 )</code></pre>
 <h3><a href="#payments" name="payments" class="anchor"><span class="anchor-link"></span></a>Payments</h3>
 <p><a href="https://synesso.github.io/scala-stellar-sdk/api/stellar/sdk/model/op/PayOperation.html">Payments</a> are the subset of Operations that cause payments to be made to an account. This is similar to the <a href="#operations">Operations</a> query methods, but will only return <code>CreateAccount</code> and <code>Payment</code> operations.</p>
-<pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/Synesso/scala-stellar-sdk/tree/v0.5.2/src/test/scala/stellar/sdk/DocExamples.scala#L221-L225" target="_blank" title="Go to snippet source"></a><code class="language-scala">// a source of all new payment operations
+<pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/Synesso/scala-stellar-sdk/tree/ve76a53a2adde66119134dcbe19550e33a124f0f0/src/test/scala/stellar/sdk/DocExamples.scala#L244-L248" target="_blank" title="Go to snippet source"></a><code class="language-scala">// a source of all new payment operations
 val paymentsSource: Source[Transacted[PayOperation], NotUsed] = TestNetwork.paymentsSource()
 
 // a source of all new payment operations involving a specified account
 val paymentsByAccountSource = TestNetwork.paymentsByAccountSource(publicKey)</code></pre>
 <h3><a href="#transactions" name="transactions" class="anchor"><span class="anchor-link"></span></a>Transactions</h3>
 <p>Transactions are the fundamental unit of change in the network and are composed of at least one and at most 100 operations. These sources stream validated transactions, in the form of <a href="https://synesso.github.io/scala-stellar-sdk/api/stellar/sdk/resp/TransactionHistory.html">TransactionHistory</a>onses (as opposed to transactions that are composed and submitted to the network).</p>
-<pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/Synesso/scala-stellar-sdk/tree/v0.5.2/src/test/scala/stellar/sdk/DocExamples.scala#L268-L277" target="_blank" title="Go to snippet source"></a><code class="language-scala">// print each new transaction&#39;s hash
+<pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/Synesso/scala-stellar-sdk/tree/ve76a53a2adde66119134dcbe19550e33a124f0f0/src/test/scala/stellar/sdk/DocExamples.scala#L291-L300" target="_blank" title="Go to snippet source"></a><code class="language-scala">// print each new transaction&#39;s hash
 TestNetwork.transactionSource().runForeach(txn =&gt; println(txn.hash))
 
 // a source of transactions for a given account
@@ -239,13 +241,13 @@ val accnTxnSource: Source[TransactionHistory, NotUsed] =
 val ledgerTxnSource = TestNetwork.transactionsByLedgerSource(1, Record(0))</code></pre>
 </div>
 <div>
-<a href="https://github.com/Synesso/scala-stellar-sdk/tree/v0.5.2/src/main/paradox/sources.md" title="Edit this page" class="md-source-file md-edit">
+<a href="https://github.com/Synesso/scala-stellar-sdk/tree/ve76a53a2adde66119134dcbe19550e33a124f0f0/src/main/paradox/sources.md" title="Edit this page" class="md-source-file md-edit">
 Edit this page
 </a>
 </div>
 <div class="print-only">
 <span class="md-source-file md-version">
-0.5.2
+e76a53a2adde66119134dcbe19550e33a124f0f0
 </span>
 </div>
 </article>
