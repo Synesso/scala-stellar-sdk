@@ -80,6 +80,7 @@ lazy val root = (project in file("."))
       "com.typesafe.scala-logging" %% "scala-logging" % "3.9.2",
       "ch.qos.logback" % "logback-classic" % "1.2.3",
       "org.typelevel" %% "cats-core" % "1.6.0",
+      "tech.sparse" %%  "toml-scala" % "0.2.0",
       "org.specs2" %% "specs2-core" % "4.4.1" % "test,it",
       "org.specs2" %% "specs2-mock" % "4.4.1" % "test",
       "org.specs2" %% "specs2-scalacheck" % "4.4.1" % "test",

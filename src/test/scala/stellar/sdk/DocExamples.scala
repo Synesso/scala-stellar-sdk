@@ -4,6 +4,7 @@ import akka.NotUsed
 import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
 import akka.stream.scaladsl.Source
+import org.apache.commons.codec.binary.Hex
 import org.json4s.CustomSerializer
 import org.specs2.concurrent.ExecutionEnv
 import org.specs2.mock.Mockito
@@ -31,8 +32,10 @@ class DocExamples(implicit ee: ExecutionEnv) extends Specification with Mockito 
 
   "query documentation" should {
     val TestNetwork = new DoNothingNetwork
+    // #keypair_from_accountid
     val accountId = "GCXYKQF35XWATRB6AWDDV2Y322IFU2ACYYN5M2YB44IBWAIITQ4RYPXK"
     val publicKey = KeyPair.fromAccountId(accountId)
+    // #keypair_from_accountid
 
     "be present for accounts" >> {
       // #account_query_examples
@@ -301,11 +304,35 @@ class DocExamples(implicit ee: ExecutionEnv) extends Specification with Mockito 
     }
   }
 
+  "keypair documentation" should {
+    "show creation of keypair from secret seed" >> {
+      // #keypair_from_secret_seed
+      // Provide the secret seed as a String
+      val keyPair = KeyPair.fromSecretSeed(
+        "SDHXK2UNHTXVW2MZSOVOPYUKVXD3PEVKMNQZZGPODQMR67YTKWMOC732")
+
+      // or an Array[Char]
+      KeyPair.fromSecretSeed(
+        "SDHXK2UNHTXVW2MZSOVOPYUKVXD3PEVKMNQZZGPODQMR67YTKWMOC732".toCharArray)
+
+      // or a raw 32 byte seed
+      KeyPair.fromSecretSeed(
+        Hex.decodeHex("1123740522f11bfef6b3671f51e159ccf589ccf8965262dd5f97d1721d383dd4")
+      )
+      // #keypair_from_secret_seed
+      keyPair.asPublicKey mustEqual KeyPair.fromAccountId("GD2HMF3BKITMXISCPTU7VVTFXDY5WSQK4QNIUATNCXVKBNWZP7FWZOXG")
+    }
+  }
+
   //noinspection ScalaUnusedSymbol
   "transaction documentation" should {
     implicit val TestNetwork = new DoNothingNetwork
 
-    val Array(sourceKey, aliceKey, bobKey, charlieKey) = Array.fill(4)(KeyPair.random)
+    val Array(sourceKey, aliceKey, bobKey, charlieKey) = Array.fill(4)(
+      // #keypair_randomly
+      KeyPair.random
+      // #keypair_randomly
+    )
     val nextSequenceNumber = 1234
 
     "show how to create a transaction with operations" >> {

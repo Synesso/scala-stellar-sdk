@@ -4,11 +4,17 @@ As this project is pre 1.0, breaking changes may happen for minor version bumps.
 
 ## Next version
 
+_Nothing, yet._
+
+
+## 0.6.0
+
 ### Added
 
-- Federation Server integration. [#6](https://github.com/Synesso/scala-stellar-sdk/issues/6) 
+- Federation Server integration. [#5](https://github.com/Synesso/scala-stellar-sdk/issues/5) [#6](https://github.com/Synesso/scala-stellar-sdk/issues/6) 
+    - Resolve federated addresses with `KeyPair.fromAddress(address: String): Future[PublicKey]`.
     - Look up the account details by federated name with `FederationServer.byName`.
-    - Or perform a reverse lookup, where it is supported by the server, with `FederationServer.byAccount`.
+    - Perform a reverse lookup, where it is supported by the server, with `FederationServer.byAccount`.
 
 - Added `Network.feeStats()` method to return the fee statistics from the most recent ledger, as per the [`fee_stats`
     endpoint](https://www.stellar.org/developers/horizon/reference/endpoints/fee-stats.html).

@@ -5,9 +5,9 @@ import org.json4s.JsonDSL._
 import org.json4s.native.JsonMethods._
 import org.scalacheck.Gen
 import org.specs2.concurrent.ExecutionEnv
-import org.specs2.mock.Mockito
 import org.specs2.mutable.Specification
 import org.specs2.specification.AfterAll
+import stellar.sdk.StubServer.ReplyWithJson
 import stellar.sdk.inet.RestException
 import stellar.sdk.model._
 import stellar.sdk.model.response.FederationResponse
@@ -15,13 +15,13 @@ import stellar.sdk.model.response.FederationResponse
 import scala.annotation.tailrec
 import scala.concurrent.duration._
 
-class FederationServerSpec(implicit ec: ExecutionEnv) extends Specification with Mockito with ArbitraryInput with AfterAll {
+class FederationServerSpec(implicit ec: ExecutionEnv) extends Specification with ArbitraryInput with AfterAll {
 
   val server = new StubServer()
 
   override def afterAll(): Unit = server.stop()
 
-  private def toJson(fr: FederationResponse, suppress: Option[String] = None): String = {
+  private def toJson(fr: FederationResponse, suppress: Option[String] = None): ReplyWithJson = {
 
     val memo: Option[JObject] = fr.memo match {
       case NoMemo => None
@@ -35,7 +35,7 @@ class FederationServerSpec(implicit ec: ExecutionEnv) extends Specification with
 
     val doc: JObject = (address.toSeq ++ memo.toSeq ++ account.toSeq).reduceLeft[JObject](_ ~ _)
 
-    compact(render(doc))
+    ReplyWithJson(compact(render(doc)))
   }
 
   @tailrec
@@ -80,13 +80,13 @@ class FederationServerSpec(implicit ec: ExecutionEnv) extends Specification with
 
     "handle invalid document response when fetching response by name" >> {
       val name = Gen.identifier.sample.get
-      server.expectGet("fed.json", Map("q" -> name, "type" -> "name"), """{"something":"else"}""")
+      server.expectGet("fed.json", Map("q" -> name, "type" -> "name"), ReplyWithJson("""{"something":"else"}"""))
       FederationServer(s"http://localhost:8002/fed.json").byName(name) must throwA[RestException].awaitFor(10.seconds)
     }
 
     "handle invalid non-document response when fetching response by name" >> {
       val name = Gen.identifier.sample.get
-      server.expectGet("fed.json", Map("q" -> name, "type" -> "name"), "hobnobs")
+      server.expectGet("fed.json", Map("q" -> name, "type" -> "name"), ReplyWithJson("hobnobs"))
       FederationServer(s"http://localhost:8002/fed.json").byName(name) must throwA[RestException].awaitFor(10.seconds)
     }
 
@@ -123,13 +123,13 @@ class FederationServerSpec(implicit ec: ExecutionEnv) extends Specification with
 
     "handle invalid document response when fetching response by account" >> {
       val account = genPublicKey.sample.get
-      server.expectGet("fed.json", Map("q" -> account.accountId, "type" -> "id"), """{"something":"else"}""")
+      server.expectGet("fed.json", Map("q" -> account.accountId, "type" -> "id"), ReplyWithJson("""{"something":"else"}"""))
       FederationServer(s"http://localhost:8002/fed.json").byAccount(account) must throwA[RestException].awaitFor(10.seconds)
     }
 
     "handle invalid non-document response when fetching response by account" >> {
       val account = genPublicKey.sample.get
-      server.expectGet("fed.json", Map("q" -> account.accountId, "type" -> "id"), "dachshunds")
+      server.expectGet("fed.json", Map("q" -> account.accountId, "type" -> "id"), ReplyWithJson("dachshunds"))
       FederationServer(s"http://localhost:8002/fed.json").byAccount(account) must throwA[RestException].awaitFor(10.seconds)
     }
   }

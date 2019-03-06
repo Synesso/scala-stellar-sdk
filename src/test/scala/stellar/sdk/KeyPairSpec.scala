@@ -1,12 +1,14 @@
 package stellar.sdk
 
 import org.apache.commons.codec.binary.Hex
+import org.specs2.concurrent.ExecutionEnv
 import org.specs2.mutable.Specification
-import stellar.sdk.model.FormatException
-import stellar.sdk.model.op.{BumpSequenceOperation, Operation}
 import stellar.sdk.util.ByteArrays
 
-class KeyPairSpec extends Specification with ArbitraryInput with DomainMatchers {
+import scala.concurrent.Future
+import scala.concurrent.duration._
+
+class KeyPairSpec(implicit ee: ExecutionEnv) extends Specification with ArbitraryInput with DomainMatchers {
 
   private val keyPair = KeyPair.fromSecretSeed(
     Hex.decodeHex("1123740522f11bfef6b3671f51e159ccf589ccf8965262dd5f97d1721d383dd4")
@@ -79,6 +81,15 @@ class KeyPairSpec extends Specification with ArbitraryInput with DomainMatchers 
       pk must beEqualTo(KeyPair.fromPublicKey(pk.publicKey))
     }
 
+    "be constructable from a passphrase" >> {
+      // #keypair_from_passphrase
+      val kp = KeyPair.fromPassphrase(
+        "But, the Babel fish is a dead giveaway isn't it?"
+      )
+      // #keypair_from_passphrase
+      kp mustEqual KeyPair.fromSecretSeed("SDHJNFV6MEPGT2FTAADH2ACHHXIV72F4VV4Q3WLYOKZTK7XB62NAOZPA")
+    }
+
     "serde via xdr bytes" >> prop { pk: PublicKey =>
       val (remaining, decoded) = KeyPair.decode.run(pk.encode).value
       decoded must beEquivalentTo(pk)
@@ -87,6 +98,29 @@ class KeyPairSpec extends Specification with ArbitraryInput with DomainMatchers 
 
     "serde via xdr string" >> prop { pk: PublicKey =>
       KeyPair.decodeXDR(ByteArrays.base64(pk.encode)) must beEquivalentTo(pk)
+    }
+  }
+
+  "a federated address" should {
+    "resolved to a keypair when it exists" >> {
+      // #keypair_from_federated_address
+      val resolved: Future[PublicKey] = KeyPair.fromAddress("jem*keybase.io")
+      // #keypair_from_federated_address
+      resolved must beEqualTo(
+        KeyPair.fromAccountId("GBRAZP7U3SPHZ2FWOJLHPBO3XABZLKHNF6V5PUIJEEK6JEBKGXWD2IIE")
+      ).awaitFor(1.minute)
+    }
+
+    "fail when the name does not exist" >> {
+      KeyPair.fromAddress("asodifuawehksdjhlsduyfasdjfh*stronghold.co") must throwA[NoSuchAddress].awaitFor(1.minute)
+    }
+
+    "fail when the domain does not resolve" >> {
+      KeyPair.fromAddress("jem*no.such.top.level.domain") must throwA[NoSuchAddress].awaitFor(1.minute)
+    }
+
+    "fail when the address is not in the correct format" >> {
+      KeyPair.fromAddress("no asterisk") must throwA[NoSuchAddress].awaitFor(1.minute)
     }
   }
 }

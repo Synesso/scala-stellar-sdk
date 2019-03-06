@@ -4,26 +4,22 @@ import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.model.HttpMethods.GET
 import akka.http.scaladsl.model.MediaTypes.`application/json`
-import akka.http.scaladsl.model.StatusCodes.{NotFound, Redirection}
+import akka.http.scaladsl.model.StatusCodes.NotFound
 import akka.http.scaladsl.model.Uri.{Path, Query}
 import akka.http.scaladsl.model._
 import akka.http.scaladsl.model.headers.{Location, RawHeader}
-import akka.http.scaladsl.unmarshalling.{Unmarshal, Unmarshaller}
+import akka.http.scaladsl.unmarshalling.{FromEntityUnmarshaller, Unmarshal}
 import akka.stream.ActorMaterializer
 import com.typesafe.scalalogging.LazyLogging
 import de.heikoseeberger.akkahttpjson4s.Json4sSupport
-import org.json4s.Formats
 import stellar.sdk.BuildInfo
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.reflect.ClassTag
-import scala.util.Failure
 
-trait WebClient extends LazyLogging {
+class WebClient(base: Uri)
+                        (implicit system: ActorSystem) extends LazyLogging {
 
-  val base: Uri
-
-  implicit val system: ActorSystem
   implicit val materializer = ActorMaterializer()
   implicit val executionContext = system.dispatcher
   implicit val serialization = org.json4s.native.Serialization
@@ -38,22 +34,20 @@ trait WebClient extends LazyLogging {
     override def unmarshallerContentTypes = List(`application/json`, `application/hal+json`, `application/problem+json`)
   }
 
-  import HalJsonSupport._
-
   def get[T: ClassTag](path: Path, params: Map[String, String] = Map.empty)
-    (implicit ec: ExecutionContext, formats: Formats, m: Manifest[T]): Future[Option[T]] = {
+    (implicit ec: ExecutionContext, um: FromEntityUnmarshaller[T], m: Manifest[T]): Future[Option[T]] = {
 
     val requestUri = base.withPath(path).withQuery(Query(params))
 
     val request = HttpRequest(GET, requestUri).addHeader(clientNameHeader).addHeader(clientVersionHeader)
     for {
       response <- singleRequest(request)
-      unwrapped <- parse[T](request, response)(unmarshaller[T])
+      unwrapped <- parse[T](request, response)
     } yield unwrapped
   }
 
   private def parse[T](request: HttpRequest, response: HttpResponse)
-                      (implicit um: Unmarshaller[ResponseEntity, T]): Future[Option[T]] = {
+                      (implicit um: FromEntityUnmarshaller[T]): Future[Option[T]] = {
 
     val HttpResponse(status, _, entity, _) = response
 

@@ -12,11 +12,12 @@ import stellar.sdk.model.response.{FederationResponse, FederationResponseDeseria
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class FederationServer(val base: Uri, path: Path)
+case class FederationServer(base: Uri, path: Path)
                       (implicit val system: ActorSystem = ActorSystem("stellar-sdk", ConfigFactory.load().getConfig("scala-stellar-sdk")))
-  extends WebClient with LazyLogging {
+  extends WebClient(base) with LazyLogging {
 
   implicit val formats = Serialization.formats(NoTypeHints) + FederationResponseDeserialiser
+  import HalJsonSupport._
 
   def byName(name: String)(implicit ec: ExecutionContext): Future[Option[FederationResponse]] = {
     get[FederationResponse](path, Map("q" -> name, "type" -> "name"))
