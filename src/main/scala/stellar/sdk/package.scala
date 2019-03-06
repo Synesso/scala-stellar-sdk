@@ -1,5 +1,7 @@
 package stellar
 
+import akka.actor.ActorSystem
+import com.typesafe.config.ConfigFactory
 import stellar.sdk.model.response.AccountResponse
 
 import scala.language.implicitConversions
@@ -8,4 +10,8 @@ package object sdk {
 
   implicit def accnFromAccnResp(resp: AccountResponse) = resp.toAccount
 
+  object DefaultActorSystem {
+    implicit val system: ActorSystem =
+      ActorSystem("stellar-sdk", ConfigFactory.load().getConfig("scala-stellar-sdk"))
+  }
 }

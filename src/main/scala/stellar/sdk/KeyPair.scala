@@ -10,6 +10,7 @@ import stellar.sdk.model.StrKey
 import stellar.sdk.model.xdr.{Decode, Encodable, Encode}
 import stellar.sdk.util.ByteArrays
 
+import scala.concurrent.Future
 import scala.util.{Failure, Success, Try}
 
 case class KeyPair(pk: EdDSAPublicKey, sk: EdDSAPrivateKey) extends PublicKeyOps {
@@ -168,6 +169,17 @@ object KeyPair {
   def fromAccountId(accountId: String): PublicKey = Try(fromPublicKey(StrKey.decodeStellarAccountId(accountId))) match {
     case Success(pk) => pk
     case Failure(t) => throw InvalidAccountId(accountId, t)
+  }
+
+  /**
+    * Returns the public key associated with the federated address.
+    *
+    * @param address formatted as `name*domain`, as per https://www.stellar.org/developers/guides/concepts/federation.html#stellar-addresses
+    * @return Future[{ @link PublicKey }]
+    */
+  def fromAddress(address: String): Future[PublicKey] = {
+
+    ???
   }
 
   /**

@@ -19,7 +19,7 @@ import com.typesafe.scalalogging.LazyLogging
 import de.heikoseeberger.akkahttpjson4s.Json4sSupport
 import org.json4s.native.{JsonMethods, Serialization}
 import org.json4s.{CustomSerializer, DefaultFormats, Formats, JObject, NoTypeHints}
-import stellar.sdk.BuildInfo
+import stellar.sdk.{BuildInfo, DefaultActorSystem}
 import stellar.sdk.model._
 import stellar.sdk.model.op.TransactedOperationDeserializer
 import stellar.sdk.model.response._
@@ -53,7 +53,7 @@ trait HorizonAccess {
 }
 
 class Horizon(uri: URI)
-             (implicit system: ActorSystem = ActorSystem("stellar-sdk", ConfigFactory.load().getConfig("scala-stellar-sdk")))
+             (implicit system: ActorSystem = DefaultActorSystem.system)
   extends HorizonAccess with LazyLogging {
 
   import HalJsonSupport._

@@ -4,26 +4,22 @@ import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.model.HttpMethods.GET
 import akka.http.scaladsl.model.MediaTypes.`application/json`
-import akka.http.scaladsl.model.StatusCodes.{NotFound, Redirection}
+import akka.http.scaladsl.model.StatusCodes.NotFound
 import akka.http.scaladsl.model.Uri.{Path, Query}
 import akka.http.scaladsl.model._
 import akka.http.scaladsl.model.headers.{Location, RawHeader}
-import akka.http.scaladsl.unmarshalling.{FromEntityUnmarshaller, Unmarshal, Unmarshaller}
+import akka.http.scaladsl.unmarshalling.{FromEntityUnmarshaller, Unmarshal}
 import akka.stream.ActorMaterializer
 import com.typesafe.scalalogging.LazyLogging
 import de.heikoseeberger.akkahttpjson4s.Json4sSupport
-import org.json4s.Formats
 import stellar.sdk.BuildInfo
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.reflect.ClassTag
-import scala.util.Failure
 
-trait WebClient extends LazyLogging {
+class WebClient(base: Uri)
+                        (implicit system: ActorSystem) extends LazyLogging {
 
-  val base: Uri
-
-  implicit val system: ActorSystem
   implicit val materializer = ActorMaterializer()
   implicit val executionContext = system.dispatcher
   implicit val serialization = org.json4s.native.Serialization
