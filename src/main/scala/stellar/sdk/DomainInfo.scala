@@ -15,9 +15,7 @@ import scala.concurrent.Future
   *
   * @see https://www.stellar.org/developers/guides/concepts/stellar-toml.html
   */
-case class DomainInfo(federationServer: FederationServer) {
-
-}
+case class DomainInfo(federationServer: FederationServer)
 
 object DomainInfo {
 
@@ -25,7 +23,6 @@ object DomainInfo {
     Unmarshaller.byteStringUnmarshaller
       .forContentTypes(`text/plain(UTF-8)`, `application/octet-stream`)
       .mapWithCharset {
-        case (ByteString.empty, _) => throw Unmarshaller.NoContentException
         case (data, charset) => data.decodeString(charset.nioCharset.name)
       }.map(from)
 

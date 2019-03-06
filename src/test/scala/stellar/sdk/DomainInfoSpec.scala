@@ -51,6 +51,10 @@ class DomainInfoSpec(implicit ee: ExecutionEnv) extends Specification with After
       DomainInfo.from("") must throwA[DomainInfoParseException]
     }
 
+    "fail when the document is something other than TOML" >> {
+      DomainInfo.from("""{'pandas': 12}""") must throwA[DomainInfoParseException]
+    }
+
     "fail when the endpoint is defined as something other than a string" >> {
       DomainInfo.from("""FEDERATION_SERVER=17""") must throwA[DomainInfoParseException]
     }
