@@ -11,12 +11,8 @@ This is the SDK for performing [Stellar](https://www.stellar.org/) operations vi
 access the Stellar network via Horizon instances to build and submit transactions, query the state of the network and
 stream updates.
 
-Scala developers may prefer to use this SDK because:
-
-* it has a simple, Scala-centric API
-* its operations are asynchronous by default
-* it uses explicit type hierarchies instead of primitives
-* it is tested to near 100% coverage with generative testing
+Scala developers may prefer to use this SDK because because it provides a more natural API for Scala developers than the
+official Java SDK
 
 The code throughout this documentation is compiled against Scala $scalaBinaryVersion$.
 
@@ -43,7 +39,7 @@ Submitting a payment.
 
 @@snip [NetworkSpec.scala](../../it/scala/stellar/sdk/LocalNetworkIntegrationSpec.scala) { #payment_example }
 
-For more detailed coverage, continue by reading about @ref:[Transacting](transacting.md).
+For more detailed coverage, continue by reading about @ref:[KeyPairs](key_pairs.md).
 
 ## API
 
@@ -71,6 +67,7 @@ is [@jem](https://keybase.io/jem).
 @@@ index
 
 * [Transacting](transacting.md)
+* [Key Pairs](key_pairs.md)
 * [Queries](queries.md)
 * [Sources](sources.md)
 

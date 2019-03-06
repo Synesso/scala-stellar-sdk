@@ -10,7 +10,7 @@ import stellar.sdk.model.StrKey
 import stellar.sdk.model.xdr.{Decode, Encodable, Encode}
 import stellar.sdk.util.ByteArrays
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success, Try}
 
 case class KeyPair(pk: EdDSAPublicKey, sk: EdDSAPrivateKey) extends PublicKeyOps {
@@ -177,10 +177,24 @@ object KeyPair {
     * @param address formatted as `name*domain`, as per https://www.stellar.org/developers/guides/concepts/federation.html#stellar-addresses
     * @return Future[{ @link PublicKey }]
     */
-  def fromAddress(address: String): Future[PublicKey] = {
-
-    ???
+  def fromAddress(address: String)(implicit ec: ExecutionContext): Future[PublicKey] = {
+    address match {
+      case AddressRegex(name, domain) =>
+        DomainInfo.forDomain(s"https://$domain")
+          .flatMap {
+            case Some(info) => info.federationServer.byName(s"$name*$domain").map(_.map(_.account))
+                .map(_.getOrElse(throw NoSuchAddress(address, new Exception(s"Address not found on ${info.federationServer}"))))
+            case None => Future(throw NoSuchAddress(address, new Exception("Domain info could not be found")))
+          }
+          .recover {
+            case t: NoSuchAddress => throw t
+            case t: Throwable => throw NoSuchAddress(address, t)
+          }
+      case _ => Future(throw NoSuchAddress(address, new Exception("Not in correct form: name*domain")))
+    }
   }
+
+  private val AddressRegex = """(.+)\*(.+)""".r
 
   /**
     * Generates a random Stellar keypair.
@@ -213,4 +227,7 @@ object Signature {
 }
 
 case class InvalidAccountId(id: String, cause: Throwable) extends RuntimeException(id, cause)
+
 case class InvalidSecretSeed(cause: Throwable) extends RuntimeException(cause)
+
+case class NoSuchAddress(address: String, cause: Throwable) extends RuntimeException(address, cause)
