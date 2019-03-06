@@ -27,4 +27,37 @@ class DomainInfoSpec(implicit ee: ExecutionEnv) extends Specification with After
     }
   }
 
+  "parsing toml" should {
+    "be successful when endpoint is correctly defined" >> {
+      DomainInfo.from("""FEDERATION_SERVER="https://fruitcakes.com/federation.pl"""") mustEqual
+        DomainInfo(FederationServer("https://fruitcakes.com/federation.pl"))
+    }
+
+    "be successful when there is other content in the file" >> {
+      DomainInfo.from(
+        """
+          |# this is how we roll
+          |ROLL="like this"
+          |NUMBERS = [1, 2, 3]
+          |FEDERATION_SERVER="bonanza"
+          |[section_9]
+          |NUMBERS = [[66, 22],[33,99]]
+          |FEDERATION_SERVER="ignoreme"
+        """.stripMargin) mustEqual
+        DomainInfo(FederationServer("bonanza"))
+    }
+
+    "fail when the document is empty" >> {
+      DomainInfo.from("") must throwA[DomainInfoParseException]
+    }
+
+    "fail when the endpoint is defined as something other than a string" >> {
+      DomainInfo.from("""FEDERATION_SERVER=17""") must throwA[DomainInfoParseException]
+    }
+
+    "fail when the endpoint is not defined" >> {
+      DomainInfo.from("""THANKS_FOR_THE_FISH=42""") must throwA[DomainInfoParseException]
+    }
+  }
+
 }
