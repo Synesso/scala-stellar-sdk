@@ -11,6 +11,8 @@ import stellar.sdk.model.xdr.{Decode, Encodable, Encode}
 import stellar.sdk.util.ByteArrays
 import stellar.sdk.util.ByteArrays.paddedByteArray
 
+import scala.util.Try
+
 /**
   * An Operation represents a change to the ledger. It is the action, as opposed to the effects resulting from that action.
   */
@@ -138,7 +140,7 @@ object OperationDeserializer extends ResponseParser[Operation]({ o: JObject =>
           key <- (o \ "signer_key").extractOpt[String]
           weight <- (o \ "signer_weight").extractOpt[Int]
         } yield {
-          AccountSigner(KeyPair.fromAccountId(key), weight)
+          Try(AccountSigner(KeyPair.fromAccountId(key), weight)).getOrElse(PreAuthTxnSigner(key, weight))
         },
         sourceAccount = sourceAccount
       )

@@ -126,6 +126,6 @@ object EventSource {
 // $COVERAGE-ON$
 
 object BigEventUnmarshalling extends EventStreamUnmarshalling {
-  override def maxEventSize: Int = 1 << 16
-  override def maxLineSize: Int = 1 << 15
+  override def maxEventSize: Int = 1 << 20
+  override def maxLineSize: Int = 1 << 16
 }

@@ -5,7 +5,7 @@ import org.json4s.native.JsonMethods.parse
 import org.json4s.native.Serialization
 import org.scalacheck.Arbitrary
 import org.specs2.mutable.Specification
-import stellar.sdk.model.AccountSigner
+import stellar.sdk.model.{AccountSigner, HashSigner, PreAuthTxnSigner}
 import stellar.sdk.util.ByteArrays.base64
 import stellar.sdk.{ArbitraryInput, DomainMatchers}
 
@@ -45,17 +45,13 @@ class SetOptionsOperationSpec extends Specification with ArbitraryInput with Dom
            |  ${opt("home_domain", op.operation.homeDomain)}
            |  ${opt("master_key_weight", op.operation.masterKeyWeight)}
            |  ${
-          opt("signer_key", op.operation.signer.flatMap {
-            case AccountSigner(accn, _) => Some(accn.accountId)
-            case _ => None
+          opt("signer_key", op.operation.signer.map {
+            case AccountSigner(accn, _) => accn.accountId
+            case PreAuthTxnSigner(hash, _) => hash
+            case HashSigner(hash, _) => hash
           })
         }
-           |  ${
-          opt("signer_weight", op.operation.signer.flatMap {
-            case AccountSigner(_, w) => Some(w)
-            case _ => None
-          })
-        }
+           |  ${opt("signer_weight", op.operation.signer.map(_.weight))}
            |  ${opt("set_flags", op.operation.setFlags.map(_.map(_.i)))}
            |  ${opt("set_flags_s", op.operation.setFlags.map(_.map(_.s)))}
            |  ${opt("clear_flags", op.operation.clearFlags.map(_.map(_.i)))}
@@ -69,6 +65,11 @@ class SetOptionsOperationSpec extends Specification with ArbitraryInput with Dom
          """.stripMargin
 
       parse(doc).extract[Transacted[SetOptionsOperation]] mustEqual op
-    }.setGen(genTransacted(genSetOptionsOperation.suchThat(_.sourceAccount.nonEmpty)))
+    }.setGen(genTransacted(genSetOptionsOperation.suchThat(_.sourceAccount.nonEmpty)
+      // todo - hash signer is not supported yet, as JSON response doesn't have signer type discriminator
+      .suchThat(_.signer.exists {
+        case _: HashSigner => false
+        case _             => true
+      })))
   }
 }

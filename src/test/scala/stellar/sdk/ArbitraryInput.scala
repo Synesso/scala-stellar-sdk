@@ -318,14 +318,12 @@ trait ArbitraryInput extends ScalaCheck {
     medThreshold <- Gen.option(Gen.choose(0, 255))
     highThreshold <- Gen.option(Gen.choose(0, 255))
     homeDomain <- Gen.option(Gen.identifier)
-    signer <- Gen.option {
-      for {
-        accn <- genPublicKey
-        weight <- Gen.choose(0, 255)
-      } yield {
-        AccountSigner(accn, weight)
-      }
-    }
+    signerWeight <- Gen.choose(0, 255)
+    signer <- Gen.option(Gen.oneOf(
+      genPublicKey.map(AccountSigner(_, signerWeight)),
+      genHash.map(PreAuthTxnSigner(_, signerWeight)),
+      genHash.map(HashSigner(_, signerWeight))
+    ))
     sourceAccount <- Gen.option(genPublicKey)
   } yield {
     SetOptionsOperation(inflationDestination, clearFlags, setFlags, masterKeyWeight, lowThreshold, medThreshold,
