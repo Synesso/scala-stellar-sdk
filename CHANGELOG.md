@@ -7,6 +7,15 @@ As this project is pre 1.0, breaking changes may happen for minor version bumps.
 _Nothing, yet._
 
 
+## 0.6.1
+
+### Fixed
+
+- [#64](https://github.com/Synesso/scala-stellar-sdk/issues/64) Unsealed ADT traits are now sealed.
+- [#65](https://github.com/Synesso/scala-stellar-sdk/issues/65) Failure to parse Set Options Operation JSON responses 
+    when the operation set a signer other than an account. This is a partial fix to avoid parse failures.
+    More work is required to properly discriminate signer types. This is blocked by required changes to Horizon.
+
 ## 0.6.0
 
 ### Added
