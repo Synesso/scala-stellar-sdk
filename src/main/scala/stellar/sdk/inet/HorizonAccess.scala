@@ -14,7 +14,6 @@ import akka.http.scaladsl.model.sse.ServerSentEvent
 import akka.http.scaladsl.unmarshalling.Unmarshal
 import akka.stream.ActorMaterializer
 import akka.stream.scaladsl.Source
-import com.typesafe.config.ConfigFactory
 import com.typesafe.scalalogging.LazyLogging
 import de.heikoseeberger.akkahttpjson4s.Json4sSupport
 import org.json4s.native.{JsonMethods, Serialization}
@@ -160,6 +159,7 @@ class Horizon(uri: URI)
                                      (implicit ec: ExecutionContext, m: Manifest[T]): Source[T, NotUsed] = {
 
     implicit val formats = DefaultFormats + de
+    implicit val sseUnmarshaller = BigEventUnmarshalling.fromEventsStream(system)
 
     val query = Query(Map("cursor" -> cursor.paramValue) ++ params)
     val requestUri = Uri(s"$uri$path").withQuery(query)
@@ -174,7 +174,7 @@ class Horizon(uri: URI)
       Http().singleRequest(req.addHeader(clientNameHeader).addHeader(clientVersionHeader))
 
     val eventSource: Source[ServerSentEvent, NotUsed] =
-      EventSource(requestUri, send, lastEventId, unmarshaller = BigEventUnmarshalling)
+      EventSource(requestUri, send, lastEventId)
 
     eventSource.mapConcat{ case ServerSentEvent(data, eventType, _, _) =>
       (if (eventType.contains("open")) None else Some(data)).to[collection.immutable.Iterable]

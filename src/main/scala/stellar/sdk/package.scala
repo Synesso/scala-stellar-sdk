@@ -11,7 +11,10 @@ package object sdk {
   implicit def accnFromAccnResp(resp: AccountResponse) = resp.toAccount
 
   object DefaultActorSystem {
-    implicit val system: ActorSystem =
-      ActorSystem("stellar-sdk", ConfigFactory.load().getConfig("scala-stellar-sdk"))
+    implicit val system: ActorSystem = {
+      val conf = ConfigFactory.load().getConfig("scala-stellar-sdk")
+      ActorSystem("stellar-sdk", conf)
+    }
   }
+
 }

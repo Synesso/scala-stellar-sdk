@@ -51,7 +51,7 @@ case class PublicKey(pk: EdDSAPublicKey) extends PublicKeyOps {
   override def toString: String = s"""PublicKey("$accountId")"""
 }
 
-trait PublicKeyOps extends Encodable {
+sealed trait PublicKeyOps extends Encodable {
   val pk: EdDSAPublicKey
 
   /**

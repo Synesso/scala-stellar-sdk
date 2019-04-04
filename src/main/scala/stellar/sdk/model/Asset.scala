@@ -5,7 +5,9 @@ import stellar.sdk.model.xdr.{Decode, Encodable, Encode}
 import stellar.sdk.util.ByteArrays._
 import stellar.sdk.{KeyPair, PublicKeyOps}
 
-sealed trait Asset extends Encodable
+sealed trait Asset extends Encodable {
+  val code: String
+}
 
 object Asset {
   def apply(code: String, issuer: PublicKeyOps): NonNativeAsset = {
@@ -21,11 +23,11 @@ object Asset {
 }
 
 case object NativeAsset extends Asset {
+  val code: String = "XLM"
   override def encode: Stream[Byte] = Encode.int(0)
 }
 
-trait NonNativeAsset extends Asset {
-  val code: String
+sealed trait NonNativeAsset extends Asset {
   val issuer: PublicKeyOps
   val typeString: String
 }

@@ -3,6 +3,7 @@ package stellar.sdk
 import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
 import akka.stream.scaladsl.Sink
+import com.typesafe.config.ConfigFactory
 import org.specs2.concurrent.ExecutionEnv
 import org.specs2.mutable.Specification
 import stellar.sdk.model.Record
@@ -15,7 +16,7 @@ import scala.concurrent.duration._
 
 class DataSourceEndpointsIntegrationSpec(implicit ee: ExecutionEnv) extends Specification {
 
-  implicit val system = ActorSystem("local-network-integration-spec")
+  implicit val system = DefaultActorSystem.system
   implicit val materializer = ActorMaterializer()
 
   "transaction source" should {

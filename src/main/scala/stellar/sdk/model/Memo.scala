@@ -40,7 +40,7 @@ case class MemoId(id: Long) extends Memo {
   override def encode: Stream[Byte] = Encode.int(2) ++ Encode.long(id)
 }
 
-trait MemoWithHash extends Memo {
+sealed trait MemoWithHash extends Memo {
   val Length = 32
   val bs: Seq[Byte]
   val bytes = paddedByteArray(bs.toArray, Length)

@@ -2,8 +2,10 @@ package stellar.sdk
 
 import org.specs2.concurrent.ExecutionEnv
 import org.specs2.mutable.Specification
+import stellar.sdk.model.op.AccountMergeOperation
 import stellar.sdk.model.{Account, Transaction}
 
+import scala.concurrent.Await
 import scala.concurrent.duration._
 import scala.util.Try
 
@@ -16,7 +18,17 @@ class FriendBotSpec(implicit ee: ExecutionEnv) extends Specification {
       val response = TestNetwork.fund(kp)
       // #friendbot_example
 
-      response.map(_.isSuccess must beTrue).awaitFor(1 minute)
+      val r = Await.result(response, 1 minute)
+
+      // roll it back in, to be a good testnet citizen
+      implicit val n = TestNetwork
+      val giveItBack = for {
+        accn <- n.account(kp)
+        friendbot <- response.map(_.transaction.transaction.source)
+        response <- Transaction(accn).add(AccountMergeOperation(friendbot.publicKey)).sign(kp).submit()
+      } yield response
+
+      r.isSuccess must beTrue
     }
 
     "be used to serialise a transaction" >> {

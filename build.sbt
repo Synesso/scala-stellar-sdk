@@ -73,18 +73,18 @@ lazy val root = (project in file("."))
     libraryDependencies ++= List(
       "commons-codec" % "commons-codec" % "1.12",
       "net.i2p.crypto" % "eddsa" % "0.3.0",
-      "com.typesafe.akka" %% "akka-http" % "10.1.7",
-      "com.typesafe.akka" %% "akka-stream" % "2.5.21",
+      "com.typesafe.akka" %% "akka-http" % "10.1.8",
+      "com.typesafe.akka" %% "akka-stream" % "2.5.22",
+      "com.lightbend.akka" %% "akka-stream-alpakka-sse" % "1.0-RC1",
       "de.heikoseeberger" %% "akka-http-json4s" % "1.25.2",
       "org.json4s" %% "json4s-native" % "3.6.5",
       "com.typesafe.scala-logging" %% "scala-logging" % "3.9.2",
       "ch.qos.logback" % "logback-classic" % "1.2.3",
       "org.typelevel" %% "cats-core" % "1.6.0",
       "tech.sparse" %%  "toml-scala" % "0.2.0",
-      "org.specs2" %% "specs2-core" % "4.4.1" % "test,it",
-      "org.specs2" %% "specs2-mock" % "4.4.1" % "test",
-      "org.specs2" %% "specs2-scalacheck" % "4.4.1" % "test",
-      "com.github.tomakehurst" % "wiremock" % "2.21.0" % "test,it"
+      "org.specs2" %% "specs2-core" % "4.5.1" % "test,it",
+      "org.specs2" %% "specs2-mock" % "4.5.1" % "test",
+      "org.specs2" %% "specs2-scalacheck" % "4.5.1" % "test"
     )
   )
 

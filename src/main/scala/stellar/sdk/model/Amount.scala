@@ -8,7 +8,7 @@ import stellar.sdk.model.xdr.{Decode, Encodable, Encode}
 
 import scala.util.Try
 
-trait Amount extends Encodable {
+sealed trait Amount extends Encodable {
   val units: Long
   val asset: Asset
 

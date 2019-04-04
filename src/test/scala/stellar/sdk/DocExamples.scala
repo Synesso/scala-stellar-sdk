@@ -114,7 +114,8 @@ class DocExamples(implicit ee: ExecutionEnv) extends Specification with Mockito 
       // #fee_stats_query_example
       val feeStats: Future[FeeStatsResponse] = TestNetwork.feeStats()
       val minAcceptedFee: Future[NativeAmount] = feeStats.map(_.minAcceptedFee)
-      val percentileFee99: Future[NativeAmount] = feeStats.map(_.acceptedFeePercentiles(99))
+      val percentileFee99: Future[NativeAmount] =
+        feeStats.map(_.acceptedFeePercentiles(99))
       // #fee_stats_query_example
 
       ok
@@ -154,7 +155,7 @@ class DocExamples(implicit ee: ExecutionEnv) extends Specification with Mockito 
       // #offer_query_examples
       // all offers for a specified account
       val offersByAccount: Future[Stream[OfferResponse]] =
-      TestNetwork.offersByAccount(publicKey)
+        TestNetwork.offersByAccount(publicKey)
 
       // most recent offers from a specified account
       val last20Offers = TestNetwork
@@ -209,18 +210,20 @@ class DocExamples(implicit ee: ExecutionEnv) extends Specification with Mockito 
       )
 
       // the FabulousBeer/HUG orderbook with up to 100 offers
-      val beerForHugsBigOrderBook: Future[OrderBook] = TestNetwork.orderBook(
-        selling = Asset("FabulousBeer", publicKey),
-        buying = Asset("HUG", publicKey),
-        limit = 100
-      )
+      val beerForHugsBigOrderBook: Future[OrderBook] =
+        TestNetwork.orderBook(
+          selling = Asset("FabulousBeer", publicKey),
+          buying = Asset("HUG", publicKey),
+          limit = 100
+        )
       // #orderbook_query_examples
 
       // #orderbook_source_examples
-      val beerForHugsBigOrderBookSource: Source[OrderBook, NotUsed] = TestNetwork.orderBookSource(
-        selling = Asset("FabulousBeer", publicKey),
-        buying = Asset("HUG", publicKey),
-      )
+      val beerForHugsBigOrderBookSource: Source[OrderBook, NotUsed] =
+        TestNetwork.orderBookSource(
+          selling = Asset("FabulousBeer", publicKey),
+          buying = Asset("HUG", publicKey),
+        )
       // #orderbook_source_examples
       ok
     }

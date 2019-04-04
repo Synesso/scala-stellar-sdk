@@ -1,22 +1,19 @@
 package stellar.sdk
 
-import java.io.File
 import java.net.URI
 
 import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
 import akka.stream.scaladsl.Sink
-import com.github.tomakehurst.wiremock.WireMockServer
 import org.json4s.JsonDSL._
 import org.specs2.concurrent.ExecutionEnv
 import org.specs2.mutable.Specification
-import stellar.sdk.ProxyMode.{NoProxy, RecordScript, ReplayScript}
 import stellar.sdk.inet.HorizonEntityNotFound
 import stellar.sdk.model.Amount.lumens
 import stellar.sdk.model._
 import stellar.sdk.model.op._
-import stellar.sdk.model.result.TransactionHistory
 import stellar.sdk.model.response._
+import stellar.sdk.model.result.TransactionHistory
 import stellar.sdk.util.ByteArrays
 
 import scala.concurrent.duration._
@@ -27,27 +24,9 @@ import scala.util.{Failure, Success}
 class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specification with DomainMatchersIT {
   sequential
 
-  // Set to NoProxy when writing tests; RecordScript when creating stub mappings; ReplayScript for all other times.
-  val mode = NoProxy
+  Seq("src/it/bin/stellar_standalone.sh", "true").!
 
-  val proxy: Option[WireMockServer] = mode match {
-    case NoProxy =>
-      Seq("src/it/bin/stellar_standalone.sh", "true").!
-      None
-    case RecordScript =>
-      require(new File("src/test/resources/mappings").listFiles().forall(_.delete))
-      val s = new WireMockServer(8080)
-      Seq("src/it/bin/stellar_standalone.sh", "true").!
-      s.start()
-      s.startRecording("http://localhost:8000/")
-      Some(s)
-    case ReplayScript =>
-      val s = new WireMockServer(8080)
-      s.start()
-      None
-  }
-
-  private implicit val network = StandaloneNetwork(URI.create(s"http://localhost:${if (mode == NoProxy) 8000 else 8080}"))
+  private implicit val network = StandaloneNetwork(URI.create(s"http://localhost:8000"))
   val masterAccountKey = network.masterAccount
   var masterAccount = Await.result(network.account(masterAccountKey).map(_.toAccount), 10.seconds)
 
@@ -479,14 +458,5 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
       results.map(_.size) must beEqualTo(1).awaitFor(1 minute)
     }
   }
-
-  step {
-    proxy.foreach(_.stopRecording())
-  }
-
 }
 
-object ProxyMode extends Enumeration {
-  type RecordMode = Value
-  val NoProxy, ReplayScript, RecordScript = Value
-}

@@ -1,4 +1,4 @@
-# [Stellar SDK for Scala](https://github.com/synesso/scala-stellar-sdk/)
+# [Stellar SDK for Scala](https://synesso.github.io/scala-stellar-sdk/)
 by [Jem Mawson](https://keybase.io/jem)
 
 [![Travis](https://img.shields.io/travis/Synesso/scala-stellar-sdk.svg)](https://travis-ci.org/Synesso/scala-stellar-sdk)
