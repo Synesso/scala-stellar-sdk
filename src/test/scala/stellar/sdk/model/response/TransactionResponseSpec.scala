@@ -67,7 +67,7 @@ class TransactionResponseSpec extends Specification with ArbitraryInput with Dom
       rejection.sequenceIncremented must beFalse
     }
 
-    // todo - reimplement
+    // todo - reimplement [#53]
 /*
     "provide access to the XDR Transaction Result Meta" >> {
       TransactionApproved("", 1, "", "", "AAAAAAAAAAEAAAACAAAAAAAACVIAAAAAAAAAAPV0vlN3VR04WFNx2dsyXUyxlcIhv99+eHwdMjqmf" +

@@ -481,7 +481,7 @@ object ChangeTrustOperation {
   * Updates the “authorized” flag of an existing trust line. This is called by the issuer of the related asset.
   */
 case class AllowTrustOperation(trustor: PublicKeyOps,
-                               assetCode: String, // todo - make nonnativeasset
+                               assetCode: String,
                                authorize: Boolean,
                                sourceAccount: Option[PublicKeyOps] = None) extends Operation {
 

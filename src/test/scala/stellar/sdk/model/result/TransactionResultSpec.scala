@@ -90,7 +90,7 @@ class TransactionResultSpec extends Specification with ArbitraryInput with Domai
     }
   }
 
-  // todo - implement
+  // todo - reimplement [#53]
   /*
     "An XDR transaction meta" should {
       "be decodable" >> {

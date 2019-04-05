@@ -40,7 +40,7 @@ object TransactionHistoryDeserializer extends ResponseParser[TransactionHistory]
         case "text" => MemoText((o \ "memo").extractOpt[String].getOrElse(""))
         case "hash" => MemoHash(base64((o \ "memo").extract[String]))
       },
-      signatures = (o \ "signatures").extract[Seq[String]], // todo - replace with Signature domain object after #13
+      signatures = (o \ "signatures").extract[Seq[String]],
       envelopeXDR = (o \ "envelope_xdr").extract[String],
       resultXDR = (o \ "result_xdr").extract[String],
       resultMetaXDR = (o \ "result_meta_xdr").extract[String],

@@ -6,7 +6,6 @@ import stellar.sdk.model.Amount.toBaseUnits
 import stellar.sdk._
 import stellar.sdk.model._
 
-// e.g. https://horizon-testnet.stellar.org/accounts/GDGUM5IKSJIFQEHXAWGQD2IWT2OUD6YTY4U7D7SSZLO23BVWHAFL54YN
 case class AccountResponse(id: PublicKey,
                            lastSequence: Long,
                            subEntryCount: Int,
@@ -61,7 +60,6 @@ object AccountRespDeserializer extends ResponseParser[AccountResponse]({ o: JObj
       Signer(key, weight)
     case _ => throw new RuntimeException(s"Expected js object at 'signers'")
   }
-  // todo - data
 
   AccountResponse(id, seq, subEntryCount, Thresholds(lowThreshold, mediumThreshold, highThreshold), authRequired,
     authRevocable, balances, signers)
