@@ -36,6 +36,14 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
 
   val accounts = Set(accnA, accnB, accnC)
 
+  val day0Assets = network.assets()
+  val day0Effects = network.effects()
+  val day0Ledgers = network.ledgers()
+  val day0Operations = network.operations()
+  val day0Payments = network.payments()
+  val day0Trades = network.trades()
+  val day0Transactions = network.transactions()
+
   private def transact(ops: Operation*): Unit = {
     val batchSize = 100
     def forReal(batch: Seq[Operation], remaining: Seq[Operation]): Unit = {
@@ -121,6 +129,17 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
   }
 
   val (accountA, accountB) = Await.result(setupFixtures, 5 minutes /* for travis */)
+
+  "before fixtures exist" >> {
+    "streamed results should be empty" >> {
+      day0Assets must beLike[Seq[AssetResponse]] { case xs => xs must beEmpty } .awaitFor(10.seconds)
+      day0Effects must beLike[Seq[EffectResponse]] { case xs => xs must beEmpty } .awaitFor(10.seconds)
+      day0Operations must beLike[Seq[Transacted[Operation]]] { case xs => xs must beEmpty } .awaitFor(10.seconds)
+      day0Payments must beLike[Seq[Transacted[PayOperation]]] { case xs => xs must beEmpty } .awaitFor(10.seconds)
+      day0Trades must beLike[Seq[Trade]] { case xs => xs must beEmpty } .awaitFor(10.seconds)
+      day0Transactions must beLike[Seq[TransactionHistory]] { case xs => xs must beEmpty } .awaitFor(10.seconds)
+    }
+  }
 
   "account endpoint" should {
     "fetch account response details" >> {
