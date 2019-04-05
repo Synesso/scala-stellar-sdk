@@ -8,7 +8,7 @@ import stellar.sdk._
 import stellar.sdk.model.Amount.lumens
 import stellar.sdk.model._
 
-class AccountResponseSpec extends Specification with ArbitraryInput {
+class AccountResponseSpec extends Specification with ArbitraryInput with DomainMatchers {
 
   implicit val formats = Serialization.formats(NoTypeHints) + AccountRespDeserializer
 
@@ -161,7 +161,8 @@ class AccountResponseSpec extends Specification with ArbitraryInput {
               sellingLiabilities = 5720000000L
             )
           ))
-          r.signers mustEqual Seq(AccountSigner(KeyPair.fromAccountId("GBU6GMZZ2KTQ33CHNVPAWWEJ22ZHLYGBGO3LIBKNANXUMNEOFROZKO62"), 1))
+          r.signers must haveSize(1)
+          r.signers.head must beEquivalentTo(Signer(AccountId(KeyPair.fromAccountId("GBU6GMZZ2KTQ33CHNVPAWWEJ22ZHLYGBGO3LIBKNANXUMNEOFROZKO62").publicKey), 1))
       }
     }
 

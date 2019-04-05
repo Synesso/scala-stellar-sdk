@@ -45,13 +45,26 @@ trait DomainMatchers extends AnyMatchers with MustExpectations with SequenceMatc
   }
 
   def beEquivalentTo(other: Signer): Matcher[Signer] = beLike[Signer] {
-    case AccountSigner(kp, weight) => other match {
-      case AccountSigner(otherKP, otherWeight) =>
-        kp must beEquivalentTo(otherKP)
-        weight mustEqual otherWeight
-      case _ => kp mustEqual other // will fail
-    }
-    case x => other mustEqual x
+    case Signer(key, weight) =>
+        weight mustEqual other.weight
+        key must beEquivalentTo(other.key)
+  }
+
+  def beEquivalentTo(key: StrKey): Matcher[StrKey] = beLike[StrKey] {
+    case Seed(hash) if key.isInstanceOf[Seed] => hash.toSeq mustEqual key.hash.toSeq
+    case other => other.asInstanceOf[SignerStrKey] must beEquivalentTo(key.asInstanceOf[SignerStrKey])
+  }
+
+  def beEquivalentTo(key: SignerStrKey): Matcher[SignerStrKey] = beLike[SignerStrKey] {
+    case AccountId(hash) if key.isInstanceOf[AccountId] => hash.toSeq mustEqual key.hash.toSeq
+    case PreAuthTx(hash) if key.isInstanceOf[PreAuthTx]  => hash.toSeq mustEqual key.hash.toSeq
+    case SHA256Hash(hash) if key.isInstanceOf[SHA256Hash] => hash.toSeq mustEqual key.hash.toSeq
+  }
+
+  def beEquivalentTo(other: Transacted[Operation]): Matcher[Transacted[Operation]] = beLike[Transacted[Operation]] {
+    case t =>
+      t.copy(operation = other.operation) mustEqual other
+      t.operation must beEquivalentTo(other.operation)
   }
 
   def beEquivalentTo(other: AccountMergeOperation): Matcher[AccountMergeOperation] = beLike[AccountMergeOperation] {
@@ -143,7 +156,13 @@ trait DomainMatchers extends AnyMatchers with MustExpectations with SequenceMatc
       op.lowThreshold mustEqual other.lowThreshold
       op.masterKeyWeight mustEqual other.masterKeyWeight
       op.mediumThreshold mustEqual other.mediumThreshold
-      op.signer mustEqual other.signer
+      op.signer match {
+        case Some(s) =>
+          other.signer must beSome[Signer].like {
+            case otherS => s must beEquivalentTo(otherS)
+          }
+        case None => other.signer must beNone
+      }
   }
 
   def beEquivalentTo[T <: Operation](other: T): Matcher[T] = beLike {

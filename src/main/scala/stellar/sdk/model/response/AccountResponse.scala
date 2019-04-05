@@ -56,9 +56,9 @@ object AccountRespDeserializer extends ResponseParser[AccountResponse]({ o: JObj
   val JArray(jsSigners) = o \ "signers"
   val signers = jsSigners.map {
     case signerObj: JObject =>
-      val publicKey = KeyPair.fromAccountId((signerObj \ "key").extract[String])
+      val key = StrKey.decodeFromString((signerObj \ "key").extract[String]).asInstanceOf[SignerStrKey]
       val weight = (signerObj \ "weight").extract[Int]
-      AccountSigner(publicKey, weight)
+      Signer(key, weight)
     case _ => throw new RuntimeException(s"Expected js object at 'signers'")
   }
   // todo - data

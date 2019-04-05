@@ -6,7 +6,7 @@ import java.util.Arrays
 import cats.data.State
 import net.i2p.crypto.eddsa._
 import net.i2p.crypto.eddsa.spec._
-import stellar.sdk.model.StrKey
+import stellar.sdk.model.{AccountId, Seed, StrKey}
 import stellar.sdk.model.xdr.{Decode, Encodable, Encode}
 import stellar.sdk.util.ByteArrays
 
@@ -18,7 +18,7 @@ case class KeyPair(pk: EdDSAPublicKey, sk: EdDSAPrivateKey) extends PublicKeyOps
   /**
     * Returns the human readable secret seed encoded in strkey.
     */
-  def secretSeed: Array[Char] = StrKey.encodeStellarSecretSeed(sk.getSeed)
+  def secretSeed: Array[Char] = Seed(sk.getSeed).encodeToChars
 
   /**
     * Sign the provided data with the private key.
@@ -57,7 +57,7 @@ sealed trait PublicKeyOps extends Encodable {
   /**
     * @return the human readable account ID
     */
-  def accountId: String = StrKey.encodeStellarAccountId(pk.getAbyte)
+  def accountId: String = AccountId(pk.getAbyte).encodeToChars.mkString
 
   def publicKey: Array[Byte] = pk.getAbyte
 
@@ -103,9 +103,9 @@ object KeyPair {
     * @return { @link KeyPair}
     */
   def fromSecretSeed(seed: Array[Char]): KeyPair = {
-    val decoded = StrKey.decodeStellarSecretSeed(seed)
-    val kp = fromSecretSeed(decoded)
-    Arrays.fill(decoded, 0.toByte)
+    val decoded = StrKey.decodeFromChars(seed)
+    val kp = fromSecretSeed(decoded.hash)
+    Arrays.fill(decoded.hash, 0.toByte)
     kp
   }
 
@@ -120,8 +120,8 @@ object KeyPair {
   def fromSecretSeed(seed: String): KeyPair = {
     val charSeed = seed.toCharArray
     Try {
-      val decoded = StrKey.decodeStellarSecretSeed(charSeed)
-      val kp = fromSecretSeed(decoded)
+      val decoded = StrKey.decodeFromChars(charSeed)
+      val kp = fromSecretSeed(decoded.hash)
       Arrays.fill(charSeed, ' ')
       kp
     } match {
@@ -166,7 +166,7 @@ object KeyPair {
     * @param accountId The strkey encoded Stellar account ID.
     * @return { @link PublicKey}
     */
-  def fromAccountId(accountId: String): PublicKey = Try(fromPublicKey(StrKey.decodeStellarAccountId(accountId))) match {
+  def fromAccountId(accountId: String): PublicKey = Try(fromPublicKey(StrKey.decodeFromChars(accountId.toCharArray).hash)) match {
     case Success(pk) => pk
     case Failure(t) => throw InvalidAccountId(accountId, t)
   }

@@ -13,6 +13,7 @@ import stellar.sdk.model.op._
 import stellar.sdk.model.result.TransactionResult._
 import stellar.sdk.model.result.{PathPaymentResult, _}
 import stellar.sdk.model.response._
+import stellar.sdk.util.ByteArrays
 
 import scala.util.Random
 
@@ -131,6 +132,10 @@ trait ArbitraryInput extends ScalaCheck {
   implicit def arbTransactionNotSuccessful = Arbitrary(genTransactionNotSuccessful)
 
   implicit def arbSigner = Arbitrary(genSigner)
+
+  implicit def arbStrKey = Arbitrary(genStrKey)
+
+  implicit def arbSignerStrKey = Arbitrary(genSignerStrKey)
 
   implicit def arbFeeStatsResponse = Arbitrary(genFeeStatsResponse)
 
@@ -319,16 +324,23 @@ trait ArbitraryInput extends ScalaCheck {
     highThreshold <- Gen.option(Gen.choose(0, 255))
     homeDomain <- Gen.option(Gen.identifier)
     signerWeight <- Gen.choose(0, 255)
-    signer <- Gen.option(Gen.oneOf(
-      genPublicKey.map(AccountSigner(_, signerWeight)),
-      genHash.map(PreAuthTxnSigner(_, signerWeight)),
-      genHash.map(HashSigner(_, signerWeight))
-    ))
+    signer <- Gen.option(genSignerStrKey.map(Signer(_, signerWeight)))
     sourceAccount <- Gen.option(genPublicKey)
   } yield {
     SetOptionsOperation(inflationDestination, clearFlags, setFlags, masterKeyWeight, lowThreshold, medThreshold,
       highThreshold, homeDomain, signer, sourceAccount)
   }
+
+  def genAccountIdStrKey: Gen[AccountId] = genPublicKey.map(pk => AccountId(pk.publicKey))
+  def genSeedStrKey: Gen[Seed] = genKeyPair.map(kp => Seed(kp.sk.getAbyte))
+  def genPreAuthTxStrKey: Gen[PreAuthTx] = Gen.containerOfN[Array, Byte](32, Arbitrary.arbByte.arbitrary)
+    .map(bs => PreAuthTx(bs))
+  def genHashStrKey: Gen[SHA256Hash] = Gen.identifier.map(_.getBytes("UTF-8")).map(ByteArrays.sha256(_))
+    .map(bs => SHA256Hash(bs))
+
+  def genStrKey: Gen[StrKey] = Gen.oneOf(genAccountIdStrKey, genSeedStrKey, genPreAuthTxStrKey, genHashStrKey)
+
+  def genSignerStrKey: Gen[SignerStrKey] = Gen.oneOf(genAccountIdStrKey, genPreAuthTxStrKey, genHashStrKey)
 
   def genBumpSequenceOperation: Gen[BumpSequenceOperation] = for {
     sequence <- Gen.posNum[Long]
@@ -421,7 +433,10 @@ trait ArbitraryInput extends ScalaCheck {
     signers <- Gen.nonEmptyListOf(genSigner)
   } yield AccountResponse(id, lastSequence, subEntryCount, thresholds, authRequired, authRevocable, balances, signers)
 
-  def genSigner: Gen[Signer] = Gen.oneOf(genAccountSigner, genHashSigner, genPreAuthTxnSigner)
+  def genSigner: Gen[Signer] = for {
+    weight <- Gen.choose(0, 255)
+    strKey <- genSignerStrKey
+  } yield Signer(strKey, weight)
 
   def genBalance: Gen[Balance] = for {
     amount <- genAmount
@@ -429,21 +444,6 @@ trait ArbitraryInput extends ScalaCheck {
     buyingLiabilities <- Gen.choose(0, amount.units)
     sellingLiabilities <- Gen.choose(0, amount.units)
   } yield Balance(amount, limit, buyingLiabilities = buyingLiabilities, sellingLiabilities)
-
-  def genAccountSigner: Gen[AccountSigner] = for {
-    key <- genPublicKey
-    weight <- Gen.posNum[Int]
-  } yield AccountSigner(key, weight)
-
-  def genHashSigner: Gen[HashSigner] = for {
-    hash <- genHash
-    weight <- Gen.posNum[Int]
-  } yield HashSigner(hash, weight)
-
-  def genPreAuthTxnSigner: Gen[PreAuthTxnSigner] = for {
-    hash <- genHash
-    weight <- Gen.posNum[Int]
-  } yield PreAuthTxnSigner(hash, weight)
 
   def genLedgerResp: Gen[LedgerResponse] = for {
     id <- Gen.identifier

@@ -139,9 +139,7 @@ object OperationDeserializer extends ResponseParser[Operation]({ o: JObject =>
         signer = for {
           key <- (o \ "signer_key").extractOpt[String]
           weight <- (o \ "signer_weight").extractOpt[Int]
-        } yield {
-          Try(AccountSigner(KeyPair.fromAccountId(key), weight)).getOrElse(PreAuthTxnSigner(key, weight))
-        },
+        } yield Signer(StrKey.decodeFromString(key).asInstanceOf[SignerStrKey], weight),
         sourceAccount = sourceAccount
       )
     case "change_trust" =>

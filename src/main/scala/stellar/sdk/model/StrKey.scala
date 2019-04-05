@@ -1,116 +1,79 @@
 package stellar.sdk.model
 
-import java.io.ByteArrayOutputStream
-import java.util.Arrays
-
+import cats.data.State
 import org.apache.commons.codec.binary.Base32
+import stellar.sdk.model.StrKey.codec
+import stellar.sdk.model.xdr.{Decode, Encodable, Encode}
+import stellar.sdk.util.ByteArrays
 
-import scala.annotation.tailrec
 
-//noinspection ReferenceMustBePrefixed
+/**
+  * A StrKey (Stellar Key) is a typed, encoded byte array.
+  */
+sealed trait StrKey {
+  val kind: Byte
+  val hash: Array[Byte]
+  def checksum: Array[Byte] = ByteArrays.checksum(kind +: hash)
+  def encodeToChars: Array[Char] = codec.encode(kind +: hash ++: checksum).map(_.toChar)
+}
+
+/**
+  * Only a subset of StrKeys can be signers. Seeds should not be the declared signer
+  * (as they are the private dual of the AccountId).
+  */
+sealed trait SignerStrKey extends StrKey with Encodable
+
+case class AccountId(hash: Array[Byte]) extends SignerStrKey {
+  val kind: Byte = (6 << 3).toByte // G
+  def encode: Stream[Byte] = Encode.int(0) ++ Encode.bytes(32, hash)
+}
+
+case class Seed(hash: Array[Byte]) extends StrKey {
+  val kind: Byte = (18 << 3).toByte // S
+}
+
+case class PreAuthTx(hash: Array[Byte]) extends SignerStrKey {
+  val kind: Byte = (19 << 3).toByte // T
+  def encode: Stream[Byte] = Encode.int(1) ++ Encode.bytes(32, hash)
+}
+
+case class SHA256Hash(hash: Array[Byte]) extends SignerStrKey {
+  val kind: Byte = (23 << 3).toByte // X
+  def encode: Stream[Byte] = Encode.int(2) ++ Encode.bytes(32, hash)
+}
+
 object StrKey {
 
-  sealed trait VersionByte {
-    val value: Byte
+  val codec = new Base32()
+
+  def decode: State[Seq[Byte], SignerStrKey] = for {
+    discriminant <- Decode.int
+    bs <- Decode.bytes(32).map(_.toArray)
+  } yield discriminant match {
+    case 0 => AccountId(bs)
+    case 1 => PreAuthTx(bs)
+    case 2 => SHA256Hash(bs)
   }
 
-  case object AccountId extends VersionByte {
-    val value: Byte = (6 << 3).toByte // G
+  def decodeFromString(key: String): StrKey = decodeFromChars(key.toCharArray)
+  def decodeFromChars(key: Array[Char]): StrKey = {
+    assert(key.forall(_ <= 127), s"Illegal characters in provided StrKey")
+
+    val bytes = key.map(_.toByte)
+    val decoded: Array[Byte] = codec.decode(bytes)
+    assert(decoded.length == 35, s"Incorrect length. Expected 35 bytes, got ${decoded.length} in StrKey: $key")
+
+    val data = decoded.tail.take(32)
+    val Array(sumA, sumB) = decoded.drop(33)
+    val Array(checkA, checkB) = ByteArrays.checksum(decoded.take(33))
+    assert((checkA, checkB) == (sumA, sumB),
+      f"Checksum does not match. Provided: 0x$sumA%04X0x$sumB%04X. Actual: 0x$checkA%04X0x$checkB%04X")
+
+    key.head match {
+      case 'G' => AccountId(data)
+      case 'S' => Seed(data)
+      case 'T' => PreAuthTx(data)
+      case 'X' => SHA256Hash(data)
+    }
   }
-
-  case object Seed extends VersionByte {
-    val value: Byte = (18 << 3).toByte // S
-  }
-
-  /*
-    case object PreAuthTx extends VersionByte {
-      val value: Byte = (19 << 3).toByte // T
-    }
-
-    case object SHA256Hash extends VersionByte {
-      val value: Byte = (23 << 3).toByte // X
-    }
-  */
-
-  def decodeStellarAccountId(data: String): Array[Byte] = decodeCheck(AccountId, data.toCharArray)
-
-  def decodeStellarSecretSeed(data: Array[Char]): Array[Byte] = decodeCheck(Seed, data)
-
-  def encodeStellarAccountId(data: Array[Byte]): String = String.valueOf(encodeCheck(AccountId, data))
-
-  def encodeStellarSecretSeed(data: Array[Byte]): Array[Char] = encodeCheck(Seed, data)
-
-  def decodeCheck(vb: VersionByte, encoded: Array[Char]): Array[Byte] = {
-    val bytes = encoded.map { c =>
-      if (c > 127) throw new IllegalArgumentException("Illegal characters in encoded char array.")
-      c.toByte
-    }
-    val decoded = new Base32().decode(bytes)
-    val decodedVersionByte = decoded.head
-    val payload = Arrays.copyOfRange(decoded, 0, decoded.length - 2)
-    val data = Arrays.copyOfRange(payload, 1, payload.length)
-    val checksum = Arrays.copyOfRange(decoded, decoded.length - 2, decoded.length)
-
-    if (decodedVersionByte != vb.value) {
-      throw new FormatException("Version byte is invalid")
-    }
-
-    if (!Arrays.equals(calculateChecksum(payload), checksum)) {
-      throw new FormatException("Checksum invalid")
-    }
-
-    if (Seed.value == decodedVersionByte) {
-      Arrays.fill(bytes, 0.toByte)
-      Arrays.fill(decoded, 0.toByte)
-      Arrays.fill(payload, 0.toByte)
-    }
-
-    data
-  }
-
-  def encodeCheck(vb: VersionByte, data: Array[Byte]): Array[Char] = {
-    val os = new ByteArrayOutputStream()
-    os.write(vb.value)
-    os.write(data)
-    val payload = os.toByteArray
-    val checksum = calculateChecksum(payload)
-    os.write(checksum)
-    val notYetEncoded = os.toByteArray
-    val bytesEncoded = new Base32().encode(notYetEncoded)
-    val charsEncoded = bytesEncoded.map(_.toChar)
-    if (vb == Seed) {
-      Arrays.fill(notYetEncoded, 0.toByte)
-      Arrays.fill(payload, 0.toByte)
-      Arrays.fill(bytesEncoded, 0.toByte)
-    }
-    charsEncoded
-  }
-
-  private def calculateChecksum(bytes: Array[Byte]): Array[Byte] = {
-    // This code calculates CRC16-XModem checksum
-    // Ported from https://github.com/alexgorbatchev/node-crc, via https://github.com/stellar/java-stellar-sdk
-
-    @tailrec
-    def loop(bs: Seq[Byte], crc: Int): Int = {
-      bs match {
-        case h +: t =>
-          var code = crc >>> 8 & 0xFF
-          code ^= h & 0xFF
-          code ^= code >>> 4
-          var crc_ = crc << 8 & 0xFFFF
-          crc_ ^= code
-          code = code << 5 & 0xFFFF
-          crc_ ^= code
-          code = code << 7 & 0xFFFF
-          crc_ ^= code
-          loop(t, crc_)
-        case Nil => crc
-      }
-    }
-
-    val crc = loop(bytes, 0x0000)
-    Array(crc.toByte, (crc >>> 8).toByte)
-  }
-
-
 }
