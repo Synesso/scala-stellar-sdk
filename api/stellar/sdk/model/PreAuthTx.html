@@ -187,8 +187,8 @@
                         <a href="Account.html" title="Represents an account in Stellar network with its sequence number.">Account</a>
                       </li><li class="current-entities indented3">
                         <span class="separator"></span>
-                        <a class="class" href="" title=""></a>
-                        <a href="" title="">AccountSigner</a>
+                        <a class="class" href="AccountId.html" title=""></a>
+                        <a href="AccountId.html" title="">AccountId</a>
                       </li><li class="current-entities indented3">
                         <a class="object" href="Amount$.html" title=""></a>
                         <a class="trait" href="Amount.html" title=""></a>
@@ -213,10 +213,6 @@
                         <span class="separator"></span>
                         <a class="class" href="FormatException.html" title=""></a>
                         <a href="FormatException.html" title="">FormatException</a>
-                      </li><li class="current-entities indented3">
-                        <span class="separator"></span>
-                        <a class="class" href="HashSigner.html" title=""></a>
-                        <a href="HashSigner.html" title="">HashSigner</a>
                       </li><li class="current-entities indented3">
                         <span class="separator"></span>
                         <a class="trait" href="HorizonCursor.html" title=""></a>
@@ -295,8 +291,8 @@
                         <a href="OrderBookDeserializer$.html" title="">OrderBookDeserializer</a>
                       </li><li class="current-entities indented3">
                         <span class="separator"></span>
-                        <a class="class" href="PreAuthTxnSigner.html" title=""></a>
-                        <a href="PreAuthTxnSigner.html" title="">PreAuthTxnSigner</a>
+                        <a class="class" href="" title=""></a>
+                        <a href="" title="">PreAuthTx</a>
                       </li><li class="current-entities indented3">
                         <a class="object" href="Price$.html" title=""></a>
                         <a class="class" href="Price.html" title=""></a>
@@ -306,17 +302,29 @@
                         <a class="class" href="Record.html" title=""></a>
                         <a href="Record.html" title="">Record</a>
                       </li><li class="current-entities indented3">
+                        <span class="separator"></span>
+                        <a class="class" href="SHA256Hash.html" title=""></a>
+                        <a href="SHA256Hash.html" title="">SHA256Hash</a>
+                      </li><li class="current-entities indented3">
+                        <span class="separator"></span>
+                        <a class="class" href="Seed.html" title=""></a>
+                        <a href="Seed.html" title="">Seed</a>
+                      </li><li class="current-entities indented3">
                         <a class="object" href="SignedTransaction$.html" title=""></a>
                         <a class="class" href="SignedTransaction.html" title=""></a>
                         <a href="SignedTransaction.html" title="">SignedTransaction</a>
                       </li><li class="current-entities indented3">
                         <a class="object" href="Signer$.html" title=""></a>
-                        <a class="trait" href="Signer.html" title=""></a>
+                        <a class="class" href="Signer.html" title=""></a>
                         <a href="Signer.html" title="">Signer</a>
                       </li><li class="current-entities indented3">
                         <span class="separator"></span>
+                        <a class="trait" href="SignerStrKey.html" title="Only a subset of StrKeys can be signers."></a>
+                        <a href="SignerStrKey.html" title="Only a subset of StrKeys can be signers.">SignerStrKey</a>
+                      </li><li class="current-entities indented3">
                         <a class="object" href="StrKey$.html" title=""></a>
-                        <a href="StrKey$.html" title="">StrKey</a>
+                        <a class="trait" href="StrKey.html" title="A StrKey (Stellar Key) is a typed, encoded byte array."></a>
+                        <a href="StrKey.html" title="A StrKey (Stellar Key) is a typed, encoded byte array.">StrKey</a>
                       </li><li class="current-entities indented3">
                         <span class="separator"></span>
                         <a class="class" href="Thresholds.html" title=""></a>
@@ -346,8 +354,8 @@
       <div id="definition">
         <div class="big-circle class">c</div>
         <p id="owner"><a href="../../index.html" class="extype" name="stellar">stellar</a>.<a href="../index.html" class="extype" name="stellar.sdk">sdk</a>.<a href="index.html" class="extype" name="stellar.sdk.model">model</a></p>
-        <h1>AccountSigner<span class="permalink">
-      <a href="../../../stellar/sdk/model/AccountSigner.html" title="Permalink">
+        <h1>PreAuthTx<span class="permalink">
+      <a href="../../../stellar/sdk/model/PreAuthTx.html" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span></h1>
@@ -360,7 +368,7 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <span class="name">AccountSigner</span><span class="params">(<span name="key">key: <a href="../PublicKeyOps.html" class="extype" name="stellar.sdk.PublicKeyOps">PublicKeyOps</a></span>, <span name="weight">weight: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result"> extends <a href="Signer.html" class="extype" name="stellar.sdk.model.Signer">Signer</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <span class="name">PreAuthTx</span><span class="params">(<span name="hash">hash: <span class="extype" name="scala.Array">Array</span>[<span class="extype" name="scala.Byte">Byte</span>]</span>)</span><span class="result"> extends <a href="SignerStrKey.html" class="extype" name="stellar.sdk.model.SignerStrKey">SignerStrKey</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4>
 
@@ -369,7 +377,7 @@
           <span class="toggle">
             Linear Supertypes
           </span>
-          <div class="superTypes hiddenContent"><span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <span class="extype" name="scala.Product">Product</span>, <span class="extype" name="scala.Equals">Equals</span>, <a href="Signer.html" class="extype" name="stellar.sdk.model.Signer">Signer</a>, <a href="xdr/Encodable.html" class="extype" name="stellar.sdk.model.xdr.Encodable">Encodable</a>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
+          <div class="superTypes hiddenContent"><span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <span class="extype" name="scala.Product">Product</span>, <span class="extype" name="scala.Equals">Equals</span>, <a href="SignerStrKey.html" class="extype" name="stellar.sdk.model.SignerStrKey">SignerStrKey</a>, <a href="xdr/Encodable.html" class="extype" name="stellar.sdk.model.xdr.Encodable">Encodable</a>, <a href="StrKey.html" class="extype" name="stellar.sdk.model.StrKey">StrKey</a>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div></div>
         
 
@@ -395,7 +403,7 @@
                   <span class="filtertype">Inherited<br />
                   </span>
                   <ol id="linearization">
-                    <li class="in" name="stellar.sdk.model.AccountSigner"><span>AccountSigner</span></li><li class="in" name="scala.Serializable"><span>Serializable</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="scala.Product"><span>Product</span></li><li class="in" name="scala.Equals"><span>Equals</span></li><li class="in" name="stellar.sdk.model.Signer"><span>Signer</span></li><li class="in" name="stellar.sdk.model.xdr.Encodable"><span>Encodable</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                    <li class="in" name="stellar.sdk.model.PreAuthTx"><span>PreAuthTx</span></li><li class="in" name="scala.Serializable"><span>Serializable</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="scala.Product"><span>Product</span></li><li class="in" name="scala.Equals"><span>Equals</span></li><li class="in" name="stellar.sdk.model.SignerStrKey"><span>SignerStrKey</span></li><li class="in" name="stellar.sdk.model.xdr.Encodable"><span>Encodable</span></li><li class="in" name="stellar.sdk.model.StrKey"><span>StrKey</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
                   </ol>
                 </div><div class="ancestors">
               <span class="filtertype"></span>
@@ -415,10 +423,10 @@
         <div id="allMembers">
         <div id="constructors" class="members">
               <h3>Instance Constructors</h3>
-              <ol><li name="stellar.sdk.model.AccountSigner#&lt;init&gt;" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="&lt;init&gt;(key:stellar.sdk.PublicKeyOps,weight:Int):stellar.sdk.model.AccountSigner"></a><a id="&lt;init&gt;:AccountSigner"></a>
+              <ol><li name="stellar.sdk.model.PreAuthTx#&lt;init&gt;" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="&lt;init&gt;(hash:Array[Byte]):stellar.sdk.model.PreAuthTx"></a><a id="&lt;init&gt;:PreAuthTx"></a>
       <span class="permalink">
-      <a href="../../../stellar/sdk/model/AccountSigner.html#&lt;init&gt;(key:stellar.sdk.PublicKeyOps,weight:Int):stellar.sdk.model.AccountSigner" title="Permalink">
+      <a href="../../../stellar/sdk/model/PreAuthTx.html#&lt;init&gt;(hash:Array[Byte]):stellar.sdk.model.PreAuthTx" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -427,7 +435,7 @@
         <span class="kind">new</span>
       </span>
       <span class="symbol">
-        <span class="name">AccountSigner</span><span class="params">(<span name="key">key: <a href="../PublicKeyOps.html" class="extype" name="stellar.sdk.PublicKeyOps">PublicKeyOps</a></span>, <span name="weight">weight: <span class="extype" name="scala.Int">Int</span></span>)</span>
+        <span class="name">PreAuthTx</span><span class="params">(<span name="hash">hash: <span class="extype" name="scala.Array">Array</span>[<span class="extype" name="scala.Byte">Byte</span>]</span>)</span>
       </span>
       
       
@@ -444,7 +452,7 @@
                 <li name="scala.AnyRef#!=" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="!=(x$1:Any):Boolean"></a><a id="!=(Any):Boolean"></a>
       <span class="permalink">
-      <a href="../../../stellar/sdk/model/AccountSigner.html#!=(x$1:Any):Boolean" title="Permalink">
+      <a href="../../../stellar/sdk/model/PreAuthTx.html#!=(x$1:Any):Boolean" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -460,7 +468,7 @@
     </li><li name="scala.AnyRef###" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="##():Int"></a>
       <span class="permalink">
-      <a href="../../../stellar/sdk/model/AccountSigner.html###():Int" title="Permalink">
+      <a href="../../../stellar/sdk/model/PreAuthTx.html###():Int" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -476,7 +484,7 @@
     </li><li name="scala.AnyRef#==" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="==(x$1:Any):Boolean"></a><a id="==(Any):Boolean"></a>
       <span class="permalink">
-      <a href="../../../stellar/sdk/model/AccountSigner.html#==(x$1:Any):Boolean" title="Permalink">
+      <a href="../../../stellar/sdk/model/PreAuthTx.html#==(x$1:Any):Boolean" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -492,7 +500,7 @@
     </li><li name="scala.Any#asInstanceOf" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="asInstanceOf[T0]:T0"></a>
       <span class="permalink">
-      <a href="../../../stellar/sdk/model/AccountSigner.html#asInstanceOf[T0]:T0" title="Permalink">
+      <a href="../../../stellar/sdk/model/PreAuthTx.html#asInstanceOf[T0]:T0" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -505,10 +513,26 @@
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
+    </li><li name="stellar.sdk.model.StrKey#checksum" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="checksum:Array[Byte]"></a>
+      <span class="permalink">
+      <a href="../../../stellar/sdk/model/PreAuthTx.html#checksum:Array[Byte]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">checksum</span><span class="result">: <span class="extype" name="scala.Array">Array</span>[<span class="extype" name="scala.Byte">Byte</span>]</span>
+      </span>
+      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="StrKey.html" class="extype" name="stellar.sdk.model.StrKey">StrKey</a></dd></dl></div>
     </li><li name="scala.AnyRef#clone" visbl="prt" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="clone():Object"></a><a id="clone():AnyRef"></a>
       <span class="permalink">
-      <a href="../../../stellar/sdk/model/AccountSigner.html#clone():Object" title="Permalink">
+      <a href="../../../stellar/sdk/model/PreAuthTx.html#clone():Object" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -529,10 +553,10 @@
     </span>)</span>
               
         </dd></dl></div>
-    </li><li name="stellar.sdk.model.AccountSigner#encode" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+    </li><li name="stellar.sdk.model.PreAuthTx#encode" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="encode:Stream[Byte]"></a>
       <span class="permalink">
-      <a href="../../../stellar/sdk/model/AccountSigner.html#encode:Stream[Byte]" title="Permalink">
+      <a href="../../../stellar/sdk/model/PreAuthTx.html#encode:Stream[Byte]" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -544,11 +568,27 @@
         <span class="name">encode</span><span class="result">: <span class="extype" name="scala.Stream">Stream</span>[<span class="extype" name="scala.Byte">Byte</span>]</span>
       </span>
       
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="stellar.sdk.model.AccountSigner">AccountSigner</a> → <a href="xdr/Encodable.html" class="extype" name="stellar.sdk.model.xdr.Encodable">Encodable</a></dd></dl></div>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="stellar.sdk.model.PreAuthTx">PreAuthTx</a> → <a href="xdr/Encodable.html" class="extype" name="stellar.sdk.model.xdr.Encodable">Encodable</a></dd></dl></div>
+    </li><li name="stellar.sdk.model.StrKey#encodeToChars" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="encodeToChars:Array[Char]"></a>
+      <span class="permalink">
+      <a href="../../../stellar/sdk/model/PreAuthTx.html#encodeToChars:Array[Char]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">encodeToChars</span><span class="result">: <span class="extype" name="scala.Array">Array</span>[<span class="extype" name="scala.Char">Char</span>]</span>
+      </span>
+      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="StrKey.html" class="extype" name="stellar.sdk.model.StrKey">StrKey</a></dd></dl></div>
     </li><li name="scala.AnyRef#eq" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="eq(x$1:AnyRef):Boolean"></a><a id="eq(AnyRef):Boolean"></a>
       <span class="permalink">
-      <a href="../../../stellar/sdk/model/AccountSigner.html#eq(x$1:AnyRef):Boolean" title="Permalink">
+      <a href="../../../stellar/sdk/model/PreAuthTx.html#eq(x$1:AnyRef):Boolean" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -564,7 +604,7 @@
     </li><li name="scala.AnyRef#finalize" visbl="prt" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="finalize():Unit"></a>
       <span class="permalink">
-      <a href="../../../stellar/sdk/model/AccountSigner.html#finalize():Unit" title="Permalink">
+      <a href="../../../stellar/sdk/model/PreAuthTx.html#finalize():Unit" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -586,7 +626,7 @@
     </li><li name="scala.AnyRef#getClass" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="getClass():Class[_]"></a>
       <span class="permalink">
-      <a href="../../../stellar/sdk/model/AccountSigner.html#getClass():Class[_]" title="Permalink">
+      <a href="../../../stellar/sdk/model/PreAuthTx.html#getClass():Class[_]" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -602,10 +642,26 @@
                 <span class="name">@native</span><span class="args">()</span>
               
         </dd></dl></div>
+    </li><li name="stellar.sdk.model.PreAuthTx#hash" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="hash:Array[Byte]"></a>
+      <span class="permalink">
+      <a href="../../../stellar/sdk/model/PreAuthTx.html#hash:Array[Byte]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">hash</span><span class="result">: <span class="extype" name="scala.Array">Array</span>[<span class="extype" name="scala.Byte">Byte</span>]</span>
+      </span>
+      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="stellar.sdk.model.PreAuthTx">PreAuthTx</a> → <a href="StrKey.html" class="extype" name="stellar.sdk.model.StrKey">StrKey</a></dd></dl></div>
     </li><li name="scala.Any#isInstanceOf" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="isInstanceOf[T0]:Boolean"></a>
       <span class="permalink">
-      <a href="../../../stellar/sdk/model/AccountSigner.html#isInstanceOf[T0]:Boolean" title="Permalink">
+      <a href="../../../stellar/sdk/model/PreAuthTx.html#isInstanceOf[T0]:Boolean" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -618,10 +674,10 @@
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
-    </li><li name="stellar.sdk.model.AccountSigner#key" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="key:stellar.sdk.PublicKeyOps"></a><a id="key:PublicKeyOps"></a>
+    </li><li name="stellar.sdk.model.PreAuthTx#kind" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="kind:Byte"></a>
       <span class="permalink">
-      <a href="../../../stellar/sdk/model/AccountSigner.html#key:stellar.sdk.PublicKeyOps" title="Permalink">
+      <a href="../../../stellar/sdk/model/PreAuthTx.html#kind:Byte" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -630,14 +686,14 @@
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">key</span><span class="result">: <a href="../PublicKeyOps.html" class="extype" name="stellar.sdk.PublicKeyOps">PublicKeyOps</a></span>
+        <span class="name">kind</span><span class="result">: <span class="extype" name="scala.Byte">Byte</span></span>
       </span>
       
-      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="stellar.sdk.model.PreAuthTx">PreAuthTx</a> → <a href="StrKey.html" class="extype" name="stellar.sdk.model.StrKey">StrKey</a></dd></dl></div>
     </li><li name="scala.AnyRef#ne" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="ne(x$1:AnyRef):Boolean"></a><a id="ne(AnyRef):Boolean"></a>
       <span class="permalink">
-      <a href="../../../stellar/sdk/model/AccountSigner.html#ne(x$1:AnyRef):Boolean" title="Permalink">
+      <a href="../../../stellar/sdk/model/PreAuthTx.html#ne(x$1:AnyRef):Boolean" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -653,7 +709,7 @@
     </li><li name="scala.AnyRef#notify" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="notify():Unit"></a>
       <span class="permalink">
-      <a href="../../../stellar/sdk/model/AccountSigner.html#notify():Unit" title="Permalink">
+      <a href="../../../stellar/sdk/model/PreAuthTx.html#notify():Unit" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -672,7 +728,7 @@
     </li><li name="scala.AnyRef#notifyAll" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="notifyAll():Unit"></a>
       <span class="permalink">
-      <a href="../../../stellar/sdk/model/AccountSigner.html#notifyAll():Unit" title="Permalink">
+      <a href="../../../stellar/sdk/model/PreAuthTx.html#notifyAll():Unit" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -691,7 +747,7 @@
     </li><li name="scala.AnyRef#synchronized" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="synchronized[T0](x$1:=&gt;T0):T0"></a><a id="synchronized[T0](⇒T0):T0"></a>
       <span class="permalink">
-      <a href="../../../stellar/sdk/model/AccountSigner.html#synchronized[T0](x$1:=&gt;T0):T0" title="Permalink">
+      <a href="../../../stellar/sdk/model/PreAuthTx.html#synchronized[T0](x$1:=&gt;T0):T0" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -707,7 +763,7 @@
     </li><li name="scala.AnyRef#wait" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="wait():Unit"></a>
       <span class="permalink">
-      <a href="../../../stellar/sdk/model/AccountSigner.html#wait():Unit" title="Permalink">
+      <a href="../../../stellar/sdk/model/PreAuthTx.html#wait():Unit" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -729,7 +785,7 @@
     </li><li name="scala.AnyRef#wait" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="wait(x$1:Long,x$2:Int):Unit"></a><a id="wait(Long,Int):Unit"></a>
       <span class="permalink">
-      <a href="../../../stellar/sdk/model/AccountSigner.html#wait(x$1:Long,x$2:Int):Unit" title="Permalink">
+      <a href="../../../stellar/sdk/model/PreAuthTx.html#wait(x$1:Long,x$2:Int):Unit" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -751,7 +807,7 @@
     </li><li name="scala.AnyRef#wait" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="wait(x$1:Long):Unit"></a><a id="wait(Long):Unit"></a>
       <span class="permalink">
-      <a href="../../../stellar/sdk/model/AccountSigner.html#wait(x$1:Long):Unit" title="Permalink">
+      <a href="../../../stellar/sdk/model/PreAuthTx.html#wait(x$1:Long):Unit" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -772,22 +828,6 @@
     </span>)</span>
               
         </dd></dl></div>
-    </li><li name="stellar.sdk.model.AccountSigner#weight" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="weight:Int"></a>
-      <span class="permalink">
-      <a href="../../../stellar/sdk/model/AccountSigner.html#weight:Int" title="Permalink">
-        <i class="material-icons"></i>
-      </a>
-    </span>
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">val</span>
-      </span>
-      <span class="symbol">
-        <span class="name">weight</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
-      </span>
-      
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="stellar.sdk.model.AccountSigner">AccountSigner</a> → <a href="Signer.html" class="extype" name="stellar.sdk.model.Signer">Signer</a></dd></dl></div>
     </li>
               </ol>
             </div>
@@ -806,10 +846,12 @@
               <h3>Inherited from <span class="extype" name="scala.Product">Product</span></h3>
             </div><div class="parent" name="scala.Equals">
               <h3>Inherited from <span class="extype" name="scala.Equals">Equals</span></h3>
-            </div><div class="parent" name="stellar.sdk.model.Signer">
-              <h3>Inherited from <a href="Signer.html" class="extype" name="stellar.sdk.model.Signer">Signer</a></h3>
+            </div><div class="parent" name="stellar.sdk.model.SignerStrKey">
+              <h3>Inherited from <a href="SignerStrKey.html" class="extype" name="stellar.sdk.model.SignerStrKey">SignerStrKey</a></h3>
             </div><div class="parent" name="stellar.sdk.model.xdr.Encodable">
               <h3>Inherited from <a href="xdr/Encodable.html" class="extype" name="stellar.sdk.model.xdr.Encodable">Encodable</a></h3>
+            </div><div class="parent" name="stellar.sdk.model.StrKey">
+              <h3>Inherited from <a href="StrKey.html" class="extype" name="stellar.sdk.model.StrKey">StrKey</a></h3>
             </div><div class="parent" name="scala.AnyRef">
               <h3>Inherited from <span class="extype" name="scala.AnyRef">AnyRef</span></h3>
             </div><div class="parent" name="scala.Any">

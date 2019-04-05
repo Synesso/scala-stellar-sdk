@@ -203,8 +203,8 @@
                         <a href="Account.html" title="Represents an account in Stellar network with its sequence number.">Account</a>
                       </li><li class="current-entities indented3">
                         <span class="separator"></span>
-                        <a class="class" href="AccountSigner.html" title=""></a>
-                        <a href="AccountSigner.html" title="">AccountSigner</a>
+                        <a class="class" href="AccountId.html" title=""></a>
+                        <a href="AccountId.html" title="">AccountId</a>
                       </li><li class="current-entities indented3">
                         <a class="object" href="Amount$.html" title=""></a>
                         <a class="trait" href="Amount.html" title=""></a>
@@ -229,10 +229,6 @@
                         <span class="separator"></span>
                         <a class="class" href="FormatException.html" title=""></a>
                         <a href="FormatException.html" title="">FormatException</a>
-                      </li><li class="current-entities indented3">
-                        <span class="separator"></span>
-                        <a class="class" href="HashSigner.html" title=""></a>
-                        <a href="HashSigner.html" title="">HashSigner</a>
                       </li><li class="current-entities indented3">
                         <span class="separator"></span>
                         <a class="trait" href="HorizonCursor.html" title=""></a>
@@ -311,8 +307,8 @@
                         <a href="OrderBookDeserializer$.html" title="">OrderBookDeserializer</a>
                       </li><li class="current-entities indented3">
                         <span class="separator"></span>
-                        <a class="class" href="PreAuthTxnSigner.html" title=""></a>
-                        <a href="PreAuthTxnSigner.html" title="">PreAuthTxnSigner</a>
+                        <a class="class" href="PreAuthTx.html" title=""></a>
+                        <a href="PreAuthTx.html" title="">PreAuthTx</a>
                       </li><li class="current-entities indented3">
                         <a class="object" href="Price$.html" title=""></a>
                         <a class="class" href="Price.html" title=""></a>
@@ -322,17 +318,29 @@
                         <a class="class" href="Record.html" title=""></a>
                         <a href="Record.html" title="">Record</a>
                       </li><li class="current-entities indented3">
+                        <span class="separator"></span>
+                        <a class="class" href="SHA256Hash.html" title=""></a>
+                        <a href="SHA256Hash.html" title="">SHA256Hash</a>
+                      </li><li class="current-entities indented3">
+                        <span class="separator"></span>
+                        <a class="class" href="Seed.html" title=""></a>
+                        <a href="Seed.html" title="">Seed</a>
+                      </li><li class="current-entities indented3">
                         <a class="object" href="SignedTransaction$.html" title=""></a>
                         <a class="class" href="SignedTransaction.html" title=""></a>
                         <a href="SignedTransaction.html" title="">SignedTransaction</a>
                       </li><li class="current-entities indented3">
                         <a class="object" href="Signer$.html" title=""></a>
-                        <a class="trait" href="Signer.html" title=""></a>
+                        <a class="class" href="Signer.html" title=""></a>
                         <a href="Signer.html" title="">Signer</a>
                       </li><li class="current-entities indented3">
                         <span class="separator"></span>
+                        <a class="trait" href="SignerStrKey.html" title="Only a subset of StrKeys can be signers."></a>
+                        <a href="SignerStrKey.html" title="Only a subset of StrKeys can be signers.">SignerStrKey</a>
+                      </li><li class="current-entities indented3">
                         <a class="object" href="StrKey$.html" title=""></a>
-                        <a href="StrKey$.html" title="">StrKey</a>
+                        <a class="trait" href="StrKey.html" title="A StrKey (Stellar Key) is a typed, encoded byte array."></a>
+                        <a href="StrKey.html" title="A StrKey (Stellar Key) is a typed, encoded byte array.">StrKey</a>
                       </li><li class="current-entities indented3">
                         <span class="separator"></span>
                         <a class="class" href="Thresholds.html" title=""></a>
@@ -448,10 +456,10 @@
       </span>
       
       <p class="shortcomment cmt">Represents an account in Stellar network with its sequence number.</p>
-    </li><li name="stellar.sdk.model.AccountSigner" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="AccountSignerextendsSignerwithProductwithSerializable"></a><a id="AccountSigner:AccountSigner"></a>
+    </li><li name="stellar.sdk.model.AccountId" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="AccountIdextendsSignerStrKeywithProductwithSerializable"></a><a id="AccountId:AccountId"></a>
       <span class="permalink">
-      <a href="../../../stellar/sdk/model/index.html#AccountSignerextendsSignerwithProductwithSerializable" title="Permalink">
+      <a href="../../../stellar/sdk/model/index.html#AccountIdextendsSignerStrKeywithProductwithSerializable" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -460,7 +468,7 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a title="" href="AccountSigner.html"><span class="name">AccountSigner</span></a><span class="params">(<span name="key">key: <a href="../PublicKeyOps.html" class="extype" name="stellar.sdk.PublicKeyOps">PublicKeyOps</a></span>, <span name="weight">weight: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result"> extends <a href="Signer.html" class="extype" name="stellar.sdk.model.Signer">Signer</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a title="" href="AccountId.html"><span class="name">AccountId</span></a><span class="params">(<span name="hash">hash: <span class="extype" name="scala.Array">Array</span>[<span class="extype" name="scala.Byte">Byte</span>]</span>)</span><span class="result"> extends <a href="SignerStrKey.html" class="extype" name="stellar.sdk.model.SignerStrKey">SignerStrKey</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       
       
@@ -525,22 +533,6 @@
       </span>
       <span class="symbol">
         <a title="" href="FormatException.html"><span class="name">FormatException</span></a><span class="params">(<span name="msg">msg: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <span class="extype" name="scala.RuntimeException">RuntimeException</span> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
-      </span>
-      
-      
-    </li><li name="stellar.sdk.model.HashSigner" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="HashSignerextendsSignerwithProductwithSerializable"></a><a id="HashSigner:HashSigner"></a>
-      <span class="permalink">
-      <a href="../../../stellar/sdk/model/index.html#HashSignerextendsSignerwithProductwithSerializable" title="Permalink">
-        <i class="material-icons"></i>
-      </a>
-    </span>
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">case class</span>
-      </span>
-      <span class="symbol">
-        <a title="" href="HashSigner.html"><span class="name">HashSigner</span></a><span class="params">(<span name="hash">hash: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="weight">weight: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result"> extends <a href="Signer.html" class="extype" name="stellar.sdk.model.Signer">Signer</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       
       
@@ -786,10 +778,10 @@
       </span>
       
       
-    </li><li name="stellar.sdk.model.PreAuthTxnSigner" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="PreAuthTxnSignerextendsSignerwithProductwithSerializable"></a><a id="PreAuthTxnSigner:PreAuthTxnSigner"></a>
+    </li><li name="stellar.sdk.model.PreAuthTx" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="PreAuthTxextendsSignerStrKeywithProductwithSerializable"></a><a id="PreAuthTx:PreAuthTx"></a>
       <span class="permalink">
-      <a href="../../../stellar/sdk/model/index.html#PreAuthTxnSignerextendsSignerwithProductwithSerializable" title="Permalink">
+      <a href="../../../stellar/sdk/model/index.html#PreAuthTxextendsSignerStrKeywithProductwithSerializable" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -798,7 +790,7 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a title="" href="PreAuthTxnSigner.html"><span class="name">PreAuthTxnSigner</span></a><span class="params">(<span name="hash">hash: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="weight">weight: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result"> extends <a href="Signer.html" class="extype" name="stellar.sdk.model.Signer">Signer</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a title="" href="PreAuthTx.html"><span class="name">PreAuthTx</span></a><span class="params">(<span name="hash">hash: <span class="extype" name="scala.Array">Array</span>[<span class="extype" name="scala.Byte">Byte</span>]</span>)</span><span class="result"> extends <a href="SignerStrKey.html" class="extype" name="stellar.sdk.model.SignerStrKey">SignerStrKey</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       
       
@@ -834,6 +826,38 @@
       </span>
       
       
+    </li><li name="stellar.sdk.model.SHA256Hash" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="SHA256HashextendsSignerStrKeywithProductwithSerializable"></a><a id="SHA256Hash:SHA256Hash"></a>
+      <span class="permalink">
+      <a href="../../../stellar/sdk/model/index.html#SHA256HashextendsSignerStrKeywithProductwithSerializable" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a title="" href="SHA256Hash.html"><span class="name">SHA256Hash</span></a><span class="params">(<span name="hash">hash: <span class="extype" name="scala.Array">Array</span>[<span class="extype" name="scala.Byte">Byte</span>]</span>)</span><span class="result"> extends <a href="SignerStrKey.html" class="extype" name="stellar.sdk.model.SignerStrKey">SignerStrKey</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      
+      
+    </li><li name="stellar.sdk.model.Seed" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="SeedextendsStrKeywithProductwithSerializable"></a><a id="Seed:Seed"></a>
+      <span class="permalink">
+      <a href="../../../stellar/sdk/model/index.html#SeedextendsStrKeywithProductwithSerializable" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a title="" href="Seed.html"><span class="name">Seed</span></a><span class="params">(<span name="hash">hash: <span class="extype" name="scala.Array">Array</span>[<span class="extype" name="scala.Byte">Byte</span>]</span>)</span><span class="result"> extends <a href="StrKey.html" class="extype" name="stellar.sdk.model.StrKey">StrKey</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      
+      
     </li><li name="stellar.sdk.model.SignedTransaction" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="SignedTransactionextendsProductwithSerializable"></a><a id="SignedTransaction:SignedTransaction"></a>
       <span class="permalink">
@@ -850,10 +874,26 @@
       </span>
       
       
-    </li><li name="stellar.sdk.model.Signer" visbl="pub" class="indented0 " data-isabs="true" fullComment="no" group="Ungrouped">
-      <a id="SignerextendsEncodable"></a><a id="Signer:Signer"></a>
+    </li><li name="stellar.sdk.model.Signer" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="SignerextendsEncodablewithProductwithSerializable"></a><a id="Signer:Signer"></a>
       <span class="permalink">
-      <a href="../../../stellar/sdk/model/index.html#SignerextendsEncodable" title="Permalink">
+      <a href="../../../stellar/sdk/model/index.html#SignerextendsEncodablewithProductwithSerializable" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a title="" href="Signer.html"><span class="name">Signer</span></a><span class="params">(<span name="key">key: <a href="SignerStrKey.html" class="extype" name="stellar.sdk.model.SignerStrKey">SignerStrKey</a></span>, <span name="weight">weight: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result"> extends <a href="xdr/Encodable.html" class="extype" name="stellar.sdk.model.xdr.Encodable">Encodable</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      
+      
+    </li><li name="stellar.sdk.model.SignerStrKey" visbl="pub" class="indented0 " data-isabs="true" fullComment="yes" group="Ungrouped">
+      <a id="SignerStrKeyextendsStrKeywithEncodable"></a><a id="SignerStrKey:SignerStrKey"></a>
+      <span class="permalink">
+      <a href="../../../stellar/sdk/model/index.html#SignerStrKeyextendsStrKeywithEncodable" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -862,10 +902,28 @@
         <span class="kind">trait</span>
       </span>
       <span class="symbol">
-        <a title="" href="Signer.html"><span class="name">Signer</span></a><span class="result"> extends <a href="xdr/Encodable.html" class="extype" name="stellar.sdk.model.xdr.Encodable">Encodable</a></span>
+        <a title="Only a subset of StrKeys can be signers." href="SignerStrKey.html"><span class="name">SignerStrKey</span></a><span class="result"> extends <a href="StrKey.html" class="extype" name="stellar.sdk.model.StrKey">StrKey</a> with <a href="xdr/Encodable.html" class="extype" name="stellar.sdk.model.xdr.Encodable">Encodable</a></span>
       </span>
       
+      <p class="shortcomment cmt">Only a subset of StrKeys can be signers.</p><div class="fullcomment"><div class="comment cmt"><p>Only a subset of StrKeys can be signers. Seeds should not be the declared signer
+(as they are the private dual of the AccountId).
+</p></div></div>
+    </li><li name="stellar.sdk.model.StrKey" visbl="pub" class="indented0 " data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="StrKeyextendsAnyRef"></a><a id="StrKey:StrKey"></a>
+      <span class="permalink">
+      <a href="../../../stellar/sdk/model/index.html#StrKeyextendsAnyRef" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier">sealed </span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a title="A StrKey (Stellar Key) is a typed, encoded byte array." href="StrKey.html"><span class="name">StrKey</span></a><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+      </span>
       
+      <p class="shortcomment cmt">A StrKey (Stellar Key) is a typed, encoded byte array.</p>
     </li><li name="stellar.sdk.model.Thresholds" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="ThresholdsextendsProductwithSerializable"></a><a id="Thresholds:Thresholds"></a>
       <span class="permalink">
@@ -1206,7 +1264,7 @@
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a title="" href="Signer$.html"><span class="name">Signer</span></a>
+        <a title="" href="Signer$.html"><span class="name">Signer</span></a><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       
       

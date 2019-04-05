@@ -187,8 +187,8 @@
                         <a href="Account.html" title="Represents an account in Stellar network with its sequence number.">Account</a>
                       </li><li class="current-entities indented3">
                         <span class="separator"></span>
-                        <a class="class" href="AccountSigner.html" title=""></a>
-                        <a href="AccountSigner.html" title="">AccountSigner</a>
+                        <a class="class" href="AccountId.html" title=""></a>
+                        <a href="AccountId.html" title="">AccountId</a>
                       </li><li class="current-entities indented3">
                         <a class="object" href="Amount$.html" title=""></a>
                         <a class="trait" href="Amount.html" title=""></a>
@@ -213,10 +213,6 @@
                         <span class="separator"></span>
                         <a class="class" href="FormatException.html" title=""></a>
                         <a href="FormatException.html" title="">FormatException</a>
-                      </li><li class="current-entities indented3">
-                        <span class="separator"></span>
-                        <a class="class" href="" title=""></a>
-                        <a href="" title="">HashSigner</a>
                       </li><li class="current-entities indented3">
                         <span class="separator"></span>
                         <a class="trait" href="HorizonCursor.html" title=""></a>
@@ -295,8 +291,8 @@
                         <a href="OrderBookDeserializer$.html" title="">OrderBookDeserializer</a>
                       </li><li class="current-entities indented3">
                         <span class="separator"></span>
-                        <a class="class" href="PreAuthTxnSigner.html" title=""></a>
-                        <a href="PreAuthTxnSigner.html" title="">PreAuthTxnSigner</a>
+                        <a class="class" href="PreAuthTx.html" title=""></a>
+                        <a href="PreAuthTx.html" title="">PreAuthTx</a>
                       </li><li class="current-entities indented3">
                         <a class="object" href="Price$.html" title=""></a>
                         <a class="class" href="Price.html" title=""></a>
@@ -306,17 +302,29 @@
                         <a class="class" href="Record.html" title=""></a>
                         <a href="Record.html" title="">Record</a>
                       </li><li class="current-entities indented3">
+                        <span class="separator"></span>
+                        <a class="class" href="" title=""></a>
+                        <a href="" title="">SHA256Hash</a>
+                      </li><li class="current-entities indented3">
+                        <span class="separator"></span>
+                        <a class="class" href="Seed.html" title=""></a>
+                        <a href="Seed.html" title="">Seed</a>
+                      </li><li class="current-entities indented3">
                         <a class="object" href="SignedTransaction$.html" title=""></a>
                         <a class="class" href="SignedTransaction.html" title=""></a>
                         <a href="SignedTransaction.html" title="">SignedTransaction</a>
                       </li><li class="current-entities indented3">
                         <a class="object" href="Signer$.html" title=""></a>
-                        <a class="trait" href="Signer.html" title=""></a>
+                        <a class="class" href="Signer.html" title=""></a>
                         <a href="Signer.html" title="">Signer</a>
                       </li><li class="current-entities indented3">
                         <span class="separator"></span>
+                        <a class="trait" href="SignerStrKey.html" title="Only a subset of StrKeys can be signers."></a>
+                        <a href="SignerStrKey.html" title="Only a subset of StrKeys can be signers.">SignerStrKey</a>
+                      </li><li class="current-entities indented3">
                         <a class="object" href="StrKey$.html" title=""></a>
-                        <a href="StrKey$.html" title="">StrKey</a>
+                        <a class="trait" href="StrKey.html" title="A StrKey (Stellar Key) is a typed, encoded byte array."></a>
+                        <a href="StrKey.html" title="A StrKey (Stellar Key) is a typed, encoded byte array.">StrKey</a>
                       </li><li class="current-entities indented3">
                         <span class="separator"></span>
                         <a class="class" href="Thresholds.html" title=""></a>
@@ -346,8 +354,8 @@
       <div id="definition">
         <div class="big-circle class">c</div>
         <p id="owner"><a href="../../index.html" class="extype" name="stellar">stellar</a>.<a href="../index.html" class="extype" name="stellar.sdk">sdk</a>.<a href="index.html" class="extype" name="stellar.sdk.model">model</a></p>
-        <h1>HashSigner<span class="permalink">
-      <a href="../../../stellar/sdk/model/HashSigner.html" title="Permalink">
+        <h1>SHA256Hash<span class="permalink">
+      <a href="../../../stellar/sdk/model/SHA256Hash.html" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span></h1>
@@ -360,7 +368,7 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <span class="name">HashSigner</span><span class="params">(<span name="hash">hash: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="weight">weight: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result"> extends <a href="Signer.html" class="extype" name="stellar.sdk.model.Signer">Signer</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <span class="name">SHA256Hash</span><span class="params">(<span name="hash">hash: <span class="extype" name="scala.Array">Array</span>[<span class="extype" name="scala.Byte">Byte</span>]</span>)</span><span class="result"> extends <a href="SignerStrKey.html" class="extype" name="stellar.sdk.model.SignerStrKey">SignerStrKey</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4>
 
@@ -369,7 +377,7 @@
           <span class="toggle">
             Linear Supertypes
           </span>
-          <div class="superTypes hiddenContent"><span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <span class="extype" name="scala.Product">Product</span>, <span class="extype" name="scala.Equals">Equals</span>, <a href="Signer.html" class="extype" name="stellar.sdk.model.Signer">Signer</a>, <a href="xdr/Encodable.html" class="extype" name="stellar.sdk.model.xdr.Encodable">Encodable</a>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
+          <div class="superTypes hiddenContent"><span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <span class="extype" name="scala.Product">Product</span>, <span class="extype" name="scala.Equals">Equals</span>, <a href="SignerStrKey.html" class="extype" name="stellar.sdk.model.SignerStrKey">SignerStrKey</a>, <a href="xdr/Encodable.html" class="extype" name="stellar.sdk.model.xdr.Encodable">Encodable</a>, <a href="StrKey.html" class="extype" name="stellar.sdk.model.StrKey">StrKey</a>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div></div>
         
 
@@ -395,7 +403,7 @@
                   <span class="filtertype">Inherited<br />
                   </span>
                   <ol id="linearization">
-                    <li class="in" name="stellar.sdk.model.HashSigner"><span>HashSigner</span></li><li class="in" name="scala.Serializable"><span>Serializable</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="scala.Product"><span>Product</span></li><li class="in" name="scala.Equals"><span>Equals</span></li><li class="in" name="stellar.sdk.model.Signer"><span>Signer</span></li><li class="in" name="stellar.sdk.model.xdr.Encodable"><span>Encodable</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                    <li class="in" name="stellar.sdk.model.SHA256Hash"><span>SHA256Hash</span></li><li class="in" name="scala.Serializable"><span>Serializable</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="scala.Product"><span>Product</span></li><li class="in" name="scala.Equals"><span>Equals</span></li><li class="in" name="stellar.sdk.model.SignerStrKey"><span>SignerStrKey</span></li><li class="in" name="stellar.sdk.model.xdr.Encodable"><span>Encodable</span></li><li class="in" name="stellar.sdk.model.StrKey"><span>StrKey</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
                   </ol>
                 </div><div class="ancestors">
               <span class="filtertype"></span>
@@ -415,10 +423,10 @@
         <div id="allMembers">
         <div id="constructors" class="members">
               <h3>Instance Constructors</h3>
-              <ol><li name="stellar.sdk.model.HashSigner#&lt;init&gt;" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="&lt;init&gt;(hash:String,weight:Int):stellar.sdk.model.HashSigner"></a><a id="&lt;init&gt;:HashSigner"></a>
+              <ol><li name="stellar.sdk.model.SHA256Hash#&lt;init&gt;" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="&lt;init&gt;(hash:Array[Byte]):stellar.sdk.model.SHA256Hash"></a><a id="&lt;init&gt;:SHA256Hash"></a>
       <span class="permalink">
-      <a href="../../../stellar/sdk/model/HashSigner.html#&lt;init&gt;(hash:String,weight:Int):stellar.sdk.model.HashSigner" title="Permalink">
+      <a href="../../../stellar/sdk/model/SHA256Hash.html#&lt;init&gt;(hash:Array[Byte]):stellar.sdk.model.SHA256Hash" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -427,7 +435,7 @@
         <span class="kind">new</span>
       </span>
       <span class="symbol">
-        <span class="name">HashSigner</span><span class="params">(<span name="hash">hash: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="weight">weight: <span class="extype" name="scala.Int">Int</span></span>)</span>
+        <span class="name">SHA256Hash</span><span class="params">(<span name="hash">hash: <span class="extype" name="scala.Array">Array</span>[<span class="extype" name="scala.Byte">Byte</span>]</span>)</span>
       </span>
       
       
@@ -444,7 +452,7 @@
                 <li name="scala.AnyRef#!=" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="!=(x$1:Any):Boolean"></a><a id="!=(Any):Boolean"></a>
       <span class="permalink">
-      <a href="../../../stellar/sdk/model/HashSigner.html#!=(x$1:Any):Boolean" title="Permalink">
+      <a href="../../../stellar/sdk/model/SHA256Hash.html#!=(x$1:Any):Boolean" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -460,7 +468,7 @@
     </li><li name="scala.AnyRef###" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="##():Int"></a>
       <span class="permalink">
-      <a href="../../../stellar/sdk/model/HashSigner.html###():Int" title="Permalink">
+      <a href="../../../stellar/sdk/model/SHA256Hash.html###():Int" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -476,7 +484,7 @@
     </li><li name="scala.AnyRef#==" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="==(x$1:Any):Boolean"></a><a id="==(Any):Boolean"></a>
       <span class="permalink">
-      <a href="../../../stellar/sdk/model/HashSigner.html#==(x$1:Any):Boolean" title="Permalink">
+      <a href="../../../stellar/sdk/model/SHA256Hash.html#==(x$1:Any):Boolean" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -492,7 +500,7 @@
     </li><li name="scala.Any#asInstanceOf" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="asInstanceOf[T0]:T0"></a>
       <span class="permalink">
-      <a href="../../../stellar/sdk/model/HashSigner.html#asInstanceOf[T0]:T0" title="Permalink">
+      <a href="../../../stellar/sdk/model/SHA256Hash.html#asInstanceOf[T0]:T0" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -505,26 +513,26 @@
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
-    </li><li name="stellar.sdk.model.HashSigner#bytes" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="bytes:Array[Byte]"></a>
+    </li><li name="stellar.sdk.model.StrKey#checksum" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="checksum:Array[Byte]"></a>
       <span class="permalink">
-      <a href="../../../stellar/sdk/model/HashSigner.html#bytes:Array[Byte]" title="Permalink">
+      <a href="../../../stellar/sdk/model/SHA256Hash.html#checksum:Array[Byte]" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
       <span class="modifier_kind">
         <span class="modifier"></span>
-        <span class="kind">val</span>
+        <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">bytes</span><span class="result">: <span class="extype" name="scala.Array">Array</span>[<span class="extype" name="scala.Byte">Byte</span>]</span>
+        <span class="name">checksum</span><span class="result">: <span class="extype" name="scala.Array">Array</span>[<span class="extype" name="scala.Byte">Byte</span>]</span>
       </span>
       
-      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="StrKey.html" class="extype" name="stellar.sdk.model.StrKey">StrKey</a></dd></dl></div>
     </li><li name="scala.AnyRef#clone" visbl="prt" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="clone():Object"></a><a id="clone():AnyRef"></a>
       <span class="permalink">
-      <a href="../../../stellar/sdk/model/HashSigner.html#clone():Object" title="Permalink">
+      <a href="../../../stellar/sdk/model/SHA256Hash.html#clone():Object" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -545,10 +553,10 @@
     </span>)</span>
               
         </dd></dl></div>
-    </li><li name="stellar.sdk.model.HashSigner#encode" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+    </li><li name="stellar.sdk.model.SHA256Hash#encode" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="encode:Stream[Byte]"></a>
       <span class="permalink">
-      <a href="../../../stellar/sdk/model/HashSigner.html#encode:Stream[Byte]" title="Permalink">
+      <a href="../../../stellar/sdk/model/SHA256Hash.html#encode:Stream[Byte]" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -560,11 +568,27 @@
         <span class="name">encode</span><span class="result">: <span class="extype" name="scala.Stream">Stream</span>[<span class="extype" name="scala.Byte">Byte</span>]</span>
       </span>
       
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="stellar.sdk.model.HashSigner">HashSigner</a> → <a href="xdr/Encodable.html" class="extype" name="stellar.sdk.model.xdr.Encodable">Encodable</a></dd></dl></div>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="stellar.sdk.model.SHA256Hash">SHA256Hash</a> → <a href="xdr/Encodable.html" class="extype" name="stellar.sdk.model.xdr.Encodable">Encodable</a></dd></dl></div>
+    </li><li name="stellar.sdk.model.StrKey#encodeToChars" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="encodeToChars:Array[Char]"></a>
+      <span class="permalink">
+      <a href="../../../stellar/sdk/model/SHA256Hash.html#encodeToChars:Array[Char]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">encodeToChars</span><span class="result">: <span class="extype" name="scala.Array">Array</span>[<span class="extype" name="scala.Char">Char</span>]</span>
+      </span>
+      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="StrKey.html" class="extype" name="stellar.sdk.model.StrKey">StrKey</a></dd></dl></div>
     </li><li name="scala.AnyRef#eq" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="eq(x$1:AnyRef):Boolean"></a><a id="eq(AnyRef):Boolean"></a>
       <span class="permalink">
-      <a href="../../../stellar/sdk/model/HashSigner.html#eq(x$1:AnyRef):Boolean" title="Permalink">
+      <a href="../../../stellar/sdk/model/SHA256Hash.html#eq(x$1:AnyRef):Boolean" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -580,7 +604,7 @@
     </li><li name="scala.AnyRef#finalize" visbl="prt" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="finalize():Unit"></a>
       <span class="permalink">
-      <a href="../../../stellar/sdk/model/HashSigner.html#finalize():Unit" title="Permalink">
+      <a href="../../../stellar/sdk/model/SHA256Hash.html#finalize():Unit" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -602,7 +626,7 @@
     </li><li name="scala.AnyRef#getClass" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="getClass():Class[_]"></a>
       <span class="permalink">
-      <a href="../../../stellar/sdk/model/HashSigner.html#getClass():Class[_]" title="Permalink">
+      <a href="../../../stellar/sdk/model/SHA256Hash.html#getClass():Class[_]" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -618,10 +642,10 @@
                 <span class="name">@native</span><span class="args">()</span>
               
         </dd></dl></div>
-    </li><li name="stellar.sdk.model.HashSigner#hash" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="hash:String"></a>
+    </li><li name="stellar.sdk.model.SHA256Hash#hash" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="hash:Array[Byte]"></a>
       <span class="permalink">
-      <a href="../../../stellar/sdk/model/HashSigner.html#hash:String" title="Permalink">
+      <a href="../../../stellar/sdk/model/SHA256Hash.html#hash:Array[Byte]" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -630,14 +654,14 @@
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">hash</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
+        <span class="name">hash</span><span class="result">: <span class="extype" name="scala.Array">Array</span>[<span class="extype" name="scala.Byte">Byte</span>]</span>
       </span>
       
-      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="stellar.sdk.model.SHA256Hash">SHA256Hash</a> → <a href="StrKey.html" class="extype" name="stellar.sdk.model.StrKey">StrKey</a></dd></dl></div>
     </li><li name="scala.Any#isInstanceOf" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="isInstanceOf[T0]:Boolean"></a>
       <span class="permalink">
-      <a href="../../../stellar/sdk/model/HashSigner.html#isInstanceOf[T0]:Boolean" title="Permalink">
+      <a href="../../../stellar/sdk/model/SHA256Hash.html#isInstanceOf[T0]:Boolean" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -650,10 +674,26 @@
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
+    </li><li name="stellar.sdk.model.SHA256Hash#kind" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="kind:Byte"></a>
+      <span class="permalink">
+      <a href="../../../stellar/sdk/model/SHA256Hash.html#kind:Byte" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">kind</span><span class="result">: <span class="extype" name="scala.Byte">Byte</span></span>
+      </span>
+      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="stellar.sdk.model.SHA256Hash">SHA256Hash</a> → <a href="StrKey.html" class="extype" name="stellar.sdk.model.StrKey">StrKey</a></dd></dl></div>
     </li><li name="scala.AnyRef#ne" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="ne(x$1:AnyRef):Boolean"></a><a id="ne(AnyRef):Boolean"></a>
       <span class="permalink">
-      <a href="../../../stellar/sdk/model/HashSigner.html#ne(x$1:AnyRef):Boolean" title="Permalink">
+      <a href="../../../stellar/sdk/model/SHA256Hash.html#ne(x$1:AnyRef):Boolean" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -669,7 +709,7 @@
     </li><li name="scala.AnyRef#notify" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="notify():Unit"></a>
       <span class="permalink">
-      <a href="../../../stellar/sdk/model/HashSigner.html#notify():Unit" title="Permalink">
+      <a href="../../../stellar/sdk/model/SHA256Hash.html#notify():Unit" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -688,7 +728,7 @@
     </li><li name="scala.AnyRef#notifyAll" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="notifyAll():Unit"></a>
       <span class="permalink">
-      <a href="../../../stellar/sdk/model/HashSigner.html#notifyAll():Unit" title="Permalink">
+      <a href="../../../stellar/sdk/model/SHA256Hash.html#notifyAll():Unit" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -707,7 +747,7 @@
     </li><li name="scala.AnyRef#synchronized" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="synchronized[T0](x$1:=&gt;T0):T0"></a><a id="synchronized[T0](⇒T0):T0"></a>
       <span class="permalink">
-      <a href="../../../stellar/sdk/model/HashSigner.html#synchronized[T0](x$1:=&gt;T0):T0" title="Permalink">
+      <a href="../../../stellar/sdk/model/SHA256Hash.html#synchronized[T0](x$1:=&gt;T0):T0" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -723,7 +763,7 @@
     </li><li name="scala.AnyRef#wait" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="wait():Unit"></a>
       <span class="permalink">
-      <a href="../../../stellar/sdk/model/HashSigner.html#wait():Unit" title="Permalink">
+      <a href="../../../stellar/sdk/model/SHA256Hash.html#wait():Unit" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -745,7 +785,7 @@
     </li><li name="scala.AnyRef#wait" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="wait(x$1:Long,x$2:Int):Unit"></a><a id="wait(Long,Int):Unit"></a>
       <span class="permalink">
-      <a href="../../../stellar/sdk/model/HashSigner.html#wait(x$1:Long,x$2:Int):Unit" title="Permalink">
+      <a href="../../../stellar/sdk/model/SHA256Hash.html#wait(x$1:Long,x$2:Int):Unit" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -767,7 +807,7 @@
     </li><li name="scala.AnyRef#wait" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="wait(x$1:Long):Unit"></a><a id="wait(Long):Unit"></a>
       <span class="permalink">
-      <a href="../../../stellar/sdk/model/HashSigner.html#wait(x$1:Long):Unit" title="Permalink">
+      <a href="../../../stellar/sdk/model/SHA256Hash.html#wait(x$1:Long):Unit" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -788,22 +828,6 @@
     </span>)</span>
               
         </dd></dl></div>
-    </li><li name="stellar.sdk.model.HashSigner#weight" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="weight:Int"></a>
-      <span class="permalink">
-      <a href="../../../stellar/sdk/model/HashSigner.html#weight:Int" title="Permalink">
-        <i class="material-icons"></i>
-      </a>
-    </span>
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">val</span>
-      </span>
-      <span class="symbol">
-        <span class="name">weight</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
-      </span>
-      
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="stellar.sdk.model.HashSigner">HashSigner</a> → <a href="Signer.html" class="extype" name="stellar.sdk.model.Signer">Signer</a></dd></dl></div>
     </li>
               </ol>
             </div>
@@ -822,10 +846,12 @@
               <h3>Inherited from <span class="extype" name="scala.Product">Product</span></h3>
             </div><div class="parent" name="scala.Equals">
               <h3>Inherited from <span class="extype" name="scala.Equals">Equals</span></h3>
-            </div><div class="parent" name="stellar.sdk.model.Signer">
-              <h3>Inherited from <a href="Signer.html" class="extype" name="stellar.sdk.model.Signer">Signer</a></h3>
+            </div><div class="parent" name="stellar.sdk.model.SignerStrKey">
+              <h3>Inherited from <a href="SignerStrKey.html" class="extype" name="stellar.sdk.model.SignerStrKey">SignerStrKey</a></h3>
             </div><div class="parent" name="stellar.sdk.model.xdr.Encodable">
               <h3>Inherited from <a href="xdr/Encodable.html" class="extype" name="stellar.sdk.model.xdr.Encodable">Encodable</a></h3>
+            </div><div class="parent" name="stellar.sdk.model.StrKey">
+              <h3>Inherited from <a href="StrKey.html" class="extype" name="stellar.sdk.model.StrKey">StrKey</a></h3>
             </div><div class="parent" name="scala.AnyRef">
               <h3>Inherited from <span class="extype" name="scala.AnyRef">AnyRef</span></h3>
             </div><div class="parent" name="scala.Any">
