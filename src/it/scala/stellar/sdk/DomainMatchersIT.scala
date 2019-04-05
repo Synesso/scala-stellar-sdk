@@ -1,11 +1,13 @@
 package stellar.sdk
 
+import cats.data.State
 import org.apache.commons.codec.binary.Hex
 import org.specs2.matcher.{AnyMatchers, Matcher, MustExpectations, OptionMatchers, SequenceMatchersCreation}
 import stellar.sdk.model._
 import stellar.sdk.util.ByteArrays.base64
 import stellar.sdk.model.op._
 import stellar.sdk.model.result.TransactionHistory
+import stellar.sdk.model.xdr.Encodable
 
 trait DomainMatchersIT extends AnyMatchers with MustExpectations with SequenceMatchersCreation with OptionMatchers {
 
@@ -40,6 +42,29 @@ trait DomainMatchersIT extends AnyMatchers with MustExpectations with SequenceMa
   def beEquivalentTo(other: PublicKeyOps): Matcher[PublicKeyOps] = beLike[PublicKeyOps] {
     case pk =>
       pk.accountId mustEqual other.accountId
+  }
+
+  def beEquivalentTo(other: Signer): Matcher[Signer] = beLike[Signer] {
+    case Signer(key, weight) =>
+      weight mustEqual other.weight
+      key must beEquivalentTo(other.key)
+  }
+
+  def beEquivalentTo(key: StrKey): Matcher[StrKey] = beLike[StrKey] {
+    case Seed(hash) if key.isInstanceOf[Seed] => hash.toSeq mustEqual key.hash.toSeq
+    case other => other.asInstanceOf[SignerStrKey] must beEquivalentTo(key.asInstanceOf[SignerStrKey])
+  }
+
+  def beEquivalentTo(key: SignerStrKey): Matcher[SignerStrKey] = beLike[SignerStrKey] {
+    case AccountId(hash) if key.isInstanceOf[AccountId] => hash.toSeq mustEqual key.hash.toSeq
+    case PreAuthTx(hash) if key.isInstanceOf[PreAuthTx]  => hash.toSeq mustEqual key.hash.toSeq
+    case SHA256Hash(hash) if key.isInstanceOf[SHA256Hash] => hash.toSeq mustEqual key.hash.toSeq
+  }
+
+  def beEquivalentTo(other: Transacted[Operation]): Matcher[Transacted[Operation]] = beLike[Transacted[Operation]] {
+    case t =>
+      t.copy(operation = other.operation) mustEqual other
+      t.operation must beEquivalentTo(other.operation)
   }
 
   def beEquivalentTo(other: AccountMergeOperation): Matcher[AccountMergeOperation] = beLike[AccountMergeOperation] {
@@ -131,11 +156,16 @@ trait DomainMatchersIT extends AnyMatchers with MustExpectations with SequenceMa
       op.lowThreshold mustEqual other.lowThreshold
       op.masterKeyWeight mustEqual other.masterKeyWeight
       op.mediumThreshold mustEqual other.mediumThreshold
-      op.signer mustEqual other.signer
+      op.signer match {
+        case Some(s) =>
+          other.signer must beSome[Signer].like {
+            case otherS => s must beEquivalentTo(otherS)
+          }
+        case None => other.signer must beNone
+      }
   }
 
   def beEquivalentTo[T <: Operation](other: T): Matcher[T] = beLike {
-    case op: InflationOperation => other mustEqual op
     case op: AccountMergeOperation => other.asInstanceOf[AccountMergeOperation] must beEquivalentTo(op)
     case op: AllowTrustOperation => other.asInstanceOf[AllowTrustOperation] must beEquivalentTo(op)
     case op: ChangeTrustOperation => other.asInstanceOf[ChangeTrustOperation] must beEquivalentTo(op)
@@ -149,6 +179,7 @@ trait DomainMatchersIT extends AnyMatchers with MustExpectations with SequenceMa
     case op: PathPaymentOperation => other.asInstanceOf[PathPaymentOperation] must beEquivalentTo(op)
     case op: PaymentOperation => other.asInstanceOf[PaymentOperation] must beEquivalentTo(op)
     case op: SetOptionsOperation => other.asInstanceOf[SetOptionsOperation] must beEquivalentTo(op)
+    case op => other mustEqual op
   }
 
   def beEquivalentTo(other: Account): Matcher[Account] = beLike {
@@ -160,7 +191,7 @@ trait DomainMatchersIT extends AnyMatchers with MustExpectations with SequenceMa
   def beEquivalentTo(other: Transaction): Matcher[Transaction] = beLike {
     case txn =>
       txn.source must beEquivalentTo(other.source)
-      txn.memo mustEqual other.memo
+      txn.memo must beEquivalentTo(other.memo)
       txn.timeBounds mustEqual other.timeBounds
       txn.hash mustEqual other.hash
       forall(txn.operations.zip(other.operations)) {
@@ -192,6 +223,14 @@ trait DomainMatchersIT extends AnyMatchers with MustExpectations with SequenceMa
     case thr =>
       other.memo must beEquivalentTo(thr.memo)
       other.copy(memo = thr.memo) mustEqual thr
+  }
+
+  def serdeUsing[E <: Encodable](decoder: State[Seq[Byte], E]): Matcher[E] = beLike {
+    case expected: Encodable =>
+      val encoded = expected.encode
+      val (remaining, actual) = decoder.run(encoded).value
+      actual mustEqual expected
+      remaining must beEmpty
   }
 
 }

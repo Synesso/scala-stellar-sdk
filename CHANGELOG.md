@@ -7,6 +7,14 @@ As this project is pre 1.0, breaking changes may happen for minor version bumps.
 _Nothing, yet._
 
 
+## 0.6.2
+
+### Fixed
+
+- [#65](https://github.com/Synesso/scala-stellar-sdk/issues/65) Restructure `Signer` and `StrKey` and objects to
+    accommodate correct serialisation & deserialisation.
+
+
 ## 0.6.1
 
 ### Fixed
