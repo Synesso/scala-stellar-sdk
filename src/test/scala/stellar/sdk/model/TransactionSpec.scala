@@ -8,7 +8,7 @@ import stellar.sdk.{ArbitraryInput, DomainMatchers, KeyPair, model}
 
 class TransactionSpec extends Specification with ArbitraryInput with DomainMatchers {
 
-  "a transaction fee" should {
+  "the default transaction fee" should {
     "be equal to 100 * the quantity of operations" >> prop { (source: Account, ops: Seq[Operation]) =>
       model.Transaction(source, ops, NoMemo).calculatedFee mustEqual NativeAmount(ops.size * 100)
     }.setGen2(Gen.nonEmptyListOf(genOperation))

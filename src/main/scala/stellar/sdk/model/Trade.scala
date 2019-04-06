@@ -8,6 +8,7 @@ import stellar.sdk.model.response.ResponseParser
 import stellar.sdk.{KeyPair, PublicKeyOps}
 
 case class Trade(id: String, ledgerCloseTime: ZonedDateTime, offerId: Long,
+                 baseOfferId: Long, counterOfferId: Long,
                  baseAccount: PublicKeyOps, baseAmount: Amount,
                  counterAccount: PublicKeyOps, counterAmount: Amount,
                  baseIsSeller: Boolean)
@@ -48,6 +49,8 @@ object TradeDeserializer extends ResponseParser[Trade]({
       id = (o \ "id").extract[String],
       ledgerCloseTime = date("ledger_close_time"),
       offerId = (o \ "offer_id").extract[String].toLong,
+      baseOfferId = (o \ "base_offer_id").extract[String].toLong,
+      counterOfferId = (o \ "counter_offer_id").extract[String].toLong,
       baseAccount = account("base_account"),
       baseAmount = amount("base_"),
       counterAccount = account("counter_account"),

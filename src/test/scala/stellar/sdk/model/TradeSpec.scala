@@ -27,10 +27,12 @@ class TradeSpec extends Specification with ArbitraryInput with JsonSnippets {
            |  "paging_token": "38583306127675393-2",
            |  "ledger_close_time": "${formatter.format(trade.ledgerCloseTime)}",
            |  "offer_id": "${trade.offerId}",
+           |  "base_offer_id": "${trade.baseOfferId}",
            |  "base_account": "${trade.baseAccount.accountId}",
            |  ${amountDocPortion(trade.baseAmount, "base_amount", "base_")}
            |  ${amountDocPortion(trade.counterAmount, "counter_amount", "counter_")}
            |  "counter_account": "${trade.counterAccount.accountId}",
+           |  "counter_offer_id": "${trade.counterOfferId}",
            |  "base_is_seller": ${trade.baseIsSeller}
            |}
          """.stripMargin

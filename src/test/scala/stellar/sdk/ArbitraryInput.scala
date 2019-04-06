@@ -507,13 +507,15 @@ trait ArbitraryInput extends ScalaCheck {
     id <- Gen.identifier
     ledgerCloseTime <- genZonedDateTime
     offerId <- Gen.posNum[Long]
+    baseOfferId <- Gen.posNum[Long]
+    counterOfferId <- Gen.posNum[Long]
     baseAccount <- genPublicKey
     baseAmount <- genAmount
     counterAccount <- genPublicKey
     counterAmount <- genAmount
     baseIsSeller <- Gen.oneOf(true, false)
   } yield {
-    Trade(id, ledgerCloseTime, offerId, baseAccount, baseAmount, counterAccount, counterAmount, baseIsSeller)
+    Trade(id, ledgerCloseTime, offerId, baseOfferId, counterOfferId, baseAccount, baseAmount, counterAccount, counterAmount, baseIsSeller)
   }
 
   def genTransactionPostSuccess: Gen[TransactionApproved] = for {
