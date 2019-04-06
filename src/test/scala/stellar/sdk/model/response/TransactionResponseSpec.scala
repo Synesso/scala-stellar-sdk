@@ -98,12 +98,23 @@ class TransactionResponseSpec extends Specification with ArbitraryInput with Dom
         case MemoText(t) => "text" -> Some(t)
         case m: MemoWithHash => "hash" -> Some(base64(m.bs))
       }
-      val json = memo.foldLeft(("hash" -> h.hash) ~ ("ledger" -> h.ledgerId) ~
-        ("created_at" -> formatter.format(h.createdAt)) ~
-        ("source_account" -> h.account.accountId) ~ ("source_account_sequence" -> h.sequence) ~
-        ("fee_paid" -> h.feePaid.units) ~ ("operation_count" -> h.operationCount) ~ ("signatures" -> h.signatures) ~
-        ("memo_type" -> memoType) ~ ("envelope_xdr" -> h.envelopeXDR) ~ ("result_xdr" -> h.resultXDR) ~
-        ("result_meta_xdr" -> h.resultMetaXDR) ~ ("fee_meta_xdr" -> h.feeMetaXDR)) {
+      val json = memo.foldLeft(
+        ("hash" -> h.hash) ~
+          ("ledger" -> h.ledgerId) ~
+          ("created_at" -> formatter.format(h.createdAt)) ~
+          ("source_account" -> h.account.accountId) ~
+          ("source_account_sequence" -> h.sequence) ~
+          ("fee_paid" -> h.feePaid.units) ~
+          ("operation_count" -> h.operationCount) ~
+          ("signatures" -> h.signatures) ~
+          ("memo_type" -> memoType) ~
+          ("envelope_xdr" -> h.envelopeXDR) ~
+          ("result_xdr" -> h.resultXDR) ~
+          ("result_meta_xdr" -> h.resultMetaXDR) ~
+          ("fee_meta_xdr" -> h.feeMetaXDR) ~
+          ("valid_after" -> h.validAfter.map(formatter.format)) ~
+          ("valid_before" -> h.validBefore.map(formatter.format))
+      ) {
         case (js, memoText) => js ~ ("memo" -> memoText)
       }
 

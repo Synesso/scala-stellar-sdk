@@ -15,7 +15,7 @@ import stellar.sdk.{KeyPair, PublicKey}
 case class TransactionHistory(hash: String, ledgerId: Long, createdAt: ZonedDateTime, account: PublicKey,
                               sequence: Long, feePaid: NativeAmount, operationCount: Int, memo: Memo,
                               signatures: Seq[String], envelopeXDR: String, resultXDR: String, resultMetaXDR: String,
-                              feeMetaXDR: String) {
+                              feeMetaXDR: String, validAfter: Option[ZonedDateTime], validBefore: Option[ZonedDateTime]) {
 
   lazy val result: TransactionResult = TransactionResult.decodeXDR(resultXDR)
 
@@ -44,6 +44,8 @@ object TransactionHistoryDeserializer extends ResponseParser[TransactionHistory]
       envelopeXDR = (o \ "envelope_xdr").extract[String],
       resultXDR = (o \ "result_xdr").extract[String],
       resultMetaXDR = (o \ "result_meta_xdr").extract[String],
-      feeMetaXDR = (o \ "fee_meta_xdr").extract[String]
+      feeMetaXDR = (o \ "fee_meta_xdr").extract[String],
+      validAfter = (o \ "valid_after").extractOpt[String].map(ZonedDateTime.parse),
+      validBefore = (o \ "valid_before").extractOpt[String].map(ZonedDateTime.parse),
     )
 })

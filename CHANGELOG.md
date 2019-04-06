@@ -4,8 +4,10 @@ As this project is pre 1.0, breaking changes may happen for minor version bumps.
 
 ## Next version
 
-- Added `base_offer_id` and `counter_offer_id` to the Trade object. These fields were introduced with Horizon v0.15.0 [#68](https://github.com/Synesso/scala-stellar-sdk/issues/68)
-
+- [#68](https://github.com/Synesso/scala-stellar-sdk/issues/68) Added `base_offer_id` and `counter_offer_id` fields to the 
+    `Trade` object. These fields were introduced with Horizon v0.15.0
+- [#69](https://github.com/Synesso/scala-stellar-sdk/issues/69) Added support for optional `valid_before` and 
+    `valid_after` fields on `TransactionHistory`.
 
 ## 0.6.2
 

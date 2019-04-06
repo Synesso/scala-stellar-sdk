@@ -543,8 +543,10 @@ trait ArbitraryInput extends ScalaCheck {
     resultXDR <- genHash
     resultMetaXDR <- genHash
     feeMetaXDR <- genHash
+    validAfter <- Gen.option(genZonedDateTime)
+    validBefore <- Gen.option(genZonedDateTime)
   } yield TransactionHistory(hash, ledger, createdAt, account, sequence, feePaid, operationCount,
-    memo, signatures, envelopeXDR, resultXDR, resultMetaXDR, feeMetaXDR)
+    memo, signatures, envelopeXDR, resultXDR, resultMetaXDR, feeMetaXDR, validAfter, validBefore)
 
   def genHorizonCursor: Gen[HorizonCursor] = Gen.option(Gen.posNum[Long]).map(_.map(Record).getOrElse(Now))
 
