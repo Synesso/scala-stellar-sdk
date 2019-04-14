@@ -12,7 +12,7 @@ sealed trait Amount extends Encodable {
   val units: Long
   val asset: Asset
 
-  def toDisplayUnits: String = "%.7f".formatLocal(Locale.ROOT, units / Amount.toIntegralFactor.doubleValue())
+  def toDisplayUnits: String = "%.7f".formatLocal(Locale.ROOT, BigDecimal(units) / Amount.toIntegralFactor)
 
   def encode: Stream[Byte] = asset.encode ++ Encode.long(units)
 }
@@ -35,8 +35,6 @@ object Amount {
   def toBaseUnits(bd: BigDecimal): Try[Long] = Try {
     (bd * toIntegralFactor.round(new MathContext(0, RoundingMode.DOWN))).toLongExact
   }
-
-  def toDisplayUnits(l: Long): String = "%.7f".formatLocal(Locale.ROOT, l / math.pow(10, decimalPlaces))
 
   def apply(units: Long, asset: Asset): Amount = {
     asset match {

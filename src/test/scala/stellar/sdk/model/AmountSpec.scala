@@ -8,8 +8,20 @@ class AmountSpec extends Specification with ArbitraryInput {
 
   "an amount" should {
     "convert base unit to display unit" >> prop { l: Long =>
-      Amount.toDisplayUnits(l).toDouble mustEqual (l / math.pow(10, 7))
+      val displayed = NativeAmount(l).toDisplayUnits
+      if (l <= 9999999L) displayed mustEqual f"0.$l%07d"
+      else {
+        val lStr = l.toString
+        displayed mustEqual s"${lStr.take(lStr.length - 7)}.${lStr.drop(lStr.length - 7)}"
+      }
     }.setGen(Gen.posNum[Long])
+
+    "convert to base units without losing precision" >> {
+      Amount.toBaseUnits("100076310227.4749892") must beASuccessfulTry(1000763102274749892L)
+      Amount.toBaseUnits("100076310227.4749892").map(NativeAmount).map(_.toDisplayUnits) must beASuccessfulTry(
+        "100076310227.4749892"
+      )
+    }
 
     "serde via xdr bytes" >> prop { expected: Amount =>
       val (remaining, actual) = Amount.decode.run(expected.encode).value
