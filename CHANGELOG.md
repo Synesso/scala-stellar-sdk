@@ -4,10 +4,20 @@ As this project is pre 1.0, breaking changes may happen for minor version bumps.
 
 ## Next version
 
+_Nothing, yet._
+
+## 0.6.3
+
+### Added
+
 - [#68](https://github.com/Synesso/scala-stellar-sdk/issues/68) Added `base_offer_id` and `counter_offer_id` fields to the 
     `Trade` object. These fields were introduced with Horizon v0.15.0
 - [#69](https://github.com/Synesso/scala-stellar-sdk/issues/69) Added support for optional `valid_before` and 
     `valid_after` fields on `TransactionHistory`.
+
+### Fixed
+
+- [#72](https://github.com/Synesso/scala-stellar-sdk/issues/72) Avoid rounding errors in Ledger responses.
 
 ## 0.6.2
 
