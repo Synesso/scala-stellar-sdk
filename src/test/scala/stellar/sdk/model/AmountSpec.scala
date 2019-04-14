@@ -7,13 +7,21 @@ import stellar.sdk.ArbitraryInput
 class AmountSpec extends Specification with ArbitraryInput {
 
   "an amount" should {
-    "present human value as base unit * 10^-7" >> prop { amount: Amount =>
-      amount.toHumanValue mustEqual amount.units / math.pow(10, 7)
-    }
-
     "convert base unit to display unit" >> prop { l: Long =>
-      Amount.toDisplayUnits(l).toDouble mustEqual (l / math.pow(10, 7))
+      val displayed = NativeAmount(l).toDisplayUnits
+      if (l <= 9999999L) displayed mustEqual f"0.$l%07d"
+      else {
+        val lStr = l.toString
+        displayed mustEqual s"${lStr.take(lStr.length - 7)}.${lStr.drop(lStr.length - 7)}"
+      }
     }.setGen(Gen.posNum[Long])
+
+    "convert to base units without losing precision" >> {
+      Amount.toBaseUnits("100076310227.4749892") must beASuccessfulTry(1000763102274749892L)
+      Amount.toBaseUnits("100076310227.4749892").map(NativeAmount).map(_.toDisplayUnits) must beASuccessfulTry(
+        "100076310227.4749892"
+      )
+    }
 
     "serde via xdr bytes" >> prop { expected: Amount =>
       val (remaining, actual) = Amount.decode.run(expected.encode).value
@@ -38,6 +46,11 @@ class AmountSpec extends Specification with ArbitraryInput {
         Amount.toBaseUnits(l) must beASuccessfulTry[Long].like { case a => a.toString mustEqual expected }
       }
     }.setGen(Gen.posNum[Double])
+
+    "parse from string correctly" >> {
+      Amount.toBaseUnits("100076310227.4749892") must beASuccessfulTry[Long](1000763102274749892L)
+      Amount.toBaseUnits("100076310227.4749") must beASuccessfulTry[Long](1000763102274749000L)
+    }
   }
 
   "throw an exception if there are too many digits in fractional portion of lumens constructor" >> {

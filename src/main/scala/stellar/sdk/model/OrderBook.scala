@@ -33,7 +33,7 @@ object OrderBookDeserializer extends ResponseParser[OrderBook]({ o: JObject =>
           n = (c \ "price_r" \ "n").extract[Int],
           d = (c \ "price_r" \ "d").extract[Int]
         ),
-        quantity = Amount.toBaseUnits((c \ "amount").extract[String].toDouble).get
+        quantity = Amount.toBaseUnits((c \ "amount").extract[String]).get
       ))
   }
 

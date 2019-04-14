@@ -12,28 +12,29 @@ sealed trait Amount extends Encodable {
   val units: Long
   val asset: Asset
 
-  def toHumanValue: Double = units / math.pow(10, Amount.decimalPlaces)
+  def toDisplayUnits: String = "%.7f".formatLocal(Locale.ROOT, BigDecimal(units) / Amount.toIntegralFactor)
 
   def encode: Stream[Byte] = asset.encode ++ Encode.long(units)
 }
 
 case class NativeAmount(units: Long) extends Amount {
   override val asset: Asset = NativeAsset
-  override def toString: String = s"$toHumanValue XLM"
+  override def toString: String = s"$toDisplayUnits XLM"
 }
 
 case class IssuedAmount(units: Long, asset: NonNativeAsset) extends Amount
 
 object Amount {
   private val decimalPlaces = 7
+  private val toIntegralFactor = BigDecimal(math.pow(10, decimalPlaces))
 
   def toBaseUnits(d: Double): Try[Long] = toBaseUnits(BigDecimal(d))
 
-  def toBaseUnits(bd: BigDecimal): Try[Long] = Try {
-    (bd * BigDecimal(math.pow(10, decimalPlaces)).round(new MathContext(0, RoundingMode.DOWN))).toLongExact
-  }
+  def toBaseUnits(s: String): Try[Long] = Try(BigDecimal(s)).flatMap(toBaseUnits)
 
-  def toDisplayUnits(l: Long): String = "%.7f".formatLocal(Locale.ROOT, l / math.pow(10, decimalPlaces))
+  def toBaseUnits(bd: BigDecimal): Try[Long] = Try {
+    (bd * toIntegralFactor.round(new MathContext(0, RoundingMode.DOWN))).toLongExact
+  }
 
   def apply(units: Long, asset: Asset): Amount = {
     asset match {

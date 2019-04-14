@@ -4,11 +4,12 @@ import java.time.ZonedDateTime
 
 import org.json4s.DefaultFormats
 import org.json4s.JsonAST.JObject
-import stellar.sdk.model.Amount
+import stellar.sdk.model.{Amount, NativeAmount}
 
 case class LedgerResponse(id: String, hash: String, previousHash: Option[String], sequence: Long, successTransactionCount: Int,
-                          failureTransactionCount: Int, operationCount: Int, closedAt: ZonedDateTime, totalCoins: Double, feePool: Double, baseFee: Long,
-                          baseReserve: Long, maxTxSetSize: Int) {
+                          failureTransactionCount: Int, operationCount: Int, closedAt: ZonedDateTime,
+                          totalCoins: NativeAmount, feePool: NativeAmount, baseFee: NativeAmount, baseReserve: NativeAmount,
+                          maxTxSetSize: Int) {
 
   def transactionCount: Int = successTransactionCount + failureTransactionCount
 
@@ -26,12 +27,12 @@ object LedgerRespDeserializer extends ResponseParser[LedgerResponse]({ o: JObjec
     failureTransactionCount = (o \ "failed_transaction_count").extract[Int],
     operationCount = (o \ "operation_count").extract[Int],
     closedAt = ZonedDateTime.parse((o \ "closed_at").extract[String]),
-    totalCoins = (o \ "total_coins").extract[String].toDouble,
-    feePool = (o \ "fee_pool").extract[String].toDouble,
-    baseFee = (o \ "base_fee").extractOpt[Long].getOrElse((o \ "base_fee_in_stroops").extract[Long]),
+    totalCoins = Amount.toBaseUnits((o \ "total_coins").extract[String]).map(NativeAmount.apply).get,
+    feePool = Amount.toBaseUnits((o \ "fee_pool").extract[String]).map(NativeAmount.apply).get,
+    baseFee = NativeAmount((o \ "base_fee").extractOpt[Long].getOrElse((o \ "base_fee_in_stroops").extract[Long])),
     baseReserve = {
       val old: Option[Long] = (o \ "base_reserve").extractOpt[String].map(_.toDouble).map(Amount.toBaseUnits).map(_.get)
-      old.getOrElse((o \ "base_reserve_in_stroops").extract[Long])
+      NativeAmount(old.getOrElse((o \ "base_reserve_in_stroops").extract[Long]))
     },
     maxTxSetSize = (o \ "max_tx_set_size").extract[Int]
   )
