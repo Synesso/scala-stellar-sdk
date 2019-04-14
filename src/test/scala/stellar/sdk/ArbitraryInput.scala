@@ -75,75 +75,75 @@ trait ArbitraryInput extends ScalaCheck {
 
   implicit def arbTimeBounds: Arbitrary[TimeBounds] = Arbitrary(genTimeBounds)
 
-  implicit def arbMemo = Arbitrary(genMemo)
+  implicit def arbMemo: Arbitrary[Memo] = Arbitrary(genMemo)
 
-  implicit def arbTransaction = Arbitrary(genTransaction)
+  implicit def arbTransaction: Arbitrary[Transaction] = Arbitrary(genTransaction)
 
-  implicit def arbSignedTransaction = Arbitrary(genSignedTransaction)
+  implicit def arbSignedTransaction: Arbitrary[SignedTransaction] = Arbitrary(genSignedTransaction)
 
-  implicit def arbThreshold = Arbitrary(genThresholds)
+  implicit def arbThreshold: Arbitrary[Thresholds] = Arbitrary(genThresholds)
 
-  implicit def arbAccountResp = Arbitrary(genAccountResp)
+  implicit def arbAccountResp: Arbitrary[AccountResponse] = Arbitrary(genAccountResp)
 
-  implicit def arbLedgerResp = Arbitrary(genLedgerResp)
+  implicit def arbLedgerResp: Arbitrary[LedgerResponse] = Arbitrary(genLedgerResp)
 
-  implicit def arbOfferResp = Arbitrary(genOfferResp)
+  implicit def arbOfferResp: Arbitrary[OfferResponse] = Arbitrary(genOfferResp)
 
-  implicit def arbOrderBook = Arbitrary(genOrderBook)
+  implicit def arbOrderBook: Arbitrary[OrderBook] = Arbitrary(genOrderBook)
 
-  implicit def arbTrade = Arbitrary(genTrade)
+  implicit def arbTrade: Arbitrary[Trade] = Arbitrary(genTrade)
 
-  implicit def arbTransactionPostResponse = Arbitrary(genTransactionPostSuccess)
+  implicit def arbTransactionPostResponse: Arbitrary[TransactionApproved] = Arbitrary(genTransactionPostSuccess)
 
-  implicit def arbTransactionHistory = Arbitrary(genTransactionHistory)
+  implicit def arbTransactionHistory: Arbitrary[TransactionHistory] = Arbitrary(genTransactionHistory)
 
-  implicit def arbHorizonCursor = Arbitrary(genHorizonCursor)
+  implicit def arbHorizonCursor: Arbitrary[HorizonCursor] = Arbitrary(genHorizonCursor)
 
-  implicit def arbOperationResult = Arbitrary(genOperationResult)
+  implicit def arbOperationResult: Arbitrary[OperationResult] = Arbitrary(genOperationResult)
   
-  implicit def arbAccountMergeResult = Arbitrary(genAccountMergeResult)
+  implicit def arbAccountMergeResult: Arbitrary[AccountMergeResult] = Arbitrary(genAccountMergeResult)
 
-  implicit def arbAllowTrustResult = Arbitrary(genAllowTrustResult)
+  implicit def arbAllowTrustResult: Arbitrary[AllowTrustResult] = Arbitrary(genAllowTrustResult)
 
-  implicit def arbBumpSequenceResult = Arbitrary(genBumpSequenceResult)
+  implicit def arbBumpSequenceResult: Arbitrary[BumpSequenceResult] = Arbitrary(genBumpSequenceResult)
 
-  implicit def arbChangeTrustResult = Arbitrary(genChangeTrustResult)
+  implicit def arbChangeTrustResult: Arbitrary[ChangeTrustResult] = Arbitrary(genChangeTrustResult)
 
-  implicit def arbCreateAccountResult = Arbitrary(genCreateAccountResult)
+  implicit def arbCreateAccountResult: Arbitrary[CreateAccountResult] = Arbitrary(genCreateAccountResult)
 
-  implicit def arbCreatePassiveOfferResult = Arbitrary(genCreatePassiveOfferResult)
+  implicit def arbCreatePassiveOfferResult: Arbitrary[CreatePassiveOfferResult] = Arbitrary(genCreatePassiveOfferResult)
 
-  implicit def arbInflationResult = Arbitrary(genInflationResult)
+  implicit def arbInflationResult: Arbitrary[InflationResult] = Arbitrary(genInflationResult)
 
-  implicit def arbManageDataResult = Arbitrary(genManageDataResult)
+  implicit def arbManageDataResult: Arbitrary[ManageDataResult] = Arbitrary(genManageDataResult)
 
-  implicit def arbManageOfferResult = Arbitrary(genManageOfferResult)
+  implicit def arbManageOfferResult: Arbitrary[ManageOfferResult] = Arbitrary(genManageOfferResult)
 
-  implicit def arbPathPaymentResult = Arbitrary(genPathPaymentResult)
+  implicit def arbPathPaymentResult: Arbitrary[PathPaymentResult] = Arbitrary(genPathPaymentResult)
 
-  implicit def arbPaymentResult = Arbitrary(genPaymentResult)
+  implicit def arbPaymentResult: Arbitrary[PaymentResult] = Arbitrary(genPaymentResult)
 
-  implicit def arbSetOptionsResult = Arbitrary(genSetOptionsResult)
+  implicit def arbSetOptionsResult: Arbitrary[SetOptionsResult] = Arbitrary(genSetOptionsResult)
 
-  implicit def arbTransactionResult = Arbitrary(genTransactionResult)
+  implicit def arbTransactionResult: Arbitrary[TransactionResult] = Arbitrary(genTransactionResult)
 
-  implicit def arbTransactionSuccess = Arbitrary(genTransactionSuccess)
+  implicit def arbTransactionSuccess: Arbitrary[TransactionSuccess] = Arbitrary(genTransactionSuccess)
 
-  implicit def arbTransactionNotSuccessful = Arbitrary(genTransactionNotSuccessful)
+  implicit def arbTransactionNotSuccessful: Arbitrary[TransactionNotSuccessful] = Arbitrary(genTransactionNotSuccessful)
 
-  implicit def arbSigner = Arbitrary(genSigner)
+  implicit def arbSigner: Arbitrary[Signer] = Arbitrary(genSigner)
 
-  implicit def arbStrKey = Arbitrary(genStrKey)
+  implicit def arbStrKey: Arbitrary[StrKey] = Arbitrary(genStrKey)
 
-  implicit def arbSignerStrKey = Arbitrary(genSignerStrKey)
+  implicit def arbSignerStrKey: Arbitrary[SignerStrKey] = Arbitrary(genSignerStrKey)
 
-  implicit def arbFeeStatsResponse = Arbitrary(genFeeStatsResponse)
+  implicit def arbFeeStatsResponse: Arbitrary[FeeStatsResponse] = Arbitrary(genFeeStatsResponse)
 
-  implicit def arbNetworkInfo = Arbitrary(genNetworkInfo)
+  implicit def arbNetworkInfo: Arbitrary[NetworkInfo] = Arbitrary(genNetworkInfo)
 
-  implicit def arbFederationResponse = Arbitrary(genFederationResponse)
+  implicit def arbFederationResponse: Arbitrary[FederationResponse] = Arbitrary(genFederationResponse)
 
-  def round(d: Double) = "%.7f".formatLocal(Locale.ROOT, d).toDouble
+  def round(d: Double): Double = "%.7f".formatLocal(Locale.ROOT, d).toDouble
 
   def genKeyPair: Gen[KeyPair] = Gen.oneOf(Seq(KeyPair.random))
 
@@ -207,7 +207,7 @@ trait ArbitraryInput extends ScalaCheck {
     AccountMergeOperation(destination, sourceAccount)
   }
 
-  def genAllowTrustOperation = for {
+  def genAllowTrustOperation: Gen[AllowTrustOperation] = for {
     trustor <- genPublicKey
     assetCode <- Gen.identifier.map(_.take(12))
     authorise <- Gen.oneOf(true, false)
@@ -216,14 +216,14 @@ trait ArbitraryInput extends ScalaCheck {
     AllowTrustOperation(trustor, assetCode, authorise, sourceAccount)
   }
 
-  def genChangeTrustOperation = for {
+  def genChangeTrustOperation: Gen[ChangeTrustOperation] = for {
     limit <- genIssuedAmount
     sourceAccount <- Gen.option(genPublicKey)
   } yield {
     ChangeTrustOperation(limit, sourceAccount)
   }
 
-  def genCreateAccountOperation = for {
+  def genCreateAccountOperation: Gen[CreateAccountOperation] = for {
     destination <- genPublicKey
     startingBalance <- genNativeAmount
     sourceAccount <- Gen.option(genPublicKey)
@@ -231,7 +231,7 @@ trait ArbitraryInput extends ScalaCheck {
     CreateAccountOperation(destination, startingBalance, sourceAccount)
   }
 
-  def genCreatePassiveOfferOperation = for {
+  def genCreatePassiveOfferOperation: Gen[CreatePassiveOfferOperation] = for {
     selling <- genAmount
     buying <- genAsset
     price <- genPrice
@@ -240,20 +240,20 @@ trait ArbitraryInput extends ScalaCheck {
     CreatePassiveOfferOperation(selling, buying, price, sourceAccount)
   }
 
-  def genInflationOperation = for {
+  def genInflationOperation: Gen[InflationOperation] = for {
     sourceAccount <- Gen.option(genPublicKey)
   } yield {
     InflationOperation(sourceAccount)
   }
 
-  def genDeleteDataOperation = for {
+  def genDeleteDataOperation: Gen[DeleteDataOperation] = for {
     name <- Gen.identifier
     sourceAccount <- Gen.option(genPublicKey)
   } yield {
     DeleteDataOperation(name, sourceAccount)
   }
 
-  def genWriteDataOperation = for {
+  def genWriteDataOperation: Gen[WriteDataOperation] = for {
     name <- Gen.identifier
     value <- Gen.identifier
     sourceAccount <- Gen.option(genPublicKey)
@@ -261,9 +261,9 @@ trait ArbitraryInput extends ScalaCheck {
     WriteDataOperation(name, value, sourceAccount)
   }
 
-  def genManageDataOperation = Gen.oneOf(genDeleteDataOperation, genWriteDataOperation)
+  def genManageDataOperation: Gen[ManageDataOperation] = Gen.oneOf(genDeleteDataOperation, genWriteDataOperation)
 
-  def genCreateOfferOperation = for {
+  def genCreateOfferOperation: Gen[CreateOfferOperation] = for {
     selling <- genAmount
     buying <- genAsset
     price <- genPrice
@@ -272,7 +272,7 @@ trait ArbitraryInput extends ScalaCheck {
     CreateOfferOperation(selling, buying, price, sourceAccount)
   }
 
-  def genDeleteOfferOperation = for {
+  def genDeleteOfferOperation: Gen[DeleteOfferOperation] = for {
     id <- Gen.posNum[Long]
     selling <- genAsset
     buying <- genAsset
@@ -282,7 +282,7 @@ trait ArbitraryInput extends ScalaCheck {
     DeleteOfferOperation(id, selling, buying, price, sourceAccount)
   }
 
-  def genUpdateOfferOperation = for {
+  def genUpdateOfferOperation: Gen[UpdateOfferOperation] = for {
     id <- Gen.posNum[Long]
     selling <- genAmount
     buying <- genAsset
@@ -292,9 +292,10 @@ trait ArbitraryInput extends ScalaCheck {
     UpdateOfferOperation(id, selling, buying, price, sourceAccount)
   }
 
-  def genManageOfferOperation = Gen.oneOf(genCreateOfferOperation, genDeleteOfferOperation, genUpdateOfferOperation)
+  def genManageOfferOperation: Gen[ManageOfferOperation] =
+    Gen.oneOf(genCreateOfferOperation, genDeleteOfferOperation, genUpdateOfferOperation)
 
-  def genPathPaymentOperation = for {
+  def genPathPaymentOperation: Gen[PathPaymentOperation] = for {
     sendMax <- genAmount
     destAccount <- genPublicKey
     destAmount <- genAmount
@@ -304,7 +305,7 @@ trait ArbitraryInput extends ScalaCheck {
     PathPaymentOperation(sendMax, destAccount, destAmount, path, sourceAccount)
   }
 
-  def genPaymentOperation = for {
+  def genPaymentOperation: Gen[PaymentOperation] = for {
     destAccount <- genPublicKey
     amount <- genAmount
     sourceAccount <- Gen.option(genPublicKey)
@@ -454,10 +455,10 @@ trait ArbitraryInput extends ScalaCheck {
     failedTransactionCount <- Gen.choose(0, 100 - successTransactionCount)
     operationCount <- Gen.posNum[Int]
     closedAt: ZonedDateTime <- genZonedDateTime
-    totalCoins <- Gen.posNum[Double].map(round)
-    feePool <- Gen.posNum[Double].map(round)
-    baseFee <- Gen.posNum[Long]
-    baseReserve <- Gen.posNum[Long]
+    totalCoins <- genNativeAmount
+    feePool <- genNativeAmount
+    baseFee <- genNativeAmount
+    baseReserve <- genNativeAmount
     maxTxSetSize <- Gen.posNum[Int]
   } yield {
     LedgerResponse(id, hash, previousHash, sequence, successTransactionCount, failedTransactionCount, operationCount,
@@ -628,7 +629,7 @@ trait ArbitraryInput extends ScalaCheck {
     Gen.const(PathPaymentSendMaxExceeded)
   )
 
-  def genPathPaymentSuccess = for {
+  def genPathPaymentSuccess: Gen[PathPaymentSuccess] = for {
     claims <- Gen.listOf(genOfferClaim)
     destination <- genPublicKey
     amount <- genAmount

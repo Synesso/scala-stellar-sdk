@@ -51,10 +51,10 @@ class LedgerResponseSpec extends Specification with ArbitraryInput {
            |  "failed_transaction_count": ${lr.failureTransactionCount},
            |  "operation_count": ${lr.operationCount},
            |  "closed_at": "${formatter.format(lr.closedAt)}",
-           |  "total_coins": "${lr.totalCoins}",
-           |  "fee_pool": "${lr.feePool}",
-           |  "base_fee_in_stroops": ${lr.baseFee},
-           |  "base_reserve_in_stroops": ${lr.baseReserve},
+           |  "total_coins": "${lr.totalCoins.toHumanValue}",
+           |  "fee_pool": "${lr.feePool.toHumanValue}",
+           |  "base_fee_in_stroops": ${lr.baseFee.units},
+           |  "base_reserve_in_stroops": ${lr.baseReserve.units},
            |  "max_tx_set_size": ${lr.maxTxSetSize},
            |  "protocol_version": 4
            |}

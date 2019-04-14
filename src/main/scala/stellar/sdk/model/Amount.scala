@@ -33,6 +33,8 @@ object Amount {
     (bd * BigDecimal(math.pow(10, decimalPlaces)).round(new MathContext(0, RoundingMode.DOWN))).toLongExact
   }
 
+  def toBaseUnits(s: String): Try[Long] = Try(BigDecimal(s)).flatMap(toBaseUnits)
+
   def toDisplayUnits(l: Long): String = "%.7f".formatLocal(Locale.ROOT, l / math.pow(10, decimalPlaces))
 
   def apply(units: Long, asset: Asset): Amount = {
