@@ -336,7 +336,7 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <span class="name">LedgerResponse</span><span class="params">(<span name="id">id: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="hash">hash: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="previousHash">previousHash: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>, <span name="sequence">sequence: <span class="extype" name="scala.Long">Long</span></span>, <span name="successTransactionCount">successTransactionCount: <span class="extype" name="scala.Int">Int</span></span>, <span name="failureTransactionCount">failureTransactionCount: <span class="extype" name="scala.Int">Int</span></span>, <span name="operationCount">operationCount: <span class="extype" name="scala.Int">Int</span></span>, <span name="closedAt">closedAt: <span class="extype" name="java.time.ZonedDateTime">ZonedDateTime</span></span>, <span name="totalCoins">totalCoins: <span class="extype" name="scala.Double">Double</span></span>, <span name="feePool">feePool: <span class="extype" name="scala.Double">Double</span></span>, <span name="baseFee">baseFee: <span class="extype" name="scala.Long">Long</span></span>, <span name="baseReserve">baseReserve: <span class="extype" name="scala.Long">Long</span></span>, <span name="maxTxSetSize">maxTxSetSize: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <span class="name">LedgerResponse</span><span class="params">(<span name="id">id: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="hash">hash: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="previousHash">previousHash: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>, <span name="sequence">sequence: <span class="extype" name="scala.Long">Long</span></span>, <span name="successTransactionCount">successTransactionCount: <span class="extype" name="scala.Int">Int</span></span>, <span name="failureTransactionCount">failureTransactionCount: <span class="extype" name="scala.Int">Int</span></span>, <span name="operationCount">operationCount: <span class="extype" name="scala.Int">Int</span></span>, <span name="closedAt">closedAt: <span class="extype" name="java.time.ZonedDateTime">ZonedDateTime</span></span>, <span name="totalCoins">totalCoins: <a href="../NativeAmount.html" class="extype" name="stellar.sdk.model.NativeAmount">NativeAmount</a></span>, <span name="feePool">feePool: <a href="../NativeAmount.html" class="extype" name="stellar.sdk.model.NativeAmount">NativeAmount</a></span>, <span name="baseFee">baseFee: <a href="../NativeAmount.html" class="extype" name="stellar.sdk.model.NativeAmount">NativeAmount</a></span>, <span name="baseReserve">baseReserve: <a href="../NativeAmount.html" class="extype" name="stellar.sdk.model.NativeAmount">NativeAmount</a></span>, <span name="maxTxSetSize">maxTxSetSize: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4>
 
@@ -392,9 +392,9 @@
         <div id="constructors" class="members">
               <h3>Instance Constructors</h3>
               <ol><li name="stellar.sdk.model.response.LedgerResponse#&lt;init&gt;" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="&lt;init&gt;(id:String,hash:String,previousHash:Option[String],sequence:Long,successTransactionCount:Int,failureTransactionCount:Int,operationCount:Int,closedAt:java.time.ZonedDateTime,totalCoins:Double,feePool:Double,baseFee:Long,baseReserve:Long,maxTxSetSize:Int):stellar.sdk.model.response.LedgerResponse"></a><a id="&lt;init&gt;:LedgerResponse"></a>
+      <a id="&lt;init&gt;(id:String,hash:String,previousHash:Option[String],sequence:Long,successTransactionCount:Int,failureTransactionCount:Int,operationCount:Int,closedAt:java.time.ZonedDateTime,totalCoins:stellar.sdk.model.NativeAmount,feePool:stellar.sdk.model.NativeAmount,baseFee:stellar.sdk.model.NativeAmount,baseReserve:stellar.sdk.model.NativeAmount,maxTxSetSize:Int):stellar.sdk.model.response.LedgerResponse"></a><a id="&lt;init&gt;:LedgerResponse"></a>
       <span class="permalink">
-      <a href="../../../../stellar/sdk/model/response/LedgerResponse.html#&lt;init&gt;(id:String,hash:String,previousHash:Option[String],sequence:Long,successTransactionCount:Int,failureTransactionCount:Int,operationCount:Int,closedAt:java.time.ZonedDateTime,totalCoins:Double,feePool:Double,baseFee:Long,baseReserve:Long,maxTxSetSize:Int):stellar.sdk.model.response.LedgerResponse" title="Permalink">
+      <a href="../../../../stellar/sdk/model/response/LedgerResponse.html#&lt;init&gt;(id:String,hash:String,previousHash:Option[String],sequence:Long,successTransactionCount:Int,failureTransactionCount:Int,operationCount:Int,closedAt:java.time.ZonedDateTime,totalCoins:stellar.sdk.model.NativeAmount,feePool:stellar.sdk.model.NativeAmount,baseFee:stellar.sdk.model.NativeAmount,baseReserve:stellar.sdk.model.NativeAmount,maxTxSetSize:Int):stellar.sdk.model.response.LedgerResponse" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -403,7 +403,7 @@
         <span class="kind">new</span>
       </span>
       <span class="symbol">
-        <span class="name">LedgerResponse</span><span class="params">(<span name="id">id: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="hash">hash: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="previousHash">previousHash: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>, <span name="sequence">sequence: <span class="extype" name="scala.Long">Long</span></span>, <span name="successTransactionCount">successTransactionCount: <span class="extype" name="scala.Int">Int</span></span>, <span name="failureTransactionCount">failureTransactionCount: <span class="extype" name="scala.Int">Int</span></span>, <span name="operationCount">operationCount: <span class="extype" name="scala.Int">Int</span></span>, <span name="closedAt">closedAt: <span class="extype" name="java.time.ZonedDateTime">ZonedDateTime</span></span>, <span name="totalCoins">totalCoins: <span class="extype" name="scala.Double">Double</span></span>, <span name="feePool">feePool: <span class="extype" name="scala.Double">Double</span></span>, <span name="baseFee">baseFee: <span class="extype" name="scala.Long">Long</span></span>, <span name="baseReserve">baseReserve: <span class="extype" name="scala.Long">Long</span></span>, <span name="maxTxSetSize">maxTxSetSize: <span class="extype" name="scala.Int">Int</span></span>)</span>
+        <span class="name">LedgerResponse</span><span class="params">(<span name="id">id: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="hash">hash: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="previousHash">previousHash: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>, <span name="sequence">sequence: <span class="extype" name="scala.Long">Long</span></span>, <span name="successTransactionCount">successTransactionCount: <span class="extype" name="scala.Int">Int</span></span>, <span name="failureTransactionCount">failureTransactionCount: <span class="extype" name="scala.Int">Int</span></span>, <span name="operationCount">operationCount: <span class="extype" name="scala.Int">Int</span></span>, <span name="closedAt">closedAt: <span class="extype" name="java.time.ZonedDateTime">ZonedDateTime</span></span>, <span name="totalCoins">totalCoins: <a href="../NativeAmount.html" class="extype" name="stellar.sdk.model.NativeAmount">NativeAmount</a></span>, <span name="feePool">feePool: <a href="../NativeAmount.html" class="extype" name="stellar.sdk.model.NativeAmount">NativeAmount</a></span>, <span name="baseFee">baseFee: <a href="../NativeAmount.html" class="extype" name="stellar.sdk.model.NativeAmount">NativeAmount</a></span>, <span name="baseReserve">baseReserve: <a href="../NativeAmount.html" class="extype" name="stellar.sdk.model.NativeAmount">NativeAmount</a></span>, <span name="maxTxSetSize">maxTxSetSize: <span class="extype" name="scala.Int">Int</span></span>)</span>
       </span>
       
       
@@ -482,9 +482,9 @@
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
     </li><li name="stellar.sdk.model.response.LedgerResponse#baseFee" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="baseFee:Long"></a>
+      <a id="baseFee:stellar.sdk.model.NativeAmount"></a><a id="baseFee:NativeAmount"></a>
       <span class="permalink">
-      <a href="../../../../stellar/sdk/model/response/LedgerResponse.html#baseFee:Long" title="Permalink">
+      <a href="../../../../stellar/sdk/model/response/LedgerResponse.html#baseFee:stellar.sdk.model.NativeAmount" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -493,14 +493,14 @@
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">baseFee</span><span class="result">: <span class="extype" name="scala.Long">Long</span></span>
+        <span class="name">baseFee</span><span class="result">: <a href="../NativeAmount.html" class="extype" name="stellar.sdk.model.NativeAmount">NativeAmount</a></span>
       </span>
       
       
     </li><li name="stellar.sdk.model.response.LedgerResponse#baseReserve" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="baseReserve:Long"></a>
+      <a id="baseReserve:stellar.sdk.model.NativeAmount"></a><a id="baseReserve:NativeAmount"></a>
       <span class="permalink">
-      <a href="../../../../stellar/sdk/model/response/LedgerResponse.html#baseReserve:Long" title="Permalink">
+      <a href="../../../../stellar/sdk/model/response/LedgerResponse.html#baseReserve:stellar.sdk.model.NativeAmount" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -509,7 +509,7 @@
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">baseReserve</span><span class="result">: <span class="extype" name="scala.Long">Long</span></span>
+        <span class="name">baseReserve</span><span class="result">: <a href="../NativeAmount.html" class="extype" name="stellar.sdk.model.NativeAmount">NativeAmount</a></span>
       </span>
       
       
@@ -586,9 +586,9 @@
       
       
     </li><li name="stellar.sdk.model.response.LedgerResponse#feePool" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="feePool:Double"></a>
+      <a id="feePool:stellar.sdk.model.NativeAmount"></a><a id="feePool:NativeAmount"></a>
       <span class="permalink">
-      <a href="../../../../stellar/sdk/model/response/LedgerResponse.html#feePool:Double" title="Permalink">
+      <a href="../../../../stellar/sdk/model/response/LedgerResponse.html#feePool:stellar.sdk.model.NativeAmount" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -597,7 +597,7 @@
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">feePool</span><span class="result">: <span class="extype" name="scala.Double">Double</span></span>
+        <span class="name">feePool</span><span class="result">: <a href="../NativeAmount.html" class="extype" name="stellar.sdk.model.NativeAmount">NativeAmount</a></span>
       </span>
       
       
@@ -841,9 +841,9 @@
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
     </li><li name="stellar.sdk.model.response.LedgerResponse#totalCoins" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="totalCoins:Double"></a>
+      <a id="totalCoins:stellar.sdk.model.NativeAmount"></a><a id="totalCoins:NativeAmount"></a>
       <span class="permalink">
-      <a href="../../../../stellar/sdk/model/response/LedgerResponse.html#totalCoins:Double" title="Permalink">
+      <a href="../../../../stellar/sdk/model/response/LedgerResponse.html#totalCoins:stellar.sdk.model.NativeAmount" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -852,7 +852,7 @@
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">totalCoins</span><span class="result">: <span class="extype" name="scala.Double">Double</span></span>
+        <span class="name">totalCoins</span><span class="result">: <a href="../NativeAmount.html" class="extype" name="stellar.sdk.model.NativeAmount">NativeAmount</a></span>
       </span>
       
       

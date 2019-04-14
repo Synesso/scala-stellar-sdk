@@ -368,7 +368,7 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <span class="name">Trade</span><span class="params">(<span name="id">id: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="ledgerCloseTime">ledgerCloseTime: <span class="extype" name="java.time.ZonedDateTime">ZonedDateTime</span></span>, <span name="offerId">offerId: <span class="extype" name="scala.Long">Long</span></span>, <span name="baseAccount">baseAccount: <a href="../PublicKeyOps.html" class="extype" name="stellar.sdk.PublicKeyOps">PublicKeyOps</a></span>, <span name="baseAmount">baseAmount: <a href="Amount.html" class="extype" name="stellar.sdk.model.Amount">Amount</a></span>, <span name="counterAccount">counterAccount: <a href="../PublicKeyOps.html" class="extype" name="stellar.sdk.PublicKeyOps">PublicKeyOps</a></span>, <span name="counterAmount">counterAmount: <a href="Amount.html" class="extype" name="stellar.sdk.model.Amount">Amount</a></span>, <span name="baseIsSeller">baseIsSeller: <span class="extype" name="scala.Boolean">Boolean</span></span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <span class="name">Trade</span><span class="params">(<span name="id">id: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="ledgerCloseTime">ledgerCloseTime: <span class="extype" name="java.time.ZonedDateTime">ZonedDateTime</span></span>, <span name="offerId">offerId: <span class="extype" name="scala.Long">Long</span></span>, <span name="baseOfferId">baseOfferId: <span class="extype" name="scala.Long">Long</span></span>, <span name="counterOfferId">counterOfferId: <span class="extype" name="scala.Long">Long</span></span>, <span name="baseAccount">baseAccount: <a href="../PublicKeyOps.html" class="extype" name="stellar.sdk.PublicKeyOps">PublicKeyOps</a></span>, <span name="baseAmount">baseAmount: <a href="Amount.html" class="extype" name="stellar.sdk.model.Amount">Amount</a></span>, <span name="counterAccount">counterAccount: <a href="../PublicKeyOps.html" class="extype" name="stellar.sdk.PublicKeyOps">PublicKeyOps</a></span>, <span name="counterAmount">counterAmount: <a href="Amount.html" class="extype" name="stellar.sdk.model.Amount">Amount</a></span>, <span name="baseIsSeller">baseIsSeller: <span class="extype" name="scala.Boolean">Boolean</span></span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4>
 
@@ -424,9 +424,9 @@
         <div id="constructors" class="members">
               <h3>Instance Constructors</h3>
               <ol><li name="stellar.sdk.model.Trade#&lt;init&gt;" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="&lt;init&gt;(id:String,ledgerCloseTime:java.time.ZonedDateTime,offerId:Long,baseAccount:stellar.sdk.PublicKeyOps,baseAmount:stellar.sdk.model.Amount,counterAccount:stellar.sdk.PublicKeyOps,counterAmount:stellar.sdk.model.Amount,baseIsSeller:Boolean):stellar.sdk.model.Trade"></a><a id="&lt;init&gt;:Trade"></a>
+      <a id="&lt;init&gt;(id:String,ledgerCloseTime:java.time.ZonedDateTime,offerId:Long,baseOfferId:Long,counterOfferId:Long,baseAccount:stellar.sdk.PublicKeyOps,baseAmount:stellar.sdk.model.Amount,counterAccount:stellar.sdk.PublicKeyOps,counterAmount:stellar.sdk.model.Amount,baseIsSeller:Boolean):stellar.sdk.model.Trade"></a><a id="&lt;init&gt;:Trade"></a>
       <span class="permalink">
-      <a href="../../../stellar/sdk/model/Trade.html#&lt;init&gt;(id:String,ledgerCloseTime:java.time.ZonedDateTime,offerId:Long,baseAccount:stellar.sdk.PublicKeyOps,baseAmount:stellar.sdk.model.Amount,counterAccount:stellar.sdk.PublicKeyOps,counterAmount:stellar.sdk.model.Amount,baseIsSeller:Boolean):stellar.sdk.model.Trade" title="Permalink">
+      <a href="../../../stellar/sdk/model/Trade.html#&lt;init&gt;(id:String,ledgerCloseTime:java.time.ZonedDateTime,offerId:Long,baseOfferId:Long,counterOfferId:Long,baseAccount:stellar.sdk.PublicKeyOps,baseAmount:stellar.sdk.model.Amount,counterAccount:stellar.sdk.PublicKeyOps,counterAmount:stellar.sdk.model.Amount,baseIsSeller:Boolean):stellar.sdk.model.Trade" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -435,7 +435,7 @@
         <span class="kind">new</span>
       </span>
       <span class="symbol">
-        <span class="name">Trade</span><span class="params">(<span name="id">id: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="ledgerCloseTime">ledgerCloseTime: <span class="extype" name="java.time.ZonedDateTime">ZonedDateTime</span></span>, <span name="offerId">offerId: <span class="extype" name="scala.Long">Long</span></span>, <span name="baseAccount">baseAccount: <a href="../PublicKeyOps.html" class="extype" name="stellar.sdk.PublicKeyOps">PublicKeyOps</a></span>, <span name="baseAmount">baseAmount: <a href="Amount.html" class="extype" name="stellar.sdk.model.Amount">Amount</a></span>, <span name="counterAccount">counterAccount: <a href="../PublicKeyOps.html" class="extype" name="stellar.sdk.PublicKeyOps">PublicKeyOps</a></span>, <span name="counterAmount">counterAmount: <a href="Amount.html" class="extype" name="stellar.sdk.model.Amount">Amount</a></span>, <span name="baseIsSeller">baseIsSeller: <span class="extype" name="scala.Boolean">Boolean</span></span>)</span>
+        <span class="name">Trade</span><span class="params">(<span name="id">id: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="ledgerCloseTime">ledgerCloseTime: <span class="extype" name="java.time.ZonedDateTime">ZonedDateTime</span></span>, <span name="offerId">offerId: <span class="extype" name="scala.Long">Long</span></span>, <span name="baseOfferId">baseOfferId: <span class="extype" name="scala.Long">Long</span></span>, <span name="counterOfferId">counterOfferId: <span class="extype" name="scala.Long">Long</span></span>, <span name="baseAccount">baseAccount: <a href="../PublicKeyOps.html" class="extype" name="stellar.sdk.PublicKeyOps">PublicKeyOps</a></span>, <span name="baseAmount">baseAmount: <a href="Amount.html" class="extype" name="stellar.sdk.model.Amount">Amount</a></span>, <span name="counterAccount">counterAccount: <a href="../PublicKeyOps.html" class="extype" name="stellar.sdk.PublicKeyOps">PublicKeyOps</a></span>, <span name="counterAmount">counterAmount: <a href="Amount.html" class="extype" name="stellar.sdk.model.Amount">Amount</a></span>, <span name="baseIsSeller">baseIsSeller: <span class="extype" name="scala.Boolean">Boolean</span></span>)</span>
       </span>
       
       
@@ -561,6 +561,22 @@
       </span>
       
       
+    </li><li name="stellar.sdk.model.Trade#baseOfferId" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="baseOfferId:Long"></a>
+      <span class="permalink">
+      <a href="../../../stellar/sdk/model/Trade.html#baseOfferId:Long" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">baseOfferId</span><span class="result">: <span class="extype" name="scala.Long">Long</span></span>
+      </span>
+      
+      
     </li><li name="scala.AnyRef#clone" visbl="prt" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="clone():Object"></a><a id="clone():AnyRef"></a>
       <span class="permalink">
@@ -614,6 +630,22 @@
       </span>
       <span class="symbol">
         <span class="name">counterAmount</span><span class="result">: <a href="Amount.html" class="extype" name="stellar.sdk.model.Amount">Amount</a></span>
+      </span>
+      
+      
+    </li><li name="stellar.sdk.model.Trade#counterOfferId" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="counterOfferId:Long"></a>
+      <span class="permalink">
+      <a href="../../../stellar/sdk/model/Trade.html#counterOfferId:Long" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">counterOfferId</span><span class="result">: <span class="extype" name="scala.Long">Long</span></span>
       </span>
       
       
