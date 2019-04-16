@@ -6,6 +6,12 @@ As this project is pre 1.0, breaking changes may happen for minor version bumps.
 
 _Nothing, yet._
 
+## 0.6.4
+
+### Fixed
+
+ - Avoid rounding errors in `EffectTrustLine{Created|Updated}`. Separate `limit` and `asset` fields where merged into a single `IssuedAmount`.
+
 ## 0.6.3
 
 ### Added
