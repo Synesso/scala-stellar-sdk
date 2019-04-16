@@ -40,9 +40,13 @@ case class EffectSignerUpdated(id: String, account: PublicKeyOps, weight: Short,
 
 case class EffectSignerRemoved(id: String, account: PublicKeyOps, publicKey: String) extends EffectResponse
 
-case class EffectTrustLineCreated(id: String, account: PublicKeyOps, asset: NonNativeAsset, limit: Double) extends EffectResponse
+case class EffectTrustLineCreated(id: String, account: PublicKeyOps, limit: IssuedAmount) extends EffectResponse {
+  val asset: NonNativeAsset = limit.asset
+}
 
-case class EffectTrustLineUpdated(id: String, account: PublicKeyOps, asset: NonNativeAsset, limit: Double) extends EffectResponse
+case class EffectTrustLineUpdated(id: String, account: PublicKeyOps, limit: IssuedAmount) extends EffectResponse {
+  val asset: NonNativeAsset = limit.asset
+}
 
 case class EffectTrustLineRemoved(id: String, account: PublicKeyOps, asset: NonNativeAsset) extends EffectResponse
 
@@ -70,10 +74,10 @@ object EffectResponseDeserializer extends ResponseParser[EffectResponse]({ o: JO
     }
   }
 
-  def doubleFromString(key: String) = (o \ key).extract[String].toDouble
+  def bigDecimal(key: String) = BigDecimal((o \ key).extract[String])
 
-  def amount(prefix: String = "") = {
-    val units = Amount.toBaseUnits(doubleFromString(s"${prefix}amount")).get
+  def amount(prefix: String = "", key: String = "amount") = {
+    val units = Amount.toBaseUnits(bigDecimal(s"$prefix$key")).get
     asset(prefix) match {
       case nna: NonNativeAsset => IssuedAmount(units, nna)
       case NativeAsset => NativeAmount(units)
@@ -107,8 +111,8 @@ object EffectResponseDeserializer extends ResponseParser[EffectResponse]({ o: JO
     case "signer_created" => EffectSignerCreated(id, account(), weight, (o \ "public_key").extract[String])
     case "signer_updated" => EffectSignerUpdated(id, account(), weight, (o \ "public_key").extract[String])
     case "signer_removed" => EffectSignerRemoved(id, account(), (o \ "public_key").extract[String])
-    case "trustline_created" => EffectTrustLineCreated(id, account(), asset().asInstanceOf[NonNativeAsset], doubleFromString("limit"))
-    case "trustline_updated" => EffectTrustLineUpdated(id, account(), asset().asInstanceOf[NonNativeAsset], doubleFromString("limit"))
+    case "trustline_created" => EffectTrustLineCreated(id, account(), amount(key = "limit").asInstanceOf[IssuedAmount])
+    case "trustline_updated" => EffectTrustLineUpdated(id, account(), amount(key = "limit").asInstanceOf[IssuedAmount])
     case "trustline_removed" => EffectTrustLineRemoved(id, account(), asset().asInstanceOf[NonNativeAsset])
     case "trustline_authorized" => EffectTrustLineAuthorized(id, account("trustor"), asset(issuerKey = "account").asInstanceOf[NonNativeAsset])
     case "trustline_deauthorized" => EffectTrustLineDeauthorized(id, account("trustor"), asset(issuerKey = "account").asInstanceOf[NonNativeAsset])

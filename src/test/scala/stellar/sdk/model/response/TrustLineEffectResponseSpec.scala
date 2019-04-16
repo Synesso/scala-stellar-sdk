@@ -8,7 +8,7 @@ import org.json4s.native.Serialization
 import org.scalacheck.Gen
 import org.specs2.mutable.Specification
 import stellar.sdk._
-import stellar.sdk.model.{Amount, NonNativeAsset}
+import stellar.sdk.model.{Amount, IssuedAmount, NonNativeAsset}
 
 class TrustLineEffectResponseSpec extends Specification with ArbitraryInput {
 
@@ -16,28 +16,28 @@ class TrustLineEffectResponseSpec extends Specification with ArbitraryInput {
 
   "a trustline created effect document" should {
     "parse to a trustline created effect" >> prop {
-      (id: String, accn: KeyPair, asset: NonNativeAsset, limit: Double) =>
+      (id: String, accn: KeyPair, asset: NonNativeAsset, limit: Long) =>
         val json = doc(id, "trustline_created", accn, asset, limit)
-        parse(json).extract[EffectResponse] mustEqual EffectTrustLineCreated(id, accn.asPublicKey, asset, limit)
-    }.setGen1(Gen.identifier).setGen4(Gen.posNum[Double])
+        parse(json).extract[EffectResponse] mustEqual EffectTrustLineCreated(id, accn.asPublicKey, IssuedAmount(limit, asset))
+    }.setGen1(Gen.identifier).setGen4(Gen.posNum[Long])
   }
 
   "a trustline updated effect document" should {
     "parse to a trustline updated effect" >> prop {
-      (id: String, accn: KeyPair, asset: NonNativeAsset, limit: Double) =>
+      (id: String, accn: KeyPair, asset: NonNativeAsset, limit: Long) =>
         val json = doc(id, "trustline_updated", accn, asset, limit)
-        parse(json).extract[EffectResponse] mustEqual EffectTrustLineUpdated(id, accn.asPublicKey, asset, limit)
-    }.setGen1(Gen.identifier).setGen4(Gen.posNum[Double])
+        parse(json).extract[EffectResponse] mustEqual EffectTrustLineUpdated(id, accn.asPublicKey, IssuedAmount(limit, asset))
+    }.setGen1(Gen.identifier).setGen4(Gen.posNum[Long])
   }
 
   "a trustline removed effect document" should {
     "parse to a trustline removed effect" >> prop { (id: String, accn: KeyPair, asset: NonNativeAsset) =>
-      val json = doc(id, "trustline_removed", accn, asset, 0.0)
+      val json = doc(id, "trustline_removed", accn, asset, 0)
       parse(json).extract[EffectResponse] mustEqual EffectTrustLineRemoved(id, accn.asPublicKey, asset)
     }.setGen1(Gen.identifier)
   }
 
-  def doc(id: String, tpe: String, accn: PublicKeyOps, asset: NonNativeAsset, limit: Double) = {
+  def doc(id: String, tpe: String, accn: PublicKeyOps, asset: NonNativeAsset, limit: Long) = {
     s"""
        |{
        |  "_links": {
@@ -59,7 +59,7 @@ class TrustLineEffectResponseSpec extends Specification with ArbitraryInput {
        |  "asset_type": "${asset.typeString}",
        |  "asset_code": "${asset.code}",
        |  "asset_issuer": "${asset.issuer.accountId}",
-       |  "limit": "$limit"
+       |  "limit": "${limit / math.pow(10, 7)}"
        |}
     """.stripMargin
   }
