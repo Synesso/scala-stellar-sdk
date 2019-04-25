@@ -9,7 +9,7 @@ import stellar.sdk.inet.Horizon
   */
 case object PublicNetwork extends Network {
   override val passphrase = "Public Global Stellar Network ; September 2015"
-  val horizon = new Horizon(URI.create("https://horizon.stellar.org"))
+  val horizon = Horizon(URI.create("https://horizon.stellar.org"))
 }
 
 

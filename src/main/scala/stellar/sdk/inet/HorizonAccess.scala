@@ -15,17 +15,18 @@ import akka.http.scaladsl.model.sse.ServerSentEvent
 import akka.http.scaladsl.unmarshalling.Unmarshal
 import akka.stream.ActorMaterializer
 import akka.stream.scaladsl.Source
+import cats.data.NonEmptyList
 import com.typesafe.scalalogging.LazyLogging
 import de.heikoseeberger.akkahttpjson4s.Json4sSupport
 import org.json4s.native.{JsonMethods, Serialization}
 import org.json4s.{CustomSerializer, DefaultFormats, Formats, JObject, NoTypeHints}
-import stellar.sdk.{BuildInfo, DefaultActorSystem}
+import stellar.sdk.{BuildInfo, DefaultActorSystem, FailedResponse}
 import stellar.sdk.model._
 import stellar.sdk.model.op.TransactedOperationDeserializer
 import stellar.sdk.model.response._
 import stellar.sdk.model.result.TransactionHistoryDeserializer
 
-import scala.concurrent.duration._
+import scala.concurrent.duration.FiniteDuration
 import scala.concurrent.{Await, ExecutionContext, Future}
 import scala.reflect.ClassTag
 import scala.util.{Failure, Success, Try}
@@ -48,11 +49,11 @@ trait HorizonAccess {
                             (implicit ec: ExecutionContext, m: Manifest[T]): Future[Stream[T]]
 
   def getSource[T: ClassTag](path: String, de: CustomSerializer[T], cursor: HorizonCursor, params: Map[String, String] = Map.empty)
-    (implicit ec: ExecutionContext, m: Manifest[T]): Source[T, NotUsed]
+                            (implicit ec: ExecutionContext, m: Manifest[T]): Source[T, NotUsed]
 
 }
 
-class Horizon(uri: URI)
+class Horizon(call: HttpRequest => Future[HttpResponse])
              (implicit system: ActorSystem = DefaultActorSystem.system)
   extends HorizonAccess with LazyLogging {
 
@@ -72,26 +73,27 @@ class Horizon(uri: URI)
   override def post(txn: SignedTransaction)(implicit ec: ExecutionContext): Future[TransactionPostResponse] = {
     for {
       envelope <- Future(txn.encodeXDR)
-      request = HttpRequest(POST, Uri(s"$uri/transactions"), entity = FormData("tx" -> envelope).toEntity)
+      request = HttpRequest(POST, Uri(s"/transactions"), entity = FormData("tx" -> envelope).toEntity)
         .addHeader(clientNameHeader).addHeader(clientVersionHeader)
-      response <- Http().singleRequest(request)
+      response <- call(request)
       unwrapped <- parseOrRedirectOrError[TransactionPostResponse](request, response)
     } yield unwrapped.get
   }
 
   override def get[T: ClassTag](path: String, params: Map[String, String] = Map.empty)
                                (implicit ec: ExecutionContext, m: Manifest[T]): Future[T] = {
-    val requestUri = Uri(s"$uri$path").withQuery(Query(params))
+    val requestUri = Uri(s"$path").withQuery(Query(params))
     logger.debug(s"Getting {}", requestUri)
 
     val request = HttpRequest(GET, requestUri).addHeader(clientNameHeader).addHeader(clientVersionHeader)
     for {
-      response <- Http().singleRequest(request)
+      response <- call(request)
       unwrapped <- parseOrRedirectOrError(request, response)
     } yield unwrapped.get
   }
 
-  private[inet] def parseOrRedirectOrError[T](request: HttpRequest, response: HttpResponse)(implicit m: Manifest[T]): Future[Try[T]] = {
+  private[inet] def parseOrRedirectOrError[T](request: HttpRequest, response: HttpResponse)
+                                             (implicit m: Manifest[T]): Future[Try[T]] = {
     val HttpResponse(status, _, entity, _) = response
 
     // 404 - Not found
@@ -127,6 +129,8 @@ class Horizon(uri: URI)
                                       params: Map[String, String] = Map.empty)
                                      (implicit ec: ExecutionContext, m: Manifest[T]): Future[Stream[T]] = {
 
+    import scala.concurrent.duration._
+
     implicit val formats = DefaultFormats + RawPageDeserializer + de
 
     val query = Query(params ++ Map(
@@ -134,7 +138,8 @@ class Horizon(uri: URI)
       "order" -> order.paramValue,
       "limit" -> "100"
     ))
-    val requestUri = Uri(s"$uri$path").withQuery(query)
+
+    val requestUri = Uri(s"$path").withQuery(query)
 
     def next(p: Page[T]): Future[Option[Page[T]]] =
       (getPage(Uri(p.nextLink).withPort(requestUri.effectivePort)): Future[Page[T]]).map(Some(_))
@@ -176,7 +181,7 @@ class Horizon(uri: URI)
     implicit val sseUnmarshaller = BigEventUnmarshalling.fromEventsStream(system)
 
     val query = Query(Map("cursor" -> cursor.paramValue) ++ params)
-    val requestUri = Uri(s"$uri$path").withQuery(query)
+    val requestUri = Uri(s"$path").withQuery(query)
 
     logger.debug(s"Streaming $requestUri")
     val lastEventId = cursor match {
@@ -185,18 +190,117 @@ class Horizon(uri: URI)
     }
 
     def send(req: HttpRequest): Future[HttpResponse] =
-      Http().singleRequest(req.addHeader(clientNameHeader).addHeader(clientVersionHeader))
+      call(req.addHeader(clientNameHeader).addHeader(clientVersionHeader))
 
     val eventSource: Source[ServerSentEvent, NotUsed] =
       EventSource(requestUri, send, lastEventId)
 
-    eventSource.mapConcat{ case ServerSentEvent(data, eventType, _, _) =>
+    eventSource.mapConcat { case ServerSentEvent(data, eventType, _, _) =>
       (if (eventType.contains("open")) None else Some(data)).to[collection.immutable.Iterable]
     }.map[T](JsonMethods.parse(_).extract[T])
   }
 }
 
-object HorizonAccess {
-  def apply(uri: String): Try[HorizonAccess] = Try(new Horizon(URI.create(uri)))
+object Horizon {
+
+  def apply(uri: Uri)(implicit system: ActorSystem): HorizonAccess =
+    Horizon.apply(
+      request => Http().singleRequest(request.copy(uri = uri.withPath(request.uri.path)))
+    )
+
+  def apply(uri: String)(implicit system: ActorSystem): HorizonAccess =
+    Horizon.apply(Uri(uri))
+
+  def apply(uri: URI)(implicit system: ActorSystem = DefaultActorSystem.system): HorizonAccess =
+    Horizon.apply(Uri(uri.toString))
+
+  def apply(call: HttpRequest => Future[HttpResponse])(implicit system: ActorSystem): HorizonAccess =
+    new Horizon(call)
+}
+
+class MultiHostCaller(uris: NonEmptyList[Uri], maxNumberOfRetry: Int, backoff: FiniteDuration)
+                     (implicit
+                      system: ActorSystem) extends (HttpRequest => Future[HttpResponse]) {
+
+  implicit val executionContext = system.dispatcher
+
+  override def apply(request: HttpRequest): Future[HttpResponse] = {
+    call(uris, request)(maxNumberOfRetry, backoff)
+  }
+
+  def call(uris: NonEmptyList[Uri], request: HttpRequest)
+          (implicit
+           maxNumberOfRetry: Int,
+           minBackoff: FiniteDuration): Future[HttpResponse] = {
+
+    singleRequest(prepareRequest(uris.head, request)) flatMap { response =>
+      handleResponse(request, response) flatMap {
+        case Success(result) => Future.successful(result)
+        case Failure(_) => recover(uris.tail, request, response)
+      }
+    }
+  }
+
+  def recover(uris: List[Uri],
+              request: HttpRequest, previousResponse: HttpResponse)
+             (implicit
+              maxNumberOfRetry: Int,
+              minBackoff: FiniteDuration): Future[HttpResponse] = {
+    uris match {
+      case Nil =>
+        Future.successful(previousResponse)
+
+      case x :: xs =>
+        singleRequest(prepareRequest(x, request)) flatMap { response =>
+          handleResponse(request, response) flatMap {
+            case Success(result) => Future.successful(result)
+            case Failure(e) => recover(xs, request, response)
+          }
+        }
+    }
+  }
+
+  def singleRequest(request: HttpRequest)
+                   (implicit
+                    maxNumberOfRetry: Int,
+                    minBackoff: FiniteDuration): Future[HttpResponse] = {
+    retryableFuture(() => Http().singleRequest(request))
+  }
+
+  def retryableFuture(future: () => Future[HttpResponse])
+                     (implicit
+                      maxNumberOfRetry: Int,
+                      minBackoff: FiniteDuration): Future[HttpResponse] = {
+    implicit val allNonFailed: retry.Success[HttpResponse] = retry.Success[HttpResponse] { _ => true }
+
+    retry
+      .Backoff(maxNumberOfRetry, minBackoff)
+      .apply {
+        future
+      }
+  }
+
+  private def prepareRequest(base: Uri, request: HttpRequest) =
+    request.copy(uri = getFullUri(base, request.uri))
+
+  private def getFullUri(base: Uri, path: Uri): Uri =
+    Uri().withPath(base.path ++ path.path)
+
+  private def handleResponse(request: HttpRequest, response: HttpResponse): Future[Try[HttpResponse]] = {
+    response.status match {
+      case StatusCodes.NotFound =>
+        Future.successful(Failure(FailedResponse(s"Request [$request] failed. Cause: [$response]")))
+
+      case status if status.isRedirection() =>
+        val request_ = request.copy(uri = response.header[Location].get.uri)
+        Http().singleRequest(request).flatMap(handleResponse(request_, _))
+
+      case status if status.isFailure() =>
+        Future.successful(Failure(FailedResponse(s"Request [$request] failed. Cause: [$response]")))
+
+      case _ =>
+        Future.successful(Success(response))
+    }
+  }
 }
 

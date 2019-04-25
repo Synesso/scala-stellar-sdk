@@ -226,6 +226,8 @@ object Signature {
   } yield Signature(data, hint)
 }
 
+case class FailedResponse(cause: String) extends RuntimeException(cause)
+
 case class InvalidAccountId(id: String, cause: Throwable) extends RuntimeException(id, cause)
 
 case class InvalidSecretSeed(cause: Throwable) extends RuntimeException(cause)
