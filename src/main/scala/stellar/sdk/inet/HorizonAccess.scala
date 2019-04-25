@@ -165,9 +165,17 @@ class Horizon(call: HttpRequest => Future[HttpResponse])
   def getPage[T: ClassTag](uri: Uri)
                           (implicit ec: ExecutionContext, m: Manifest[T], formats: Formats): Future[Page[T]] = {
 
+    val request = HttpRequest(GET, uri).addHeader(clientNameHeader).addHeader(clientVersionHeader)
+
+    val getResponse: () => Future[HttpResponse] =
+      if(uri.isAbsolute)
+        () => Http().singleRequest(request)
+      else
+        () => call(request)
+
     logger.debug(s"Getting $uri")
     val request = HttpRequest(GET, uri).addHeader(clientNameHeader).addHeader(clientVersionHeader)
-    Http().singleRequest(request).flatMap {
+    getResponse().flatMap {
       case response if response.status == StatusCodes.NotFound => Future(Page(Seq.empty[T], uri.toString()))
       case response                                            => Unmarshal(response).to[RawPage].map(_.parse[T])
     }
