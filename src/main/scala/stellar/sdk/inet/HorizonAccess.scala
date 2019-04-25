@@ -139,10 +139,10 @@ class Horizon(call: HttpRequest => Future[HttpResponse])
       "limit" -> "100"
     ))
 
-    val requestUri = Uri(s"$path").withQuery(query)
+    val requestUri = Uri(path).withQuery(query)
 
     def next(p: Page[T]): Future[Option[Page[T]]] =
-      (getPage(Uri(p.nextLink).withPort(requestUri.effectivePort)): Future[Page[T]]).map(Some(_))
+      (getPage(Uri(p.nextLink)): Future[Page[T]]).map(Some(_))
 
     def stream(ts: Seq[T], maybeNextPage: Future[Option[Page[T]]]): Stream[T] = {
       ts match {
