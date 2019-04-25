@@ -16,3 +16,5 @@ case class HorizonEntityNotFound(uri: Uri, body: JObject)(implicit val formats: 
 case class HorizonRateLimitExceeded(uri: Uri, retryAfter: Duration)(implicit val formats: Formats) extends Exception(
   s"Horizon request rate limit was exceeded. Try again in $retryAfter"
 )
+
+case class FailedResponse(cause: String) extends Exception(cause)
