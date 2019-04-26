@@ -292,7 +292,7 @@ class MultiHostCaller(uris: NonEmptyList[Uri], maxNumberOfRetry: Int, backoff: F
     request.copy(uri = getFullUri(base, request.uri))
 
   private def getFullUri(base: Uri, path: Uri): Uri =
-    Uri().withPath(base.path ++ path.path)
+    base.withPath(base.path ++ path.path)
 
   private def handleResponse(request: HttpRequest, response: HttpResponse): Future[Try[HttpResponse]] = {
     response.status match {
