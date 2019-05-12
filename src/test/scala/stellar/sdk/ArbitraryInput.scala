@@ -45,17 +45,17 @@ trait ArbitraryInput extends ScalaCheck {
 
   implicit def arbCreateAccountOperation: Arbitrary[CreateAccountOperation] = Arbitrary(genCreateAccountOperation)
 
-  implicit def arbCreatePassiveOfferOperation: Arbitrary[CreatePassiveOfferOperation] = Arbitrary(genCreatePassiveOfferOperation)
+  implicit def arbCreatePassiveOfferOperation: Arbitrary[CreatePassiveSellOfferOperation] = Arbitrary(genCreatePassiveOfferOperation)
 
   implicit def arbWriteDataOperation: Arbitrary[WriteDataOperation] = Arbitrary(genWriteDataOperation)
 
   implicit def arbDeleteDataOperation: Arbitrary[DeleteDataOperation] = Arbitrary(genDeleteDataOperation)
 
-  implicit def arbCreateOfferOperation: Arbitrary[CreateOfferOperation] = Arbitrary(genCreateOfferOperation)
+  implicit def arbCreateOfferOperation: Arbitrary[CreateSellOfferOperation] = Arbitrary(genCreateOfferOperation)
 
-  implicit def arbDeleteOfferOperation: Arbitrary[DeleteOfferOperation] = Arbitrary(genDeleteOfferOperation)
+  implicit def arbDeleteOfferOperation: Arbitrary[DeleteSellOfferOperation] = Arbitrary(genDeleteOfferOperation)
 
-  implicit def arbUpdateOfferOperation: Arbitrary[UpdateOfferOperation] = Arbitrary(genUpdateOfferOperation)
+  implicit def arbUpdateOfferOperation: Arbitrary[UpdateSellOfferOperation] = Arbitrary(genUpdateOfferOperation)
 
   implicit def arbInflationOperation: Arbitrary[InflationOperation] = Arbitrary(genInflationOperation)
 
@@ -231,13 +231,13 @@ trait ArbitraryInput extends ScalaCheck {
     CreateAccountOperation(destination, startingBalance, sourceAccount)
   }
 
-  def genCreatePassiveOfferOperation: Gen[CreatePassiveOfferOperation] = for {
+  def genCreatePassiveOfferOperation: Gen[CreatePassiveSellOfferOperation] = for {
     selling <- genAmount
     buying <- genAsset
     price <- genPrice
     sourceAccount <- Gen.option(genPublicKey)
   } yield {
-    CreatePassiveOfferOperation(selling, buying, price, sourceAccount)
+    CreatePassiveSellOfferOperation(selling, buying, price, sourceAccount)
   }
 
   def genInflationOperation: Gen[InflationOperation] = for {
@@ -263,36 +263,36 @@ trait ArbitraryInput extends ScalaCheck {
 
   def genManageDataOperation: Gen[ManageDataOperation] = Gen.oneOf(genDeleteDataOperation, genWriteDataOperation)
 
-  def genCreateOfferOperation: Gen[CreateOfferOperation] = for {
+  def genCreateOfferOperation: Gen[CreateSellOfferOperation] = for {
     selling <- genAmount
     buying <- genAsset
     price <- genPrice
     sourceAccount <- Gen.option(genPublicKey)
   } yield {
-    CreateOfferOperation(selling, buying, price, sourceAccount)
+    CreateSellOfferOperation(selling, buying, price, sourceAccount)
   }
 
-  def genDeleteOfferOperation: Gen[DeleteOfferOperation] = for {
+  def genDeleteOfferOperation: Gen[DeleteSellOfferOperation] = for {
     id <- Gen.posNum[Long]
     selling <- genAsset
     buying <- genAsset
     price <- genPrice
     sourceAccount <- Gen.option(genPublicKey)
   } yield {
-    DeleteOfferOperation(id, selling, buying, price, sourceAccount)
+    DeleteSellOfferOperation(id, selling, buying, price, sourceAccount)
   }
 
-  def genUpdateOfferOperation: Gen[UpdateOfferOperation] = for {
+  def genUpdateOfferOperation: Gen[UpdateSellOfferOperation] = for {
     id <- Gen.posNum[Long]
     selling <- genAmount
     buying <- genAsset
     price <- genPrice
     sourceAccount <- Gen.option(genPublicKey)
   } yield {
-    UpdateOfferOperation(id, selling, buying, price, sourceAccount)
+    UpdateSellOfferOperation(id, selling, buying, price, sourceAccount)
   }
 
-  def genManageOfferOperation: Gen[ManageOfferOperation] =
+  def genManageOfferOperation: Gen[ManageSellOfferOperation] =
     Gen.oneOf(genCreateOfferOperation, genDeleteOfferOperation, genUpdateOfferOperation)
 
   def genPathPaymentOperation: Gen[PathPaymentOperation] = for {

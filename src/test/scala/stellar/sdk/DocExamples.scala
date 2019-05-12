@@ -357,7 +357,7 @@ class DocExamples(implicit ee: ExecutionEnv) extends Specification with Mockito 
         .add(PaymentOperation(aliceKey, Amount.lumens(100)))
         .add(PaymentOperation(bobKey, Amount.lumens(77)))
         .add(PaymentOperation(charlieKey, Amount.lumens(4.08)))
-        .add(CreateOfferOperation(
+        .add(CreateSellOfferOperation(
           selling = Amount.lumens(100),
           buying = Asset("FRUITCAKE42", aliceKey),
           price = Price(100, 1)

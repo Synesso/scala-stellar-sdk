@@ -19,7 +19,6 @@ import stellar.sdk.util.ByteArrays
 import scala.concurrent.duration._
 import scala.concurrent.{Await, Future}
 import scala.sys.process._
-import scala.util.{Failure, Success}
 
 class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specification with DomainMatchersIT {
   sequential
@@ -89,19 +88,19 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
         // force a transaction boundary between CreateAccount and AccountMerge
         transact(
           AccountMergeOperation(accnB, Some(accnC)),
-          CreateOfferOperation(lumens(3), Asset("Aardvark", accnA), Price(3, 100), Some(accnB)),
-          CreateOfferOperation(lumens(5), Asset("Chinchilla", accnA), Price(5, 100), Some(accnB)),
-          CreatePassiveOfferOperation(IssuedAmount(10, Asset("Beaver", accnA)), NativeAsset, Price(1, 3), Some(accnA)),
+          CreateSellOfferOperation(lumens(3), Asset("Aardvark", accnA), Price(3, 100), Some(accnB)),
+          CreateSellOfferOperation(lumens(5), Asset("Chinchilla", accnA), Price(5, 100), Some(accnB)),
+          CreatePassiveSellOfferOperation(IssuedAmount(10, Asset("Beaver", accnA)), NativeAsset, Price(1, 3), Some(accnA)),
           AllowTrustOperation(accnB, "Aardvark", authorize = false, Some(accnA))
         )
 
         // force a transaction boundary between Create*Offer and Update/DeleteOffer
         transact(
-          UpdateOfferOperation(2, lumens(5), Asset("Chinchilla", accnA), Price(1, 5), Some(accnB)),
-          DeleteOfferOperation(3, Asset("Beaver", accnA), NativeAsset, Price(1, 3), Some(accnA)),
+          UpdateSellOfferOperation(2, lumens(5), Asset("Chinchilla", accnA), Price(1, 5), Some(accnB)),
+          DeleteSellOfferOperation(3, Asset("Beaver", accnA), NativeAsset, Price(1, 3), Some(accnA)),
           InflationOperation(),
-          CreateOfferOperation(IssuedAmount(80, Asset("Chinchilla", accnA)), NativeAsset, Price(80, 4), Some(accnA)),
-          CreateOfferOperation(IssuedAmount(1, Asset("Chinchilla", accnA)), Asset("Chinchilla", masterAccountKey), Price(1, 1), Some(accnA)),
+          CreateSellOfferOperation(IssuedAmount(80, Asset("Chinchilla", accnA)), NativeAsset, Price(80, 4), Some(accnA)),
+          CreateSellOfferOperation(IssuedAmount(1, Asset("Chinchilla", accnA)), Asset("Chinchilla", masterAccountKey), Price(1, 1), Some(accnA)),
           PathPaymentOperation(IssuedAmount(1, Asset("Chinchilla", masterAccountKey)), accnB, IssuedAmount(1, Asset("Chinchilla", accnA)), Nil),
           BumpSequenceOperation(masterAccount.sequenceNumber + 20)
         )

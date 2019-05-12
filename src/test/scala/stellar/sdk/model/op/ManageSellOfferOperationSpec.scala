@@ -8,25 +8,25 @@ import org.specs2.mutable.Specification
 import stellar.sdk.util.ByteArrays.base64
 import stellar.sdk.{ArbitraryInput, DomainMatchers}
 
-class ManageOfferOperationSpec extends Specification with ArbitraryInput with DomainMatchers with JsonSnippets {
+class ManageSellOfferOperationSpec extends Specification with ArbitraryInput with DomainMatchers with JsonSnippets {
 
-  implicit val arbCreate: Arbitrary[Transacted[CreateOfferOperation]] = Arbitrary(genTransacted(genCreateOfferOperation))
-  implicit val arbDelete: Arbitrary[Transacted[DeleteOfferOperation]] = Arbitrary(genTransacted(genDeleteOfferOperation))
-  implicit val arbUpdate: Arbitrary[Transacted[UpdateOfferOperation]] = Arbitrary(genTransacted(genUpdateOfferOperation))
+  implicit val arbCreate: Arbitrary[Transacted[CreateSellOfferOperation]] = Arbitrary(genTransacted(genCreateOfferOperation))
+  implicit val arbDelete: Arbitrary[Transacted[DeleteSellOfferOperation]] = Arbitrary(genTransacted(genDeleteOfferOperation))
+  implicit val arbUpdate: Arbitrary[Transacted[UpdateSellOfferOperation]] = Arbitrary(genTransacted(genUpdateOfferOperation))
   implicit val formats = Serialization.formats(NoTypeHints) + TransactedOperationDeserializer + OperationDeserializer
 
   "create offer operation" should {
-    "serde via xdr string" >> prop { actual: CreateOfferOperation =>
+    "serde via xdr string" >> prop { actual: CreateSellOfferOperation =>
       Operation.decodeXDR(base64(actual.encode)) must beEquivalentTo(actual)
     }
 
-    "serde via xdr bytes" >> prop { actual: CreateOfferOperation =>
+    "serde via xdr bytes" >> prop { actual: CreateSellOfferOperation =>
       val (remaining, decoded) = Operation.decode.run(actual.encode).value
       decoded mustEqual actual
       remaining must beEmpty
     }
 
-    "be parsed from json" >> prop { op: Transacted[CreateOfferOperation] =>
+    "be parsed from json" >> prop { op: Transacted[CreateSellOfferOperation] =>
       val doc =
         s"""
            |{
@@ -60,17 +60,17 @@ class ManageOfferOperationSpec extends Specification with ArbitraryInput with Do
   }
 
   "update offer operation" should {
-    "serde via xdr string" >> prop { actual: UpdateOfferOperation =>
+    "serde via xdr string" >> prop { actual: UpdateSellOfferOperation =>
       Operation.decodeXDR(base64(actual.encode)) must beEquivalentTo(actual)
     }
 
-    "serde via xdr bytes" >> prop { actual: UpdateOfferOperation =>
+    "serde via xdr bytes" >> prop { actual: UpdateSellOfferOperation =>
       val (remaining, decoded) = Operation.decode.run(actual.encode).value
       decoded mustEqual actual
       remaining must beEmpty
     }
 
-    "be parsed from json" >> prop { op: Transacted[UpdateOfferOperation] =>
+    "be parsed from json" >> prop { op: Transacted[UpdateSellOfferOperation] =>
       val doc =
         s"""
            |{
@@ -104,17 +104,17 @@ class ManageOfferOperationSpec extends Specification with ArbitraryInput with Do
   }
 
   "delete offer operation" should {
-    "serde via xdr string" >> prop { actual: DeleteOfferOperation =>
+    "serde via xdr string" >> prop { actual: DeleteSellOfferOperation =>
       Operation.decodeXDR(base64(actual.encode)) must beEquivalentTo(actual)
     }
 
-    "serde via xdr bytes" >> prop { actual: DeleteOfferOperation =>
+    "serde via xdr bytes" >> prop { actual: DeleteSellOfferOperation =>
       val (remaining, decoded) = Operation.decode.run(actual.encode).value
       decoded mustEqual actual
       remaining must beEmpty
     }
 
-    "be parsed from json" >> prop { op: Transacted[DeleteOfferOperation] =>
+    "be parsed from json" >> prop { op: Transacted[DeleteSellOfferOperation] =>
       val doc =
         s"""
            |{

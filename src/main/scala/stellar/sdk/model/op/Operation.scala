@@ -29,12 +29,12 @@ object Operation {
         case 0 => widen(CreateAccountOperation.decode.map(_.copy(sourceAccount = source)))
         case 1 => widen(PaymentOperation.decode.map(_.copy(sourceAccount = source)))
         case 2 => widen(PathPaymentOperation.decode.map(_.copy(sourceAccount = source)))
-        case 3 => widen(ManageOfferOperation.decode.map {
-          case x: CreateOfferOperation => x.copy(sourceAccount = source)
-          case x: UpdateOfferOperation => x.copy(sourceAccount = source)
-          case x: DeleteOfferOperation => x.copy(sourceAccount = source)
+        case 3 => widen(ManageSellOfferOperation.decode.map {
+          case x: CreateSellOfferOperation => x.copy(sourceAccount = source)
+          case x: UpdateSellOfferOperation => x.copy(sourceAccount = source)
+          case x: DeleteSellOfferOperation => x.copy(sourceAccount = source)
         })
-        case 4 => widen(CreatePassiveOfferOperation.decode.map(_.copy(sourceAccount = source)))
+        case 4 => widen(CreatePassiveSellOfferOperation.decode.map(_.copy(sourceAccount = source)))
         case 5 => widen(SetOptionsOperation.decode.map(_.copy(sourceAccount = source)))
         case 6 => widen(ChangeTrustOperation.decode.map(_.copy(sourceAccount = source)))
         case 7 => widen(AllowTrustOperation.decode.map(_.copy(sourceAccount = source)))
@@ -104,7 +104,7 @@ object OperationDeserializer extends ResponseParser[Operation]({ o: JObject =>
       PathPaymentOperation(amount("source_max", "source_"), account("to"), amount(), path, sourceAccount)
     case "manage_offer" =>
       (o \ "offer_id").extract[Long] match {
-        case 0L => CreateOfferOperation(
+        case 0L => CreateSellOfferOperation(
           selling = amount(assetPrefix = "selling_"),
           buying = asset("buying_"),
           price = price(),
@@ -113,14 +113,14 @@ object OperationDeserializer extends ResponseParser[Operation]({ o: JObject =>
         case id =>
           val amnt = (o \ "amount").extract[String].toDouble
           if (amnt == 0.0) {
-            DeleteOfferOperation(id, asset("selling_"), asset("buying_"), price(), sourceAccount)
+            DeleteSellOfferOperation(id, asset("selling_"), asset("buying_"), price(), sourceAccount)
           } else {
-            UpdateOfferOperation(id, selling = amount(assetPrefix = "selling_"), buying = asset("buying_"),
+            UpdateSellOfferOperation(id, selling = amount(assetPrefix = "selling_"), buying = asset("buying_"),
               price = price(), sourceAccount)
           }
       }
     case "create_passive_offer" =>
-      CreatePassiveOfferOperation(
+      CreatePassiveSellOfferOperation(
         selling = amount(assetPrefix = "selling_"),
         buying = asset("buying_"),
         price = price(),
@@ -265,15 +265,15 @@ object PathPaymentOperation {
 
 }
 
-sealed trait ManageOfferOperation extends Operation {
+sealed trait ManageSellOfferOperation extends Operation {
   val offerId: Long = 0
 }
 
 /**
   * Creates an offer in the Stellar network.
   */
-case class CreateOfferOperation(selling: Amount, buying: Asset, price: Price,
-                                sourceAccount: Option[PublicKeyOps] = None) extends ManageOfferOperation {
+case class CreateSellOfferOperation(selling: Amount, buying: Asset, price: Price,
+                                    sourceAccount: Option[PublicKeyOps] = None) extends ManageSellOfferOperation {
 
   override def encode: Stream[Byte] =
     super.encode ++
@@ -295,9 +295,9 @@ case class CreateOfferOperation(selling: Amount, buying: Asset, price: Price,
   * @param sourceAccount the account effecting this operation, if different from the owning account of the transaction
   * @see [[https://www.stellar.org/developers/horizon/reference/resources/operation.html#manage-offer endpoint doc]]
   */
-case class DeleteOfferOperation(override val offerId: Long,
-                                selling: Asset, buying: Asset, price: Price,
-                                sourceAccount: Option[PublicKeyOps] = None) extends ManageOfferOperation {
+case class DeleteSellOfferOperation(override val offerId: Long,
+                                    selling: Asset, buying: Asset, price: Price,
+                                    sourceAccount: Option[PublicKeyOps] = None) extends ManageSellOfferOperation {
 
   override def encode: Stream[Byte] =
     super.encode ++
@@ -319,9 +319,9 @@ case class DeleteOfferOperation(override val offerId: Long,
   * @param sourceAccount the account effecting this operation, if different from the owning account of the transaction
   * @see [[https://www.stellar.org/developers/horizon/reference/resources/operation.html#manage-offer endpoint doc]]
   */
-case class UpdateOfferOperation(override val offerId: Long,
-                                selling: Amount, buying: Asset, price: Price,
-                                sourceAccount: Option[PublicKeyOps] = None) extends ManageOfferOperation {
+case class UpdateSellOfferOperation(override val offerId: Long,
+                                    selling: Amount, buying: Asset, price: Price,
+                                    sourceAccount: Option[PublicKeyOps] = None) extends ManageSellOfferOperation {
 
   override def encode: Stream[Byte] =
     super.encode ++
@@ -333,17 +333,17 @@ case class UpdateOfferOperation(override val offerId: Long,
       Encode.long(offerId)
 }
 
-object ManageOfferOperation {
-  def decode: State[Seq[Byte], ManageOfferOperation] = for {
+object ManageSellOfferOperation {
+  def decode: State[Seq[Byte], ManageSellOfferOperation] = for {
     sellingAsset <- Asset.decode
     buyingAsset <- Asset.decode
     sellingUnits <- Decode.long
     price <- Price.decode
     offerId <- Decode.long
   } yield {
-    if (offerId == 0) CreateOfferOperation(Amount(sellingUnits, sellingAsset), buyingAsset, price)
-    else if (sellingUnits == 0) DeleteOfferOperation(offerId, sellingAsset, buyingAsset, price)
-    else UpdateOfferOperation(offerId, Amount(sellingUnits, sellingAsset), buyingAsset, price)
+    if (offerId == 0) CreateSellOfferOperation(Amount(sellingUnits, sellingAsset), buyingAsset, price)
+    else if (sellingUnits == 0) DeleteSellOfferOperation(offerId, sellingAsset, buyingAsset, price)
+    else UpdateSellOfferOperation(offerId, Amount(sellingUnits, sellingAsset), buyingAsset, price)
   }
 }
 
@@ -356,8 +356,8 @@ object ManageOfferOperation {
   * @param sourceAccount the account effecting this operation, if different from the owning account of the transaction
   * @see [[https://www.stellar.org/developers/horizon/reference/resources/operation.html#create-passive-offer endpoint doc]]
   */
-case class CreatePassiveOfferOperation(selling: Amount, buying: Asset, price: Price,
-                                       sourceAccount: Option[PublicKeyOps] = None) extends Operation {
+case class CreatePassiveSellOfferOperation(selling: Amount, buying: Asset, price: Price,
+                                           sourceAccount: Option[PublicKeyOps] = None) extends Operation {
 
   override def encode: Stream[Byte] =
     super.encode ++
@@ -368,13 +368,13 @@ case class CreatePassiveOfferOperation(selling: Amount, buying: Asset, price: Pr
       price.encode
 }
 
-object CreatePassiveOfferOperation {
-  val decode: State[Seq[Byte], CreatePassiveOfferOperation] = for {
+object CreatePassiveSellOfferOperation {
+  val decode: State[Seq[Byte], CreatePassiveSellOfferOperation] = for {
     sellingAsset <- Asset.decode
     buyingAsset <- Asset.decode
     sellingUnits <- Decode.long
     price <- Price.decode
-  } yield CreatePassiveOfferOperation(Amount(sellingUnits, sellingAsset), buyingAsset, price)
+  } yield CreatePassiveSellOfferOperation(Amount(sellingUnits, sellingAsset), buyingAsset, price)
 }
 
 /**
