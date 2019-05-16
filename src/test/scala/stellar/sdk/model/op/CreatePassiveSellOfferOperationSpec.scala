@@ -10,7 +10,7 @@ import stellar.sdk.{ArbitraryInput, DomainMatchers}
 
 class CreatePassiveSellOfferOperationSpec extends Specification with ArbitraryInput with DomainMatchers with JsonSnippets {
 
-  implicit val arb: Arbitrary[Transacted[CreatePassiveSellOfferOperation]] = Arbitrary(genTransacted(genCreatePassiveOfferOperation))
+  implicit val arb: Arbitrary[Transacted[CreatePassiveSellOfferOperation]] = Arbitrary(genTransacted(genCreatePassiveSellOfferOperation))
   implicit val formats = Serialization.formats(NoTypeHints) + TransactedOperationDeserializer + OperationDeserializer
 
   "create passive offer operation" should {
@@ -54,7 +54,7 @@ class CreatePassiveSellOfferOperationSpec extends Specification with ArbitraryIn
          """.stripMargin
 
       parse(doc).extract[Transacted[CreatePassiveSellOfferOperation]] mustEqual op
-    }.setGen(genTransacted(genCreatePassiveOfferOperation.suchThat(_.sourceAccount.nonEmpty)))
+    }.setGen(genTransacted(genCreatePassiveSellOfferOperation.suchThat(_.sourceAccount.nonEmpty)))
   }
 
 }

@@ -50,7 +50,7 @@ class OperationResultSpec extends Specification with ArbitraryInput with DomainM
   }
 
   "create passive offer results" should {
-    "serde via xdr bytes" >> prop { r: CreatePassiveOfferResult =>
+    "serde via xdr bytes" >> prop { r: CreatePassiveSellOfferResult =>
       r should serdeUsing(OperationResult.decode)
     }
   }

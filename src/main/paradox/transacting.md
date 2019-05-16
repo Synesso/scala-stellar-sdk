@@ -44,7 +44,7 @@ The available operations are:
 * @scaladoc[ChangeTrust](stellar.sdk.model.op.ChangeTrustOperation)
 * @scaladoc[CreateAccount](stellar.sdk.model.op.CreateAccountOperation)
 * @scaladoc[CreateSellOffer](stellar.sdk.model.op.CreateSellOfferOperation)
-* @scaladoc[CreatePassiveOffer](stellar.sdk.model.op.CreatePassiveOfferOperation)
+* @scaladoc[CreatePassiveSellOffer](stellar.sdk.model.op.CreatePassiveSellOfferOperation)
 * @scaladoc[DeleteData](stellar.sdk.model.op.DeleteDataOperation)
 * @scaladoc[DeleteSellOffer](stellar.sdk.model.op.DeleteSellOfferOperation)
 * @scaladoc[Inflation](stellar.sdk.model.op.InflationOperation)
