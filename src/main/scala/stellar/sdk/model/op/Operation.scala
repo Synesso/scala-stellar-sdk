@@ -122,6 +122,22 @@ object OperationDeserializer extends ResponseParser[Operation]({ o: JObject =>
               price = price(), sourceAccount)
           }
       }
+    case "manage_buy_offer" =>
+      (o \ "offer_id").extract[Long] match {
+        case 0L => CreateBuyOfferOperation(
+          buying = amount(assetPrefix = "buying_"),
+          selling = asset("selling_"),
+          price = price(),
+          sourceAccount = sourceAccount
+        )
+        case id =>
+          val amnt = (o \ "amount").extract[String].toDouble
+          if (amnt == 0.0) {
+            DeleteBuyOfferOperation(id, asset("selling_"), asset("buying_"), price(), sourceAccount)
+          } else {
+            UpdateBuyOfferOperation(id, asset("selling_"), amount(assetPrefix = "buying_"), price(), sourceAccount)
+          }
+      }
     case "create_passive_offer" =>
       CreatePassiveSellOfferOperation(
         selling = amount(assetPrefix = "selling_"),
