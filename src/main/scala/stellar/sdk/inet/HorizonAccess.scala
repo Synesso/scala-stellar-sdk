@@ -149,10 +149,12 @@ class Horizon(uri: URI)
                           (implicit ec: ExecutionContext, m: Manifest[T], formats: Formats): Future[Page[T]] = {
 
     logger.debug(s"Getting $uri")
-    for {
-      response <- Http().singleRequest(HttpRequest(GET, uri).addHeader(clientNameHeader).addHeader(clientVersionHeader))
-      unwrapped <- Unmarshal(response).to[RawPage]
-    } yield unwrapped.parse[T]
+    val request = HttpRequest(GET, uri).addHeader(clientNameHeader).addHeader(clientVersionHeader)
+    Http().singleRequest(request).flatMap {
+      case response if response.status == StatusCodes.NotFound => Future(Page(Seq.empty[T], uri.toString()))
+      case response                                            => Unmarshal(response).to[RawPage].map(_.parse[T])
+    }
+    .recover { case t: Throwable => throw new RuntimeException(s"Unable to get page for $uri", t) }
   }
 
   override def getSource[T: ClassTag](path: String, de: CustomSerializer[T], cursor: HorizonCursor, params: Map[String, String] = Map.empty)

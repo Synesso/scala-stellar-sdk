@@ -45,17 +45,19 @@ trait ArbitraryInput extends ScalaCheck {
 
   implicit def arbCreateAccountOperation: Arbitrary[CreateAccountOperation] = Arbitrary(genCreateAccountOperation)
 
-  implicit def arbCreatePassiveOfferOperation: Arbitrary[CreatePassiveOfferOperation] = Arbitrary(genCreatePassiveOfferOperation)
+  implicit def arbCreatePassiveSellOfferOperation: Arbitrary[CreatePassiveSellOfferOperation] = Arbitrary(genCreatePassiveSellOfferOperation)
 
   implicit def arbWriteDataOperation: Arbitrary[WriteDataOperation] = Arbitrary(genWriteDataOperation)
 
   implicit def arbDeleteDataOperation: Arbitrary[DeleteDataOperation] = Arbitrary(genDeleteDataOperation)
 
-  implicit def arbCreateOfferOperation: Arbitrary[CreateOfferOperation] = Arbitrary(genCreateOfferOperation)
+  implicit def arbCreateBuyOfferOperation: Arbitrary[CreateBuyOfferOperation] = Arbitrary(genCreateBuyOfferOperation)
+  implicit def arbDeleteBuyOfferOperation: Arbitrary[DeleteBuyOfferOperation] = Arbitrary(genDeleteBuyOfferOperation)
+  implicit def arbUpdateBuyOfferOperation: Arbitrary[UpdateBuyOfferOperation] = Arbitrary(genUpdateBuyOfferOperation)
 
-  implicit def arbDeleteOfferOperation: Arbitrary[DeleteOfferOperation] = Arbitrary(genDeleteOfferOperation)
-
-  implicit def arbUpdateOfferOperation: Arbitrary[UpdateOfferOperation] = Arbitrary(genUpdateOfferOperation)
+  implicit def arbCreateSellOfferOperation: Arbitrary[CreateSellOfferOperation] = Arbitrary(genCreateSellOfferOperation)
+  implicit def arbDeleteSellOfferOperation: Arbitrary[DeleteSellOfferOperation] = Arbitrary(genDeleteSellOfferOperation)
+  implicit def arbUpdateSellOfferOperation: Arbitrary[UpdateSellOfferOperation] = Arbitrary(genUpdateSellOfferOperation)
 
   implicit def arbInflationOperation: Arbitrary[InflationOperation] = Arbitrary(genInflationOperation)
 
@@ -111,7 +113,7 @@ trait ArbitraryInput extends ScalaCheck {
 
   implicit def arbCreateAccountResult: Arbitrary[CreateAccountResult] = Arbitrary(genCreateAccountResult)
 
-  implicit def arbCreatePassiveOfferResult: Arbitrary[CreatePassiveOfferResult] = Arbitrary(genCreatePassiveOfferResult)
+  implicit def arbCreatePassiveSellOfferResult: Arbitrary[CreatePassiveSellOfferResult] = Arbitrary(genCreatePassiveSellOfferResult)
 
   implicit def arbInflationResult: Arbitrary[InflationResult] = Arbitrary(genInflationResult)
 
@@ -231,13 +233,13 @@ trait ArbitraryInput extends ScalaCheck {
     CreateAccountOperation(destination, startingBalance, sourceAccount)
   }
 
-  def genCreatePassiveOfferOperation: Gen[CreatePassiveOfferOperation] = for {
+  def genCreatePassiveSellOfferOperation: Gen[CreatePassiveSellOfferOperation] = for {
     selling <- genAmount
     buying <- genAsset
     price <- genPrice
     sourceAccount <- Gen.option(genPublicKey)
   } yield {
-    CreatePassiveOfferOperation(selling, buying, price, sourceAccount)
+    CreatePassiveSellOfferOperation(selling, buying, price, sourceAccount)
   }
 
   def genInflationOperation: Gen[InflationOperation] = for {
@@ -263,37 +265,69 @@ trait ArbitraryInput extends ScalaCheck {
 
   def genManageDataOperation: Gen[ManageDataOperation] = Gen.oneOf(genDeleteDataOperation, genWriteDataOperation)
 
-  def genCreateOfferOperation: Gen[CreateOfferOperation] = for {
+  def genCreateSellOfferOperation: Gen[CreateSellOfferOperation] = for {
     selling <- genAmount
     buying <- genAsset
     price <- genPrice
     sourceAccount <- Gen.option(genPublicKey)
   } yield {
-    CreateOfferOperation(selling, buying, price, sourceAccount)
+    CreateSellOfferOperation(selling, buying, price, sourceAccount)
   }
 
-  def genDeleteOfferOperation: Gen[DeleteOfferOperation] = for {
+  def genDeleteSellOfferOperation: Gen[DeleteSellOfferOperation] = for {
     id <- Gen.posNum[Long]
     selling <- genAsset
     buying <- genAsset
     price <- genPrice
     sourceAccount <- Gen.option(genPublicKey)
   } yield {
-    DeleteOfferOperation(id, selling, buying, price, sourceAccount)
+    DeleteSellOfferOperation(id, selling, buying, price, sourceAccount)
   }
 
-  def genUpdateOfferOperation: Gen[UpdateOfferOperation] = for {
+  def genUpdateSellOfferOperation: Gen[UpdateSellOfferOperation] = for {
     id <- Gen.posNum[Long]
     selling <- genAmount
     buying <- genAsset
     price <- genPrice
     sourceAccount <- Gen.option(genPublicKey)
   } yield {
-    UpdateOfferOperation(id, selling, buying, price, sourceAccount)
+    UpdateSellOfferOperation(id, selling, buying, price, sourceAccount)
   }
 
-  def genManageOfferOperation: Gen[ManageOfferOperation] =
-    Gen.oneOf(genCreateOfferOperation, genDeleteOfferOperation, genUpdateOfferOperation)
+  def genManageSellOfferOperation: Gen[ManageSellOfferOperation] =
+    Gen.oneOf(genCreateSellOfferOperation, genDeleteSellOfferOperation, genUpdateSellOfferOperation)
+
+  def genCreateBuyOfferOperation: Gen[CreateBuyOfferOperation] = for {
+    selling <- genAsset
+    buying <- genAmount
+    price <- genPrice
+    sourceAccount <- Gen.option(genPublicKey)
+  } yield {
+    CreateBuyOfferOperation(selling, buying, price, sourceAccount)
+  }
+
+  def genDeleteBuyOfferOperation: Gen[DeleteBuyOfferOperation] = for {
+    id <- Gen.posNum[Long]
+    selling <- genAsset
+    buying <- genAsset
+    price <- genPrice
+    sourceAccount <- Gen.option(genPublicKey)
+  } yield {
+    DeleteBuyOfferOperation(id, selling, buying, price, sourceAccount)
+  }
+
+  def genUpdateBuyOfferOperation: Gen[UpdateBuyOfferOperation] = for {
+    id <- Gen.posNum[Long]
+    selling <- genAsset
+    buying <- genAmount
+    price <- genPrice
+    sourceAccount <- Gen.option(genPublicKey)
+  } yield {
+    UpdateBuyOfferOperation(id, selling, buying, price, sourceAccount)
+  }
+
+  def genManageBuyOfferOperation: Gen[ManageBuyOfferOperation] =
+    Gen.oneOf(genCreateBuyOfferOperation, genDeleteBuyOfferOperation, genUpdateBuyOfferOperation)
 
   def genPathPaymentOperation: Gen[PathPaymentOperation] = for {
     sendMax <- genAmount
@@ -350,8 +384,9 @@ trait ArbitraryInput extends ScalaCheck {
 
   def genOperation: Gen[Operation] = {
     Gen.oneOf(genAccountMergeOperation, genAllowTrustOperation, genChangeTrustOperation, genCreateAccountOperation,
-      genCreatePassiveOfferOperation, genInflationOperation, genManageDataOperation, genManageOfferOperation,
-      genPathPaymentOperation, genPaymentOperation, genSetOptionsOperation, genBumpSequenceOperation)
+      genCreatePassiveSellOfferOperation, genInflationOperation, genManageDataOperation, genManageSellOfferOperation,
+      genManageBuyOfferOperation, genPathPaymentOperation, genPaymentOperation, genSetOptionsOperation,
+      genBumpSequenceOperation)
   }
 
   def genPrice: Gen[Price] = for {
@@ -554,7 +589,7 @@ trait ArbitraryInput extends ScalaCheck {
   // === Operation Results ===
   def genOperationResult: Gen[OperationResult] = Gen.oneOf(
     genAccountMergeResult, genAllowTrustResult, genBumpSequenceResult, genChangeTrustResult,
-    genCreatePassiveOfferResult, genInflationResult, genManageDataResult, genManageOfferResult,
+    genCreatePassiveSellOfferResult, genInflationResult, genManageDataResult, genManageOfferResult,
     genPathPaymentResult, genPaymentResult, genSetOptionsResult, genOperationNotAttemptedResult
   )
 
@@ -584,11 +619,11 @@ trait ArbitraryInput extends ScalaCheck {
     CreateAccountUnderfunded
   )
 
-  def genCreatePassiveOfferResult: Gen[CreatePassiveOfferResult] = Gen.oneOf(
-    CreatePassiveOfferSuccess, CreatePassiveOfferMalformed, CreatePassiveOfferSellNoTrust, CreatePassiveOfferBuyNoTrust,
-    CreatePassiveOfferSellNoAuth, CreatePassiveOfferBuyNoAuth, CreatePassiveOfferLineFull, CreatePassiveOfferUnderfunded,
-    CreatePassiveOfferCrossSelf, CreatePassiveOfferSellNoIssuer, CreatePassiveOfferBuyNoIssuer,
-    UpdatePassiveOfferIdNotFound, CreatePassiveOfferLowReserve
+  def genCreatePassiveSellOfferResult: Gen[CreatePassiveSellOfferResult] = Gen.oneOf(
+    CreatePassiveSellOfferSuccess, CreatePassiveSellOfferMalformed, CreatePassiveSellOfferSellNoTrust, CreatePassiveSellOfferBuyNoTrust,
+    CreatePassiveSellOfferSellNoAuth, CreatePassiveSellOfferBuyNoAuth, CreatePassiveSellOfferLineFull, CreatePassiveSellOfferUnderfunded,
+    CreatePassiveSellOfferCrossSelf, CreatePassiveSellOfferSellNoIssuer, CreatePassiveSellOfferBuyNoIssuer,
+    UpdatePassiveOfferIdNotFound, CreatePassiveSellOfferLowReserve
   )
 
   def genInflationResult: Gen[InflationResult] = Gen.oneOf(

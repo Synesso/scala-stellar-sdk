@@ -34,7 +34,7 @@ object OperationResult {
       case 1 => widen(PaymentResult.decode)
       case 2 => widen(PathPaymentResult.decode)
       case 3 => widen(ManageOfferResult.decode)
-      case 4 => widen(CreatePassiveOfferResult.decode)
+      case 4 => widen(CreatePassiveSellOfferResult.decode)
       case 5 => widen(SetOptionsResult.decode)
       case 6 => widen(ChangeTrustResult.decode)
       case 7 => widen(AllowTrustResult.decode)

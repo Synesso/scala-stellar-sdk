@@ -90,7 +90,7 @@ trait DomainMatchers extends AnyMatchers with MustExpectations with SequenceMatc
       op.startingBalance.units mustEqual other.startingBalance.units
   }
 
-  def beEquivalentTo(other: CreatePassiveOfferOperation): Matcher[CreatePassiveOfferOperation] = beLike[CreatePassiveOfferOperation] {
+  def beEquivalentTo(other: CreatePassiveSellOfferOperation): Matcher[CreatePassiveSellOfferOperation] = beLike[CreatePassiveSellOfferOperation] {
     case op =>
       op.selling must beEquivalentTo(other.selling)
       op.buying must beEquivalentTo(other.buying)
@@ -108,14 +108,14 @@ trait DomainMatchers extends AnyMatchers with MustExpectations with SequenceMatc
       op.value.toSeq mustEqual other.value.toSeq
   }
 
-  def beEquivalentTo(other: CreateOfferOperation): Matcher[CreateOfferOperation] = beLike[CreateOfferOperation] {
+  def beEquivalentTo(other: CreateSellOfferOperation): Matcher[CreateSellOfferOperation] = beLike[CreateSellOfferOperation] {
     case op =>
       op.selling must beEquivalentTo(other.selling)
       op.buying must beEquivalentTo(other.buying)
       op.price mustEqual other.price
   }
 
-  def beEquivalentTo(other: DeleteOfferOperation): Matcher[DeleteOfferOperation] = beLike[DeleteOfferOperation] {
+  def beEquivalentTo(other: DeleteSellOfferOperation): Matcher[DeleteSellOfferOperation] = beLike[DeleteSellOfferOperation] {
     case op =>
       op.offerId mustEqual other.offerId
       op.selling must beEquivalentTo(other.selling)
@@ -123,7 +123,7 @@ trait DomainMatchers extends AnyMatchers with MustExpectations with SequenceMatc
       op.price mustEqual other.price
   }
 
-  def beEquivalentTo(other: UpdateOfferOperation): Matcher[UpdateOfferOperation] = beLike[UpdateOfferOperation] {
+  def beEquivalentTo(other: UpdateSellOfferOperation): Matcher[UpdateSellOfferOperation] = beLike[UpdateSellOfferOperation] {
     case op =>
       op.offerId mustEqual other.offerId
       op.selling must beEquivalentTo(other.selling)
@@ -170,12 +170,12 @@ trait DomainMatchers extends AnyMatchers with MustExpectations with SequenceMatc
     case op: AllowTrustOperation => other.asInstanceOf[AllowTrustOperation] must beEquivalentTo(op)
     case op: ChangeTrustOperation => other.asInstanceOf[ChangeTrustOperation] must beEquivalentTo(op)
     case op: CreateAccountOperation => other.asInstanceOf[CreateAccountOperation] must beEquivalentTo(op)
-    case op: CreatePassiveOfferOperation => other.asInstanceOf[CreatePassiveOfferOperation] must beEquivalentTo(op)
+    case op: CreatePassiveSellOfferOperation => other.asInstanceOf[CreatePassiveSellOfferOperation] must beEquivalentTo(op)
     case op: DeleteDataOperation => other.asInstanceOf[DeleteDataOperation] must beEquivalentTo(op)
     case op: WriteDataOperation => other.asInstanceOf[WriteDataOperation] must beEquivalentTo(op)
-    case op: CreateOfferOperation => other.asInstanceOf[CreateOfferOperation] must beEquivalentTo(op)
-    case op: DeleteOfferOperation => other.asInstanceOf[DeleteOfferOperation] must beEquivalentTo(op)
-    case op: UpdateOfferOperation => other.asInstanceOf[UpdateOfferOperation] must beEquivalentTo(op)
+    case op: CreateSellOfferOperation => other.asInstanceOf[CreateSellOfferOperation] must beEquivalentTo(op)
+    case op: DeleteSellOfferOperation => other.asInstanceOf[DeleteSellOfferOperation] must beEquivalentTo(op)
+    case op: UpdateSellOfferOperation => other.asInstanceOf[UpdateSellOfferOperation] must beEquivalentTo(op)
     case op: PathPaymentOperation => other.asInstanceOf[PathPaymentOperation] must beEquivalentTo(op)
     case op: PaymentOperation => other.asInstanceOf[PaymentOperation] must beEquivalentTo(op)
     case op: SetOptionsOperation => other.asInstanceOf[SetOptionsOperation] must beEquivalentTo(op)

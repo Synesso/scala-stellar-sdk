@@ -8,23 +8,23 @@ import org.specs2.mutable.Specification
 import stellar.sdk.util.ByteArrays.base64
 import stellar.sdk.{ArbitraryInput, DomainMatchers}
 
-class CreatePassiveOfferOperationSpec extends Specification with ArbitraryInput with DomainMatchers with JsonSnippets {
+class CreatePassiveSellOfferOperationSpec extends Specification with ArbitraryInput with DomainMatchers with JsonSnippets {
 
-  implicit val arb: Arbitrary[Transacted[CreatePassiveOfferOperation]] = Arbitrary(genTransacted(genCreatePassiveOfferOperation))
+  implicit val arb: Arbitrary[Transacted[CreatePassiveSellOfferOperation]] = Arbitrary(genTransacted(genCreatePassiveSellOfferOperation))
   implicit val formats = Serialization.formats(NoTypeHints) + TransactedOperationDeserializer + OperationDeserializer
 
   "create passive offer operation" should {
-    "serde via xdr string" >> prop { actual: CreatePassiveOfferOperation =>
+    "serde via xdr string" >> prop { actual: CreatePassiveSellOfferOperation =>
       Operation.decodeXDR(base64(actual.encode)) must beEquivalentTo(actual)
     }
 
-    "serde via xdr bytes" >> prop { actual: CreatePassiveOfferOperation =>
+    "serde via xdr bytes" >> prop { actual: CreatePassiveSellOfferOperation =>
       val (remaining, decoded) = Operation.decode.run(actual.encode).value
       decoded mustEqual actual
       remaining must beEmpty
     }
 
-    "parse from json" >> prop { op: Transacted[CreatePassiveOfferOperation] =>
+    "parse from json" >> prop { op: Transacted[CreatePassiveSellOfferOperation] =>
       val doc =
         s"""
            |{
@@ -53,8 +53,8 @@ class CreatePassiveOfferOperationSpec extends Specification with ArbitraryInput 
            |}
          """.stripMargin
 
-      parse(doc).extract[Transacted[CreatePassiveOfferOperation]] mustEqual op
-    }.setGen(genTransacted(genCreatePassiveOfferOperation.suchThat(_.sourceAccount.nonEmpty)))
+      parse(doc).extract[Transacted[CreatePassiveSellOfferOperation]] mustEqual op
+    }.setGen(genTransacted(genCreatePassiveSellOfferOperation.suchThat(_.sourceAccount.nonEmpty)))
   }
 
 }
