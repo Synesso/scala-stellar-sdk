@@ -10,9 +10,9 @@ import stellar.sdk.{ArbitraryInput, DomainMatchers}
 
 class ManageSellOfferOperationSpec extends Specification with ArbitraryInput with DomainMatchers with JsonSnippets {
 
-  implicit val arbCreate: Arbitrary[Transacted[CreateSellOfferOperation]] = Arbitrary(genTransacted(genCreateOfferOperation))
-  implicit val arbDelete: Arbitrary[Transacted[DeleteSellOfferOperation]] = Arbitrary(genTransacted(genDeleteOfferOperation))
-  implicit val arbUpdate: Arbitrary[Transacted[UpdateSellOfferOperation]] = Arbitrary(genTransacted(genUpdateOfferOperation))
+  implicit val arbCreate: Arbitrary[Transacted[CreateSellOfferOperation]] = Arbitrary(genTransacted(genCreateSellOfferOperation))
+  implicit val arbDelete: Arbitrary[Transacted[DeleteSellOfferOperation]] = Arbitrary(genTransacted(genDeleteSellOfferOperation))
+  implicit val arbUpdate: Arbitrary[Transacted[UpdateSellOfferOperation]] = Arbitrary(genTransacted(genUpdateSellOfferOperation))
   implicit val formats = Serialization.formats(NoTypeHints) + TransactedOperationDeserializer + OperationDeserializer
 
   "create offer operation" should {
@@ -56,7 +56,7 @@ class ManageSellOfferOperationSpec extends Specification with ArbitraryInput wit
         """.stripMargin
 
       parse(doc).extract[Transacted[Operation]] mustEqual op
-    }.setGen(genTransacted(genCreateOfferOperation.suchThat(_.sourceAccount.nonEmpty)))
+    }.setGen(genTransacted(genCreateSellOfferOperation.suchThat(_.sourceAccount.nonEmpty)))
   }
 
   "update offer operation" should {
@@ -100,7 +100,7 @@ class ManageSellOfferOperationSpec extends Specification with ArbitraryInput wit
         """.stripMargin
 
       parse(doc).extract[Transacted[Operation]] mustEqual op
-    }.setGen(genTransacted(genUpdateOfferOperation.suchThat(_.sourceAccount.nonEmpty)))
+    }.setGen(genTransacted(genUpdateSellOfferOperation.suchThat(_.sourceAccount.nonEmpty)))
   }
 
   "delete offer operation" should {
@@ -145,7 +145,7 @@ class ManageSellOfferOperationSpec extends Specification with ArbitraryInput wit
         """.stripMargin
 
       parse(doc).extract[Transacted[Operation]] mustEqual op
-    }.setGen(genTransacted(genDeleteOfferOperation.suchThat(_.sourceAccount.nonEmpty)))
+    }.setGen(genTransacted(genDeleteSellOfferOperation.suchThat(_.sourceAccount.nonEmpty)))
   }
 
 }

@@ -11,8 +11,6 @@ import stellar.sdk.model.xdr.{Decode, Encodable, Encode}
 import stellar.sdk.util.ByteArrays
 import stellar.sdk.util.ByteArrays.paddedByteArray
 
-import scala.util.Try
-
 /**
   * An Operation represents a change to the ledger. It is the action, as opposed to the effects resulting from that action.
   */
@@ -45,6 +43,11 @@ object Operation {
           case x: WriteDataOperation => x.copy(sourceAccount = source)
         })
         case 11 => widen(BumpSequenceOperation.decode.map(_.copy(sourceAccount = source)))
+        case 12 => widen(ManageBuyOfferOperation.decode.map {
+          case x: CreateBuyOfferOperation => x.copy(sourceAccount = source)
+          case x: UpdateBuyOfferOperation => x.copy(sourceAccount = source)
+          case x: DeleteBuyOfferOperation => x.copy(sourceAccount = source)
+        })
       }
     }
   private def widen[A, W, O <: W](s: State[A, O]): State[A, W] = s.map(w => w: W)
@@ -270,7 +273,7 @@ sealed trait ManageSellOfferOperation extends Operation {
 }
 
 /**
-  * Creates an offer in the Stellar network.
+  * Creates a sell offer in the Stellar network.
   */
 case class CreateSellOfferOperation(selling: Amount, buying: Asset, price: Price,
                                     sourceAccount: Option[PublicKeyOps] = None) extends ManageSellOfferOperation {
@@ -286,7 +289,7 @@ case class CreateSellOfferOperation(selling: Amount, buying: Asset, price: Price
 }
 
 /**
-  * Deletes an offer in the Stellar network.
+  * Deletes a sell offer in the Stellar network.
   *
   * @param offerId the id of the offer to be deleted
   * @param selling the asset being offered
@@ -310,7 +313,7 @@ case class DeleteSellOfferOperation(override val offerId: Long,
 }
 
 /**
-  * Updates an offer in the Stellar network.
+  * Updates a sell offer in the Stellar network.
   *
   * @param offerId the id of the offer to be modified
   * @param selling the asset and amount being offered
@@ -346,6 +349,90 @@ object ManageSellOfferOperation {
     else UpdateSellOfferOperation(offerId, Amount(sellingUnits, sellingAsset), buyingAsset, price)
   }
 }
+
+// TODO (jem) - review doc. Integration tests. ManageBuyOfferOperationSpec (JSON parsing).
+sealed trait ManageBuyOfferOperation extends Operation {
+  val offerId: Long = 0
+}
+
+/**
+  * Creates a buy offer in the Stellar network.
+  */
+case class CreateBuyOfferOperation(selling: Asset, buying: Amount, price: Price,
+                                   sourceAccount: Option[PublicKeyOps] = None) extends ManageBuyOfferOperation {
+
+  override def encode: Stream[Byte] =
+    super.encode ++
+      Encode.int(12) ++
+      selling.encode ++
+      buying.asset.encode ++
+      Encode.long(buying.units) ++
+      price.encode ++
+      Encode.long(0)
+}
+
+/**
+  * Deletes a buy offer in the Stellar network.
+  *
+  * @param offerId the id of the offer to be deleted
+  * @param selling the asset previously offered
+  * @param buying the asset previously sought
+  * @param price the price being offered
+  * @param sourceAccount the account effecting this operation, if different from the owning account of the transaction
+  * @see [[https://www.stellar.org/developers/horizon/reference/resources/operation.html#manage-offer endpoint doc]]
+  */
+case class DeleteBuyOfferOperation(override val offerId: Long,
+                                   selling: Asset, buying: Asset, price: Price,
+                                   sourceAccount: Option[PublicKeyOps] = None) extends ManageBuyOfferOperation {
+
+  override def encode: Stream[Byte] =
+    super.encode ++
+      Encode.int(12) ++
+      selling.encode ++
+      buying.encode ++
+      Encode.long(0) ++
+      price.encode ++
+      Encode.long(offerId)
+}
+
+/**
+  * Updates a sell offer in the Stellar network.
+  *
+  * @param offerId the id of the offer to be modified
+  * @param selling the asset offered
+  * @param buying the asset and amount being sought
+  * @param price the price being sought
+  * @param sourceAccount the account effecting this operation, if different from the owning account of the transaction
+  * @see [[https://www.stellar.org/developers/horizon/reference/resources/operation.html#manage-offer endpoint doc]]
+  */
+case class UpdateBuyOfferOperation(override val offerId: Long,
+                                   selling: Asset, buying: Amount, price: Price,
+                                   sourceAccount: Option[PublicKeyOps] = None) extends ManageBuyOfferOperation {
+
+  override def encode: Stream[Byte] =
+    super.encode ++
+      Encode.int(12) ++
+      selling.encode ++
+      buying.asset.encode ++
+      Encode.long(buying.units) ++
+      price.encode ++
+      Encode.long(offerId)
+}
+
+object ManageBuyOfferOperation {
+  def decode: State[Seq[Byte], ManageBuyOfferOperation] = for {
+    sellingAsset <- Asset.decode
+    buyingAsset <- Asset.decode
+    buyingUnits <- Decode.long
+    price <- Price.decode
+    offerId <- Decode.long
+  } yield {
+    if (offerId == 0) CreateBuyOfferOperation(sellingAsset, Amount(buyingUnits, buyingAsset), price)
+    else if (buyingUnits == 0) DeleteBuyOfferOperation(offerId, sellingAsset, buyingAsset, price)
+    else UpdateBuyOfferOperation(offerId, sellingAsset, Amount(buyingUnits, buyingAsset), price)
+  }
+}
+
 
 /**
   * Creates an offer that won’t consume a counter offer that exactly matches this offer.
