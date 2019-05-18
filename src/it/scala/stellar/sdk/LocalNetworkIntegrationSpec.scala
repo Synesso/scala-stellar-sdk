@@ -5,6 +5,7 @@ import java.net.URI
 import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
 import akka.stream.scaladsl.Sink
+import com.typesafe.scalalogging.LazyLogging
 import org.json4s.JsonDSL._
 import org.specs2.concurrent.ExecutionEnv
 import org.specs2.mutable.Specification
@@ -20,7 +21,7 @@ import scala.concurrent.duration._
 import scala.concurrent.{Await, Future}
 import scala.sys.process._
 
-class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specification with DomainMatchersIT {
+class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specification with DomainMatchersIT with LazyLogging {
   sequential
 
   Seq("src/it/bin/stellar_standalone.sh", "true").!
@@ -32,6 +33,10 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
   val accnA = KeyPair.fromPassphrase("account a")
   val accnB = KeyPair.fromPassphrase("account b")
   val accnC = KeyPair.fromPassphrase("account c")
+
+  logger.debug(s"Account A = ${accnA.accountId}")
+  logger.debug(s"Account B = ${accnB.accountId}")
+  logger.debug(s"Account C = ${accnC.accountId}")
 
   val accounts = Set(accnA, accnB, accnC)
 
@@ -49,11 +54,14 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
       batch match {
         case Nil =>
         case xs =>
+          logger.debug(s"Transacting ${xs.size}")
           val opAccountIds = xs.flatMap(_.sourceAccount).map(_.accountId).toSet
           val signatories = accounts.filter(a => opAccountIds.contains(a.accountId))
           val signedTransaction = xs.foldLeft(model.Transaction(masterAccount))(_ add _).sign(masterAccountKey)
-          val trp = signatories.foldLeft(signedTransaction)(_ sign _).submit()
-          Await.result(trp, 5 minutes)
+          val eventualTransactionPostResponse = signatories.foldLeft(signedTransaction)(_ sign _).submit()
+          val transactionPostResponse = Await.result(eventualTransactionPostResponse, 5 minutes)
+          logger.info(transactionPostResponse.toString)
+          transactionPostResponse must beLike[TransactionPostResponse] { case r => r.isSuccess must beTrue }
           masterAccount = masterAccount.withIncSeq
           forReal(remaining.take(batchSize), remaining.drop(batchSize))
       }
@@ -90,6 +98,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
           AccountMergeOperation(accnB, Some(accnC)),
           CreateSellOfferOperation(lumens(3), Asset("Aardvark", accnA), Price(3, 100), Some(accnB)),
           CreateSellOfferOperation(lumens(5), Asset("Chinchilla", accnA), Price(5, 100), Some(accnB)),
+          CreateBuyOfferOperation(Asset("Dachshund", accnB), Amount(3, Asset("Aardvark", accnA)), Price(5, 3), Some(accnB)),
           CreatePassiveSellOfferOperation(IssuedAmount(10, Asset("Beaver", accnA)), NativeAsset, Price(1, 3), Some(accnA)),
           AllowTrustOperation(accnB, "Aardvark", authorize = false, Some(accnA))
         )
@@ -97,7 +106,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
         // force a transaction boundary between Create*Offer and Update/DeleteOffer
         transact(
           UpdateSellOfferOperation(2, lumens(5), Asset("Chinchilla", accnA), Price(1, 5), Some(accnB)),
-          DeleteSellOfferOperation(3, Asset("Beaver", accnA), NativeAsset, Price(1, 3), Some(accnA)),
+          DeleteSellOfferOperation(4, Asset("Beaver", accnA), NativeAsset, Price(1, 3), Some(accnA)),
           InflationOperation(),
           CreateSellOfferOperation(IssuedAmount(80, Asset("Chinchilla", accnA)), NativeAsset, Price(80, 4), Some(accnA)),
           CreateSellOfferOperation(IssuedAmount(1, Asset("Chinchilla", accnA)), Asset("Chinchilla", masterAccountKey), Price(1, 1), Some(accnA)),
@@ -202,7 +211,8 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
         AssetResponse(Asset("Aardvark", accnA), 0, 0, authRequired = true, authRevocable = true),
         AssetResponse(Asset("Beaver", accnA), 0, 0, authRequired = true, authRevocable = true),
         AssetResponse(Asset("Chinchilla", accnA), 1, 1, authRequired = true, authRevocable = true),
-        AssetResponse(Asset("Chinchilla", masterAccountKey), 1, 1, authRequired = false, authRevocable = false)
+        AssetResponse(Asset("Chinchilla", masterAccountKey), 1, 1, authRequired = false, authRevocable = false),
+        AssetResponse(Asset("Dachshund", accnB), 0, 0, authRequired = false, authRevocable = false)
       )).awaitFor(10 seconds)
     }
 
@@ -252,7 +262,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
     }
 
     "filter effects by transaction hash" >> {
-      val byTransaction = network.effectsByTransaction("a631c8617c47b735967352755ac305f4230fdfc4385c2d8815934cdc41877cff").map(_.toList)
+      val byTransaction = network.effectsByTransaction("e13447898b27dbf278d4411022e2e6d0aae78ef70670c7af7834a1f2a6d191d8").map(_.toList)
       byTransaction must beLike[List[EffectResponse]] {
         case List(
         EffectAccountDebited(_, accn1, amount1),
@@ -320,7 +330,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
 
   "operation endpoint" should {
     "list all operations" >> {
-      network.operations().map(_.size) must beEqualTo(126).awaitFor(10.seconds)
+      network.operations().map(_.size) must beEqualTo(127).awaitFor(10.seconds)
     }
 
     "list operations by account" >> {
@@ -345,7 +355,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
       }.awaitFor(10.seconds)
 
       "list operations by transaction" >> {
-        network.operationsByTransaction("a631c8617c47b735967352755ac305f4230fdfc4385c2d8815934cdc41877cff")
+        network.operationsByTransaction("e13447898b27dbf278d4411022e2e6d0aae78ef70670c7af7834a1f2a6d191d8")
           .map(_.head) must beLike[Transacted[Operation]] {
           case op =>
             op.operation must beLike[Operation] {
@@ -358,7 +368,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
     }
 
     "list the details of a given operation" >> {
-      network.operationsByTransaction("c5e29c7d19c8af4fa932e6bd3214397a6f20041bc0234dacaac66bf155c02ae9")
+      network.operationsByTransaction("f72bc33eb1b18b184bfd08cbe9b26d8d1ddf67994e350c5ead1958782d79dea2")
         .map(_.drop(2).head) must beLike[Transacted[Operation]] {
         case op =>
           op.operation must beLike[Operation] {
@@ -403,7 +413,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
     }
 
     "filter payments by transaction" >> {
-      network.paymentsByTransaction("c5e29c7d19c8af4fa932e6bd3214397a6f20041bc0234dacaac66bf155c02ae9") must
+      network.paymentsByTransaction("f72bc33eb1b18b184bfd08cbe9b26d8d1ddf67994e350c5ead1958782d79dea2") must
         beLike[Seq[Transacted[PayOperation]]] {
           case Seq(op) =>
             op.operation must beEquivalentTo(PathPaymentOperation(

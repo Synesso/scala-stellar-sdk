@@ -366,7 +366,7 @@ object ManageSellOfferOperation {
   }
 }
 
-// TODO (jem) - review doc. Integration tests. ManageBuyOfferOperationSpec (JSON parsing).
+// TODO (jem) - review doc.
 sealed trait ManageBuyOfferOperation extends Operation {
   val offerId: Long = 0
 }
