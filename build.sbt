@@ -75,7 +75,7 @@ lazy val root = (project in file("."))
       "net.i2p.crypto" % "eddsa" % "0.3.0",
       "com.typesafe.akka" %% "akka-http" % "10.1.8",
       "com.typesafe.akka" %% "akka-stream" % "2.5.22",
-      "com.lightbend.akka" %% "akka-stream-alpakka-sse" % "1.0.0",
+      "com.lightbend.akka" %% "akka-stream-alpakka-sse" % "1.0.1",
       "de.heikoseeberger" %% "akka-http-json4s" % "1.25.2",
       "org.json4s" %% "json4s-native" % "3.6.5",
       "com.typesafe.scala-logging" %% "scala-logging" % "3.9.2",
