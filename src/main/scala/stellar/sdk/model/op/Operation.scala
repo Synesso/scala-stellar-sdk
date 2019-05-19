@@ -105,7 +105,7 @@ object OperationDeserializer extends ResponseParser[Operation]({ o: JObject =>
       val JArray(pathJs) = o \ "path"
       val path: List[Asset] = pathJs.map(a => asset(obj = a))
       PathPaymentOperation(amount("source_max", "source_"), account("to"), amount(), path, sourceAccount)
-    case "manage_offer" =>
+    case "manage_offer" | "manage_sell_offer" =>
       (o \ "offer_id").extract[Long] match {
         case 0L => CreateSellOfferOperation(
           selling = amount(assetPrefix = "selling_"),
@@ -366,7 +366,6 @@ object ManageSellOfferOperation {
   }
 }
 
-// TODO (jem) - review doc.
 sealed trait ManageBuyOfferOperation extends Operation {
   val offerId: Long = 0
 }
