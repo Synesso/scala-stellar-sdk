@@ -36,7 +36,7 @@ object TransactionHistoryDeserializer extends ResponseParser[TransactionHistory]
       operationCount = (o \ "operation_count").extract[Int],
       memo = (o \ "memo_type").extract[String] match {
         case "none" => NoMemo
-        case "id" => MemoId((o \ "memo").extract[String].toLong)
+        case "id" => MemoId(BigInt((o \ "memo").extract[String]).toLong)
         case "text" => MemoText((o \ "memo").extractOpt[String].getOrElse(""))
         case "hash" => MemoHash(base64((o \ "memo").extract[String]))
       },

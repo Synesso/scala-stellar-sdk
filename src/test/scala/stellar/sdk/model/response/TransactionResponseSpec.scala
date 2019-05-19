@@ -94,7 +94,7 @@ class TransactionResponseSpec extends Specification with ArbitraryInput with Dom
     "deserialise from JSON" >> prop { h: TransactionHistory =>
       val (memoType, memo) = h.memo match {
         case NoMemo => "none" -> None
-        case MemoId(id) => "id" -> Some(s"$id")
+        case MemoId(id) => "id" -> Some(java.lang.Long.toUnsignedString(id))
         case MemoText(t) => "text" -> Some(t)
         case m: MemoWithHash => "hash" -> Some(base64(m.bs))
       }

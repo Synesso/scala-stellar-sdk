@@ -35,9 +35,11 @@ case class MemoText(text: String) extends Memo {
 }
 
 case class MemoId(id: Long) extends Memo {
-  assert(id >= 0, s"Id must be non-negative (not $id)")
-
   override def encode: Stream[Byte] = Encode.int(2) ++ Encode.long(id)
+
+  def unsignedId: BigInt = BigInt(java.lang.Long.toUnsignedString(id))
+
+  override def toString = s"MemoId(${unsignedId.toString()})"
 }
 
 sealed trait MemoWithHash extends Memo {
