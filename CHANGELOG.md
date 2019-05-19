@@ -22,6 +22,10 @@ _Nothing, yet._
 - [#78](https://github.com/Synesso/scala-stellar-sdk/issues/78) Parse `manage_sell_offer` JSON responses to
     provide compatibility with Horizon v0.18.0.
 
+### Fixed
+
+- [#76](https://github.com/Synesso/scala-stellar-sdk/issues/76) `MemoId` is parsed as unsigned Long.
+
 ## 0.6.4
 
 ### Fixed
