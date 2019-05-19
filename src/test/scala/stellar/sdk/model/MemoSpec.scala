@@ -15,8 +15,8 @@ class MemoSpec extends Specification with ArbitraryInput with DomainMatchers {
   }
 
   "a id memo" should {
-    "not be constructable with zero" >> {
-      MemoId(0) must throwAn[AssertionError]
+    "be constructable with zero" >> {
+      MemoId(0) must not(throwAn[AssertionError])
     }
 
     "not be constructable with negative number" >> prop { id: Long =>

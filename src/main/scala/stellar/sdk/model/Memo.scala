@@ -35,7 +35,7 @@ case class MemoText(text: String) extends Memo {
 }
 
 case class MemoId(id: Long) extends Memo {
-  assert(id > 0, s"Id must be positive (not $id)")
+  assert(id >= 0, s"Id must be non-negative (not $id)")
 
   override def encode: Stream[Byte] = Encode.int(2) ++ Encode.long(id)
 }
