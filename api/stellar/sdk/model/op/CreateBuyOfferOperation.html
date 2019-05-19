@@ -167,20 +167,28 @@
                         <a href="CreateAccountOperation.html" title="Funds and creates a new account.">CreateAccountOperation</a>
                       </li><li class="current-entities indented4">
                         <span class="separator"></span>
-                        <a class="class" href="CreateOfferOperation.html" title="Creates an offer in the Stellar network."></a>
-                        <a href="CreateOfferOperation.html" title="Creates an offer in the Stellar network.">CreateOfferOperation</a>
+                        <a class="class" href="" title="Creates a buy offer in the Stellar network."></a>
+                        <a href="" title="Creates a buy offer in the Stellar network.">CreateBuyOfferOperation</a>
                       </li><li class="current-entities indented4">
-                        <a class="object" href="" title=""></a>
-                        <a class="class" href="CreatePassiveOfferOperation.html" title="Creates an offer that won’t consume a counter offer that exactly matches this offer."></a>
-                        <a href="CreatePassiveOfferOperation.html" title="Creates an offer that won’t consume a counter offer that exactly matches this offer.">CreatePassiveOfferOperation</a>
+                        <a class="object" href="CreatePassiveSellOfferOperation$.html" title=""></a>
+                        <a class="class" href="CreatePassiveSellOfferOperation.html" title="Creates an offer that won’t consume a counter offer that exactly matches this offer."></a>
+                        <a href="CreatePassiveSellOfferOperation.html" title="Creates an offer that won’t consume a counter offer that exactly matches this offer.">CreatePassiveSellOfferOperation</a>
+                      </li><li class="current-entities indented4">
+                        <span class="separator"></span>
+                        <a class="class" href="CreateSellOfferOperation.html" title="Creates a sell offer in the Stellar network."></a>
+                        <a href="CreateSellOfferOperation.html" title="Creates a sell offer in the Stellar network.">CreateSellOfferOperation</a>
+                      </li><li class="current-entities indented4">
+                        <span class="separator"></span>
+                        <a class="class" href="DeleteBuyOfferOperation.html" title="Deletes a buy offer in the Stellar network."></a>
+                        <a href="DeleteBuyOfferOperation.html" title="Deletes a buy offer in the Stellar network.">DeleteBuyOfferOperation</a>
                       </li><li class="current-entities indented4">
                         <span class="separator"></span>
                         <a class="class" href="DeleteDataOperation.html" title="Deletes a Data Entry (name/value pair) for an account."></a>
                         <a href="DeleteDataOperation.html" title="Deletes a Data Entry (name/value pair) for an account.">DeleteDataOperation</a>
                       </li><li class="current-entities indented4">
                         <span class="separator"></span>
-                        <a class="class" href="DeleteOfferOperation.html" title="Deletes an offer in the Stellar network."></a>
-                        <a href="DeleteOfferOperation.html" title="Deletes an offer in the Stellar network.">DeleteOfferOperation</a>
+                        <a class="class" href="DeleteSellOfferOperation.html" title="Deletes a sell offer in the Stellar network."></a>
+                        <a href="DeleteSellOfferOperation.html" title="Deletes a sell offer in the Stellar network.">DeleteSellOfferOperation</a>
                       </li><li class="current-entities indented4">
                         <span class="separator"></span>
                         <a class="class" href="InflationOperation.html" title="Requests that the network runs the inflation process."></a>
@@ -194,13 +202,17 @@
                         <a class="object" href="IssuerFlags$.html" title=""></a>
                         <a href="IssuerFlags$.html" title="">IssuerFlags</a>
                       </li><li class="current-entities indented4">
+                        <a class="object" href="ManageBuyOfferOperation$.html" title=""></a>
+                        <a class="trait" href="ManageBuyOfferOperation.html" title=""></a>
+                        <a href="ManageBuyOfferOperation.html" title="">ManageBuyOfferOperation</a>
+                      </li><li class="current-entities indented4">
                         <a class="object" href="ManageDataOperation$.html" title=""></a>
                         <a class="trait" href="ManageDataOperation.html" title=""></a>
                         <a href="ManageDataOperation.html" title="">ManageDataOperation</a>
                       </li><li class="current-entities indented4">
-                        <a class="object" href="ManageOfferOperation$.html" title=""></a>
-                        <a class="trait" href="ManageOfferOperation.html" title=""></a>
-                        <a href="ManageOfferOperation.html" title="">ManageOfferOperation</a>
+                        <a class="object" href="ManageSellOfferOperation$.html" title=""></a>
+                        <a class="trait" href="ManageSellOfferOperation.html" title=""></a>
+                        <a href="ManageSellOfferOperation.html" title="">ManageSellOfferOperation</a>
                       </li><li class="current-entities indented4">
                         <a class="object" href="Operation$.html" title=""></a>
                         <a class="trait" href="Operation.html" title="An Operation represents a change to the ledger."></a>
@@ -235,8 +247,12 @@
                         <a href="TransactedOperationDeserializer$.html" title="">TransactedOperationDeserializer</a>
                       </li><li class="current-entities indented4">
                         <span class="separator"></span>
-                        <a class="class" href="UpdateOfferOperation.html" title="Updates an offer in the Stellar network."></a>
-                        <a href="UpdateOfferOperation.html" title="Updates an offer in the Stellar network.">UpdateOfferOperation</a>
+                        <a class="class" href="UpdateBuyOfferOperation.html" title="Updates a sell offer in the Stellar network."></a>
+                        <a href="UpdateBuyOfferOperation.html" title="Updates a sell offer in the Stellar network.">UpdateBuyOfferOperation</a>
+                      </li><li class="current-entities indented4">
+                        <span class="separator"></span>
+                        <a class="class" href="UpdateSellOfferOperation.html" title="Updates a sell offer in the Stellar network."></a>
+                        <a href="UpdateSellOfferOperation.html" title="Updates a sell offer in the Stellar network.">UpdateSellOfferOperation</a>
                       </li><li class="current-entities indented4">
                         <span class="separator"></span>
                         <a class="class" href="WriteDataOperation.html" title="Creates or updates a Data Entry (name/value pair) for an account."></a>
@@ -246,36 +262,35 @@
             </div>
           </div>
           <div id="content">
-            <body class="object value">
+            <body class="class type">
       <div id="definition">
-        <a href="CreatePassiveOfferOperation.html" title="See companion class"><div class="big-circle object-companion-class">o</div></a>
+        <div class="big-circle class">c</div>
         <p id="owner"><a href="../../../index.html" class="extype" name="stellar">stellar</a>.<a href="../../index.html" class="extype" name="stellar.sdk">sdk</a>.<a href="../index.html" class="extype" name="stellar.sdk.model">model</a>.<a href="index.html" class="extype" name="stellar.sdk.model.op">op</a></p>
-        <h1><a href="CreatePassiveOfferOperation.html" title="See companion class">CreatePassiveOfferOperation</a><span class="permalink">
-      <a href="../../../../stellar/sdk/model/op/CreatePassiveOfferOperation$.html" title="Permalink">
+        <h1>CreateBuyOfferOperation<span class="permalink">
+      <a href="../../../../stellar/sdk/model/op/CreateBuyOfferOperation.html" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span></h1>
-        <h3><span class="morelinks"><div>
-            Companion <a href="CreatePassiveOfferOperation.html" title="See companion class">class CreatePassiveOfferOperation</a>
-          </div></span></h3>
+        <h3><span class="morelinks"></span></h3>
       </div>
 
       <h4 id="signature" class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
-        <span class="kind">object</span>
+        <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <span class="name">CreatePassiveOfferOperation</span><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <span class="name">CreateBuyOfferOperation</span><span class="params">(<span name="selling">selling: <a href="../Asset.html" class="extype" name="stellar.sdk.model.Asset">Asset</a></span>, <span name="buying">buying: <a href="../Amount.html" class="extype" name="stellar.sdk.model.Amount">Amount</a></span>, <span name="price">price: <a href="../Price.html" class="extype" name="stellar.sdk.model.Price">Price</a></span>, <span name="sourceAccount">sourceAccount: <span class="extype" name="scala.Option">Option</span>[<a href="../../PublicKeyOps.html" class="extype" name="stellar.sdk.PublicKeyOps">PublicKeyOps</a>] = <span class="symbol">None</span></span>)</span><span class="result"> extends <a href="ManageBuyOfferOperation.html" class="extype" name="stellar.sdk.model.op.ManageBuyOfferOperation">ManageBuyOfferOperation</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4>
 
       
-          <div id="comment" class="fullcommenttop"><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Creates a buy offer in the Stellar network.
+</p></div><div class="toggleContainer block">
           <span class="toggle">
             Linear Supertypes
           </span>
-          <div class="superTypes hiddenContent"><span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
+          <div class="superTypes hiddenContent"><span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <span class="extype" name="scala.Product">Product</span>, <span class="extype" name="scala.Equals">Equals</span>, <a href="ManageBuyOfferOperation.html" class="extype" name="stellar.sdk.model.op.ManageBuyOfferOperation">ManageBuyOfferOperation</a>, <a href="Operation.html" class="extype" name="stellar.sdk.model.op.Operation">Operation</a>, <a href="../xdr/Encodable.html" class="extype" name="stellar.sdk.model.xdr.Encodable">Encodable</a>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div></div>
         
 
@@ -301,7 +316,7 @@
                   <span class="filtertype">Inherited<br />
                   </span>
                   <ol id="linearization">
-                    <li class="in" name="stellar.sdk.model.op.CreatePassiveOfferOperation"><span>CreatePassiveOfferOperation</span></li><li class="in" name="scala.Serializable"><span>Serializable</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                    <li class="in" name="stellar.sdk.model.op.CreateBuyOfferOperation"><span>CreateBuyOfferOperation</span></li><li class="in" name="scala.Serializable"><span>Serializable</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="scala.Product"><span>Product</span></li><li class="in" name="scala.Equals"><span>Equals</span></li><li class="in" name="stellar.sdk.model.op.ManageBuyOfferOperation"><span>ManageBuyOfferOperation</span></li><li class="in" name="stellar.sdk.model.op.Operation"><span>Operation</span></li><li class="in" name="stellar.sdk.model.xdr.Encodable"><span>Encodable</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
                   </ol>
                 </div><div class="ancestors">
               <span class="filtertype"></span>
@@ -319,7 +334,26 @@
 
       <div id="template">
         <div id="allMembers">
-        
+        <div id="constructors" class="members">
+              <h3>Instance Constructors</h3>
+              <ol><li name="stellar.sdk.model.op.CreateBuyOfferOperation#&lt;init&gt;" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="&lt;init&gt;(selling:stellar.sdk.model.Asset,buying:stellar.sdk.model.Amount,price:stellar.sdk.model.Price,sourceAccount:Option[stellar.sdk.PublicKeyOps]):stellar.sdk.model.op.CreateBuyOfferOperation"></a><a id="&lt;init&gt;:CreateBuyOfferOperation"></a>
+      <span class="permalink">
+      <a href="../../../../stellar/sdk/model/op/CreateBuyOfferOperation.html#&lt;init&gt;(selling:stellar.sdk.model.Asset,buying:stellar.sdk.model.Amount,price:stellar.sdk.model.Price,sourceAccount:Option[stellar.sdk.PublicKeyOps]):stellar.sdk.model.op.CreateBuyOfferOperation" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">new</span>
+      </span>
+      <span class="symbol">
+        <span class="name">CreateBuyOfferOperation</span><span class="params">(<span name="selling">selling: <a href="../Asset.html" class="extype" name="stellar.sdk.model.Asset">Asset</a></span>, <span name="buying">buying: <a href="../Amount.html" class="extype" name="stellar.sdk.model.Amount">Amount</a></span>, <span name="price">price: <a href="../Price.html" class="extype" name="stellar.sdk.model.Price">Price</a></span>, <span name="sourceAccount">sourceAccount: <span class="extype" name="scala.Option">Option</span>[<a href="../../PublicKeyOps.html" class="extype" name="stellar.sdk.PublicKeyOps">PublicKeyOps</a>] = <span class="symbol">None</span></span>)</span>
+      </span>
+      
+      
+    </li></ol>
+            </div>
 
         
 
@@ -331,7 +365,7 @@
                 <li name="scala.AnyRef#!=" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="!=(x$1:Any):Boolean"></a><a id="!=(Any):Boolean"></a>
       <span class="permalink">
-      <a href="../../../../stellar/sdk/model/op/CreatePassiveOfferOperation$.html#!=(x$1:Any):Boolean" title="Permalink">
+      <a href="../../../../stellar/sdk/model/op/CreateBuyOfferOperation.html#!=(x$1:Any):Boolean" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -347,7 +381,7 @@
     </li><li name="scala.AnyRef###" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="##():Int"></a>
       <span class="permalink">
-      <a href="../../../../stellar/sdk/model/op/CreatePassiveOfferOperation$.html###():Int" title="Permalink">
+      <a href="../../../../stellar/sdk/model/op/CreateBuyOfferOperation.html###():Int" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -363,7 +397,7 @@
     </li><li name="scala.AnyRef#==" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="==(x$1:Any):Boolean"></a><a id="==(Any):Boolean"></a>
       <span class="permalink">
-      <a href="../../../../stellar/sdk/model/op/CreatePassiveOfferOperation$.html#==(x$1:Any):Boolean" title="Permalink">
+      <a href="../../../../stellar/sdk/model/op/CreateBuyOfferOperation.html#==(x$1:Any):Boolean" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -379,7 +413,7 @@
     </li><li name="scala.Any#asInstanceOf" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="asInstanceOf[T0]:T0"></a>
       <span class="permalink">
-      <a href="../../../../stellar/sdk/model/op/CreatePassiveOfferOperation$.html#asInstanceOf[T0]:T0" title="Permalink">
+      <a href="../../../../stellar/sdk/model/op/CreateBuyOfferOperation.html#asInstanceOf[T0]:T0" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -392,10 +426,26 @@
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
+    </li><li name="stellar.sdk.model.op.CreateBuyOfferOperation#buying" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="buying:stellar.sdk.model.Amount"></a><a id="buying:Amount"></a>
+      <span class="permalink">
+      <a href="../../../../stellar/sdk/model/op/CreateBuyOfferOperation.html#buying:stellar.sdk.model.Amount" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">buying</span><span class="result">: <a href="../Amount.html" class="extype" name="stellar.sdk.model.Amount">Amount</a></span>
+      </span>
+      
+      
     </li><li name="scala.AnyRef#clone" visbl="prt" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="clone():Object"></a><a id="clone():AnyRef"></a>
       <span class="permalink">
-      <a href="../../../../stellar/sdk/model/op/CreatePassiveOfferOperation$.html#clone():Object" title="Permalink">
+      <a href="../../../../stellar/sdk/model/op/CreateBuyOfferOperation.html#clone():Object" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -416,26 +466,26 @@
     </span>)</span>
               
         </dd></dl></div>
-    </li><li name="stellar.sdk.model.op.CreatePassiveOfferOperation#decode" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="decode:cats.data.State[Seq[Byte],stellar.sdk.model.op.CreatePassiveOfferOperation]"></a><a id="decode:State[Seq[Byte],CreatePassiveOfferOperation]"></a>
+    </li><li name="stellar.sdk.model.op.CreateBuyOfferOperation#encode" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="encode:Stream[Byte]"></a>
       <span class="permalink">
-      <a href="../../../../stellar/sdk/model/op/CreatePassiveOfferOperation$.html#decode:cats.data.State[Seq[Byte],stellar.sdk.model.op.CreatePassiveOfferOperation]" title="Permalink">
+      <a href="../../../../stellar/sdk/model/op/CreateBuyOfferOperation.html#encode:Stream[Byte]" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
       <span class="modifier_kind">
         <span class="modifier"></span>
-        <span class="kind">val</span>
+        <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">decode</span><span class="result">: <span class="extype" name="cats.data.State">State</span>[<span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Byte">Byte</span>], <a href="CreatePassiveOfferOperation.html" class="extype" name="stellar.sdk.model.op.CreatePassiveOfferOperation">CreatePassiveOfferOperation</a>]</span>
+        <span class="name">encode</span><span class="result">: <span class="extype" name="scala.Stream">Stream</span>[<span class="extype" name="scala.Byte">Byte</span>]</span>
       </span>
       
-      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="stellar.sdk.model.op.CreateBuyOfferOperation">CreateBuyOfferOperation</a> → <a href="Operation.html" class="extype" name="stellar.sdk.model.op.Operation">Operation</a> → <a href="../xdr/Encodable.html" class="extype" name="stellar.sdk.model.xdr.Encodable">Encodable</a></dd></dl></div>
     </li><li name="scala.AnyRef#eq" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="eq(x$1:AnyRef):Boolean"></a><a id="eq(AnyRef):Boolean"></a>
       <span class="permalink">
-      <a href="../../../../stellar/sdk/model/op/CreatePassiveOfferOperation$.html#eq(x$1:AnyRef):Boolean" title="Permalink">
+      <a href="../../../../stellar/sdk/model/op/CreateBuyOfferOperation.html#eq(x$1:AnyRef):Boolean" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -448,26 +498,10 @@
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
-    </li><li name="scala.AnyRef#equals" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="equals(x$1:Any):Boolean"></a><a id="equals(Any):Boolean"></a>
-      <span class="permalink">
-      <a href="../../../../stellar/sdk/model/op/CreatePassiveOfferOperation$.html#equals(x$1:Any):Boolean" title="Permalink">
-        <i class="material-icons"></i>
-      </a>
-    </span>
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">equals</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Any">Any</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
-      </span>
-      
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
     </li><li name="scala.AnyRef#finalize" visbl="prt" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="finalize():Unit"></a>
       <span class="permalink">
-      <a href="../../../../stellar/sdk/model/op/CreatePassiveOfferOperation$.html#finalize():Unit" title="Permalink">
+      <a href="../../../../stellar/sdk/model/op/CreateBuyOfferOperation.html#finalize():Unit" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -489,7 +523,7 @@
     </li><li name="scala.AnyRef#getClass" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="getClass():Class[_]"></a>
       <span class="permalink">
-      <a href="../../../../stellar/sdk/model/op/CreatePassiveOfferOperation$.html#getClass():Class[_]" title="Permalink">
+      <a href="../../../../stellar/sdk/model/op/CreateBuyOfferOperation.html#getClass():Class[_]" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -505,29 +539,10 @@
                 <span class="name">@native</span><span class="args">()</span>
               
         </dd></dl></div>
-    </li><li name="scala.AnyRef#hashCode" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="hashCode():Int"></a>
-      <span class="permalink">
-      <a href="../../../../stellar/sdk/model/op/CreatePassiveOfferOperation$.html#hashCode():Int" title="Permalink">
-        <i class="material-icons"></i>
-      </a>
-    </span>
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">hashCode</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
-      </span>
-      
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd><dt>Annotations</dt><dd>
-                <span class="name">@native</span><span class="args">()</span>
-              
-        </dd></dl></div>
     </li><li name="scala.Any#isInstanceOf" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="isInstanceOf[T0]:Boolean"></a>
       <span class="permalink">
-      <a href="../../../../stellar/sdk/model/op/CreatePassiveOfferOperation$.html#isInstanceOf[T0]:Boolean" title="Permalink">
+      <a href="../../../../stellar/sdk/model/op/CreateBuyOfferOperation.html#isInstanceOf[T0]:Boolean" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -543,7 +558,7 @@
     </li><li name="scala.AnyRef#ne" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="ne(x$1:AnyRef):Boolean"></a><a id="ne(AnyRef):Boolean"></a>
       <span class="permalink">
-      <a href="../../../../stellar/sdk/model/op/CreatePassiveOfferOperation$.html#ne(x$1:AnyRef):Boolean" title="Permalink">
+      <a href="../../../../stellar/sdk/model/op/CreateBuyOfferOperation.html#ne(x$1:AnyRef):Boolean" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -559,7 +574,7 @@
     </li><li name="scala.AnyRef#notify" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="notify():Unit"></a>
       <span class="permalink">
-      <a href="../../../../stellar/sdk/model/op/CreatePassiveOfferOperation$.html#notify():Unit" title="Permalink">
+      <a href="../../../../stellar/sdk/model/op/CreateBuyOfferOperation.html#notify():Unit" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -578,7 +593,7 @@
     </li><li name="scala.AnyRef#notifyAll" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="notifyAll():Unit"></a>
       <span class="permalink">
-      <a href="../../../../stellar/sdk/model/op/CreatePassiveOfferOperation$.html#notifyAll():Unit" title="Permalink">
+      <a href="../../../../stellar/sdk/model/op/CreateBuyOfferOperation.html#notifyAll():Unit" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -594,10 +609,74 @@
                 <span class="name">@native</span><span class="args">()</span>
               
         </dd></dl></div>
+    </li><li name="stellar.sdk.model.op.ManageBuyOfferOperation#offerId" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="offerId:Long"></a>
+      <span class="permalink">
+      <a href="../../../../stellar/sdk/model/op/CreateBuyOfferOperation.html#offerId:Long" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">offerId</span><span class="result">: <span class="extype" name="scala.Long">Long</span></span>
+      </span>
+      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="ManageBuyOfferOperation.html" class="extype" name="stellar.sdk.model.op.ManageBuyOfferOperation">ManageBuyOfferOperation</a></dd></dl></div>
+    </li><li name="stellar.sdk.model.op.CreateBuyOfferOperation#price" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="price:stellar.sdk.model.Price"></a><a id="price:Price"></a>
+      <span class="permalink">
+      <a href="../../../../stellar/sdk/model/op/CreateBuyOfferOperation.html#price:stellar.sdk.model.Price" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">price</span><span class="result">: <a href="../Price.html" class="extype" name="stellar.sdk.model.Price">Price</a></span>
+      </span>
+      
+      
+    </li><li name="stellar.sdk.model.op.CreateBuyOfferOperation#selling" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="selling:stellar.sdk.model.Asset"></a><a id="selling:Asset"></a>
+      <span class="permalink">
+      <a href="../../../../stellar/sdk/model/op/CreateBuyOfferOperation.html#selling:stellar.sdk.model.Asset" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">selling</span><span class="result">: <a href="../Asset.html" class="extype" name="stellar.sdk.model.Asset">Asset</a></span>
+      </span>
+      
+      
+    </li><li name="stellar.sdk.model.op.CreateBuyOfferOperation#sourceAccount" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="sourceAccount:Option[stellar.sdk.PublicKeyOps]"></a><a id="sourceAccount:Option[PublicKeyOps]"></a>
+      <span class="permalink">
+      <a href="../../../../stellar/sdk/model/op/CreateBuyOfferOperation.html#sourceAccount:Option[stellar.sdk.PublicKeyOps]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">sourceAccount</span><span class="result">: <span class="extype" name="scala.Option">Option</span>[<a href="../../PublicKeyOps.html" class="extype" name="stellar.sdk.PublicKeyOps">PublicKeyOps</a>]</span>
+      </span>
+      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="stellar.sdk.model.op.CreateBuyOfferOperation">CreateBuyOfferOperation</a> → <a href="Operation.html" class="extype" name="stellar.sdk.model.op.Operation">Operation</a></dd></dl></div>
     </li><li name="scala.AnyRef#synchronized" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="synchronized[T0](x$1:=&gt;T0):T0"></a><a id="synchronized[T0](⇒T0):T0"></a>
       <span class="permalink">
-      <a href="../../../../stellar/sdk/model/op/CreatePassiveOfferOperation$.html#synchronized[T0](x$1:=&gt;T0):T0" title="Permalink">
+      <a href="../../../../stellar/sdk/model/op/CreateBuyOfferOperation.html#synchronized[T0](x$1:=&gt;T0):T0" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -610,26 +689,10 @@
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
-    </li><li name="scala.AnyRef#toString" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="toString():String"></a>
-      <span class="permalink">
-      <a href="../../../../stellar/sdk/model/op/CreatePassiveOfferOperation$.html#toString():String" title="Permalink">
-        <i class="material-icons"></i>
-      </a>
-    </span>
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">toString</span><span class="params">()</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
-      </span>
-      
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
     </li><li name="scala.AnyRef#wait" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="wait():Unit"></a>
       <span class="permalink">
-      <a href="../../../../stellar/sdk/model/op/CreatePassiveOfferOperation$.html#wait():Unit" title="Permalink">
+      <a href="../../../../stellar/sdk/model/op/CreateBuyOfferOperation.html#wait():Unit" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -651,7 +714,7 @@
     </li><li name="scala.AnyRef#wait" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="wait(x$1:Long,x$2:Int):Unit"></a><a id="wait(Long,Int):Unit"></a>
       <span class="permalink">
-      <a href="../../../../stellar/sdk/model/op/CreatePassiveOfferOperation$.html#wait(x$1:Long,x$2:Int):Unit" title="Permalink">
+      <a href="../../../../stellar/sdk/model/op/CreateBuyOfferOperation.html#wait(x$1:Long,x$2:Int):Unit" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -673,7 +736,7 @@
     </li><li name="scala.AnyRef#wait" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="wait(x$1:Long):Unit"></a><a id="wait(Long):Unit"></a>
       <span class="permalink">
-      <a href="../../../../stellar/sdk/model/op/CreatePassiveOfferOperation$.html#wait(x$1:Long):Unit" title="Permalink">
+      <a href="../../../../stellar/sdk/model/op/CreateBuyOfferOperation.html#wait(x$1:Long):Unit" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -708,6 +771,16 @@
               <h3>Inherited from <span class="extype" name="scala.Serializable">Serializable</span></h3>
             </div><div class="parent" name="java.io.Serializable">
               <h3>Inherited from <span class="extype" name="java.io.Serializable">Serializable</span></h3>
+            </div><div class="parent" name="scala.Product">
+              <h3>Inherited from <span class="extype" name="scala.Product">Product</span></h3>
+            </div><div class="parent" name="scala.Equals">
+              <h3>Inherited from <span class="extype" name="scala.Equals">Equals</span></h3>
+            </div><div class="parent" name="stellar.sdk.model.op.ManageBuyOfferOperation">
+              <h3>Inherited from <a href="ManageBuyOfferOperation.html" class="extype" name="stellar.sdk.model.op.ManageBuyOfferOperation">ManageBuyOfferOperation</a></h3>
+            </div><div class="parent" name="stellar.sdk.model.op.Operation">
+              <h3>Inherited from <a href="Operation.html" class="extype" name="stellar.sdk.model.op.Operation">Operation</a></h3>
+            </div><div class="parent" name="stellar.sdk.model.xdr.Encodable">
+              <h3>Inherited from <a href="../xdr/Encodable.html" class="extype" name="stellar.sdk.model.xdr.Encodable">Encodable</a></h3>
             </div><div class="parent" name="scala.AnyRef">
               <h3>Inherited from <span class="extype" name="scala.AnyRef">AnyRef</span></h3>
             </div><div class="parent" name="scala.Any">
