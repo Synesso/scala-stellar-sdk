@@ -6,6 +6,15 @@ As this project is pre 1.0, breaking changes may happen for minor version bumps.
 
 _Nothing, yet._
 
+## 0.7.0
+
+### Added
+
+- [#77](https://github.com/Synesso/scala-stellar-sdk/issues/77) Supports protocol v11.
+    - Renames `{Create|Delete|Update}OfferOperation` to `{Create|Delete|Update}SellOfferOperation`.
+    - Renames `CreatePassiveOfferOperation` to `CreatePassiveSellOfferOperation`.
+    - Introduces `{Create|Delete|Update}BuyOfferOperation`.
+
 ## 0.6.4
 
 ### Fixed
