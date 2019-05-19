@@ -54,13 +54,13 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
       batch match {
         case Nil =>
         case xs =>
-          logger.debug(s"Transacting ${xs.size}")
+          logger.debug(s"Transacting ${xs.size} operation(s)")
           val opAccountIds = xs.flatMap(_.sourceAccount).map(_.accountId).toSet
           val signatories = accounts.filter(a => opAccountIds.contains(a.accountId))
           val signedTransaction = xs.foldLeft(model.Transaction(masterAccount))(_ add _).sign(masterAccountKey)
           val eventualTransactionPostResponse = signatories.foldLeft(signedTransaction)(_ sign _).submit()
           val transactionPostResponse = Await.result(eventualTransactionPostResponse, 5 minutes)
-          logger.info(transactionPostResponse.toString)
+          logger.info(s"${transactionPostResponse.toString.take(100)}...")
           transactionPostResponse must beLike[TransactionPostResponse] { case r => r.isSuccess must beTrue }
           masterAccount = masterAccount.withIncSeq
           forReal(remaining.take(batchSize), remaining.drop(batchSize))

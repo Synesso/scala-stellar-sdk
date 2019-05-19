@@ -19,8 +19,8 @@ class MemoSpec extends Specification with ArbitraryInput with DomainMatchers {
       MemoId(0) must not(throwAn[AssertionError])
     }
 
-    "not be constructable with negative number" >> prop { id: Long =>
-      MemoId(id) must throwAn[AssertionError]
+    "be constructable with negative number" >> prop { id: Long =>
+      MemoId(id).toString mustEqual s"MemoId(${java.lang.Long.toUnsignedString(id)})"
     }.setGen(Gen.negNum[Long])
   }
 

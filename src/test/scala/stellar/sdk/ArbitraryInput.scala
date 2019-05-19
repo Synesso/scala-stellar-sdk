@@ -410,7 +410,7 @@ trait ArbitraryInput extends ScalaCheck {
 
   def genMemoText: Gen[MemoText] = Gen.identifier.map(_.take(28)).map(MemoText.apply)
 
-  def genMemoId: Gen[MemoId] = Gen.posNum[Long].map(_ - 1).map(MemoId.apply)
+  def genMemoId: Gen[MemoId] = Arbitrary.arbLong.arbitrary.map(MemoId.apply)
 
   def genMemoHash: Gen[MemoHash] = for {
     bs <- Gen.nonEmptyContainerOf[Array, Byte](Arbitrary.arbByte.arbitrary)
