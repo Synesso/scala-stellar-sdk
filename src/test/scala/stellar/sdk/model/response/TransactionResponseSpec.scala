@@ -96,7 +96,8 @@ class TransactionResponseSpec extends Specification with ArbitraryInput with Dom
         case NoMemo => "none" -> None
         case MemoId(id) => "id" -> Some(s"$id")
         case MemoText(t) => "text" -> Some(t)
-        case m: MemoWithHash => "hash" -> Some(base64(m.bs))
+        case MemoHash(bs) => "hash" -> Some(base64(bs))
+        case MemoReturnHash(bs) => "return" -> Some(base64(bs))
       }
       val json = memo.foldLeft(
         ("hash" -> h.hash) ~

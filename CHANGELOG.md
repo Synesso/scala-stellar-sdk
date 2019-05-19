@@ -25,6 +25,7 @@ _Nothing, yet._
 ### Fixed
 
 - [#76](https://github.com/Synesso/scala-stellar-sdk/issues/76) `MemoId` is parsed as unsigned Long.
+- [#84](https://github.com/Synesso/scala-stellar-sdk/issues/84) Return hash memos are handled explicitly.
 
 ## 0.6.4
 

@@ -570,10 +570,7 @@ trait ArbitraryInput extends ScalaCheck {
     sequence <- Gen.posNum[Long]
     feePaid <- Gen.posNum[Int].map(NativeAmount(_))
     operationCount <- Gen.posNum[Int]
-    memo <- genMemo.map {
-      case MemoReturnHash(bs) => MemoHash(bs)
-      case m => m
-    }
+    memo <- genMemo
     signatures <- Gen.nonEmptyListOf(genHash)
     envelopeXDR <- genHash
     resultXDR <- genHash
