@@ -8,12 +8,19 @@ _Nothing, yet._
 
 ## 0.7.0
 
+### Breaking changes
+
+- Renamed types `{Create|Delete|Update}OfferOperation` to `{Create|Delete|Update}SellOfferOperation`.
+- Renamed type `CreatePassiveOfferOperation` to `CreatePassiveSellOfferOperation`.
+
 ### Added
 
 - [#77](https://github.com/Synesso/scala-stellar-sdk/issues/77) Supports protocol v11.
     - Renames `{Create|Delete|Update}OfferOperation` to `{Create|Delete|Update}SellOfferOperation`.
     - Renames `CreatePassiveOfferOperation` to `CreatePassiveSellOfferOperation`.
     - Introduces `{Create|Delete|Update}BuyOfferOperation`.
+- [#78](https://github.com/Synesso/scala-stellar-sdk/issues/78) Parse `manage_sell_offer` JSON responses to
+    provide compatibility with Horizon v0.18.0.
 
 ## 0.6.4
 
