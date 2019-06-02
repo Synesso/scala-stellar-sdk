@@ -1,6 +1,7 @@
 package stellar.sdk.inet
 
 import java.net.URI
+import java.util.concurrent.TimeUnit
 
 import akka.NotUsed
 import akka.actor.ActorSystem
@@ -93,12 +94,23 @@ class Horizon(uri: URI)
   private[inet] def parseOrRedirectOrError[T](request: HttpRequest, response: HttpResponse)(implicit m: Manifest[T]): Future[Try[T]] = {
     val HttpResponse(status, _, entity, _) = response
 
-    // 404 - not found
-    if (status.intValue() == StatusCodes.NotFound.intValue)
+    // 404 - Not found
+    if (status == StatusCodes.NotFound)
       Unmarshal(response.entity).to[JObject]
         .map(HorizonEntityNotFound(request.uri, _)).map(Failure(_))
 
-    // 3xx redirect
+    // 429 - Rate limit exceeded
+    else if (status == StatusCodes.TooManyRequests) {
+      val retryAt = Try {
+        Duration(
+          response.headers.find(_.name() == "X-Ratelimit-Reset").map(_.value().toInt).getOrElse(5),
+          TimeUnit.SECONDS
+        )
+      }
+      Future.successful(HorizonRateLimitExceeded(request.uri, retryAt.get)).map(Failure(_))
+    }
+
+    // 3xx - Redirect
     else if (status.isRedirection()) {
       val request_ = request.copy(uri = response.header[Location].get.uri)
       Http().singleRequest(request).flatMap(parseOrRedirectOrError(request_, _))
