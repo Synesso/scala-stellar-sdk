@@ -4,7 +4,11 @@ As this project is pre 1.0, breaking changes may happen for minor version bumps.
 
 ## Next version
 
-_Nothing, yet._
+### Fixed
+
+- [#86](https://github.com/Synesso/scala-stellar-sdk/issues/86) Horizon response of `TooManyRequests` will result in
+        a `HorizonRateLimitExceeded` response. That exception type includes the duration until the next rate limit
+        window opens.
 
 ## 0.7.0
 
