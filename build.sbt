@@ -5,7 +5,7 @@ import scoverage.ScoverageKeys.coverageMinimum
 lazy val commonSettings = Seq(
   name := "scala-stellar-sdk",
   organization := "io.github.synesso",
-  scalaVersion := "2.12.8",
+  scalaVersion := "2.13",
   homepage := Some(url("https://github.com/synesso/scala-stellar-sdk")),
   startYear := Some(2018),
   description := "Perform Stellar (distributed payments platform) operations from your Scala application. " +
@@ -76,11 +76,11 @@ lazy val root = (project in file("."))
       "com.typesafe.akka" %% "akka-http" % "10.1.8",
       "com.typesafe.akka" %% "akka-stream" % "2.5.23",
       "com.lightbend.akka" %% "akka-stream-alpakka-sse" % "1.0.2",
-      "de.heikoseeberger" %% "akka-http-json4s" % "1.25.2",
+      "de.heikoseeberger" %% "akka-http-json4s" % "1.26.0",
       "org.json4s" %% "json4s-native" % "3.6.6",
       "com.typesafe.scala-logging" %% "scala-logging" % "3.9.2",
       "ch.qos.logback" % "logback-classic" % "1.2.3",
-      "org.typelevel" %% "cats-core" % "1.6.0",
+      "org.typelevel" %% "cats-core" % "1.6.1",
       "tech.sparse" %%  "toml-scala" % "0.2.0",
       "org.specs2" %% "specs2-core" % "4.5.1" % "test,it",
       "org.specs2" %% "specs2-mock" % "4.5.1" % "test",
