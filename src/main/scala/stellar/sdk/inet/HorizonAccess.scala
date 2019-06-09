@@ -26,7 +26,7 @@ import stellar.sdk.model.op.TransactedOperationDeserializer
 import stellar.sdk.model.response._
 import stellar.sdk.model.result.TransactionHistoryDeserializer
 
-import scala.concurrent.duration.FiniteDuration
+import scala.concurrent.duration._
 import scala.concurrent.{Await, ExecutionContext, Future}
 import scala.reflect.ClassTag
 import scala.util.{Failure, Success, Try}
@@ -174,7 +174,7 @@ class Horizon(call: HttpRequest => Future[HttpResponse])
         () => call(request)
 
     logger.debug(s"Getting $uri")
-    val request = HttpRequest(GET, uri).addHeader(clientNameHeader).addHeader(clientVersionHeader)
+
     getResponse().flatMap {
       case response if response.status == StatusCodes.NotFound => Future(Page(Seq.empty[T], uri.toString()))
       case response                                            => Unmarshal(response).to[RawPage].map(_.parse[T])
