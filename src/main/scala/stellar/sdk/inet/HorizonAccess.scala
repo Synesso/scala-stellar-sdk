@@ -167,17 +167,14 @@ class Horizon(call: HttpRequest => Future[HttpResponse])
 
     val request = HttpRequest(GET, uri).addHeader(clientNameHeader).addHeader(clientVersionHeader)
 
-    val getResponse: () => Future[HttpResponse] =
-      if(uri.isAbsolute)
-        () => Http().singleRequest(request)
-      else
-        () => call(request)
+    val response =
+      if (uri.isAbsolute) Http().singleRequest(request)
+      else call(request)
 
-    logger.debug(s"Getting $uri")
-
-    getResponse().flatMap {
-      case response if response.status == StatusCodes.NotFound => Future(Page(Seq.empty[T], uri.toString()))
-      case response                                            => Unmarshal(response).to[RawPage].map(_.parse[T])
+    response.flatMap {
+      case r if r.status == StatusCodes.NotFound => Future(Page(Seq.empty[T], uri.toString()))
+      case r =>
+        Unmarshal(r).to[RawPage].map(_.parse[T])
     }
     .recover { case t: Throwable => throw new RuntimeException(s"Unable to get page for $uri", t) }
   }
@@ -213,7 +210,12 @@ object Horizon {
 
   def apply(uri: Uri)(implicit system: ActorSystem): HorizonAccess =
     Horizon.apply(
-      request => Http().singleRequest(request.copy(uri = uri.withPath(request.uri.path)))
+      request => {
+        val requestUri = uri
+          .withPath(request.uri.path)
+          .withQuery(Uri.Query(request.uri.queryString()))
+        Http().singleRequest(request.copy(uri = requestUri))
+      }
     )
 
   def apply(uri: String)(implicit system: ActorSystem): HorizonAccess =
@@ -226,20 +228,22 @@ object Horizon {
     new Horizon(call)
 }
 
-class MultiHostCaller(uris: NonEmptyList[Uri], maxNumberOfRetry: Int, backoff: FiniteDuration)
+/*
+// TODO - Re-enable in separate PR with test coverage and documentation.
+class MultiHostCaller(uris: NonEmptyList[Uri], maxNumberOfRetry: Int, backOff: FiniteDuration)
                      (implicit
                       system: ActorSystem) extends (HttpRequest => Future[HttpResponse]) {
 
   implicit val executionContext = system.dispatcher
 
   override def apply(request: HttpRequest): Future[HttpResponse] = {
-    call(uris, request)(maxNumberOfRetry, backoff)
+    call(uris, request)(maxNumberOfRetry, backOff)
   }
 
   def call(uris: NonEmptyList[Uri], request: HttpRequest)
           (implicit
            maxNumberOfRetry: Int,
-           minBackoff: FiniteDuration): Future[HttpResponse] = {
+           minBackOff: FiniteDuration): Future[HttpResponse] = {
 
     singleRequest(prepareRequest(uris.head, request)) flatMap { response =>
       handleResponse(request, response) flatMap {
@@ -253,7 +257,7 @@ class MultiHostCaller(uris: NonEmptyList[Uri], maxNumberOfRetry: Int, backoff: F
               request: HttpRequest, previousResponse: HttpResponse)
              (implicit
               maxNumberOfRetry: Int,
-              minBackoff: FiniteDuration): Future[HttpResponse] = {
+              minBackOff: FiniteDuration): Future[HttpResponse] = {
     uris match {
       case Nil =>
         Future.successful(previousResponse)
@@ -271,18 +275,18 @@ class MultiHostCaller(uris: NonEmptyList[Uri], maxNumberOfRetry: Int, backoff: F
   def singleRequest(request: HttpRequest)
                    (implicit
                     maxNumberOfRetry: Int,
-                    minBackoff: FiniteDuration): Future[HttpResponse] = {
+                    minBackOff: FiniteDuration): Future[HttpResponse] = {
     retryableFuture(() => Http().singleRequest(request))
   }
 
   def retryableFuture(future: () => Future[HttpResponse])
                      (implicit
                       maxNumberOfRetry: Int,
-                      minBackoff: FiniteDuration): Future[HttpResponse] = {
+                      minBackOff: FiniteDuration): Future[HttpResponse] = {
     implicit val allNonFailed: retry.Success[HttpResponse] = retry.Success[HttpResponse] { _ => true }
 
     retry
-      .Backoff(maxNumberOfRetry, minBackoff)
+      .BackOff(maxNumberOfRetry, minBackOff)
       .apply {
         future
       }
@@ -311,4 +315,5 @@ class MultiHostCaller(uris: NonEmptyList[Uri], maxNumberOfRetry: Int, backoff: F
     }
   }
 }
+*/
 
