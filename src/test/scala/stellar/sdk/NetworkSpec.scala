@@ -1,5 +1,7 @@
 package stellar.sdk
 
+import java.net.URLEncoder
+
 import akka.NotUsed
 import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
@@ -77,7 +79,8 @@ class NetworkSpec(implicit ee: ExecutionEnv) extends Specification with Arbitrar
       val network = new MockNetwork
       val response = DataValueResponse(ByteArrays.base64(value.getBytes("UTF-8")))
       val expected = Future(response)
-      network.horizon.get[DataValueResponse](s"/accounts/${pk.accountId}/data/$key") returns expected
+      val encodedKey = URLEncoder.encode(key, "UTF-8")
+      network.horizon.get[DataValueResponse](s"/accounts/${pk.accountId}/data/$encodedKey") returns expected
       network.accountData(pk, key) must beEqualTo(value).await
     }
 

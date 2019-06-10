@@ -81,6 +81,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
           CreateAccountOperation(accnB, lumens(1000)),
           CreateAccountOperation(accnC, lumens(1000)),
           WriteDataOperation("life_universe_everything", "42", Some(accnB)),
+          WriteDataOperation("brain the size of a planet", "and they ask me to open a door", Some(accnB)),
           WriteDataOperation("fenton", "FENTON!", Some(accnC)),
           DeleteDataOperation("fenton", Some(accnC)),
           SetOptionsOperation(setFlags = Some(Set(AuthorizationRequiredFlag, AuthorizationRevocableFlag)), sourceAccount = Some(accnA)),
@@ -152,12 +153,22 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
   "account endpoint" should {
     "fetch account response details" >> {
       network.account(accnA) must beLike[AccountResponse] {
-        case AccountResponse(id, _, _, _, _, _, balances, _) =>
+        case AccountResponse(id, _, _, _, _, _, balances, _, data) =>
           id mustEqual accnA
           balances must containTheSameElementsAs(Seq(
             Balance(lumens(1000.000495), buyingLiabilities = 1600),
             Balance(IssuedAmount(1, Asset.apply("Chinchilla", masterAccountKey)), limit = Some(100000000))
           ))
+          data must beEmpty
+      }.awaitFor(30 seconds)
+    }
+
+    "provide access to custom data" >> {
+      network.account(accnB) must beLike[AccountResponse] { case r =>
+        r.data mustEqual Map(
+          "life_universe_everything" -> "42",
+          "brain the size of a planet" -> "and they ask me to open a door"
+        )
       }.awaitFor(30 seconds)
     }
 
@@ -195,7 +206,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
     }
 
     "fetch nothing if no data exists for the account" >> {
-      network.accountData(accnB, "brain_size_of_planet") must throwA[Exception].like { case HorizonEntityNotFound(uri, body) =>
+      network.accountData(accnB, "vogon poetry") must throwA[Exception].like { case HorizonEntityNotFound(uri, body) =>
         body mustEqual ("type" -> "https://stellar.org/horizon-errors/not_found") ~
           ("title" -> "Resource Missing") ~
           ("status" -> 404) ~
@@ -239,7 +250,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
   "effect endpoint" should {
     "parse all effects" >> {
       val effects = network.effects()
-      effects.map(_.size) must beEqualTo(230).awaitFor(10 seconds)
+      effects.map(_.size) must beEqualTo(231).awaitFor(10 seconds)
     }
 
     "filter effects by account" >> {
@@ -330,7 +341,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
 
   "operation endpoint" should {
     "list all operations" >> {
-      network.operations().map(_.size) must beEqualTo(127).awaitFor(10.seconds)
+      network.operations().map(_.size) must beEqualTo(128).awaitFor(10.seconds)
     }
 
     "list operations by account" >> {
@@ -446,8 +457,8 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
       byAccount.map(_.head) must beLike[TransactionHistory] {
         case t =>
           t.account must beEquivalentTo(masterAccountKey)
-          t.feePaid mustEqual NativeAmount(1400)
-          t.operationCount mustEqual 14
+          t.feePaid mustEqual NativeAmount(1500)
+          t.operationCount mustEqual 15
           t.memo mustEqual NoMemo
       }.awaitFor(10.seconds)
     }

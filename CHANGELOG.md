@@ -4,11 +4,22 @@ As this project is pre 1.0, breaking changes may happen for minor version bumps.
 
 ## Next version
 
+_Nothing yet_
+
+## 0.7.1
+
+### Added
+
+- [#74](https://github.com/Synesso/scala-stellar-sdk/issues/74) Failed network calls to Horizon will now automatically
+        retry several times.
+
 ### Fixed
 
 - [#86](https://github.com/Synesso/scala-stellar-sdk/issues/86) Horizon response of `TooManyRequests` will result in
         a `HorizonRateLimitExceeded` response. That exception type includes the duration until the next rate limit
         window opens.
+- [#70](https://github.com/Synesso/scala-stellar-sdk/issues/70) Account responses now include account data.
+- [#76](https://github.com/Synesso/scala-stellar-sdk/issues/76) MemoIds are parsed as Longs and accept zero as a value.
 
 ## 0.7.0
 
