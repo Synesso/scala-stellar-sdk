@@ -115,7 +115,7 @@ class Horizon(call: HttpRequest => Future[HttpResponse])
     // 3xx - Redirect
     else if (status.isRedirection()) {
       val request_ = request.copy(uri = response.header[Location].get.uri)
-      Http().singleRequest(request).flatMap(parseOrRedirectOrError(request_, _))
+      Http().singleRequest(request_).flatMap(parseOrRedirectOrError(request_, _))
     }
 
     // 200 or 4xx
