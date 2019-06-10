@@ -1,9 +1,10 @@
 package stellar.sdk.model.response
 
+import org.apache.commons.codec.binary.Base64
 import org.json4s.DefaultFormats
 import org.json4s.JsonAST.{JArray, JObject}
-import stellar.sdk.model.Amount.toBaseUnits
 import stellar.sdk._
+import stellar.sdk.model.Amount.toBaseUnits
 import stellar.sdk.model._
 
 case class AccountResponse(id: PublicKey,
@@ -13,7 +14,8 @@ case class AccountResponse(id: PublicKey,
                            authRequired: Boolean,
                            authRevocable: Boolean,
                            balances: List[Balance],
-                           signers: List[Signer]) {
+                           signers: List[Signer],
+                           data: Map[String, String]) {
 
   def toAccount: Account = Account(id, lastSequence + 1)
 }
@@ -60,8 +62,10 @@ object AccountRespDeserializer extends ResponseParser[AccountResponse]({ o: JObj
       Signer(key, weight)
     case _ => throw new RuntimeException(s"Expected js object at 'signers'")
   }
+  val JObject(dataFields) = o \ "data"
+  val data = dataFields.toMap.mapValues(_.extract[String]).mapValues(Base64.decodeBase64).mapValues(new String(_))
 
   AccountResponse(id, seq, subEntryCount, Thresholds(lowThreshold, mediumThreshold, highThreshold), authRequired,
-    authRevocable, balances, signers)
+    authRevocable, balances, signers, data)
 
 })

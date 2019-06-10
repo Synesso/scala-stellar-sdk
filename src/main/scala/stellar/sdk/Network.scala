@@ -1,5 +1,6 @@
 package stellar.sdk
 
+import java.net.URLEncoder
 import java.nio.charset.StandardCharsets.UTF_8
 
 import akka.NotUsed
@@ -49,8 +50,11 @@ trait Network extends LazyLogging {
     * @param dataKey the key for the data field
     * @see [[https://www.stellar.org/developers/horizon/reference/endpoints/data-for-account.html endpoint doc]]
     */
-  def accountData(pubKey: PublicKeyOps, dataKey: String)(implicit ec: ExecutionContext): Future[String] =
-    horizon.get[DataValueResponse](s"/accounts/${pubKey.accountId}/data/$dataKey").map(_.v).map(base64).map(new String(_, "UTF-8"))
+  def accountData(pubKey: PublicKeyOps, dataKey: String)(implicit ec: ExecutionContext): Future[String] = {
+    val encodedKey = URLEncoder.encode(dataKey, UTF_8)
+    horizon.get[DataValueResponse](s"/accounts/${pubKey.accountId}/data/$encodedKey")
+      .map(_.v).map(base64).map(new String(_, UTF_8))
+  }
 
   /**
     * Fetch a stream of assets, optionally filtered by code, issuer or neither

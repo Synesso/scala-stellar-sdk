@@ -8,12 +8,12 @@ import org.apache.commons.codec.binary.Base64
 import org.scalacheck.{Arbitrary, Gen}
 import org.specs2.ScalaCheck
 import stellar.sdk.model._
-import stellar.sdk.util.ByteArrays.trimmedByteArray
 import stellar.sdk.model.op._
+import stellar.sdk.model.response._
 import stellar.sdk.model.result.TransactionResult._
 import stellar.sdk.model.result.{PathPaymentResult, _}
-import stellar.sdk.model.response._
 import stellar.sdk.util.ByteArrays
+import stellar.sdk.util.ByteArrays.trimmedByteArray
 
 import scala.util.Random
 
@@ -467,7 +467,14 @@ trait ArbitraryInput extends ScalaCheck {
     authRevocable <- Gen.oneOf(true, false)
     balances <- Gen.nonEmptyListOf(genBalance)
     signers <- Gen.nonEmptyListOf(genSigner)
-  } yield AccountResponse(id, lastSequence, subEntryCount, thresholds, authRequired, authRevocable, balances, signers)
+    data <- genDataMap
+  } yield AccountResponse(id, lastSequence, subEntryCount, thresholds, authRequired, authRevocable, balances, signers, data)
+
+  def genDataMap: Gen[Map[String, String]] = for {
+    qty <- Gen.choose(0, 30)
+    keys <- Gen.listOfN(qty, Gen.identifier)
+    values <- Gen.listOfN(qty, Gen.asciiPrintableStr)
+  } yield keys.zip(values).toMap
 
   def genSigner: Gen[Signer] = for {
     weight <- Gen.choose(0, 255)
