@@ -8,6 +8,7 @@ import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.model.HttpMethods.{GET, POST}
 import akka.http.scaladsl.model.MediaTypes.`application/json`
+import akka.http.scaladsl.model.StatusCodes.NotFound
 import akka.http.scaladsl.model.Uri.Query
 import akka.http.scaladsl.model._
 import akka.http.scaladsl.model.headers._
@@ -15,16 +16,15 @@ import akka.http.scaladsl.model.sse.ServerSentEvent
 import akka.http.scaladsl.unmarshalling.Unmarshal
 import akka.stream.ActorMaterializer
 import akka.stream.scaladsl.Source
-import cats.data.NonEmptyList
 import com.typesafe.scalalogging.LazyLogging
 import de.heikoseeberger.akkahttpjson4s.Json4sSupport
 import org.json4s.native.{JsonMethods, Serialization}
 import org.json4s.{CustomSerializer, DefaultFormats, Formats, JObject, NoTypeHints}
-import stellar.sdk.{BuildInfo, DefaultActorSystem}
 import stellar.sdk.model._
 import stellar.sdk.model.op.TransactedOperationDeserializer
 import stellar.sdk.model.response._
 import stellar.sdk.model.result.TransactionHistoryDeserializer
+import stellar.sdk.{BuildInfo, DefaultActorSystem}
 
 import scala.concurrent.duration._
 import scala.concurrent.{Await, ExecutionContext, Future}
@@ -97,7 +97,7 @@ class Horizon(call: HttpRequest => Future[HttpResponse])
     val HttpResponse(status, _, entity, _) = response
 
     // 404 - Not found
-    if (status == StatusCodes.NotFound)
+    if (status == NotFound)
       Unmarshal(response.entity).to[JObject]
         .map(HorizonEntityNotFound(request.uri, _)).map(Failure(_))
 
@@ -172,9 +172,8 @@ class Horizon(call: HttpRequest => Future[HttpResponse])
       else call(request)
 
     response.flatMap {
-      case r if r.status == StatusCodes.NotFound => Future(Page(Seq.empty[T], uri.toString()))
-      case r =>
-        Unmarshal(r).to[RawPage].map(_.parse[T])
+      case r if r.status == NotFound => Future(Page(Seq.empty[T], uri.toString()))
+      case r                         => Unmarshal(r).to[RawPage].map(_.parse[T])
     }
     .recover { case t: Throwable => throw new RuntimeException(s"Unable to get page for $uri", t) }
   }
@@ -217,9 +216,6 @@ object Horizon {
         Http().singleRequest(request.copy(uri = requestUri))
       }
     )
-
-  def apply(uri: String)(implicit system: ActorSystem): HorizonAccess =
-    Horizon.apply(Uri(uri))
 
   def apply(uri: URI)(implicit system: ActorSystem = DefaultActorSystem.system): HorizonAccess =
     Horizon.apply(Uri(uri.toString))

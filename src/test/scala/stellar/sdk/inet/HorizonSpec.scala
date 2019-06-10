@@ -5,6 +5,7 @@ import akka.http.scaladsl.Http
 import akka.http.scaladsl.model.HttpCharsets.`UTF-8`
 import akka.http.scaladsl.model._
 import akka.http.scaladsl.model.headers.{Location, RawHeader}
+import org.json4s.{DefaultFormats, DefaultJsonFormats}
 import org.json4s.JsonDSL._
 import org.json4s.native.JsonMethods._
 import org.specs2.concurrent.ExecutionEnv
@@ -42,7 +43,7 @@ class HorizonSpec(implicit ec: ExecutionEnv) extends Specification with Mockito 
   }
 
   "parsing a rate-limit-exceeded response" should {
-    "fail with a rate-limit-exceeded" >> {
+    "fail with rate-limit-exceeded" >> {
       val responseBody = ("detail" -> "going too fast!") ~ ("status" -> 429)
       val responseEntity = HttpEntity(
         ContentType(MediaType.applicationWithFixedCharset("problem+json", `UTF-8`)),
@@ -54,6 +55,20 @@ class HorizonSpec(implicit ec: ExecutionEnv) extends Specification with Mockito 
         case HorizonRateLimitExceeded(requestUri, retryAfter) =>
           requestUri mustEqual uri
           retryAfter mustEqual 7.seconds
+      }.awaitFor(1.second)
+    }
+
+    "default to a retry value of 5 seconds" >> {
+      val responseBody = ("detail" -> "going too fast!") ~ ("status" -> 429)
+      val responseEntity = HttpEntity(
+        ContentType(MediaType.applicationWithFixedCharset("problem+json", `UTF-8`)),
+        compact(render(responseBody))
+      )
+      val response = new HttpResponse(StatusCodes.TooManyRequests, Nil, responseEntity, HttpProtocols.`HTTP/2.0`)
+      new Horizon(call(uri)).parseOrRedirectOrError[String](request, response) must beFailedTry[String].like {
+        case HorizonRateLimitExceeded(requestUri, retryAfter) =>
+          requestUri mustEqual uri
+          retryAfter mustEqual 5.seconds
       }.awaitFor(1.second)
     }
   }
@@ -73,7 +88,4 @@ class HorizonSpec(implicit ec: ExecutionEnv) extends Specification with Mockito 
       }.awaitFor(1.second)
     }
   }
-
-
-
 }
