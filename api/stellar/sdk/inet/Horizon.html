@@ -127,16 +127,24 @@
                         <a href="EventSource$.html" title="This stream processing stage establishes a continuous source of server-sent events from the given URI.">EventSource</a>
                       </li><li class="current-entities indented3">
                         <span class="separator"></span>
+                        <a class="class" href="FailedResponse.html" title=""></a>
+                        <a href="FailedResponse.html" title="">FailedResponse</a>
+                      </li><li class="current-entities indented3">
+                        <a class="object" href="Horizon$.html" title=""></a>
                         <a class="class" href="" title=""></a>
                         <a href="" title="">Horizon</a>
                       </li><li class="current-entities indented3">
-                        <a class="object" href="HorizonAccess$.html" title=""></a>
+                        <span class="separator"></span>
                         <a class="trait" href="HorizonAccess.html" title=""></a>
                         <a href="HorizonAccess.html" title="">HorizonAccess</a>
                       </li><li class="current-entities indented3">
                         <span class="separator"></span>
                         <a class="class" href="HorizonEntityNotFound.html" title=""></a>
                         <a href="HorizonEntityNotFound.html" title="">HorizonEntityNotFound</a>
+                      </li><li class="current-entities indented3">
+                        <span class="separator"></span>
+                        <a class="class" href="HorizonRateLimitExceeded.html" title=""></a>
+                        <a href="HorizonRateLimitExceeded.html" title="">HorizonRateLimitExceeded</a>
                       </li><li class="current-entities indented3">
                         <span class="separator"></span>
                         <a class="class" href="HorizonServerError.html" title=""></a>
@@ -168,14 +176,16 @@
           <div id="content">
             <body class="class type">
       <div id="definition">
-        <div class="big-circle class">c</div>
+        <a href="Horizon$.html" title="See companion object"><div class="big-circle class-companion-object">c</div></a>
         <p id="owner"><a href="../../index.html" class="extype" name="stellar">stellar</a>.<a href="../index.html" class="extype" name="stellar.sdk">sdk</a>.<a href="index.html" class="extype" name="stellar.sdk.inet">inet</a></p>
-        <h1>Horizon<span class="permalink">
+        <h1><a href="Horizon$.html" title="See companion object">Horizon</a><span class="permalink">
       <a href="../../../stellar/sdk/inet/Horizon.html" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span></h1>
-        <h3><span class="morelinks"></span></h3>
+        <h3><span class="morelinks"><div>
+            Companion <a href="Horizon$.html" title="See companion object">object Horizon</a>
+          </div></span></h3>
       </div>
 
       <h4 id="signature" class="signature">
@@ -240,9 +250,9 @@
         <div id="constructors" class="members">
               <h3>Instance Constructors</h3>
               <ol><li name="stellar.sdk.inet.Horizon#&lt;init&gt;" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="&lt;init&gt;(uri:java.net.URI)(implicitsystem:akka.actor.ActorSystem):stellar.sdk.inet.Horizon"></a><a id="&lt;init&gt;:Horizon"></a>
+      <a id="&lt;init&gt;(call:akka.http.scaladsl.model.HttpRequest=&gt;scala.concurrent.Future[akka.http.scaladsl.model.HttpResponse])(implicitsystem:akka.actor.ActorSystem):stellar.sdk.inet.Horizon"></a><a id="&lt;init&gt;:Horizon"></a>
       <span class="permalink">
-      <a href="../../../stellar/sdk/inet/Horizon.html#&lt;init&gt;(uri:java.net.URI)(implicitsystem:akka.actor.ActorSystem):stellar.sdk.inet.Horizon" title="Permalink">
+      <a href="../../../stellar/sdk/inet/Horizon.html#&lt;init&gt;(call:akka.http.scaladsl.model.HttpRequest=&gt;scala.concurrent.Future[akka.http.scaladsl.model.HttpResponse])(implicitsystem:akka.actor.ActorSystem):stellar.sdk.inet.Horizon" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -251,7 +261,7 @@
         <span class="kind">new</span>
       </span>
       <span class="symbol">
-        <span class="name">Horizon</span><span class="params">(<span name="uri">uri: <span class="extype" name="java.net.URI">URI</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="system">system: <span class="extype" name="akka.actor.ActorSystem">ActorSystem</span> = <span class="symbol"><span class="name"><a href="../../index.html">DefaultActorSystem.system</a></span></span></span>)</span>
+        <span class="name">Horizon</span><span class="params">(<span name="call">call: (<span class="extype" name="akka.http.scaladsl.model.HttpRequest">HttpRequest</span>) ⇒ <span class="extype" name="scala.concurrent.Future">Future</span>[<span class="extype" name="akka.http.scaladsl.model.HttpResponse">HttpResponse</span>]</span>)</span><span class="params">(<span class="implicit">implicit </span><span name="system">system: <span class="extype" name="akka.actor.ActorSystem">ActorSystem</span> = <span class="symbol"><span class="name"><a href="../../index.html">DefaultActorSystem.system</a></span></span></span>)</span>
       </span>
       
       

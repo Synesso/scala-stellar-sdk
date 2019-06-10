@@ -127,16 +127,24 @@
                         <a href="EventSource$.html" title="This stream processing stage establishes a continuous source of server-sent events from the given URI.">EventSource</a>
                       </li><li class="current-entities indented3">
                         <span class="separator"></span>
+                        <a class="class" href="FailedResponse.html" title=""></a>
+                        <a href="FailedResponse.html" title="">FailedResponse</a>
+                      </li><li class="current-entities indented3">
+                        <a class="object" href="Horizon$.html" title=""></a>
                         <a class="class" href="Horizon.html" title=""></a>
                         <a href="Horizon.html" title="">Horizon</a>
                       </li><li class="current-entities indented3">
-                        <a class="object" href="HorizonAccess$.html" title=""></a>
+                        <span class="separator"></span>
                         <a class="trait" href="HorizonAccess.html" title=""></a>
                         <a href="HorizonAccess.html" title="">HorizonAccess</a>
                       </li><li class="current-entities indented3">
                         <span class="separator"></span>
                         <a class="class" href="HorizonEntityNotFound.html" title=""></a>
                         <a href="HorizonEntityNotFound.html" title="">HorizonEntityNotFound</a>
+                      </li><li class="current-entities indented3">
+                        <span class="separator"></span>
+                        <a class="class" href="HorizonRateLimitExceeded.html" title=""></a>
+                        <a href="HorizonRateLimitExceeded.html" title="">HorizonRateLimitExceeded</a>
                       </li><li class="current-entities indented3">
                         <span class="separator"></span>
                         <a class="class" href="HorizonServerError.html" title=""></a>
@@ -256,7 +264,23 @@
 
         <div id="types" class="types members">
               <h3>Type Members</h3>
-              <ol><li name="stellar.sdk.inet.Horizon" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+              <ol><li name="stellar.sdk.inet.FailedResponse" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="FailedResponseextendsExceptionwithProductwithSerializable"></a><a id="FailedResponse:FailedResponse"></a>
+      <span class="permalink">
+      <a href="../../../stellar/sdk/inet/index.html#FailedResponseextendsExceptionwithProductwithSerializable" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a title="" href="FailedResponse.html"><span class="name">FailedResponse</span></a><span class="params">(<span name="cause">cause: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <span class="extype" name="scala.Exception">Exception</span> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      
+      
+    </li><li name="stellar.sdk.inet.Horizon" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="HorizonextendsHorizonAccesswithLazyLogging"></a><a id="Horizon:Horizon"></a>
       <span class="permalink">
       <a href="../../../stellar/sdk/inet/index.html#HorizonextendsHorizonAccesswithLazyLogging" title="Permalink">
@@ -301,6 +325,22 @@
       </span>
       <span class="symbol">
         <a title="" href="HorizonEntityNotFound.html"><span class="name">HorizonEntityNotFound</span></a><span class="params">(<span name="uri">uri: <span class="extype" name="akka.http.scaladsl.model.Uri">Uri</span></span>, <span name="body">body: <span class="extype" name="org.json4s.JObject">JObject</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="formats">formats: <span class="extype" name="org.json4s.Formats">Formats</span></span>)</span><span class="result"> extends <span class="extype" name="scala.Exception">Exception</span> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      
+      
+    </li><li name="stellar.sdk.inet.HorizonRateLimitExceeded" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="HorizonRateLimitExceededextendsExceptionwithProductwithSerializable"></a><a id="HorizonRateLimitExceeded:HorizonRateLimitExceeded"></a>
+      <span class="permalink">
+      <a href="../../../stellar/sdk/inet/index.html#HorizonRateLimitExceededextendsExceptionwithProductwithSerializable" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a title="" href="HorizonRateLimitExceeded.html"><span class="name">HorizonRateLimitExceeded</span></a><span class="params">(<span name="uri">uri: <span class="extype" name="akka.http.scaladsl.model.Uri">Uri</span></span>, <span name="retryAfter">retryAfter: <span class="extype" name="scala.concurrent.duration.Duration">Duration</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="formats">formats: <span class="extype" name="org.json4s.Formats">Formats</span></span>)</span><span class="result"> extends <span class="extype" name="scala.Exception">Exception</span> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       
       
@@ -457,10 +497,10 @@ by streaming the materialized values of the handler via a throttle.</p><pre>+ - 
                     ServerSentEvent|          +---------------------+
 |                                  v                                  |
  - - - - - - - - - - - - - - - - - o - - - - - - - - - - - - - - - - -</pre></div></div>
-    </li><li name="stellar.sdk.inet.HorizonAccess" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="HorizonAccess"></a><a id="HorizonAccess:HorizonAccess"></a>
+    </li><li name="stellar.sdk.inet.Horizon" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="Horizon"></a><a id="Horizon:Horizon"></a>
       <span class="permalink">
-      <a href="../../../stellar/sdk/inet/index.html#HorizonAccess" title="Permalink">
+      <a href="../../../stellar/sdk/inet/index.html#Horizon" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -469,7 +509,7 @@ by streaming the materialized values of the handler via a throttle.</p><pre>+ - 
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a title="" href="HorizonAccess$.html"><span class="name">HorizonAccess</span></a>
+        <a title="" href="Horizon$.html"><span class="name">Horizon</span></a>
       </span>
       
       
