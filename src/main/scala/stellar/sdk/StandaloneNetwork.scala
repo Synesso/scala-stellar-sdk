@@ -11,7 +11,7 @@ import stellar.sdk.inet.{Horizon, HorizonAccess}
   */
 case class StandaloneNetwork(uri: URI) extends Network with FriendBot {
   override val passphrase: String = "Standalone Network ; February 2017"
-  override val horizon: HorizonAccess = new Horizon(uri)
+  override val horizon: HorizonAccess = Horizon(uri)
 }
 
 

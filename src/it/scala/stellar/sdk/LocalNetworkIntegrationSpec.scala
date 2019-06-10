@@ -486,5 +486,12 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
       results.map(_.size) must beEqualTo(1).awaitFor(1 minute)
     }
   }
+
+  "page deserialisation" should {
+    "return an empty page when the underlying resource does not exist" >> {
+      network.horizon.getStream("/does_not_exist", TradeDeserializer, Now, Asc) must beEmpty[Stream[Trade]]
+          .awaitFor(10.seconds)
+    }
+  }
 }
 

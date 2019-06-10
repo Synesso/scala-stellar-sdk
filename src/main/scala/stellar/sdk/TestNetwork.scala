@@ -9,7 +9,7 @@ import stellar.sdk.inet.Horizon
   */
 case object TestNetwork extends Network with FriendBot {
   override val passphrase = "Test SDF Network ; September 2015"
-  val horizon = new Horizon(URI.create("https://horizon-testnet.stellar.org"))
+  val horizon = Horizon(URI.create("https://horizon-testnet.stellar.org"))
 }
 
 
