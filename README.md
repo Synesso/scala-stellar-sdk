@@ -17,7 +17,7 @@ You can do what you like with this software, as long as you include the required
 Add the [latest dependency](https://mvnrepository.com/artifact/io.github.synesso/scala-stellar-sdk) to your build tool. Here's how it might look in `build.sbt`
 
 ```scala
-libraryDependencies += "io.github.synesso" %% "scala-stellar-sdk" % "0.7.0"
+libraryDependencies += "io.github.synesso" %% "scala-stellar-sdk" % "0.7.1"
 ```
 
 From there, it is a simple affair to create and fund a new account on the test network.
