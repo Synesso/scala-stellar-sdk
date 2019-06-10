@@ -1,5 +1,6 @@
 package stellar.sdk
 
+import java.nio.charset.StandardCharsets.UTF_8
 import java.time.temporal.ChronoField
 import java.time.{Instant, ZoneId, ZonedDateTime}
 import java.util.Locale
@@ -473,7 +474,7 @@ trait ArbitraryInput extends ScalaCheck {
   def genDataMap: Gen[Map[String, String]] = for {
     qty <- Gen.choose(0, 30)
     keys <- Gen.listOfN(qty, Gen.identifier)
-    values <- Gen.listOfN(qty, Gen.asciiPrintableStr)
+    values <- Gen.listOfN(qty, Gen.asciiPrintableStr.map(_.getBytes(UTF_8)).map(Base64.encodeBase64String))
   } yield keys.zip(values).toMap
 
   def genSigner: Gen[Signer] = for {
