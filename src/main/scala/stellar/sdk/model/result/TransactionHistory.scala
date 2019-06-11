@@ -20,7 +20,7 @@ case class TransactionHistory(hash: String, ledgerId: Long, createdAt: ZonedDate
 
   lazy val result: TransactionResult = TransactionResult.decodeXDR(resultXDR)
 
-  @Deprecated(since = "v0.8.0", forRemoval = true)
+  @deprecated(since = "v0.8.0")
   val feePaid: NativeAmount = feeCharged
 
 }
