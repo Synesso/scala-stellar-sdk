@@ -576,7 +576,8 @@ trait ArbitraryInput extends ScalaCheck {
     createdAt <- genZonedDateTime
     account <- genPublicKey
     sequence <- Gen.posNum[Long]
-    feePaid <- Gen.posNum[Int].map(NativeAmount(_))
+    maxFee <- Gen.posNum[Int].map(NativeAmount(_))
+    feeCharged <- Gen.posNum[Int].map(NativeAmount(_))
     operationCount <- Gen.posNum[Int]
     memo <- genMemo
     signatures <- Gen.nonEmptyListOf(genHash)
@@ -586,7 +587,7 @@ trait ArbitraryInput extends ScalaCheck {
     feeMetaXDR <- genHash
     validAfter <- Gen.option(genZonedDateTime)
     validBefore <- Gen.option(genZonedDateTime)
-  } yield TransactionHistory(hash, ledger, createdAt, account, sequence, feePaid, operationCount,
+  } yield TransactionHistory(hash, ledger, createdAt, account, sequence, maxFee, feeCharged, operationCount,
     memo, signatures, envelopeXDR, resultXDR, resultMetaXDR, feeMetaXDR, validAfter, validBefore)
 
   def genHorizonCursor: Gen[HorizonCursor] = Gen.option(Gen.posNum[Long]).map(_.map(Record).getOrElse(Now))

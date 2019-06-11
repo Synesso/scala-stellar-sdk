@@ -105,7 +105,8 @@ class TransactionResponseSpec extends Specification with ArbitraryInput with Dom
           ("created_at" -> formatter.format(h.createdAt)) ~
           ("source_account" -> h.account.accountId) ~
           ("source_account_sequence" -> h.sequence) ~
-          ("fee_paid" -> h.feePaid.units) ~
+          ("max_fee" -> h.maxFee.units) ~
+          ("fee_charged" -> h.feeCharged.units) ~
           ("operation_count" -> h.operationCount) ~
           ("signatures" -> h.signatures) ~
           ("memo_type" -> memoType) ~

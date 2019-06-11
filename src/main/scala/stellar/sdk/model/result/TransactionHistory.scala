@@ -13,11 +13,15 @@ import stellar.sdk.{KeyPair, PublicKey}
   * A transaction that has been included in the ledger sometime in the past.
   */
 case class TransactionHistory(hash: String, ledgerId: Long, createdAt: ZonedDateTime, account: PublicKey,
-                              sequence: Long, feePaid: NativeAmount, operationCount: Int, memo: Memo,
-                              signatures: Seq[String], envelopeXDR: String, resultXDR: String, resultMetaXDR: String,
-                              feeMetaXDR: String, validAfter: Option[ZonedDateTime], validBefore: Option[ZonedDateTime]) {
+                              sequence: Long, maxFee: NativeAmount, feeCharged: NativeAmount, operationCount: Int,
+                              memo: Memo, signatures: Seq[String], envelopeXDR: String, resultXDR: String,
+                              resultMetaXDR: String, feeMetaXDR: String, validAfter: Option[ZonedDateTime],
+                              validBefore: Option[ZonedDateTime]) {
 
   lazy val result: TransactionResult = TransactionResult.decodeXDR(resultXDR)
+
+  @Deprecated(since = "v0.8.0", forRemoval = true)
+  val feePaid: NativeAmount = feeCharged
 
 }
 
@@ -32,7 +36,8 @@ object TransactionHistoryDeserializer extends ResponseParser[TransactionHistory]
       createdAt = ZonedDateTime.parse((o \ "created_at").extract[String]),
       account = KeyPair.fromAccountId((o \ "source_account").extract[String]),
       sequence = (o \ "source_account_sequence").extract[String].toLong,
-      feePaid = NativeAmount((o \ "fee_paid").extract[Int]),
+      maxFee = NativeAmount((o \ "max_fee").extract[Int]),
+      feeCharged = NativeAmount((o \ "fee_charged").extract[Int]),
       operationCount = (o \ "operation_count").extract[Int],
       memo = (o \ "memo_type").extract[String] match {
         case "none" => NoMemo
