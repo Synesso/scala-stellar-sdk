@@ -4,7 +4,10 @@ As this project is pre 1.0, breaking changes may happen for minor version bumps.
 
 ## Next version
 
-_Nothing yet_
+### Changed
+- [#92](https://github.com/Synesso/scala-stellar-sdk/issues/92) Horizon Release v0.18.0 compatibility. Added fields
+       `maxFee` and `feeCharged` to transaction responses. The field `feePaid` is now deprecated and will be removed
+       in a future release.
 
 ## 0.7.1
 

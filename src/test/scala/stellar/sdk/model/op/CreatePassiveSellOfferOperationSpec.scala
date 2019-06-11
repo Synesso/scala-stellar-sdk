@@ -38,7 +38,7 @@ class CreatePassiveSellOfferOperationSpec extends Specification with ArbitraryIn
            |  "id": "${op.id}",
            |  "paging_token": "10157597659137",
            |  "source_account": "${op.operation.sourceAccount.get.accountId}",
-           |  "type": "create_passive_offer",
+           |  "type": "create_passive_sell_offer",
            |  "type_i": 4,
            |  "created_at": "${formatter.format(op.createdAt)}",
            |  "transaction_hash": "${op.txnHash}",
