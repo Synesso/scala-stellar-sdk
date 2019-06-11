@@ -138,7 +138,7 @@ object OperationDeserializer extends ResponseParser[Operation]({ o: JObject =>
             UpdateBuyOfferOperation(id, asset("selling_"), amount(assetPrefix = "buying_"), price(), sourceAccount)
           }
       }
-    case "create_passive_offer" =>
+    case "create_passive_offer" | "create_passive_sell_offer" =>
       CreatePassiveSellOfferOperation(
         selling = amount(assetPrefix = "selling_"),
         buying = asset("buying_"),
