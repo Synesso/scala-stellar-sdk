@@ -3,7 +3,7 @@ by [Jem Mawson](https://keybase.io/jem)
 
 [![Travis](https://img.shields.io/travis/Synesso/scala-stellar-sdk.svg?branch=master)](https://travis-ci.org/Synesso/scala-stellar-sdk)
 [![Coverage](https://img.shields.io/codecov/c/gh/Synesso/scala-stellar-sdk.svg)](https://codecov.io/gh/Synesso/scala-stellar-sdk)
-[![Chat](https://img.shields.io/gitter/room/scala-stellar-sdk/community.svg)](https://gitter.im/0rora/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Chat](https://img.shields.io/gitter/room/scala-stellar-sdk/community.svg)](https://gitter.im/scala-stellar-sdk/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Issues](https://img.shields.io/github/issues/Synesso/scala-stellar-sdk.svg)](https://github.com/Synesso/scala-stellar-sdk/issues)
 ![Supports Stellar Horizon v0.18](https://img.shields.io/badge/Horizon-v0.18-blue.svg)
 ![Supports Stellar Core v11](https://img.shields.io/badge/Core-v11-blue.svg)
