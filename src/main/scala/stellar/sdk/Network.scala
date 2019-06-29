@@ -410,7 +410,7 @@ trait Network extends LazyLogging {
   }
 
   /**
-    * Fetch a stream of transactions affecting a given account
+    * Fetch a stream of transactions affecting a given account.
     * @param pubKey the relevant account
     * @param cursor optional record id to start results from (defaults to `0`)
     * @param order  optional order to sort results by (defaults to `Asc`)
@@ -432,7 +432,7 @@ trait Network extends LazyLogging {
   }
 
   /**
-    * Fetch a stream of transactions for a given ledger
+    * Fetch a stream of transactions for a given ledger.
     * @param cursor optional record id to start results from (defaults to `0`)
     * @param order  optional order to sort results by (defaults to `Asc`)
     * @see [[https://www.stellar.org/developers/horizon/reference/endpoints/transactions-for-ledger.html endpoint doc]]
@@ -457,6 +457,15 @@ trait Network extends LazyLogging {
     */
   def feeStats()(implicit ex: ExecutionContext): Future[FeeStatsResponse] =
     horizon.get[FeeStatsResponse]("/fee_stats")
+
+  /**
+    * Fetch a stream of payment paths that realise a payment of the requested destination amount, from the specified
+    * account.
+    * @param from the account that wishes to make the payment
+    * @param destination the desired payment
+    * @see [[https://www.stellar.org/developers/horizon/reference/endpoints/path-finding.html endpoint doc]]
+    */
+  def paths(from: PublicKeyOps, destination: Amount)(implicit ex: ExecutionContext): Future[Stream[PaymentPath]] = ???
 
   private def assetParams(prefix: String, asset: Asset): Map[String, String] = {
     asset match {
