@@ -146,6 +146,8 @@ trait ArbitraryInput extends ScalaCheck {
 
   implicit def arbFederationResponse: Arbitrary[FederationResponse] = Arbitrary(genFederationResponse)
 
+  implicit def arbPaymentPath: Arbitrary[PaymentPath] = Arbitrary(genPaymentPath)
+
   def round(d: Double): Double = "%.7f".formatLocal(Locale.ROOT, d).toDouble
 
   def genKeyPair: Gen[KeyPair] = Gen.oneOf(Seq(KeyPair.random))
@@ -756,4 +758,10 @@ trait ArbitraryInput extends ScalaCheck {
     account <- genPublicKey
     memo <- genMemo.suchThat(m => !m.isInstanceOf[MemoReturnHash])
   } yield FederationResponse(name, account, memo)
+
+  def genPaymentPath: Gen[PaymentPath] = for {
+    source <- genAmount
+    destination <- genAmount
+    path <- genAssetPath
+  } yield PaymentPath(source, destination, path)
 }

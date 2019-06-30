@@ -121,6 +121,23 @@ class DocExamples(implicit ee: ExecutionEnv) extends Specification with Mockito 
       ok
     }
 
+    "be present for payment paths" >> {
+      // #payment_paths_query_example
+      val payer = KeyPair.fromPassphrase("the payer")
+      val payee = KeyPair.fromPassphrase("the payee")
+      val usdIssuer = KeyPair.fromPassphrase("the asset issuer")
+
+      val amountToPay = IssuedAmount(5000000, Asset("USD", usdIssuer))
+      val paymentPaths: Future[Seq[PaymentPath]] = TestNetwork.paths(
+        from = payer,
+        to = payee,
+        amount = amountToPay
+      )
+      // #payment_paths_query_example
+
+      ok
+    }
+
     "be present for ledgers" >> {
       // #ledger_query_examples
       // details of a specific ledger

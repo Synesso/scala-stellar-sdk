@@ -457,7 +457,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
       byAccount.map(_.head) must beLike[TransactionHistory] {
         case t =>
           t.account must beEquivalentTo(masterAccountKey)
-          t.feePaid mustEqual NativeAmount(1500)
+          t.feeCharged mustEqual NativeAmount(1500)
           t.operationCount mustEqual 15
           t.memo mustEqual NoMemo
       }.awaitFor(10.seconds)
@@ -470,7 +470,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
       } yield operation) must beLike[Seq[TransactionHistory]] {
         case Seq(t) =>
           t.account must beEquivalentTo(masterAccountKey)
-          t.feePaid mustEqual NativeAmount(10000)
+          t.feeCharged mustEqual NativeAmount(10000)
           t.operationCount mustEqual 100
           t.memo mustEqual NoMemo
       }.awaitFor(10.seconds)
