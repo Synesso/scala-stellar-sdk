@@ -48,6 +48,9 @@ trait HorizonAccess {
   def getStream[T: ClassTag](path: String, de: CustomSerializer[T], cursor: HorizonCursor, order: HorizonOrder, params: Map[String, String] = Map.empty)
                             (implicit ec: ExecutionContext, m: Manifest[T]): Future[Stream[T]]
 
+  def getSeq[T: ClassTag](path: String, de: CustomSerializer[T], params: Map[String, String] = Map.empty)
+                            (implicit ec: ExecutionContext, m: Manifest[T]): Future[Seq[T]]
+
   def getSource[T: ClassTag](path: String, de: CustomSerializer[T], cursor: HorizonCursor, params: Map[String, String] = Map.empty)
                             (implicit ec: ExecutionContext, m: Manifest[T]): Source[T, NotUsed]
 
@@ -125,19 +128,28 @@ class Horizon(call: HttpRequest => Future[HttpResponse])
     else Unmarshal(response.entity).to[JObject].map(HorizonServerError(request.uri, _)).map(Failure(_))
   }
 
+  override def getSeq[T: ClassTag](path: String, de: CustomSerializer[T], params: Map[String, String])
+                                  (implicit ec: ExecutionContext, m: Manifest[T]): Future[Seq[T]] =
+    getStream(path, de, None, None, params)
+
   override def getStream[T: ClassTag](path: String, de: CustomSerializer[T], cursor: HorizonCursor, order: HorizonOrder,
                                       params: Map[String, String] = Map.empty)
+                                     (implicit ec: ExecutionContext, m: Manifest[T]): Future[Stream[T]] =
+    getStream(path, de, Some(cursor), Some(order), params)
+
+  private def getStream[T: ClassTag](path: String, de: CustomSerializer[T], cursor: Option[HorizonCursor],
+                                     order: Option[HorizonOrder], params: Map[String, String])
                                      (implicit ec: ExecutionContext, m: Manifest[T]): Future[Stream[T]] = {
 
     import scala.concurrent.duration._
 
     implicit val formats = DefaultFormats + RawPageDeserializer + de
 
-    val query = Query(params ++ Map(
-      "cursor" -> cursor.paramValue,
-      "order" -> order.paramValue,
-      "limit" -> "100"
-    ))
+    val query = Query(params ++ Seq(
+      cursor.map("cursor" -> _.paramValue),
+      order.map("order" -> _.paramValue),
+      Some("limit" -> "100")
+    ).flatten.toMap)
 
     val requestUri = Uri(path).withQuery(query)
 

@@ -462,10 +462,24 @@ trait Network extends LazyLogging {
     * Fetch a stream of payment paths that realise a payment of the requested destination amount, from the specified
     * account.
     * @param from the account that wishes to make the payment
-    * @param destination the desired payment
+    * @param to the recipient account
+    * @param amount the desired payment amount
     * @see [[https://www.stellar.org/developers/horizon/reference/endpoints/path-finding.html endpoint doc]]
     */
-  def paths(from: PublicKeyOps, destination: Amount)(implicit ex: ExecutionContext): Future[Stream[PaymentPath]] = ???
+  def paths(from: PublicKeyOps, to: PublicKeyOps, amount: Amount)(implicit ex: ExecutionContext): Future[Seq[PaymentPath]] = {
+    val queryParams = Map(
+      "source_account" -> from.accountId,
+      "destination_account" -> to.accountId
+    ) ++ amountParams("destination", amount)
+    horizon.getSeq[PaymentPath]("/paths", PaymentPathDeserializer, queryParams)
+  }
+
+  private def amountParams(prefix: String, amount: Amount): Map[String, String] = {
+    (amount match {
+      case issuedAmount: IssuedAmount => assetParams(prefix, issuedAmount.asset)
+      case _ => Map.empty[String, String]
+    }) ++ Map(s"${prefix}_amount" -> s"${amount.units}")
+  }
 
   private def assetParams(prefix: String, asset: Asset): Map[String, String] = {
     asset match {
