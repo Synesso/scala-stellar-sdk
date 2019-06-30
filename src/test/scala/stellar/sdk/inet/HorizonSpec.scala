@@ -4,8 +4,7 @@ import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.model.HttpCharsets.`UTF-8`
 import akka.http.scaladsl.model._
-import akka.http.scaladsl.model.headers.{Location, RawHeader}
-import org.json4s.{DefaultFormats, DefaultJsonFormats}
+import akka.http.scaladsl.model.headers.RawHeader
 import org.json4s.JsonDSL._
 import org.json4s.native.JsonMethods._
 import org.specs2.concurrent.ExecutionEnv
