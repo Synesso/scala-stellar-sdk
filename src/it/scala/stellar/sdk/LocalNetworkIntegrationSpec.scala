@@ -515,15 +515,18 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
   }
 
   "payment path endpoint" should {
-    // TODO - parse OK when there are no paths.
-    // TODO - assert on results
     "return valid payment paths" >> {
-      Await.result(network.paths(masterAccountKey, accnD, Amount(1, chinchillaA)), 10.seconds)
-        .foreach(x => println(s">> $x"))
-      ok
+      network.paths(masterAccountKey, accnD, Amount(1, chinchillaA)) must
+        beEqualTo(Seq(
+          PaymentPath(lumens(20), Amount(10000000, chinchillaA), List())
+      )).awaitFor(1 minute)
+    }
+
+    "return nothing when there's no path" >> {
+      network.paths(masterAccountKey, accnD, Amount(1, dachshundB)) must
+        beEmpty[Seq[PaymentPath]].awaitFor(1 minute)
     }
   }
-
 
   "page deserialisation" should {
     "return an empty page when the underlying resource does not exist" >> {
