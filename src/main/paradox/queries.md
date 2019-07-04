@@ -122,6 +122,15 @@ By default the results will be in ascending order from the earliest record. This
 @@snip [DocExamples.scala](../../test/scala/stellar/sdk/DocExamples.scala) { #payment_query_examples }
 
 
+### Payment Paths
+
+In order for a cross-token payment to find the most cost-efficient path through the offers in the distributed ledger, it
+is necessary to query the network for the available pathways, given the current orderbooks.
+
+@scaladoc[Payment Paths](stellar.sdk.model.PaymentPath) document the source & destination amounts - along with any
+intermediate assets that would fulfil a path payment.
+
+
 ### Trades
 
 @scaladoc[Trades](stellar.sdk.Trade) are created when offers in an orderbook are partially or fully matched.
