@@ -1,23 +1,11 @@
 package stellar.sdk
 
-import java.net.URLEncoder
-
-import akka.NotUsed
 import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
-import akka.stream.scaladsl.{Keep, Sink, Source}
-import org.scalacheck.Gen
 import org.specs2.concurrent.ExecutionEnv
 import org.specs2.mock.Mockito
 import org.specs2.mutable.Specification
-import stellar.sdk.inet._
-import stellar.sdk.model._
-import stellar.sdk.model.op._
-import stellar.sdk.model.response._
-import stellar.sdk.model.result.{TransactionHistory, TransactionHistoryDeserializer}
-import stellar.sdk.util.ByteArrays
 
-import scala.concurrent.Future
 import scala.concurrent.duration._
 
 class NetworkSpec(implicit ee: ExecutionEnv) extends Specification with ArbitraryInput with Mockito {

@@ -8,7 +8,12 @@ import stellar.sdk._
 import stellar.sdk.model._
 
 case class OfferResponse(id: Long, seller: PublicKeyOps, selling: Amount, buying: Asset, price: Price,
-                         lastModifiedLedger: Long, lastModifiedTime: ZonedDateTime)
+                         lastModifiedLedger: Long, lastModifiedTime: ZonedDateTime) {
+
+  override def toString = {
+    s"Offer $id: ${seller.accountId} selling $selling, buying $buying @ rate $price"
+  }
+}
 
 object OfferRespDeserializer extends ResponseParser[OfferResponse]({ o: JObject =>
   implicit val formats = DefaultFormats

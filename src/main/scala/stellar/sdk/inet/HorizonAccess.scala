@@ -153,8 +153,10 @@ class Horizon(call: HttpRequest => Future[HttpResponse])
 
     val requestUri = Uri(path).withQuery(query)
 
-    def next(p: Page[T]): Future[Option[Page[T]]] =
-      (getPage(Uri(p.nextLink)): Future[Page[T]]).map(Some(_))
+    def next(p: Page[T]): Future[Option[Page[T]]] = p.nextLink match {
+      case None => Future.successful(None)
+      case Some(link) => (getPage(Uri(link)): Future[Page[T]]).map(Some(_))
+    }
 
     def stream(ts: Seq[T], maybeNextPage: Future[Option[Page[T]]]): Stream[T] = {
       ts match {
@@ -184,7 +186,7 @@ class Horizon(call: HttpRequest => Future[HttpResponse])
       else call(request)
 
     response.flatMap {
-      case r if r.status == NotFound => Future(Page(Seq.empty[T], uri.toString()))
+      case r if r.status == NotFound => Future(Page(Seq.empty[T], Some(uri.toString())))
       case r                         => Unmarshal(r).to[RawPage].map(_.parse[T])
     }
     .recover { case t: Throwable => throw new RuntimeException(s"Unable to get page for $uri", t) }

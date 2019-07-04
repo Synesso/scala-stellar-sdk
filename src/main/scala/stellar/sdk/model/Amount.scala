@@ -22,7 +22,9 @@ case class NativeAmount(units: Long) extends Amount {
   override def toString: String = s"$toDisplayUnits XLM"
 }
 
-case class IssuedAmount(units: Long, asset: NonNativeAsset) extends Amount
+case class IssuedAmount(units: Long, asset: NonNativeAsset) extends Amount {
+  override def toString: String = s"$toDisplayUnits $asset"
+}
 
 object Amount {
   private val decimalPlaces = 7
