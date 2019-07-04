@@ -392,6 +392,14 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
             }
         }.awaitFor(10.seconds)
       }
+
+      "provide operation details" >> {
+        (for {
+          ops <- network.operationsByAccount(accnB)
+          expected = ops.last
+          actual <- network.operation(expected.id)
+        } yield expected.operation shouldEqual actual.operation).awaitFor(10.seconds)
+      }
     }
 
     "list the details of a given operation" >> {
