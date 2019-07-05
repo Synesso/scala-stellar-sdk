@@ -2,6 +2,7 @@ package stellar.sdk
 
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets.UTF_8
+import java.time.Instant
 
 import akka.NotUsed
 import akka.stream.scaladsl.Source
@@ -380,6 +381,21 @@ trait Network extends LazyLogging {
     val params = Map("offerid" -> s"$offerId")
     horizon.getStream[Trade]("/trades", TradeDeserializer, cursor, order, params)
   }
+
+  /**
+    * Fetch trade history aggregations in a time period, for a given resolution and asset pair.
+    * @param start the start of the time period
+    * @param end the end of the time period
+    * @param resolution the resolution for reporting trading activity
+    * @param base the base asset
+    * @param counter the counter/quote asset
+    * @param cursor optional record id to start results from (defaults to `0`)
+    * @param order  optional order to sort results by (defaults to `Asc`)
+    * @see [[https://www.stellar.org/developers/horizon/reference/endpoints/trade_aggregations.html endpoint doc]]
+    */
+  def tradeAggregations(start: Instant, end: Instant, resolution: TradeAggregation.Resolution, offsetHours: Int,
+                        base: Asset, counter: Asset, cursor: HorizonCursor = Record(0), order: HorizonOrder = Asc)
+                       (implicit ex: ExecutionContext): Future[Stream[TradeAggregation]] = ???
 
   /**
     * Fetch information on a single transaction.

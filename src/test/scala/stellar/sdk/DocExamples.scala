@@ -1,7 +1,12 @@
 package stellar.sdk
 
+import java.time.temporal.ChronoUnit.DAYS
+import java.time.temporal.{ChronoUnit, TemporalUnit}
+import java.time.{Instant, ZonedDateTime}
+
 import akka.NotUsed
 import akka.actor.ActorSystem
+import akka.parboiled2.RuleTrace.NotPredicate.Base
 import akka.stream.ActorMaterializer
 import akka.stream.scaladsl.Source
 import org.apache.commons.codec.binary.Hex
@@ -265,6 +270,21 @@ class DocExamples() {
       // stream of trades that are created as a result of the specified offer
       val offerBookTrades: Future[Stream[Trade]] = TestNetwork.tradesByOfferId(1234)
       // #trade_query_examples
+    }
+
+    def `be present for trade aggregations`() = {
+      // #trade_aggregations_examples
+      // stream of all trades
+      val start = Instant.now().minus(5, DAYS)
+      val end = Instant.now()
+      val tradeAggregations: Future[Stream[TradeAggregation]] =
+        TestNetwork.tradeAggregations(start, end,
+          resolution = TradeAggregation.FiveMinutes,
+          offsetHours = 0,
+          base = NativeAsset,
+          counter = Asset("HUG", publicKey)
+        )
+      // #trade_aggregations_examples
     }
 
     def `be present for transactions`() = {
