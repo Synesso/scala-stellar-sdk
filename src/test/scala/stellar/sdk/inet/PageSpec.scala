@@ -34,7 +34,7 @@ class PageSpec extends Specification {
 
       implicit val formats = DefaultFormats + RawPageDeserializer + HelloDeserializer
       JsonMethods.parse(doc).extract[RawPage].parse[String] mustEqual Page(Seq("world"),
-        nextLink = "https://horizon-testnet.stellar.org/hello?cursor=2045052972961793-0&limit=10&order=asc"
+        nextLink = Some("https://horizon-testnet.stellar.org/hello?cursor=2045052972961793-0&limit=10&order=asc")
       )
     }
   }

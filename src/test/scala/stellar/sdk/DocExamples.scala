@@ -18,7 +18,7 @@ import stellar.sdk.model.result.TransactionHistory
 import scala.concurrent.{ExecutionContext, Future}
 import scala.reflect.ClassTag
 
-class DocExamples(implicit ee: ExecutionEnv) extends Specification with Mockito {
+class DocExamples() {
 
   //noinspection ScalaUnusedSymbol
   // $COVERAGE-OFF$
@@ -26,18 +26,17 @@ class DocExamples(implicit ee: ExecutionEnv) extends Specification with Mockito 
   // #sources_implicit_setup
   implicit val system = ActorSystem("stellar-sources")
   implicit val materializer = ActorMaterializer()
-
   import system.dispatcher
   // #sources_implicit_setup
 
-  "query documentation" should {
+  def `query documentation`() = {
     val TestNetwork = new DoNothingNetwork
     // #keypair_from_accountid
     val accountId = "GCXYKQF35XWATRB6AWDDV2Y322IFU2ACYYN5M2YB44IBWAIITQ4RYPXK"
     val publicKey = KeyPair.fromAccountId(accountId)
     // #keypair_from_accountid
 
-    "be present for accounts" >> {
+    def `be present for accounts`() = {
       // #account_query_examples
       val accountId = "GCXYKQF35XWATRB6AWDDV2Y322IFU2ACYYN5M2YB44IBWAIITQ4RYPXK"
       val publicKey = KeyPair.fromAccountId(accountId)
@@ -48,11 +47,9 @@ class DocExamples(implicit ee: ExecutionEnv) extends Specification with Mockito 
       // account datum value
       val accountData: Future[String] = TestNetwork.accountData(publicKey, "data_key")
       // #account_query_examples
-
-      ok
     }
 
-    "be present for assets" >> {
+    def `be present for assets`() = {
       // #asset_query_examples
       // stream of all assets from all issuers
       val allAssets: Future[Stream[AssetResponse]] = TestNetwork.assets()
@@ -72,10 +69,9 @@ class DocExamples(implicit ee: ExecutionEnv) extends Specification with Mockito 
       val issuersHugAsset: Future[Stream[AssetResponse]] =
         TestNetwork.assets(code = Some("HUG"), issuer = Some(publicKey))
       // #asset_query_examples
-      ok
     }
 
-    "be present for effects" >> {
+    def `be present for effects`() = {
       // #effect_query_examples
       // stream of all effects
       val allEffects: Future[Stream[EffectResponse]] = TestNetwork.effects()
@@ -106,22 +102,33 @@ class DocExamples(implicit ee: ExecutionEnv) extends Specification with Mockito 
       // a source of all new effects for a given account
       val effectsForAccountSource = TestNetwork.effectsByAccountSource(publicKey)
       // #effect_source_examples
-
-      ok
     }
 
-    "be present for fee_stats" >> {
+    def `be present for fee_stats`() = {
       // #fee_stats_query_example
       val feeStats: Future[FeeStatsResponse] = TestNetwork.feeStats()
       val minAcceptedFee: Future[NativeAmount] = feeStats.map(_.minAcceptedFee)
       val percentileFee99: Future[NativeAmount] =
         feeStats.map(_.acceptedFeePercentiles(99))
       // #fee_stats_query_example
-
-      ok
     }
 
-    "be present for ledgers" >> {
+    def `be present for payment paths`() = {
+      // #payment_paths_query_example
+      val payer = KeyPair.fromPassphrase("the payer")
+      val payee = KeyPair.fromPassphrase("the payee")
+      val usdIssuer = KeyPair.fromPassphrase("the asset issuer")
+
+      val amountToPay = IssuedAmount(5000000, Asset("USD", usdIssuer))
+      val paymentPaths: Future[Seq[PaymentPath]] = TestNetwork.paths(
+        from = payer,
+        to = payee,
+        amount = amountToPay
+      )
+      // #payment_paths_query_example
+    }
+
+    def `be present for ledgers`() = {
       // #ledger_query_examples
       // details of a specific ledger
       val ledger: Future[LedgerResponse] = TestNetwork.ledger(1234)
@@ -138,20 +145,16 @@ class DocExamples(implicit ee: ExecutionEnv) extends Specification with Mockito 
       // a source of all new ledgers
       val ledgersSource: Source[LedgerResponse, NotUsed] = TestNetwork.ledgersSource()
       // #ledger_source_examples
-
-      ok
     }
 
-    "be present for network info" >> {
+    def `be present for network info`() = {
       // #network_info_example
       val info: Future[NetworkInfo] = TestNetwork.info()
       val passphrase: Future[String] = info.map(_.passphrase)
       // #network_info_example
-
-      ok
     }
 
-    "be present for offers" >> {
+    def `be present for offers`() = {
       // #offer_query_examples
       // all offers for a specified account
       val offersByAccount: Future[Stream[OfferResponse]] =
@@ -166,10 +169,9 @@ class DocExamples(implicit ee: ExecutionEnv) extends Specification with Mockito 
       val offersByAccountSource: Source[OfferResponse, NotUsed] =
         TestNetwork.offersByAccountSource(publicKey)
       // #offer_source_examples
-      ok
     }
 
-    "be present for operations" >> {
+    def `be present for operations`() = {
       // #operation_query_examples
       // details of a specific operation
       val operation: Future[Transacted[Operation]] = TestNetwork.operation(1234)
@@ -197,11 +199,9 @@ class DocExamples(implicit ee: ExecutionEnv) extends Specification with Mockito 
       // a source of all new operations involving a specified account
       val operationsByAccountSource = TestNetwork.operationsByAccountSource(publicKey)
       // #operation_source_examples
-
-      ok
     }
 
-    "be present for orderbooks" >> {
+    def `be present for orderbooks`() = {
       // #orderbook_query_examples
       // the XLM/HUG orderbook with up to 20 offers
       val hugOrderBook: Future[OrderBook] = TestNetwork.orderBook(
@@ -225,10 +225,9 @@ class DocExamples(implicit ee: ExecutionEnv) extends Specification with Mockito 
           buying = Asset("HUG", publicKey),
         )
       // #orderbook_source_examples
-      ok
     }
 
-    "be present for payments" >> {
+    def `be present for payments`() = {
       // #payment_query_examples
       // stream of all payment operations
       val payments: Future[Stream[Transacted[PayOperation]]] = TestNetwork.payments()
@@ -250,11 +249,9 @@ class DocExamples(implicit ee: ExecutionEnv) extends Specification with Mockito 
       // a source of all new payment operations involving a specified account
       val paymentsByAccountSource = TestNetwork.paymentsByAccountSource(publicKey)
       // #payment_source_examples
-
-      ok
     }
 
-    "be present for trades" >> {
+    def `be present for trades`() = {
       // #trade_query_examples
       // stream of all trades
       val trades: Future[Stream[Trade]] = TestNetwork.trades()
@@ -268,10 +265,9 @@ class DocExamples(implicit ee: ExecutionEnv) extends Specification with Mockito 
       // stream of trades that are created as a result of the specified offer
       val offerBookTrades: Future[Stream[Trade]] = TestNetwork.tradesByOfferId(1234)
       // #trade_query_examples
-      ok
     }
 
-    "be present for transactions" >> {
+    def `be present for transactions`() = {
       val transactionIdString = "17a670bc424ff5ce3b386dbfaae9990b66a2a37b4fbe51547e8794962a3f9e6a"
 
       // #transaction_query_examples
@@ -302,13 +298,11 @@ class DocExamples(implicit ee: ExecutionEnv) extends Specification with Mockito 
       // started from the beginning of time to ensure we get everything
       val ledgerTxnSource = TestNetwork.transactionsByLedgerSource(1, Record(0))
       // #transaction_source_examples
-
-      ok
     }
   }
 
-  "keypair documentation" should {
-    "show creation of keypair from secret seed" >> {
+  def `keypair documentation`() = {
+    def `show creation of keypair from secret seed`() = {
       // #keypair_from_secret_seed
       // Provide the secret seed as a String
       val keyPair = KeyPair.fromSecretSeed(
@@ -323,12 +317,11 @@ class DocExamples(implicit ee: ExecutionEnv) extends Specification with Mockito 
         Hex.decodeHex("1123740522f11bfef6b3671f51e159ccf589ccf8965262dd5f97d1721d383dd4")
       )
       // #keypair_from_secret_seed
-      keyPair.asPublicKey mustEqual KeyPair.fromAccountId("GD2HMF3BKITMXISCPTU7VVTFXDY5WSQK4QNIUATNCXVKBNWZP7FWZOXG")
     }
   }
 
   //noinspection ScalaUnusedSymbol
-  "transaction documentation" should {
+  def `transaction documentation`() = {
     implicit val TestNetwork = new DoNothingNetwork
 
     val Array(sourceKey, aliceKey, bobKey, charlieKey) = Array.fill(4)(
@@ -338,7 +331,7 @@ class DocExamples(implicit ee: ExecutionEnv) extends Specification with Mockito 
     )
     val nextSequenceNumber = 1234
 
-    "show how to create a transaction with operations" >> {
+    def `show how to create a transaction with operations`() = {
       // #transaction_createwithops_example
       val account = Account(sourceKey, nextSequenceNumber)
       val txn = Transaction(account, Seq(
@@ -347,10 +340,9 @@ class DocExamples(implicit ee: ExecutionEnv) extends Specification with Mockito 
         PaymentOperation(charlieKey, Amount.lumens(42))
       ))
       // #transaction_createwithops_example
-      ok
     }
 
-    "show how to add operations afterwards" >> {
+    def `show how to add operations afterwards`() = {
       val account = Account(sourceKey, nextSequenceNumber)
       // #transaction_addops_example
       val txn = Transaction(account)
@@ -363,40 +355,36 @@ class DocExamples(implicit ee: ExecutionEnv) extends Specification with Mockito 
           price = Price(100, 1)
         ))
       // #transaction_addops_example
-      ok
     }
 
-    "show signing" >> {
+    def `show signing`() = {
       val account = Account(sourceKey, nextSequenceNumber)
       val operation = PaymentOperation(aliceKey, Amount.lumens(100))
       // #transaction_signing_example
       val transaction = Transaction(account).add(operation)
       val signedTransaction: SignedTransaction = transaction.sign(sourceKey)
       // #transaction_signing_example
-      ok
     }
 
-    "show signing of a joint account" >> {
+    def `show signing of a joint account`() = {
       val jointAccount = Account(sourceKey, nextSequenceNumber)
       val operation = PaymentOperation(aliceKey, Amount.lumens(100))
       // #joint_transaction_signing_example
       val transaction = Transaction(jointAccount).add(operation)
       val signedTransaction: SignedTransaction = transaction.sign(aliceKey, bobKey)
       // #joint_transaction_signing_example
-      ok
     }
 
-    "show submitting" >> {
+    def `show submitting`() = {
       val account = Account(sourceKey, nextSequenceNumber)
       val operation = PaymentOperation(aliceKey, Amount.lumens(100))
       // #transaction_submit_example
       val transaction = Transaction(account).add(operation).sign(sourceKey)
       val response: Future[TransactionPostResponse] = transaction.submit()
       // #transaction_submit_example
-      ok
     }
 
-    "show checking of response" >> {
+    def `show checking of response`() = {
       val account = Account(sourceKey, nextSequenceNumber)
       val operation = PaymentOperation(aliceKey, Amount.lumens(100))
       // #transaction_response_example
@@ -405,31 +393,30 @@ class DocExamples(implicit ee: ExecutionEnv) extends Specification with Mockito 
         case ko => println(ko)
       }
       // #transaction_response_example
-      ok
     }
   }
 
   class DoNothingNetwork extends Network {
     override val passphrase: String = "Scala SDK do-nothing network"
     override val horizon: HorizonAccess = new HorizonAccess {
-      override def post(txn: SignedTransaction)(implicit ec: ExecutionContext): Future[TransactionPostResponse] =
-        mock[Future[TransactionPostResponse]]
+      override def post(txn: SignedTransaction)(implicit ec: ExecutionContext): Future[TransactionPostResponse] = ???
 
       override def get[T: ClassTag](path: String, params: Map[String, String])
                                    (implicit ec: ExecutionContext, m: Manifest[T]): Future[T] =
         if (path.endsWith("data/data_key")) {
           Future(DataValueResponse("00").asInstanceOf[T])(ec)
-        } else {
-          mock[Future[T]]
-        }
+        } else ???
 
       override def getStream[T: ClassTag](path: String, de: CustomSerializer[T], cursor: HorizonCursor, order: HorizonOrder, params: Map[String, String] = Map.empty)
                                          (implicit ec: ExecutionContext, m: Manifest[T]): Future[Stream[T]] =
-        mock[Future[Stream[T]]]
+        ???
 
       override def getSource[T: ClassTag](path: String, de: CustomSerializer[T], cursor: HorizonCursor, params: Map[String, String])
                                          (implicit ec: ExecutionContext, m: Manifest[T]): Source[T, NotUsed] = Source.empty[T]
 
+      override def getSeq[T: ClassTag](path: String, de: CustomSerializer[T], params: Map[String, String])
+                                      (implicit ec: ExecutionContext, m: Manifest[T]): Future[Seq[T]] =
+        Future.successful(Seq.empty[T])
     }
   }
 

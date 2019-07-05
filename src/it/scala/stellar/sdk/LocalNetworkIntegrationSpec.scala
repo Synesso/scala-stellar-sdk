@@ -33,12 +33,14 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
   val accnA = KeyPair.fromPassphrase("account a")
   val accnB = KeyPair.fromPassphrase("account b")
   val accnC = KeyPair.fromPassphrase("account c")
+  val accnD = KeyPair.fromPassphrase("account d")
 
   logger.debug(s"Account A = ${accnA.accountId}")
   logger.debug(s"Account B = ${accnB.accountId}")
   logger.debug(s"Account C = ${accnC.accountId}")
+  logger.debug(s"Account D = ${accnD.accountId}")
 
-  val accounts = Set(accnA, accnB, accnC)
+  val accounts = Set(accnA, accnB, accnC, accnD)
 
   val day0Assets = network.assets()
   val day0Effects = network.effects()
@@ -60,14 +62,26 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
           val signedTransaction = xs.foldLeft(model.Transaction(masterAccount))(_ add _).sign(masterAccountKey)
           val eventualTransactionPostResponse = signatories.foldLeft(signedTransaction)(_ sign _).submit()
           val transactionPostResponse = Await.result(eventualTransactionPostResponse, 5 minutes)
-          logger.info(s"${transactionPostResponse.toString.take(100)}...")
-          transactionPostResponse must beLike[TransactionPostResponse] { case r => r.isSuccess must beTrue }
+          transactionPostResponse must beLike[TransactionPostResponse] {
+            case _: TransactionApproved => ok
+            case r: TransactionRejected =>
+              logger.info(r.detail)
+              r.opResultCodes.foreach(s => logger.info(s" - $s"))
+              ko
+          }
           masterAccount = masterAccount.withIncSeq
           forReal(remaining.take(batchSize), remaining.drop(batchSize))
       }
     }
     forReal(ops.take(batchSize), ops.drop(batchSize))
   }
+
+  // Assets
+  private val aardvarkA = Asset("Aardvark", accnA)
+  private val beaverA = Asset("Beaver", accnA)
+  private val chinchillaA = Asset("Chinchilla", accnA)
+  private val chinchillaMaster = Asset("Chinchilla", masterAccountKey)
+  private val dachshundB = Asset("Dachshund", accnB)
 
   private def setupFixtures: Future[(Account, Account)] = {
     val futureAccountA = network.account(accnA).map(_.toAccount)
@@ -80,38 +94,40 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
           CreateAccountOperation(accnA, lumens(1000)),
           CreateAccountOperation(accnB, lumens(1000)),
           CreateAccountOperation(accnC, lumens(1000)),
+          CreateAccountOperation(accnD, lumens(1000)),
           WriteDataOperation("life_universe_everything", "42", Some(accnB)),
           WriteDataOperation("brain the size of a planet", "and they ask me to open a door", Some(accnB)),
           WriteDataOperation("fenton", "FENTON!", Some(accnC)),
           DeleteDataOperation("fenton", Some(accnC)),
           SetOptionsOperation(setFlags = Some(Set(AuthorizationRequiredFlag, AuthorizationRevocableFlag)), sourceAccount = Some(accnA)),
-          ChangeTrustOperation(IssuedAmount(100000000, Asset("Aardvark", accnA)), Some(accnB)),
-          ChangeTrustOperation(IssuedAmount(100000000, Asset("Beaver", accnA)), Some(accnB)),
-          ChangeTrustOperation(IssuedAmount(100000000, Asset("Chinchilla", accnA)), Some(accnB)),
-          ChangeTrustOperation(IssuedAmount(100000000, Asset("Chinchilla", masterAccountKey)), Some(accnA)),
+          ChangeTrustOperation(IssuedAmount(100000000, aardvarkA), Some(accnB)),
+          ChangeTrustOperation(IssuedAmount(100000000, beaverA), Some(accnB)),
+          ChangeTrustOperation(IssuedAmount(100000000, chinchillaA), Some(accnB)),
+          ChangeTrustOperation(IssuedAmount(100000000, chinchillaA), Some(accnD)),
+          ChangeTrustOperation(IssuedAmount(100000000, chinchillaMaster), Some(accnA)),
           AllowTrustOperation(accnB, "Aardvark", authorize = true, Some(accnA)),
           AllowTrustOperation(accnB, "Chinchilla", authorize = true, Some(accnA)),
-          PaymentOperation(accnB, IssuedAmount(555, Asset("Aardvark", accnA)), Some(accnA))
+          PaymentOperation(accnB, IssuedAmount(555, aardvarkA), Some(accnA))
         )
 
         // force a transaction boundary between CreateAccount and AccountMerge
         transact(
           AccountMergeOperation(accnB, Some(accnC)),
-          CreateSellOfferOperation(lumens(3), Asset("Aardvark", accnA), Price(3, 100), Some(accnB)),
-          CreateSellOfferOperation(lumens(5), Asset("Chinchilla", accnA), Price(5, 100), Some(accnB)),
-          CreateBuyOfferOperation(Asset("Dachshund", accnB), Amount(3, Asset("Aardvark", accnA)), Price(5, 3), Some(accnB)),
-          CreatePassiveSellOfferOperation(IssuedAmount(10, Asset("Beaver", accnA)), NativeAsset, Price(1, 3), Some(accnA)),
+          CreateSellOfferOperation(lumens(3), aardvarkA, Price(3, 100), Some(accnB)),
+          CreateSellOfferOperation(lumens(5), chinchillaA, Price(5, 100), Some(accnB)),
+          CreateBuyOfferOperation(dachshundB, Amount(3, aardvarkA), Price(5, 3), Some(accnB)),
+          CreatePassiveSellOfferOperation(IssuedAmount(10, beaverA), NativeAsset, Price(1, 3), Some(accnA)),
           AllowTrustOperation(accnB, "Aardvark", authorize = false, Some(accnA))
         )
 
         // force a transaction boundary between Create*Offer and Update/DeleteOffer
         transact(
-          UpdateSellOfferOperation(2, lumens(5), Asset("Chinchilla", accnA), Price(1, 5), Some(accnB)),
-          DeleteSellOfferOperation(4, Asset("Beaver", accnA), NativeAsset, Price(1, 3), Some(accnA)),
+          UpdateSellOfferOperation(2, lumens(5), chinchillaA, Price(1, 5), Some(accnB)),
+          DeleteSellOfferOperation(4, beaverA, NativeAsset, Price(1, 3), Some(accnA)),
           InflationOperation(),
-          CreateSellOfferOperation(IssuedAmount(80, Asset("Chinchilla", accnA)), NativeAsset, Price(80, 4), Some(accnA)),
-          CreateSellOfferOperation(IssuedAmount(1, Asset("Chinchilla", accnA)), Asset("Chinchilla", masterAccountKey), Price(1, 1), Some(accnA)),
-          PathPaymentOperation(IssuedAmount(1, Asset("Chinchilla", masterAccountKey)), accnB, IssuedAmount(1, Asset("Chinchilla", accnA)), Nil),
+          CreateSellOfferOperation(IssuedAmount(800000000, chinchillaA), NativeAsset, Price(80, 4), Some(accnA)),
+          CreateSellOfferOperation(IssuedAmount(10000000, chinchillaA), chinchillaMaster, Price(1, 1), Some(accnA)),
+          PathPaymentOperation(IssuedAmount(1, chinchillaMaster), accnB, IssuedAmount(1, chinchillaA), Nil),
           BumpSequenceOperation(masterAccount.sequenceNumber + 20)
         )
 
@@ -156,8 +172,8 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
         case AccountResponse(id, _, _, _, _, _, balances, _, data) =>
           id mustEqual accnA
           balances must containTheSameElementsAs(Seq(
-            Balance(lumens(1000.000495), buyingLiabilities = 1600),
-            Balance(IssuedAmount(1, Asset.apply("Chinchilla", masterAccountKey)), limit = Some(100000000))
+            Balance(lumens(1000.000495), buyingLiabilities = 16000000000L),
+            Balance(IssuedAmount(1, Asset.apply("Chinchilla", masterAccountKey)), limit = Some(100000000), 9999999)
           ))
           data must beEmpty
       }.awaitFor(30 seconds)
@@ -219,11 +235,11 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
     "list all assets" >> {
       val eventualResps = network.assets().map(_.toSeq)
       eventualResps must containTheSameElementsAs(Seq(
-        AssetResponse(Asset("Aardvark", accnA), 0, 0, authRequired = true, authRevocable = true),
-        AssetResponse(Asset("Beaver", accnA), 0, 0, authRequired = true, authRevocable = true),
-        AssetResponse(Asset("Chinchilla", accnA), 1, 1, authRequired = true, authRevocable = true),
-        AssetResponse(Asset("Chinchilla", masterAccountKey), 1, 1, authRequired = false, authRevocable = false),
-        AssetResponse(Asset("Dachshund", accnB), 0, 0, authRequired = false, authRevocable = false)
+        AssetResponse(aardvarkA, 0, 0, authRequired = true, authRevocable = true),
+        AssetResponse(beaverA, 0, 0, authRequired = true, authRevocable = true),
+        AssetResponse(chinchillaA, 1, 1, authRequired = true, authRevocable = true),
+        AssetResponse(chinchillaMaster, 1, 1, authRequired = false, authRevocable = false),
+        AssetResponse(dachshundB, 0, 0, authRequired = false, authRevocable = false)
       )).awaitFor(10 seconds)
     }
 
@@ -250,7 +266,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
   "effect endpoint" should {
     "parse all effects" >> {
       val effects = network.effects()
-      effects.map(_.size) must beEqualTo(231).awaitFor(10 seconds)
+      effects.map(_.size) must beEqualTo(235).awaitFor(10 seconds)
     }
 
     "filter effects by account" >> {
@@ -341,7 +357,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
 
   "operation endpoint" should {
     "list all operations" >> {
-      network.operations().map(_.size) must beEqualTo(128).awaitFor(10.seconds)
+      network.operations().map(_.size) must beEqualTo(130).awaitFor(10.seconds)
     }
 
     "list operations by account" >> {
@@ -376,10 +392,18 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
             }
         }.awaitFor(10.seconds)
       }
+
+      "provide operation details" >> {
+        (for {
+          ops <- network.operationsByAccount(accnB)
+          expected = ops.last
+          actual <- network.operation(expected.id)
+        } yield expected.operation shouldEqual actual.operation).awaitFor(10.seconds)
+      }
     }
 
     "list the details of a given operation" >> {
-      network.operationsByTransaction("f72bc33eb1b18b184bfd08cbe9b26d8d1ddf67994e350c5ead1958782d79dea2")
+      network.operationsByTransaction("4b55f0095aa1e7e19c731a60f2f28271cd64c1f5359206c54a82bc9c7c4e81ad")
         .map(_.drop(2).head) must beLike[Transacted[Operation]] {
         case op =>
           op.operation must beLike[Operation] {
@@ -392,10 +416,10 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
 
   "orderbook endpoint" should {
     "fetch current orders" >> {
-      network.orderBook(NativeAsset, Asset("Chinchilla", accnA)) must beLike[OrderBook] {
+      network.orderBook(NativeAsset, chinchillaA) must beLike[OrderBook] {
         case OrderBook(NativeAsset, buying, bids, asks) =>
-          buying must beEquivalentTo(Asset("Chinchilla", accnA))
-          bids mustEqual Seq(Order(Price(4, 80), 80))
+          buying must beEquivalentTo(chinchillaA)
+          bids mustEqual Seq(Order(Price(4, 80), 800000000))
           asks mustEqual Seq(Order(Price(1,5),50000000))
       }.awaitFor(10.seconds)
     }
@@ -406,7 +430,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
       network.paymentsByAccount(accnA) must beLike[Seq[Transacted[PayOperation]]] {
         case a +: b +: oneHundredPayments =>
           a.operation must beEquivalentTo(CreateAccountOperation(accnA, lumens(1000), Some(masterAccountKey)))
-          b.operation must beEquivalentTo(PaymentOperation(accnB, IssuedAmount(555, Asset("Aardvark", accnA)), Some(accnA)))
+          b.operation must beEquivalentTo(PaymentOperation(accnB, IssuedAmount(555, aardvarkA), Some(accnA)))
           oneHundredPayments must haveSize(100)
       }.awaitFor(10.seconds)
     }
@@ -418,17 +442,17 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
       } yield operation) must beLike[Seq[Transacted[PayOperation]]] {
         case Seq(op) =>
           op.operation must beEquivalentTo(PathPaymentOperation(
-            IssuedAmount(1, Asset("Chinchilla", masterAccountKey)), accnB, IssuedAmount(1, Asset("Chinchilla", accnA)), Nil
+            IssuedAmount(1, chinchillaMaster), accnB, IssuedAmount(1, chinchillaA), Nil
           ))
       }.awaitFor(10.seconds)
     }
 
     "filter payments by transaction" >> {
-      network.paymentsByTransaction("f72bc33eb1b18b184bfd08cbe9b26d8d1ddf67994e350c5ead1958782d79dea2") must
+      network.paymentsByTransaction("4b55f0095aa1e7e19c731a60f2f28271cd64c1f5359206c54a82bc9c7c4e81ad") must
         beLike[Seq[Transacted[PayOperation]]] {
           case Seq(op) =>
             op.operation must beEquivalentTo(PathPaymentOperation(
-              IssuedAmount(1, Asset("Chinchilla", masterAccountKey)), accnB, IssuedAmount(1, Asset("Chinchilla", accnA)), Nil
+              IssuedAmount(1, chinchillaMaster), accnB, IssuedAmount(1, chinchillaA), Nil
             ))
         }.awaitFor(10.seconds)
     }
@@ -437,12 +461,12 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
   "trades endpoint" should {
     "filter trades by orderbook" >> {
       network.tradesByOrderBook(
-        base = Asset("Chinchilla", accnA),
+        base = chinchillaA,
         counter = Asset("Chinchilla", masterAccountKey.asPublicKey)
       ) must beLike[Seq[Trade]] {
         case Seq(trade) =>
           trade.baseAccount must beEquivalentTo(accnA)
-          trade.baseAmount must beEquivalentTo(IssuedAmount(1, Asset("Chinchilla", accnA)))
+          trade.baseAmount must beEquivalentTo(IssuedAmount(1, chinchillaA))
           trade.counterAccount must beEquivalentTo(masterAccountKey.asPublicKey)
           trade.counterAmount must beEquivalentTo(IssuedAmount(1, Asset("Chinchilla", masterAccountKey.asPublicKey)))
           trade.baseIsSeller must beTrue
@@ -457,8 +481,8 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
       byAccount.map(_.head) must beLike[TransactionHistory] {
         case t =>
           t.account must beEquivalentTo(masterAccountKey)
-          t.feePaid mustEqual NativeAmount(1500)
-          t.operationCount mustEqual 15
+          t.feeCharged mustEqual NativeAmount(1700)
+          t.operationCount mustEqual 17
           t.memo mustEqual NoMemo
       }.awaitFor(10.seconds)
     }
@@ -470,7 +494,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
       } yield operation) must beLike[Seq[TransactionHistory]] {
         case Seq(t) =>
           t.account must beEquivalentTo(masterAccountKey)
-          t.feePaid mustEqual NativeAmount(10000)
+          t.feeCharged mustEqual NativeAmount(10000)
           t.operationCount mustEqual 100
           t.memo mustEqual NoMemo
       }.awaitFor(10.seconds)
@@ -495,6 +519,20 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
       results.isCompleted must beFalse
       transact(InflationOperation())
       results.map(_.size) must beEqualTo(1).awaitFor(1 minute)
+    }
+  }
+
+  "payment path endpoint" should {
+    "return valid payment paths" >> {
+      network.paths(masterAccountKey, accnD, Amount(1, chinchillaA)) must
+        beEqualTo(Seq(
+          PaymentPath(lumens(20), Amount(10000000, chinchillaA), List())
+      )).awaitFor(1 minute)
+    }
+
+    "return nothing when there's no path" >> {
+      network.paths(masterAccountKey, accnD, Amount(1, dachshundB)) must
+        beEmpty[Seq[PaymentPath]].awaitFor(1 minute)
     }
   }
 

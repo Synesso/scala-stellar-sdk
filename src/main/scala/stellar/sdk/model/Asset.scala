@@ -28,8 +28,11 @@ case object NativeAsset extends Asset {
 }
 
 sealed trait NonNativeAsset extends Asset {
+  val code: String
   val issuer: PublicKeyOps
   val typeString: String
+
+  override def toString: String = s"${issuer.accountId}:$code"
 }
 
 /**

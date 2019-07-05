@@ -8,10 +8,7 @@ case class FeeStatsResponse(lastLedger: Long,
                             ledgerCapacityUsage: Double,
                             minAcceptedFee: NativeAmount,
                             modeAcceptedFee: NativeAmount,
-                            acceptedFeePercentiles: Map[Int, NativeAmount]) {
-
-
-}
+                            acceptedFeePercentiles: Map[Int, NativeAmount])
 
 object FeeStatsRespDeserializer extends ResponseParser[FeeStatsResponse]({ o: JObject =>
   implicit val formats = DefaultFormats

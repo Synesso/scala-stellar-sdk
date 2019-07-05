@@ -9,6 +9,8 @@ case class Price(n: Int, d: Int) {
   def asDecimalString = "%.7f".formatLocal(Locale.ROOT, n * 1.0 / d * 1.0)
 
   def encode: Stream[Byte] = Encode.int(n) ++ Encode.int(d)
+
+  override def toString: String = s"$n:$d"
 }
 
 object Price {

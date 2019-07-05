@@ -4,6 +4,10 @@ As this project is pre 1.0, breaking changes may happen for minor version bumps.
 
 ## Next version
 
+### Added
+
+- [#33](https://github.com/Synesso/scala-stellar-sdk/issues/33) Support for pathfinding endpoint `/paths`.
+
 ### Changed
 - [#92](https://github.com/Synesso/scala-stellar-sdk/issues/92) Horizon Release v0.18.0 compatibility. Added fields
        `maxFee` and `feeCharged` to transaction responses. The field `feePaid` is now deprecated and will be removed
