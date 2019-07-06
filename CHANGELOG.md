@@ -7,6 +7,7 @@ As this project is pre 1.0, breaking changes may happen for minor version bumps.
 ### Added
 
 - [#33](https://github.com/Synesso/scala-stellar-sdk/issues/33) Support for pathfinding endpoint `/paths`.
+- [#35](https://github.com/Synesso/scala-stellar-sdk/issues/35) Support for trade aggregations endpoint `/trade_aggregations`.
 
 ### Changed
 - [#92](https://github.com/Synesso/scala-stellar-sdk/issues/92) Horizon Release v0.18.0 compatibility. Added fields
