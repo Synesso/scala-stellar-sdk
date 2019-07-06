@@ -3,6 +3,7 @@ package stellar.sdk
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets.UTF_8
 import java.time.Instant
+import java.util.concurrent.TimeUnit
 
 import akka.NotUsed
 import akka.stream.scaladsl.Source
@@ -387,6 +388,7 @@ trait Network extends LazyLogging {
     * @param start the start of the time period
     * @param end the end of the time period
     * @param resolution the resolution for reporting trading activity
+    * @param offsetHours an offset to apply to the start of aggregated periods, between 0-23.
     * @param base the base asset
     * @param counter the counter/quote asset
     * @param cursor optional record id to start results from (defaults to `0`)
@@ -395,7 +397,16 @@ trait Network extends LazyLogging {
     */
   def tradeAggregations(start: Instant, end: Instant, resolution: TradeAggregation.Resolution, offsetHours: Int,
                         base: Asset, counter: Asset, cursor: HorizonCursor = Record(0), order: HorizonOrder = Asc)
-                       (implicit ex: ExecutionContext): Future[Stream[TradeAggregation]] = ???
+                       (implicit ex: ExecutionContext): Future[Stream[TradeAggregation]] = {
+
+    val params = assetParams("base", base) ++ assetParams("counter", counter) ++ Map(
+      "start_time" -> start.toEpochMilli,
+      "end_time" -> end.toEpochMilli,
+      "resolution" -> resolution.duration.toMillis,
+      "offset" -> TimeUnit.HOURS.toMillis(offsetHours)
+    ).mapValues(_.toString)
+    horizon.getStream[TradeAggregation]("/trade_aggregations", TradeAggregationDeserializer, cursor, order, params)
+  }
 
   /**
     * Fetch information on a single transaction.

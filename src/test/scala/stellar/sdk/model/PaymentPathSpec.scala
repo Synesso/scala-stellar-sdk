@@ -9,7 +9,7 @@ class PaymentPathSpec extends Specification with ArbitraryInput {
 
   implicit val formats = Serialization.formats(NoTypeHints) + PaymentPathDeserializer
 
-  "a payment path response documents" should {
+  "a payment path response document" should {
     "parse to a payment path" >> prop { path: PaymentPath =>
 
       def amountJson(prefix: String, amount: Amount) =

@@ -1,19 +1,14 @@
 package stellar.sdk
 
+import java.time.Instant
 import java.time.temporal.ChronoUnit.DAYS
-import java.time.temporal.{ChronoUnit, TemporalUnit}
-import java.time.{Instant, ZonedDateTime}
 
 import akka.NotUsed
 import akka.actor.ActorSystem
-import akka.parboiled2.RuleTrace.NotPredicate.Base
 import akka.stream.ActorMaterializer
 import akka.stream.scaladsl.Source
 import org.apache.commons.codec.binary.Hex
 import org.json4s.CustomSerializer
-import org.specs2.concurrent.ExecutionEnv
-import org.specs2.mock.Mockito
-import org.specs2.mutable.Specification
 import stellar.sdk.inet.HorizonAccess
 import stellar.sdk.model._
 import stellar.sdk.model.op._

@@ -1,12 +1,33 @@
 package stellar.sdk.model
 
+import java.time.Instant
 import java.util.concurrent.TimeUnit
+
+import org.json4s.JsonAST.JObject
+import org.json4s.{DefaultFormats, JValue}
+import stellar.sdk.model.response.ResponseParser
 
 import scala.concurrent.duration.Duration
 
-case class TradeAggregation() {
+case class TradeAggregation(instant: Instant, tradeCount: Int, baseVolume: Double, counterVolume: Double,
+                            average: Double, open: Price, high: Price, low: Price, close: Price)
 
-}
+object TradeAggregationDeserializer extends ResponseParser[TradeAggregation]({ o: JObject =>
+  implicit val formats = DefaultFormats
+
+  def price(p: JValue): Price = Price((p \ "N").extract[Int], (p \ "D").extract[Int])
+
+  TradeAggregation(
+    instant = Instant.ofEpochMilli((o \ "timestamp").extract[Long]),
+    tradeCount = (o \ "trade_count").extract[Int],
+    baseVolume = (o \ "base_volume").extract[String].toDouble,
+    counterVolume = (o \ "counter_volume").extract[String].toDouble,
+    average = (o \ "avg").extract[String].toDouble,
+    open = price(o \ "open_r"),
+    high = price(o \ "high_r"),
+    low = price(o \ "low_r"),
+    close = price(o \ "close_r"))
+})
 
 object TradeAggregation {
 
