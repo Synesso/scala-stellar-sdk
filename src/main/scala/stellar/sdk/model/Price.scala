@@ -10,6 +10,8 @@ case class Price(n: Int, d: Int) {
 
   def encode: Stream[Byte] = Encode.int(n) ++ Encode.int(d)
 
+  // TODO (jem): As BigDecimal
+
   override def toString: String = s"$n:$d"
 }
 

@@ -1,6 +1,7 @@
 package stellar.sdk
 
 import java.net.URI
+import java.time.{Instant, Period}
 
 import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
@@ -11,6 +12,7 @@ import org.specs2.concurrent.ExecutionEnv
 import org.specs2.mutable.Specification
 import stellar.sdk.inet.HorizonEntityNotFound
 import stellar.sdk.model.Amount.lumens
+import stellar.sdk.model.TradeAggregation.FifteenMinutes
 import stellar.sdk.model._
 import stellar.sdk.model.op._
 import stellar.sdk.model.response._
@@ -462,13 +464,13 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
     "filter trades by orderbook" >> {
       network.tradesByOrderBook(
         base = chinchillaA,
-        counter = Asset("Chinchilla", masterAccountKey.asPublicKey)
+        counter = chinchillaMaster
       ) must beLike[Seq[Trade]] {
         case Seq(trade) =>
           trade.baseAccount must beEquivalentTo(accnA)
           trade.baseAmount must beEquivalentTo(IssuedAmount(1, chinchillaA))
           trade.counterAccount must beEquivalentTo(masterAccountKey.asPublicKey)
-          trade.counterAmount must beEquivalentTo(IssuedAmount(1, Asset("Chinchilla", masterAccountKey.asPublicKey)))
+          trade.counterAmount must beEquivalentTo(IssuedAmount(1, chinchillaMaster))
           trade.baseIsSeller must beTrue
       }.awaitFor(10.seconds)
     }
@@ -497,6 +499,25 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
           t.feeCharged mustEqual NativeAmount(10000)
           t.operationCount mustEqual 100
           t.memo mustEqual NoMemo
+      }.awaitFor(10.seconds)
+    }
+  }
+
+  "trade aggregations endpoint" should {
+    "show aggregations for a given pair" >> {
+      val start = Instant.now().minus(Period.ofDays(1))
+      val end = Instant.now().plus(Period.ofDays(1))
+      network.tradeAggregations(start, end, FifteenMinutes, 0, chinchillaA, chinchillaMaster) must beLike[Seq[TradeAggregation]] {
+        case Seq(ta) =>
+          ta.instant.isBefore(Instant.now()) must beTrue
+          ta.tradeCount mustEqual 1
+          ta.average mustEqual 1
+          ta.baseVolume mustEqual 1e-7
+          ta.counterVolume mustEqual 1e-7
+          ta.open mustEqual Price(1, 1)
+          ta.high mustEqual Price(1, 1)
+          ta.low mustEqual Price(1, 1)
+          ta.close mustEqual Price(1, 1)
       }.awaitFor(10.seconds)
     }
   }

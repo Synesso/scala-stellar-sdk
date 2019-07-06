@@ -76,7 +76,7 @@ lazy val root = (project in file("."))
       "net.i2p.crypto" % "eddsa" % "0.3.0",
       "com.typesafe.akka" %% "akka-http" % "10.1.8",
       "com.typesafe.akka" %% "akka-stream" % "2.5.23",
-      "com.lightbend.akka" %% "akka-stream-alpakka-sse" % "1.0.2",
+      "com.lightbend.akka" %% "akka-stream-alpakka-sse" % "1.1.0",
       "de.heikoseeberger" %% "akka-http-json4s" % "1.27.0",
       "org.json4s" %% "json4s-native" % "3.6.7",
       "com.typesafe.scala-logging" %% "scala-logging" % "3.9.2",
@@ -84,9 +84,9 @@ lazy val root = (project in file("."))
       "org.typelevel" %% "cats-core" % "1.6.1",
       "tech.sparse" %%  "toml-scala" % "0.2.0",
       "com.softwaremill.retry" %% "retry" % "0.3.2",
-      "org.specs2" %% "specs2-core" % "4.5.1" % "test,it",
-      "org.specs2" %% "specs2-mock" % "4.5.1" % "test",
-      "org.specs2" %% "specs2-scalacheck" % "4.5.1" % "test"
+      "org.specs2" %% "specs2-core" % "4.6.0" % "test,it",
+      "org.specs2" %% "specs2-mock" % "4.6.0" % "test",
+      "org.specs2" %% "specs2-scalacheck" % "4.6.0" % "test"
     )
   )
 

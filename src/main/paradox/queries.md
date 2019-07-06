@@ -141,6 +141,17 @@ By default the results will be in ascending order from the earliest record. This
 @@snip [DocExamples.scala](../../test/scala/stellar/sdk/DocExamples.scala) { #trade_query_examples }
 
 
+### Trade Aggregations
+
+@scaladoc[TradeAggregations](stellar.sdk.TradeAggregation) are summaries of historical trade data for a given asset pair,
+time period and time resolution.
+
+By default the results will be in ascending order from the earliest record. This behaviour can be modified with the
+`cursor` and `order` parameters.
+
+@@snip [DocExamples.scala](../../test/scala/stellar/sdk/DocExamples.scala) { #trade_query_examples }
+
+
 ### Transactions
 
 By default the results will be in ascending order from the earliest record. This behaviour can be modified with the

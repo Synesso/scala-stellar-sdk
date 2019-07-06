@@ -148,6 +148,8 @@ trait ArbitraryInput extends ScalaCheck {
 
   implicit def arbPaymentPath: Arbitrary[PaymentPath] = Arbitrary(genPaymentPath)
 
+  implicit def arbTradeAggregation: Arbitrary[TradeAggregation] = Arbitrary(genTradeAggregation)
+
   def round(d: Double): Double = "%.7f".formatLocal(Locale.ROOT, d).toDouble
 
   def genKeyPair: Gen[KeyPair] = Gen.oneOf(Seq(KeyPair.random))
@@ -399,7 +401,8 @@ trait ArbitraryInput extends ScalaCheck {
     Price(n, d)
   }
 
-  def genInstant: Gen[Instant] = Gen.posNum[Long].map(Instant.ofEpochMilli)
+  def genInstant: Gen[Instant] = Arbitrary.arbInt.arbitrary.map(_.toLong)
+    .map(Instant.now().`with`(ChronoField.MILLI_OF_SECOND, 0).plusSeconds)
 
   def genZonedDateTime: Gen[ZonedDateTime] = genInstant.map(ZonedDateTime.ofInstant(_, ZoneId.of("UTC").normalized()))
     .map(_.`with`(ChronoField.NANO_OF_SECOND, 0))
@@ -563,6 +566,16 @@ trait ArbitraryInput extends ScalaCheck {
   } yield {
     Trade(id, ledgerCloseTime, offerId, baseOfferId, counterOfferId, baseAccount, baseAmount, counterAccount, counterAmount, baseIsSeller)
   }
+
+  def genTradeAggregation: Gen[TradeAggregation] = for {
+    instant <- genInstant
+    tradeCount <- Gen.posNum[Int]
+    baseVolume <- Gen.posNum[Double]
+    counterVolume <- Gen.posNum[Double]
+    average <- Gen.posNum[Double]
+    prices <- Gen.listOfN(4, genPrice)
+    Seq(low, open, close, high) = prices
+  } yield TradeAggregation(instant, tradeCount, baseVolume, counterVolume, average, open, high, low, close)
 
   def genTransactionPostSuccess: Gen[TransactionApproved] = for {
     hash <- genHash
