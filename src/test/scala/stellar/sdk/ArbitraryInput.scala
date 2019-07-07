@@ -261,8 +261,8 @@ trait ArbitraryInput extends ScalaCheck {
   }
 
   def genWriteDataOperation: Gen[WriteDataOperation] = for {
-    name <- Gen.identifier
-    value <- Gen.identifier
+    name <- Gen.identifier.map(_.getBytes(UTF_8).take(64)).map(new String(_, UTF_8))
+    value <- Arbitrary.arbString.arbitrary.suchThat(_.nonEmpty).map(_.getBytes(UTF_8).take(60)).map(new String(_, UTF_8))
     sourceAccount <- Gen.option(genPublicKey)
   } yield {
     WriteDataOperation(name, value, sourceAccount)
@@ -476,10 +476,10 @@ trait ArbitraryInput extends ScalaCheck {
     data <- genDataMap
   } yield AccountResponse(id, lastSequence, subEntryCount, thresholds, authRequired, authRevocable, balances, signers, data)
 
-  def genDataMap: Gen[Map[String, String]] = for {
+  def genDataMap: Gen[Map[String, Array[Byte]]] = for {
     qty <- Gen.choose(0, 30)
     keys <- Gen.listOfN(qty, Gen.identifier)
-    values <- Gen.listOfN(qty, Gen.asciiPrintableStr.map(_.getBytes(UTF_8)).map(Base64.encodeBase64String))
+    values <- Gen.listOfN(qty, Arbitrary.arbString.arbitrary.map(_.take(60).getBytes(UTF_8)))
   } yield keys.zip(values).toMap
 
   def genSigner: Gen[Signer] = for {

@@ -45,7 +45,7 @@ class DocExamples() {
       val accountDetails: Future[AccountResponse] = TestNetwork.account(publicKey)
 
       // account datum value
-      val accountData: Future[String] = TestNetwork.accountData(publicKey, "data_key")
+      val accountData: Future[Array[Byte]] = TestNetwork.accountData(publicKey, "data_key")
       // #account_query_examples
     }
 

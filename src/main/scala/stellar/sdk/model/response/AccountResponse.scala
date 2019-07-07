@@ -1,11 +1,13 @@
 package stellar.sdk.model.response
 
-import org.apache.commons.codec.binary.Base64
+import java.nio.charset.StandardCharsets.UTF_8
+
 import org.json4s.DefaultFormats
 import org.json4s.JsonAST.{JArray, JObject}
 import stellar.sdk._
 import stellar.sdk.model.Amount.toBaseUnits
 import stellar.sdk.model._
+import stellar.sdk.util.ByteArrays
 
 case class AccountResponse(id: PublicKey,
                            lastSequence: Long,
@@ -15,9 +17,11 @@ case class AccountResponse(id: PublicKey,
                            authRevocable: Boolean,
                            balances: List[Balance],
                            signers: List[Signer],
-                           data: Map[String, String]) {
+                           data: Map[String, Array[Byte]]) {
 
   def toAccount: Account = Account(id, lastSequence + 1)
+
+  def decodedData: Map[String, String] = data.mapValues(new String(_, UTF_8))
 }
 
 object AccountRespDeserializer extends ResponseParser[AccountResponse]({ o: JObject =>
@@ -63,7 +67,7 @@ object AccountRespDeserializer extends ResponseParser[AccountResponse]({ o: JObj
     case _ => throw new RuntimeException(s"Expected js object at 'signers'")
   }
   val JObject(dataFields) = o \ "data"
-  val data = dataFields.toMap.mapValues(_.extract[String]).mapValues(Base64.decodeBase64).mapValues(new String(_))
+  val data = dataFields.toMap.mapValues(_.extract[String]).mapValues(ByteArrays.base64)
 
   AccountResponse(id, seq, subEntryCount, Thresholds(lowThreshold, mediumThreshold, highThreshold), authRequired,
     authRevocable, balances, signers, data)

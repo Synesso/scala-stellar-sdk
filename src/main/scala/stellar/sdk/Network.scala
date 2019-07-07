@@ -52,10 +52,10 @@ trait Network extends LazyLogging {
     * @param dataKey the key for the data field
     * @see [[https://www.stellar.org/developers/horizon/reference/endpoints/data-for-account.html endpoint doc]]
     */
-  def accountData(pubKey: PublicKeyOps, dataKey: String)(implicit ec: ExecutionContext): Future[String] = {
+  def accountData(pubKey: PublicKeyOps, dataKey: String)(implicit ec: ExecutionContext): Future[Array[Byte]] = {
     val encodedKey = URLEncoder.encode(dataKey, "UTF-8")
     horizon.get[DataValueResponse](s"/accounts/${pubKey.accountId}/data/$encodedKey")
-      .map(_.v).map(base64).map(new String(_, UTF_8))
+      .map(_.v).map(base64)
   }
 
   /**

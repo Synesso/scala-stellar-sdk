@@ -1,5 +1,7 @@
 package stellar.sdk.model.op
 
+import java.nio.charset.StandardCharsets.UTF_8
+
 import cats.data.State
 import org.apache.commons.codec.binary.Base64
 import org.json4s.DefaultFormats
@@ -9,7 +11,7 @@ import stellar.sdk.model._
 import stellar.sdk.model.response.ResponseParser
 import stellar.sdk.model.xdr.{Decode, Encodable, Encode}
 import stellar.sdk.util.ByteArrays
-import stellar.sdk.util.ByteArrays.paddedByteArray
+import stellar.sdk.util.ByteArrays.{base64, paddedByteArray}
 
 /**
   * An Operation represents a change to the ledger. It is the action, as opposed to the effects resulting from that action.
@@ -175,7 +177,7 @@ object OperationDeserializer extends ResponseParser[Operation]({ o: JObject =>
       val value = (o \ "value").extract[String]
       value match {
         case "" => DeleteDataOperation(name, sourceAccount)
-        case _ => WriteDataOperation(name, new String(Base64.decodeBase64(value), "UTF-8"), sourceAccount)
+        case _ => WriteDataOperation(name, new String(Base64.decodeBase64(value), UTF_8), sourceAccount)
       }
     case "bump_sequence" =>
       BumpSequenceOperation((o \ "bump_to").extract[String].toLong, sourceAccount)
@@ -645,7 +647,7 @@ sealed trait ManageDataOperation extends Operation {
   * @see [[https://www.stellar.org/developers/horizon/reference/resources/operation.html#manage-data endpoint doc]]
   */
 case class DeleteDataOperation(name: String, sourceAccount: Option[PublicKeyOps] = None) extends ManageDataOperation {
-  override def encode: Stream[Byte] = super.encode ++ Encode.int(10) ++ Encode.string(name) ++ Encode.int(0)
+  override def encode: Stream[Byte] = super.encode ++ Encode.int(10) ++ Encode.string(name) ++ Encode.bool(false)
 }
 
 /**
@@ -654,13 +656,27 @@ case class DeleteDataOperation(name: String, sourceAccount: Option[PublicKeyOps]
   * @param sourceAccount the account effecting this operation, if different from the owning account of the transaction
   * @see [[https://www.stellar.org/developers/horizon/reference/resources/operation.html#manage-data endpoint doc]]
   */
-case class WriteDataOperation(name: String, value: String, sourceAccount: Option[PublicKeyOps] = None) extends ManageDataOperation {
+case class WriteDataOperation(name: String, value: Array[Byte], sourceAccount: Option[PublicKeyOps] = None) extends ManageDataOperation {
+
+  require(name.getBytes(UTF_8).length <= 64, s"name cannot be greater than 64 bytes, was ${name.length}")
+  require(value.length <= 64 && value.nonEmpty, s"value must be non-empty and cannot be greater than 64 bytes, was ${value.length}")
+
+  def decodedValue: String = base64(value)
+
   override def encode: Stream[Byte] =
     super.encode ++
       Encode.int(10) ++
       Encode.string(name) ++
-      Encode.int(1) ++
-      Encode.string(value)
+      Encode.bool(true) ++
+      Encode.string(new String(value, UTF_8))
+}
+
+object WriteDataOperation {
+  def apply(name: String, value: String): WriteDataOperation =
+    WriteDataOperation(name, value.getBytes(UTF_8))
+
+  def apply(name: String, value: String, sourceAccount: Option[PublicKeyOps]): WriteDataOperation =
+    WriteDataOperation(name, value.getBytes(UTF_8), sourceAccount)
 }
 
 
@@ -669,10 +685,9 @@ object ManageDataOperation {
     name <- Decode.string
     value <- Decode.opt(Decode.string)
   } yield value match {
-    case Some(v) => WriteDataOperation(name, v)
+    case Some(v) => WriteDataOperation(name, v.getBytes(UTF_8))
     case None => DeleteDataOperation(name)
   }
-
 }
 
 /**
