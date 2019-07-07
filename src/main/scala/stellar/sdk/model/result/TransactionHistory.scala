@@ -9,6 +9,8 @@ import stellar.sdk.model.response.ResponseParser
 import stellar.sdk.util.ByteArrays.base64
 import stellar.sdk.{KeyPair, PublicKey}
 
+import scala.util.Try
+
 /**
   * A transaction that has been included in the ledger sometime in the past.
   */
@@ -51,7 +53,8 @@ object TransactionHistoryDeserializer extends ResponseParser[TransactionHistory]
       resultXDR = (o \ "result_xdr").extract[String],
       resultMetaXDR = (o \ "result_meta_xdr").extract[String],
       feeMetaXDR = (o \ "fee_meta_xdr").extract[String],
-      validAfter = (o \ "valid_after").extractOpt[String].map(ZonedDateTime.parse),
-      validBefore = (o \ "valid_before").extractOpt[String].map(ZonedDateTime.parse),
+      // TODO (jem) - Remove the Try wrappers when https://github.com/stellar/go/issues/1381 is fixed.
+      validBefore = Try((o \ "valid_before").extractOpt[String].map(ZonedDateTime.parse)).getOrElse(None),
+      validAfter = Try((o \ "valid_after").extractOpt[String].map(ZonedDateTime.parse)).getOrElse(None)
     )
 })

@@ -4,6 +4,13 @@ As this project is pre 1.0, breaking changes may happen for minor version bumps.
 
 ## Next version
 
+### Breaking changes
+
+- `AccountResponse` now models account data values as `Array[Byte]`, not `String` (See below).
+- Due to [this bug in Horizon](https://github.com/stellar/go/issues/1381), the `validBefore` and `validAfter` fields of 
+    `TransactionHistory` may appear as `None` when they were in fact present. This document will note when these fields
+    become reliable again.
+
 ### Added
 
 - [#33](https://github.com/Synesso/scala-stellar-sdk/issues/33) Support for pathfinding endpoint `/paths`.
