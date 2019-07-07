@@ -183,7 +183,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
 
     "provide access to custom data" >> {
       network.account(accnB) must beLike[AccountResponse] { case r =>
-        r.data mustEqual Map(
+        r.decodedData mustEqual Map(
           "life_universe_everything" -> "42",
           "brain the size of a planet" -> "and they ask me to open a door"
         )
@@ -220,7 +220,8 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
     }
 
     "return the data for an account" >> {
-      network.accountData(accnB, "life_universe_everything") must beEqualTo("42").awaitFor(5.seconds)
+      network.accountData(accnB, "life_universe_everything").map(_.toSeq) must
+        beEqualTo("42".getBytes("UTF-8").toSeq).awaitFor(5.seconds)
     }
 
     "fetch nothing if no data exists for the account" >> {
@@ -365,7 +366,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
     "list operations by account" >> {
       network.operationsByAccount(accnB).map(_.drop(1).head) must beLike[Transacted[Operation]] {
         case op =>
-          op.operation mustEqual WriteDataOperation("life_universe_everything", "42", Some(accnB))
+          op.operation must beEquivalentTo(WriteDataOperation("life_universe_everything", "42", Some(accnB)))
       }.awaitFor(10.seconds)
     }
 

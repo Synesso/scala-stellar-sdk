@@ -4,10 +4,10 @@ import org.apache.commons.codec.binary.Base64
 import org.json4s.NoTypeHints
 import org.json4s.native.JsonMethods.parse
 import org.json4s.native.Serialization
-import org.scalacheck.Arbitrary
+import org.scalacheck.{Arbitrary, Gen}
 import org.specs2.mutable.Specification
 import stellar.sdk.util.ByteArrays.base64
-import stellar.sdk.{ArbitraryInput, DomainMatchers}
+import stellar.sdk.{ArbitraryInput, DomainMatchers, PublicKey}
 
 class ManageDataOperationSpec extends Specification with ArbitraryInput with DomainMatchers with JsonSnippets {
 
@@ -35,7 +35,7 @@ class ManageDataOperationSpec extends Specification with ArbitraryInput with Dom
        |  "name": "${op.operation.name}",
        |  "value": "${
       op.operation match {
-        case WriteDataOperation(_, value, _) => Base64.encodeBase64String(value.getBytes("UTF-8"))
+        case WriteDataOperation(_, value, _) => Base64.encodeBase64String(value)
         case _ => ""
       }
     }"
@@ -48,13 +48,38 @@ class ManageDataOperationSpec extends Specification with ArbitraryInput with Dom
 
     "serde via xdr bytes" >> prop { actual: WriteDataOperation =>
       val (remaining, decoded) = Operation.decode.run(actual.encode).value
-      decoded mustEqual actual
+      decoded must beEquivalentTo(actual)
       remaining must beEmpty
     }
 
     "parse from json" >> prop { op: Transacted[WriteDataOperation] =>
-      parse(doc(op)).extract[Transacted[ManageDataOperation]] mustEqual op
+      parse(doc(op)).extract[Transacted[ManageDataOperation]] must beEquivalentTo(op)
     }.setGen(genTransacted(genWriteDataOperation.suchThat(_.sourceAccount.nonEmpty)))
+
+    "include a binary payload verbatim" >> prop { bs: Array[Byte] =>
+      val value = bs.take(64)
+      WriteDataOperation("name", value).value mustEqual value
+    }.setGen(Gen.nonEmptyContainerOf[Array, Byte](Arbitrary.arbByte.arbitrary))
+
+    "encode a string payload as UTF-8 in base64" >> prop { (s: String, source: PublicKey) =>
+      val value = new String(s.take(64).getBytes("UTF-8").take(60), "UTF-8")
+      WriteDataOperation("name", value).value.toSeq mustEqual value.getBytes("UTF-8").toSeq
+      WriteDataOperation("name", value, None).value.toSeq mustEqual value.getBytes("UTF-8").toSeq
+      WriteDataOperation("name", value, Some(source)).value.toSeq mustEqual value.getBytes("UTF-8").toSeq
+    }.setGen1(Arbitrary.arbString.arbitrary.suchThat(_.nonEmpty))
+
+    "fail if the key is greater than 64 bytes" >> prop { s: String =>
+      WriteDataOperation(s, "value") must throwAn[IllegalArgumentException]
+    }.setGen(Gen.identifier.suchThat(_.getBytes("UTF-8").length > 64))
+
+    "fail if the value is greater than 64 bytes" >> prop { s: String =>
+      WriteDataOperation("name", s) must throwAn[IllegalArgumentException]
+    }.setGen(Gen.identifier.suchThat(_.getBytes("UTF-8").length > 64))
+
+    "provide a mechanism to decode the value to string" >> prop { bs: Array[Byte] =>
+      val value = bs.take(64)
+      WriteDataOperation("name", value).decodedValue mustEqual base64(value)
+    }.setGen(Gen.nonEmptyContainerOf[Array, Byte](Arbitrary.arbByte.arbitrary))
   }
 
   "a delete data operation" should {
