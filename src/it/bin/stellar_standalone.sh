@@ -1,6 +1,6 @@
 #!/bin/bash
 
-CONTAINER=synesso/stellar:v0.18.0
+CONTAINER=synesso/stellar:v0.18.1
 PROTOCOL_VERSION=11
 
 function container_started {
