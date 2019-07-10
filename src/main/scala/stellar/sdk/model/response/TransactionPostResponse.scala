@@ -29,8 +29,9 @@ case class TransactionApproved(hash: String, ledger: Long,
 
   override val isSuccess: Boolean = true
 
-  // -- unroll nested XDR deserialised object into this object for convenience
+  // -- unroll nested XDR deserialised objects into this object for convenience
   lazy val result: TransactionSuccess = TransactionResult.decodeXDR(resultXDR).asInstanceOf[TransactionSuccess]
+  lazy val resultMeta: TransactionResultMeta = TransactionResultMeta.decodeXDR(resultMetaXDR)
 
   def feeCharged: NativeAmount = result.feeCharged
 
