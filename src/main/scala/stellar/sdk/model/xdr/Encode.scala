@@ -1,7 +1,8 @@
 package stellar.sdk.model.xdr
 
 import java.nio.ByteBuffer
-import java.nio.charset.Charset
+import java.nio.charset.StandardCharsets.UTF_8
+import java.nio.charset.{Charset, StandardCharsets}
 import java.time.Instant
 
 trait Encodable {
@@ -22,7 +23,7 @@ object Encode {
     buffer.array().toStream
   }
 
-  def instant(i: Instant): Stream[Byte] = long(i.toEpochMilli)
+  def instant(i: Instant): Stream[Byte] = long(i.toEpochMilli / 1000)
 
   def bytes(len: Int, bs: Seq[Byte]): Stream[Byte] = {
     require(bs.length == len)
@@ -31,11 +32,12 @@ object Encode {
 
   def bytes(bs: Seq[Byte]): Stream[Byte] = int(bs.length) ++ bs
 
-  def string(s: String): Stream[Byte] = {
-    val bs = s.getBytes(Charset.forName("UTF-8"))
-    val filler = Array.fill[Byte]((4 - (bs.length %4)) % 4)(0)
+  def padded(bs: Seq[Byte], multipleOf: Int = 4): Stream[Byte] = {
+    val filler = Array.fill[Byte]((multipleOf - (bs.length % multipleOf)) % multipleOf)(0)
     bytes(bs) ++ filler
   }
+
+  def string(s: String): Stream[Byte] = padded(s.getBytes(UTF_8))
 
   def opt(o: Option[Encodable]): Stream[Byte] = o.map(t => int(1) ++ t.encode).getOrElse(int(0))
 

@@ -2,7 +2,7 @@ package stellar.sdk.model.xdr
 
 import java.io.EOFException
 import java.nio.ByteBuffer
-import java.nio.charset.Charset
+import java.nio.charset.{Charset, StandardCharsets}
 import java.time.Instant
 
 import cats.data.State
@@ -21,7 +21,7 @@ object Decode {
     case _ => throw new EOFException("Insufficient data remains to parse a long")
   }
 
-  val instant: State[Seq[Byte], Instant] = long.map(Instant.ofEpochMilli)
+  val instant: State[Seq[Byte], Instant] = long.map(Instant.ofEpochSecond)
 
   val bool: State[Seq[Byte], Boolean] = int.map(_ == 1)
 
@@ -35,11 +35,13 @@ object Decode {
     bs <- bytes(len)
   } yield bs
 
-  val string: State[Seq[Byte], String] = for {
+  def padded(multipleOf: Int = 4): State[Seq[Byte], Seq[Byte]] = for {
     len <- int
     bs <- bytes(len)
-    _ <- bytes((4 - (len % 4)) % 4)
-  } yield new String(bs.toArray, Charset.forName("UTF-8"))
+    _ <- bytes((multipleOf - (len % multipleOf)) % multipleOf)
+  } yield bs
+
+  val string: State[Seq[Byte], String] = padded().map(_.toArray).map(new String(_, StandardCharsets.UTF_8))
 
   def opt[T](parseT: State[Seq[Byte], T]): State[Seq[Byte], Option[T]] = bool.flatMap {
     case true => parseT.map(Some(_))
