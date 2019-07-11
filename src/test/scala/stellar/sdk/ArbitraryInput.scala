@@ -261,8 +261,10 @@ trait ArbitraryInput extends ScalaCheck {
   }
 
   def genWriteDataOperation: Gen[WriteDataOperation] = for {
-    name <- Gen.identifier.map(_.getBytes(UTF_8).take(64)).map(new String(_, UTF_8))
-    value <- Arbitrary.arbString.arbitrary.suchThat(_.nonEmpty).map(_.getBytes(UTF_8).take(60)).map(new String(_, UTF_8))
+    nameLen <- Gen.choose(1, 64)
+    valueLen <- Gen.choose(1, 64)
+    name <- Gen.listOfN(nameLen, Gen.alphaNumChar).map(_.mkString)
+    value <- Gen.listOfN(valueLen, Arbitrary.arbByte.arbitrary).map(_.toArray)
     sourceAccount <- Gen.option(genPublicKey)
   } yield {
     WriteDataOperation(name, value, sourceAccount)

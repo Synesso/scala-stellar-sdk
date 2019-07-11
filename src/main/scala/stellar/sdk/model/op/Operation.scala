@@ -177,7 +177,7 @@ object OperationDeserializer extends ResponseParser[Operation]({ o: JObject =>
       val value = (o \ "value").extract[String]
       value match {
         case "" => DeleteDataOperation(name, sourceAccount)
-        case _ => WriteDataOperation(name, new String(Base64.decodeBase64(value), UTF_8), sourceAccount)
+        case _ => WriteDataOperation(name, base64(value), sourceAccount)
       }
     case "bump_sequence" =>
       BumpSequenceOperation((o \ "bump_to").extract[String].toLong, sourceAccount)
@@ -661,14 +661,12 @@ case class WriteDataOperation(name: String, value: Array[Byte], sourceAccount: O
   require(name.getBytes(UTF_8).length <= 64, s"name cannot be greater than 64 bytes, was ${name.length}")
   require(value.length <= 64 && value.nonEmpty, s"value must be non-empty and cannot be greater than 64 bytes, was ${value.length}")
 
-  def decodedValue: String = base64(value)
-
   override def encode: Stream[Byte] =
     super.encode ++
       Encode.int(10) ++
       Encode.string(name) ++
       Encode.bool(true) ++
-      Encode.string(new String(value, UTF_8))
+      Encode.padded(value)
 }
 
 object WriteDataOperation {
@@ -683,9 +681,9 @@ object WriteDataOperation {
 object ManageDataOperation {
   def decode: State[Seq[Byte], ManageDataOperation] = for {
     name <- Decode.string
-    value <- Decode.opt(Decode.string)
+    value <- Decode.opt(Decode.padded())
   } yield value match {
-    case Some(v) => WriteDataOperation(name, v.getBytes(UTF_8))
+    case Some(v) => WriteDataOperation(name, v.toArray)
     case None => DeleteDataOperation(name)
   }
 }
