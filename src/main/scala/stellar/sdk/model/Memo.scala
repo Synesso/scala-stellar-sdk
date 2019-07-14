@@ -12,14 +12,14 @@ sealed trait Memo {
   def encode: Stream[Byte]
 }
 
-object Memo {
-  def decode: State[Seq[Byte], Memo] = Decode.int.flatMap {
-    case 0 => State.pure(NoMemo)
-    case 1 => Decode.string.map(MemoText)
-    case 2 => Decode.long.map(MemoId)
-    case 3 => Decode.bytes.map(_.toArray).map(MemoHash(_))
-    case 4 => Decode.bytes.map(_.toArray).map(MemoReturnHash(_))
-  }
+object Memo extends Decode {
+  def decode: State[Seq[Byte], Memo] = switch(
+    State.pure(NoMemo),
+    string.map(MemoText),
+    long.map(MemoId),
+    bytes.map(_.toArray).map(MemoHash(_)),
+    bytes.map(_.toArray).map(MemoReturnHash(_))
+  )
 }
 
 case object NoMemo extends Memo {

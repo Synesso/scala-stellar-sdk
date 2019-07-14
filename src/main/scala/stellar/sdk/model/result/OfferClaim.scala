@@ -9,10 +9,10 @@ case class OfferClaim(seller: PublicKey, offerId: Long, sold: Amount, bought: Am
   def encode: Stream[Byte] = seller.encode ++ Encode.long(offerId) ++ sold.encode ++ bought.encode
 }
 
-object OfferClaim {
+object OfferClaim extends Decode {
   val decode: State[Seq[Byte], OfferClaim] = for {
     seller <- KeyPair.decode
-    offerId <- Decode.long
+    offerId <- long
     sold <- Amount.decode
     bought <- Amount.decode
   } yield OfferClaim(seller, offerId, sold, bought)

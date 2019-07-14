@@ -5,8 +5,8 @@ import stellar.sdk.model.xdr.Decode
 
 sealed abstract class CreatePassiveSellOfferResult(val opResultCode: Int) extends ProcessedOperationResult(opCode = 4)
 
-object CreatePassiveSellOfferResult {
-  val decode: State[Seq[Byte], CreatePassiveSellOfferResult] = Decode.int.map {
+object CreatePassiveSellOfferResult extends Decode {
+  val decode: State[Seq[Byte], CreatePassiveSellOfferResult] = int.map {
     case 0 => CreatePassiveSellOfferSuccess
     case -1 => CreatePassiveSellOfferMalformed
     case -2 => CreatePassiveSellOfferSellNoTrust

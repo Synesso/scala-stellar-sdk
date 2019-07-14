@@ -92,7 +92,7 @@ sealed trait PublicKeyOps extends Encodable {
 }
 
 //noinspection ReferenceMustBePrefixed
-object KeyPair {
+object KeyPair extends Decode {
 
   private val ed25519 = EdDSANamedCurveTable.getByName("ed25519")
 
@@ -207,8 +207,8 @@ object KeyPair {
   }
 
   def decode: State[Seq[Byte], PublicKey] = for {
-    _ <- Decode.int
-    bs <- Decode.bytes(32)
+    _ <- int
+    bs <- bytes(32)
   } yield KeyPair.fromPublicKey(bs.toArray)
 
   def decodeXDR(base64: String): PublicKey = decode.run(ByteArrays.base64(base64)).value._2
@@ -219,10 +219,10 @@ case class Signature(data: Array[Byte], hint: Array[Byte]) extends Encodable {
   def encode: Stream[Byte] = Encode.bytes(4, hint) ++ Encode.bytes(data)
 }
 
-object Signature {
+object Signature extends Decode {
   def decode: State[Seq[Byte], Signature] = for {
-    hint <- Decode.bytes(4).map(_.toArray)
-    data <- Decode.bytes.map(_.toArray)
+    hint <- bytes(4).map(_.toArray)
+    data <- bytes.map(_.toArray)
   } yield Signature(data, hint)
 }
 

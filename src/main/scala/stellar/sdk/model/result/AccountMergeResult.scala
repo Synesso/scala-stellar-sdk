@@ -6,9 +6,9 @@ import stellar.sdk.model.xdr.{Decode, Encode}
 
 sealed abstract class AccountMergeResult(val opResultCode: Int) extends ProcessedOperationResult(opCode = 8)
 
-object AccountMergeResult {
-  val decode: State[Seq[Byte], AccountMergeResult] = Decode.int.flatMap {
-    case 0 => Decode.long.map(NativeAmount).map(AccountMergeSuccess)
+object AccountMergeResult extends Decode {
+  val decode: State[Seq[Byte], AccountMergeResult] = int.flatMap {
+    case 0 => long.map(NativeAmount).map(AccountMergeSuccess)
     case -1 => State.pure(AccountMergeMalformed)
     case -2 => State.pure(AccountMergeNoAccount)
     case -3 => State.pure(AccountMergeImmutable)

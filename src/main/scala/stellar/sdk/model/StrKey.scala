@@ -42,13 +42,13 @@ case class SHA256Hash(hash: Array[Byte]) extends SignerStrKey {
   def encode: Stream[Byte] = Encode.int(2) ++ Encode.bytes(32, hash)
 }
 
-object StrKey {
+object StrKey extends Decode {
 
   val codec = new Base32()
 
   def decode: State[Seq[Byte], SignerStrKey] = for {
-    discriminant <- Decode.int
-    bs <- Decode.bytes(32).map(_.toArray)
+    discriminant <- int
+    bs <- bytes(32).map(_.toArray)
   } yield discriminant match {
     case 0 => AccountId(bs)
     case 1 => PreAuthTx(bs)

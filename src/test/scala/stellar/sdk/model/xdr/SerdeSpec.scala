@@ -8,67 +8,67 @@ import org.scalacheck.{Arbitrary, Gen}
 import org.specs2.ScalaCheck
 import org.specs2.mutable.Specification
 
-class SerdeSpec extends Specification with ScalaCheck {
+class SerdeSpec extends Specification with ScalaCheck with Decode {
 
   "round trip serialisation" should {
     "work for ints" >> prop { i: Int =>
-      val (remainder, result) = Decode.int.run(Encode.int(i)).value
+      val (remainder, result) = int.run(Encode.int(i)).value
       remainder must beEmpty
       result mustEqual i
     }
 
     "work for longs" >> prop { l: Long =>
-      val (remainder, result) = Decode.long.run(Encode.long(l)).value
+      val (remainder, result) = long.run(Encode.long(l)).value
       remainder must beEmpty
       result mustEqual l
     }
 
     "work for false" >> {
-      val (remainder, result) = Decode.bool.run(Encode.bool(false)).value
+      val (remainder, result) = bool.run(Encode.bool(false)).value
       remainder must beEmpty
       result must beFalse
     }
 
     "work for true" >> {
-      val (remainder, result) = Decode.bool.run(Encode.bool(true)).value
+      val (remainder, result) = bool.run(Encode.bool(true)).value
       remainder must beEmpty
       result must beTrue
     }
 
     "work for opaque bytes" >> prop { bs: Seq[Byte] =>
-      val (remainder, result) = Decode.bytes.run(Encode.bytes(bs)).value
+      val (remainder, result) = bytes.run(Encode.bytes(bs)).value
       remainder must beEmpty
       result mustEqual bs
     }
 
     "work for strings" >> prop { s: String =>
       val bytes = Encode.string(s)
-      val (remainder, result) = Decode.string.run(bytes).value
+      val (remainder, result) = string.run(bytes).value
       bytes.length % 4 mustEqual 0
       remainder must beEmpty
       result mustEqual s
     }
 
     "work for optional ints" >> prop { i: Option[Int] =>
-      val (remainder, result) = Decode.opt(Decode.int).run(Encode.optInt(i)).value
+      val (remainder, result) = opt(int).run(Encode.optInt(i)).value
       remainder must beEmpty
       result mustEqual i
     }
 
     "work for optional longs" >> prop { l: Option[Long] =>
-      val (remainder, result) = Decode.opt(Decode.long).run(Encode.optLong(l)).value
+      val (remainder, result) = opt(long).run(Encode.optLong(l)).value
       remainder must beEmpty
       result mustEqual l
     }
 
     "work for optional strings" >> prop { s: Option[String] =>
-      val (remainder, result) = Decode.opt(Decode.string).run(Encode.optString(s)).value
+      val (remainder, result) = opt(string).run(Encode.optString(s)).value
       remainder must beEmpty
       result mustEqual s
     }
 
     "work for a list of encodables" >> prop { xs: Seq[String] =>
-      val (remainder, result) = Decode.arr(Decode.string).run(Encode.arrString(xs)).value
+      val (remainder, result) = arr(string).run(Encode.arrString(xs)).value
       remainder must beEmpty
       result mustEqual xs
     }
@@ -96,16 +96,16 @@ class SerdeSpec extends Specification with ScalaCheck {
 
   "decoding" should {
     "fail if there are insufficient bytes for an int" >> {
-      Decode.int.run(Seq(0, 0, 0)).value must throwA[EOFException]
+      int.run(Seq(0, 0, 0)).value must throwA[EOFException]
     }
     "fail if there are insufficient bytes for a long" >> {
-      Decode.long.run(Seq(0, 0, 0, 0, 0, 0, 0)).value must throwA[EOFException]
+      long.run(Seq(0, 0, 0, 0, 0, 0, 0)).value must throwA[EOFException]
     }
     "fail if there are insufficient bytes given the declared length" >> {
-      Decode.bytes.run(Seq(0, 0, 0, 4, 1, 1, 1)).value must throwA[EOFException]
+      bytes.run(Seq(0, 0, 0, 4, 1, 1, 1)).value must throwA[EOFException]
     }
     "fail if the string has insufficient padding bytes" >> {
-      Decode.string.run(Seq(0, 0, 0, 1, 99, 0)).value must throwA[EOFException]
+      string.run(Seq(0, 0, 0, 1, 99, 0)).value must throwA[EOFException]
     }
   }
 
@@ -121,12 +121,12 @@ class SerdeSpec extends Specification with ScalaCheck {
     override def encode: Stream[Byte] = Encode.optBytes(bs) ++ Encode.bool(b) ++ Encode.opt(next) ++ Encode.string(s)
   }
 
-  object CompositeThing {
+  object CompositeThing extends Decode {
     def decode: State[Seq[Byte], CompositeThing] = for {
-      bs <- Decode.opt(Decode.bytes)
-      b <- Decode.bool
-      next <- Decode.opt[CompositeThing](CompositeThing.decode)
-      s <- Decode.string
+      bs <- opt(bytes)
+      b <- bool
+      next <- opt[CompositeThing](CompositeThing.decode)
+      s <- string
     } yield CompositeThing(b, s, bs, next)
   }
 

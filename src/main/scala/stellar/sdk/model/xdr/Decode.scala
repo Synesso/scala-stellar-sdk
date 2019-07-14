@@ -2,32 +2,37 @@ package stellar.sdk.model.xdr
 
 import java.io.EOFException
 import java.nio.ByteBuffer
-import java.nio.charset.{Charset, StandardCharsets}
+import java.nio.charset.StandardCharsets
 import java.time.Instant
 
 import cats.data.State
+import com.typesafe.scalalogging.LazyLogging
 
-object Decode {
+import scala.util.Try
 
-  val int: State[Seq[Byte], Int] = State[Seq[Byte], Int] {
-    case bs if bs.length >= 4 =>
-      bs.drop(4) -> ByteBuffer.wrap(bs.take(4).toArray).getInt
-    case _ => throw new EOFException("Insufficient data remains to parse an int")
+trait Decode extends LazyLogging {
+
+  private def decode[T](bs: Seq[Byte], len: Int)(decoder: Seq[Byte] => T): (Seq[Byte], T) = {
+    if (bs.length < len) throw new EOFException("Insufficient data remains to parse.")
+    val t = decoder(bs.take(len))
+    logger.debug(s"Dropping {} to make {}", len, t)
+    bs.drop(len) -> t
   }
 
-  val long: State[Seq[Byte], Long] = State[Seq[Byte], Long] {
-    case bs if bs.length >= 8 =>
-      bs.drop(8) -> ByteBuffer.wrap(bs.take(8).toArray).getLong
-    case _ => throw new EOFException("Insufficient data remains to parse a long")
+  val int: State[Seq[Byte], Int] = State[Seq[Byte], Int] { bs =>
+    decode(bs, 4) { in => ByteBuffer.wrap(in.toArray).getInt }
+  }
+
+  val long: State[Seq[Byte], Long] = State[Seq[Byte], Long] { bs =>
+    decode(bs, 8) { in => ByteBuffer.wrap(in.toArray).getLong }
   }
 
   val instant: State[Seq[Byte], Instant] = long.map(Instant.ofEpochSecond)
 
   val bool: State[Seq[Byte], Boolean] = int.map(_ == 1)
 
-  def bytes(len: Int): State[Seq[Byte], Seq[Byte]] = State[Seq[Byte], Seq[Byte]] {
-    case bs if bs.length >= len => bs.drop(len) -> bs.take(len)
-    case _ => throw new EOFException(s"Insufficient data remains to parse $len bytes")
+  def bytes(len: Int): State[Seq[Byte], Seq[Byte]] = State[Seq[Byte], Seq[Byte]] { bs =>
+    decode(bs, len) { _.take(len) }
   }
 
   val bytes: State[Seq[Byte], Seq[Byte]] = for {
@@ -43,22 +48,30 @@ object Decode {
 
   val string: State[Seq[Byte], String] = padded().map(_.toArray).map(new String(_, StandardCharsets.UTF_8))
 
+  // TODO (jem) - Use switch everywhere that we currently do this manually.
+  def switch[T](zero: State[Seq[Byte], T], others: State[Seq[Byte], T]*) = int.flatMap {
+    case 0 => zero
+    case n =>  Try(others(n - 1)).getOrElse {
+      throw new IllegalArgumentException(s"No parser defined for discriminant $n")
+    }
+  }
+
   def opt[T](parseT: State[Seq[Byte], T]): State[Seq[Byte], Option[T]] = bool.flatMap {
     case true => parseT.map(Some(_))
     case false => State.pure(None)
   }
 
-  def arr[T](parseT: State[Seq[Byte], T]): State[Seq[Byte], Seq[T]] = {
-    def inner(qty: Int, ts: Seq[T]): State[Seq[Byte], Seq[T]] = qty match {
+  def arr[T](parseT: State[Seq[Byte], T]): State[Seq[Byte], Seq[T]] = int.flatMap(seq(_, parseT))
+
+  def seq[T](qty: Int, parseT: State[Seq[Byte], T]): State[Seq[Byte], Seq[T]] = {
+    def inner(remain: Int, ts: Seq[T]): State[Seq[Byte], Seq[T]] = remain match {
       case 0 => State.pure(ts)
       case _ => for {
         t <- parseT
-        ts_ <- inner(qty - 1, t +: ts)
+        ts_ <- inner(remain - 1, t +: ts)
       } yield ts_
     }
-    int.flatMap{i =>
-      inner(i, Nil)
-    }.map(_.reverse)
+    inner(qty, Nil).map(_.reverse)
   }
 }
 

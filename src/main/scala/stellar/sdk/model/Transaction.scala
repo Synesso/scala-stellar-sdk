@@ -56,7 +56,7 @@ case class Transaction(source: Account,
   }
 }
 
-object Transaction {
+object Transaction extends Decode {
 
   /**
     * Decodes an unsigned transaction from base64-encoded XDR.
@@ -66,12 +66,12 @@ object Transaction {
 
   def decode(implicit network: Network): State[Seq[Byte], Transaction] = for {
       publicKey <- KeyPair.decode
-      fee <- Decode.int
-      seqNo <- Decode.long
-      timeBounds <- Decode.opt(TimeBounds.decode)
+      fee <- int
+      seqNo <- long
+      timeBounds <- opt(TimeBounds.decode)
       memo <- Memo.decode
-      ops <- Decode.arr(Operation.decode)
-      _ <- Decode.int
+      ops <- arr(Operation.decode)
+      _ <- int
     } yield {
     Transaction(Account(publicKey, seqNo), ops, memo, timeBounds, Some(NativeAmount(fee)))
   }
@@ -94,7 +94,7 @@ case class SignedTransaction(transaction: Transaction, signatures: Seq[Signature
   def encode: Stream[Byte] = transaction.encode ++ Encode.arr(signatures)
 }
 
-object SignedTransaction {
+object SignedTransaction extends Decode {
 
   /**
     * Decodes a signed transaction (aka envelope) from base64-encoded XDR.
@@ -104,7 +104,7 @@ object SignedTransaction {
 
   def decode(implicit network: Network): State[Seq[Byte], SignedTransaction] = for {
     txn <- Transaction.decode
-    sigs <- Decode.arr(Signature.decode)
+    sigs <- arr(Signature.decode)
   } yield SignedTransaction(txn, sigs)
 
 }
