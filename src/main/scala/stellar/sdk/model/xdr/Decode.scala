@@ -73,5 +73,11 @@ trait Decode extends LazyLogging {
     }
     inner(qty, Nil).map(_.reverse)
   }
+
+  def drop[T](parse: State[Seq[Byte], _])(t: T): State[Seq[Byte], T] = for {
+    _ <- parse
+  } yield t
+
+  def widen[A, W, O <: W](s: State[A, O]): State[A, W] = s.map(w => w: W)
 }
 

@@ -23,7 +23,7 @@ abstract class ProcessedOperationResult(opCode: Int) extends OperationResult(opC
 
 object OperationResult extends Decode {
 
-  private def widen[A, W, O <: W](s: State[A, O]): State[A, W] = s.map(w => w: W)
+//  private def widen[A, W, O <: W](s: State[A, O]): State[A, W] = s.map(w => w: W)
 
   val decode: State[Seq[Byte], OperationResult] = int.flatMap {
     case -3 => widen(State.pure(OperationNotSupportedResult))

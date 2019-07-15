@@ -52,7 +52,7 @@ object Operation extends Decode {
         })
       }
     }
-  private def widen[A, W, O <: W](s: State[A, O]): State[A, W] = s.map(w => w: W)
+//  private def widen[A, W, O <: W](s: State[A, O]): State[A, W] = s.map(w => w: W)
 
   def decodeXDR(base64: String): Operation = decode.run(ByteArrays.base64(base64)).value._2
 }

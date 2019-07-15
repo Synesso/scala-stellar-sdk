@@ -9,14 +9,15 @@ import stellar.sdk.model.xdr.Decode
 sealed trait LedgerEntry
 
 object LedgerEntry extends Decode {
-  private def widen[A, W, O <: W](s: State[A, O]): State[A, W] = s.map(w => w: W)
-
-  def decode: State[Seq[Byte], LedgerEntry] = switch(
-    widen(AccountEntry.decode),
-    widen(TrustLineEntry.decode),
-    widen(OfferEntry.decode),
-    widen(DataEntry.decode)
-  )
+  val decode: State[Seq[Byte], LedgerEntry] = for {
+    lastModifiedLedgerSeq <- int // TODO (jem) - Include this value.
+    entry <- switch[LedgerEntry](
+      widen(AccountEntry.decode),
+      widen(TrustLineEntry.decode),
+      widen(OfferEntry.decode),
+      widen(DataEntry.decode)
+    )
+  } yield entry
 }
 
 /*
@@ -167,9 +168,8 @@ object OfferEntry extends Decode {
     buying <- Asset.decode
     units <- long
     price <- Price.decode
-    flags <- int
-    _ = assert(flags == 1)
-    _ <- int
+    _ <- int // flags
+    _ <- int // ext
   } yield OfferEntry(account, offerId, Amount(units, selling), buying, price)
 }
 
