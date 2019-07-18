@@ -82,6 +82,7 @@ object AccountEntry extends Decode {
   } yield AccountEntry(account, balance, seqNum, numSubEntries, inflationDestination, flags, homeDomain, thresholds,
       signers, liabilities)
 }
+
 /*
 //  struct TrustLineEntry
 //  {

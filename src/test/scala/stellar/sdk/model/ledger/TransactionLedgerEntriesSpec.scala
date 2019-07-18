@@ -1,13 +1,16 @@
 package stellar.sdk.model.ledger
 
+import org.specs2.concurrent.ExecutionEnv
 import org.specs2.mutable.Specification
-import stellar.sdk.PublicKey
-import stellar.sdk.model.Thresholds
+import stellar.sdk.PublicNetwork
+import stellar.sdk.model.{Desc, Now}
 
-import scala.io.Source
-import scala.util.{Failure, Success, Try}
+import scala.concurrent.Await
+import scala.concurrent.duration._
 
-class TransactionLedgerEntriesSpec extends Specification {
+class TransactionLedgerEntriesSpec(ee: ExecutionEnv) extends Specification {
+
+  import ee.ec
 
   "transaction meta parsing" should {
     "work" >> {
@@ -64,10 +67,11 @@ class TransactionLedgerEntriesSpec extends Specification {
     }
 
     "parse 100" >> {
-      Source.fromFile("metas2").getLines().map { s =>
-        println(s"parsing: $s")
-        TransactionLedgerEntries.decodeXDR(s)
-      }.foreach(println)
+      Await.result(PublicNetwork.transactions(cursor = Now, order = Desc), 1.minute).take(1000)
+        .foreach { t =>
+          println(t.resultMetaXDR)
+          println(t.ledgerEntries)
+        }
       ok
     }
 

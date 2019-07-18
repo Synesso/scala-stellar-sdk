@@ -1,11 +1,13 @@
 package stellar.sdk.model.ledger
 
 import cats.data.State
-import stellar.sdk.{KeyPair, PublicKey}
+import stellar.sdk.{KeyPair, PublicKey, PublicKeyOps}
 import stellar.sdk.model.{Asset, NonNativeAsset}
-import stellar.sdk.model.xdr.Decode
+import stellar.sdk.model.xdr.{Decode, Encode}
 
-sealed trait LedgerKey
+sealed trait LedgerKey {
+  def encode: Stream[Byte]
+}
 
 object LedgerKey extends Decode {
 
@@ -17,13 +19,17 @@ object LedgerKey extends Decode {
   )
 }
 
-case class AccountKey(account: PublicKey) extends LedgerKey
+case class AccountKey(account: PublicKeyOps) extends LedgerKey {
+  override def encode: Stream[Byte] = Encode.int(0) ++ account.encode
+}
 
 object AccountKey extends Decode {
   val decode: State[Seq[Byte], AccountKey] = KeyPair.decode.map(AccountKey(_))
 }
 
-case class TrustLineKey(account: PublicKey, asset: NonNativeAsset) extends LedgerKey
+case class TrustLineKey(account: PublicKeyOps, asset: NonNativeAsset) extends LedgerKey {
+  override def encode: Stream[Byte] = Encode.int(1) ++ account.encode ++ asset.encode
+}
 
 object TrustLineKey extends Decode {
   val decode: State[Seq[Byte], TrustLineKey] = for {
@@ -32,7 +38,9 @@ object TrustLineKey extends Decode {
   } yield TrustLineKey(account, asset)
 }
 
-case class OfferKey(account: PublicKey, offerId: Long) extends LedgerKey
+case class OfferKey(account: PublicKeyOps, offerId: Long) extends LedgerKey {
+  override def encode: Stream[Byte] = Encode.int(2) ++ account.encode ++ Encode.long(offerId)
+}
 
 object OfferKey extends Decode {
   val decode: State[Seq[Byte], OfferKey] = for {
@@ -41,7 +49,9 @@ object OfferKey extends Decode {
   } yield OfferKey(account, offerId)
 }
 
-case class DataKey(account: PublicKey, name: String) extends LedgerKey
+case class DataKey(account: PublicKeyOps, name: String) extends LedgerKey {
+  override def encode: Stream[Byte] = Encode.int(3) ++ account.encode ++ Encode.string(name)
+}
 
 object DataKey extends Decode {
   val decode: State[Seq[Byte], DataKey] = for {

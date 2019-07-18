@@ -15,7 +15,7 @@ trait Decode extends LazyLogging {
   private def decode[T](bs: Seq[Byte], len: Int)(decoder: Seq[Byte] => T): (Seq[Byte], T) = {
     if (bs.length < len) throw new EOFException("Insufficient data remains to parse.")
     val t = decoder(bs.take(len))
-    logger.debug(s"Dropping {} to make {}", len, t)
+    logger.trace(s"Dropping {} to make {}", len, t)
     bs.drop(len) -> t
   }
 
@@ -48,7 +48,6 @@ trait Decode extends LazyLogging {
 
   val string: State[Seq[Byte], String] = padded().map(_.toArray).map(new String(_, StandardCharsets.UTF_8))
 
-  // TODO (jem) - Use switch everywhere that we currently do this manually.
   def switch[T](zero: State[Seq[Byte], T], others: State[Seq[Byte], T]*) = int.flatMap {
     case 0 => zero
     case n =>  Try(others(n - 1)).getOrElse {
