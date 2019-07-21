@@ -231,7 +231,12 @@ object OfferEntry extends Decode {
 
  */
 case class DataEntry(account: PublicKeyOps, name: String, value: Seq[Byte], lastModifiedLedgerSeq: Int) extends LedgerEntry {
-  override def encode: Stream[Byte] = ???
+  override def encode: Stream[Byte] = Encode.int(lastModifiedLedgerSeq) ++
+    Encode.int(3) ++
+    account.encode ++
+    Encode.string(name) ++
+    Encode.bytes(value) ++
+    Encode.int(0)
 }
 
 object DataEntry extends Decode {

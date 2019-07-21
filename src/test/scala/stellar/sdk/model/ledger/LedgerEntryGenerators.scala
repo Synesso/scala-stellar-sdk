@@ -70,7 +70,14 @@ trait LedgerEntryGenerators extends ArbitraryInput {
     price <- genPrice
   } yield OfferEntry(account, offerId, selling, buying, price, lastModifiedLedgerSeq)
 
-  val genLedgerEntry: Gen[LedgerEntry] = Gen.oneOf(genAccountEntry, genTrustLineEntry, genOfferEntry)
+  val genDataEntry: Gen[DataEntry] = for {
+    lastModifiedLedgerSeq <- Gen.posNum[Int]
+    account <- genPublicKey
+    name <- Gen.identifier
+    value <- Gen.identifier.map(_.getBytes("UTF-8"))
+  } yield DataEntry(account, name, value, lastModifiedLedgerSeq)
+
+  val genLedgerEntry: Gen[LedgerEntry] = Gen.oneOf(genAccountEntry, genTrustLineEntry, genOfferEntry, genDataEntry)
 
   implicit val arbLedgerEntry = Arbitrary(genLedgerEntry)
 
