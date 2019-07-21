@@ -128,19 +128,26 @@ object AccountEntry extends Decode {
 //      }
 //      ext;
 //  };
-
  */
-case class TrustLineEntry(account: PublicKeyOps, asset: Asset, balance: Long, limit: Long,
+case class TrustLineEntry(account: PublicKeyOps, asset: NonNativeAsset, balance: Long, limit: Long,
                           issuerAuthorized: Boolean, liabilities: Option[Liabilities], lastModifiedLedgerSeq: Int)
   extends LedgerEntry {
 
-  override def encode: Stream[Byte] = ???
+  override def encode: Stream[Byte] = Encode.int(lastModifiedLedgerSeq) ++
+    Encode.int(1) ++
+    account.encode ++
+    asset.encode ++
+    Encode.long(balance) ++
+    Encode.long(limit) ++
+    Encode.bool(issuerAuthorized) ++
+    Encode.opt(liabilities)
+
 }
 
 object TrustLineEntry extends Decode {
   val decode: State[Seq[Byte], TrustLineEntry] = for {
     account <- KeyPair.decode
-    asset <- Asset.decode
+    asset <- Asset.decode.map(_.asInstanceOf[NonNativeAsset])
     balance <- long
     limit <- long
     issuerAuthorized <- bool
