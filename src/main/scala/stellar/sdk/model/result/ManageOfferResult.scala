@@ -5,9 +5,9 @@ import stellar.sdk.model.xdr.{Decode, Encode}
 
 sealed abstract class ManageOfferResult(val opResultCode: Int) extends ProcessedOperationResult(opCode = 3)
 
-object ManageOfferResult {
-  val decode: State[Seq[Byte], ManageOfferResult] = Decode.int.flatMap {
-    case 0 => Decode.arr(OfferClaim.decode).map(ManageOfferSuccess)
+object ManageOfferResult extends Decode {
+  val decode: State[Seq[Byte], ManageOfferResult] = int.flatMap {
+    case 0 => arr(OfferClaim.decode).map(ManageOfferSuccess)
     case -1 => State.pure(ManageOfferMalformed)
     case -2 => State.pure(ManageOfferSellNoTrust)
     case -3 => State.pure(ManageOfferBuyNoTrust)

@@ -15,9 +15,9 @@ case class TimeBounds(start: Instant, end: Instant) extends Encodable {
   }
 }
 
-object TimeBounds {
+object TimeBounds extends Decode {
   def decode: State[Seq[Byte], TimeBounds] = for {
-    start <- Decode.instant
-    end <- Decode.instant
+    start <- instant
+    end <- instant
   } yield TimeBounds(start, end)
 }

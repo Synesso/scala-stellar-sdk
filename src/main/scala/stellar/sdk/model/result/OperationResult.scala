@@ -21,28 +21,28 @@ abstract class ProcessedOperationResult(opCode: Int) extends OperationResult(opC
       Encode.int(opResultCode) // the operation result code
 }
 
-object OperationResult {
+object OperationResult extends Decode {
 
-  private def widen[A, W, O <: W](s: State[A, O]): State[A, W] = s.map(w => w: W)
+//  private def widen[A, W, O <: W](s: State[A, O]): State[A, W] = s.map(w => w: W)
 
-  val decode: State[Seq[Byte], OperationResult] = Decode.int.flatMap {
+  val decode: State[Seq[Byte], OperationResult] = int.flatMap {
     case -3 => widen(State.pure(OperationNotSupportedResult))
     case -2 => widen(State.pure(NoSourceAccountResult))
     case -1 => widen(State.pure(BadAuthenticationResult))
-    case 0 => Decode.int.flatMap {
-      case 0 => widen(CreateAccountResult.decode)
-      case 1 => widen(PaymentResult.decode)
-      case 2 => widen(PathPaymentResult.decode)
-      case 3 => widen(ManageOfferResult.decode)
-      case 4 => widen(CreatePassiveSellOfferResult.decode)
-      case 5 => widen(SetOptionsResult.decode)
-      case 6 => widen(ChangeTrustResult.decode)
-      case 7 => widen(AllowTrustResult.decode)
-      case 8 => widen(AccountMergeResult.decode)
-      case 9 => widen(InflationResult.decode)
-      case 10 => widen(ManageDataResult.decode)
-      case 11 => widen(BumpSequenceResult.decode)
-    }
+    case 0 => switch(
+      widen(CreateAccountResult.decode),
+      widen(PaymentResult.decode),
+      widen(PathPaymentResult.decode),
+      widen(ManageOfferResult.decode),
+      widen(CreatePassiveSellOfferResult.decode),
+      widen(SetOptionsResult.decode),
+      widen(ChangeTrustResult.decode),
+      widen(AllowTrustResult.decode),
+      widen(AccountMergeResult.decode),
+      widen(InflationResult.decode),
+      widen(ManageDataResult.decode),
+      widen(BumpSequenceResult.decode)
+    )
   }
 }
 

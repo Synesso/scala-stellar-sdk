@@ -5,8 +5,8 @@ import stellar.sdk.model.xdr.Decode
 
 sealed abstract class PaymentResult(val opResultCode: Int) extends ProcessedOperationResult(opCode = 1)
 
-object PaymentResult {
-  val decode: State[Seq[Byte], PaymentResult] = Decode.int.map {
+object PaymentResult extends Decode {
+  val decode: State[Seq[Byte], PaymentResult] = int.map {
     case 0 => PaymentSuccess
     case -1 => PaymentMalformed
     case -2 => PaymentUnderfunded

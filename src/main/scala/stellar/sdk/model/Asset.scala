@@ -9,13 +9,13 @@ sealed trait Asset extends Encodable {
   val code: String
 }
 
-object Asset {
+object Asset extends Decode {
   def apply(code: String, issuer: PublicKeyOps): NonNativeAsset = {
     require(code.matches("[a-zA-Z0-9]+"), s"Asset code $code does not match [a-zA-Z0-9]+")
     if (code.length <= 4) IssuedAsset4.of(code, issuer) else IssuedAsset12.of(code, issuer)
   }
 
-  val decode: State[Seq[Byte], Asset] = Decode.int flatMap {
+  val decode: State[Seq[Byte], Asset] = int.flatMap {
     case 0 => State.pure(NativeAsset)
     case 1 => IssuedAsset4.decode.map(x => x: Asset)
     case 2 => IssuedAsset12.decode.map(x => x: Asset)
@@ -52,11 +52,11 @@ case class IssuedAsset4 private(code: String, issuer: PublicKeyOps) extends NonN
   }
 }
 
-object IssuedAsset4 {
+object IssuedAsset4 extends Decode {
   def of(code: String, issuer: PublicKeyOps): IssuedAsset4 = IssuedAsset4(code, issuer.asPublicKey)
 
   def decode: State[Seq[Byte], IssuedAsset4] = for {
-    bs <- Decode.bytes(4)
+    bs <- bytes(4)
     issuer <- KeyPair.decode
     code = paddedByteArrayToString(bs.toArray)
   } yield IssuedAsset4(code, issuer)
@@ -79,11 +79,11 @@ case class IssuedAsset12 private (code: String, issuer: PublicKeyOps) extends No
   }
 }
 
-object IssuedAsset12 {
+object IssuedAsset12 extends Decode {
   def of(code: String, keyPair: PublicKeyOps): IssuedAsset12 = IssuedAsset12(code, keyPair.asPublicKey)
 
   def decode: State[Seq[Byte], IssuedAsset12] = for {
-    bs <- Decode.bytes(12)
+    bs <- bytes(12)
     issuer <- KeyPair.decode
     code = paddedByteArrayToString(bs.toArray)
   } yield IssuedAsset12(code, issuer)

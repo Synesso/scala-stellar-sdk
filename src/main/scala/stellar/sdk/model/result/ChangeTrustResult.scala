@@ -6,8 +6,8 @@ import stellar.sdk.model.xdr.Decode
 sealed abstract class ChangeTrustResult(val opResultCode: Int) extends ProcessedOperationResult(opCode = 6)
 
 
-object ChangeTrustResult {
-  val decode: State[Seq[Byte], ChangeTrustResult] = Decode.int.map {
+object ChangeTrustResult extends Decode {
+  val decode: State[Seq[Byte], ChangeTrustResult] = int.map {
     case 0 => ChangeTrustSuccess
     case -1 => ChangeTrustMalformed
     case -2 => ChangeTrustNoIssuer

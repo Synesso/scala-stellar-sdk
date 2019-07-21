@@ -5,8 +5,8 @@ import stellar.sdk.model.xdr.Decode
 
 sealed abstract class ManageDataResult(val opResultCode: Int) extends ProcessedOperationResult(opCode = 10)
 
-object ManageDataResult {
-  val decode: State[Seq[Byte], ManageDataResult] = Decode.int.map {
+object ManageDataResult extends Decode {
+  val decode: State[Seq[Byte], ManageDataResult] = int.map {
     case 0 => ManageDataSuccess
     case -1 => ManageDataNotSupportedYet
     case -2 => DeleteDataNameNotFound

@@ -21,11 +21,11 @@ sealed trait Operation extends Encodable {
   override def encode: Stream[Byte] = Encode.opt(sourceAccount)
 }
 
-object Operation {
+object Operation extends Decode {
 
   val decode: State[Seq[Byte], Operation] =
-    Decode.opt(KeyPair.decode).flatMap { source =>
-      Decode.int.flatMap {
+    opt(KeyPair.decode).flatMap { source =>
+      int.flatMap {
         case 0 => widen(CreateAccountOperation.decode.map(_.copy(sourceAccount = source)))
         case 1 => widen(PaymentOperation.decode.map(_.copy(sourceAccount = source)))
         case 2 => widen(PathPaymentOperation.decode.map(_.copy(sourceAccount = source)))
@@ -52,7 +52,7 @@ object Operation {
         })
       }
     }
-  private def widen[A, W, O <: W](s: State[A, O]): State[A, W] = s.map(w => w: W)
+//  private def widen[A, W, O <: W](s: State[A, O]): State[A, W] = s.map(w => w: W)
 
   def decodeXDR(base64: String): Operation = decode.run(ByteArrays.base64(base64)).value._2
 }
@@ -210,10 +210,10 @@ case class CreateAccountOperation(destinationAccount: PublicKeyOps,
       Encode.long(startingBalance.units)
 }
 
-object CreateAccountOperation {
+object CreateAccountOperation extends Decode {
   val decode: State[Seq[Byte], CreateAccountOperation] = for {
     destination <- KeyPair.decode
-    startingBalance <- Decode.long
+    startingBalance <- long
   } yield CreateAccountOperation(destination, NativeAmount(startingBalance))
 }
 
@@ -275,13 +275,13 @@ case class PathPaymentOperation(sendMax: Amount,
       Encode.arr(path)
 }
 
-object PathPaymentOperation {
+object PathPaymentOperation extends Decode {
 
   def decode: State[Seq[Byte], PathPaymentOperation] = for {
     sendMax <- Amount.decode
     destAccount <- KeyPair.decode
     destAmount <- Amount.decode
-    path <- Decode.arr(Asset.decode)
+    path <- arr(Asset.decode)
   } yield PathPaymentOperation(sendMax, destAccount, destAmount, path)
 
 }
@@ -354,13 +354,13 @@ case class UpdateSellOfferOperation(override val offerId: Long,
       Encode.long(offerId)
 }
 
-object ManageSellOfferOperation {
+object ManageSellOfferOperation extends Decode {
   def decode: State[Seq[Byte], ManageSellOfferOperation] = for {
     sellingAsset <- Asset.decode
     buyingAsset <- Asset.decode
-    sellingUnits <- Decode.long
+    sellingUnits <- long
     price <- Price.decode
-    offerId <- Decode.long
+    offerId <- long
   } yield {
     if (offerId == 0) CreateSellOfferOperation(Amount(sellingUnits, sellingAsset), buyingAsset, price)
     else if (sellingUnits == 0) DeleteSellOfferOperation(offerId, sellingAsset, buyingAsset, price)
@@ -436,13 +436,13 @@ case class UpdateBuyOfferOperation(override val offerId: Long,
       Encode.long(offerId)
 }
 
-object ManageBuyOfferOperation {
+object ManageBuyOfferOperation extends Decode {
   def decode: State[Seq[Byte], ManageBuyOfferOperation] = for {
     sellingAsset <- Asset.decode
     buyingAsset <- Asset.decode
-    buyingUnits <- Decode.long
+    buyingUnits <- long
     price <- Price.decode
-    offerId <- Decode.long
+    offerId <- long
   } yield {
     if (offerId == 0) CreateBuyOfferOperation(sellingAsset, Amount(buyingUnits, buyingAsset), price)
     else if (buyingUnits == 0) DeleteBuyOfferOperation(offerId, sellingAsset, buyingAsset, price)
@@ -472,11 +472,11 @@ case class CreatePassiveSellOfferOperation(selling: Amount, buying: Asset, price
       price.encode
 }
 
-object CreatePassiveSellOfferOperation {
+object CreatePassiveSellOfferOperation extends Decode {
   val decode: State[Seq[Byte], CreatePassiveSellOfferOperation] = for {
     sellingAsset <- Asset.decode
     buyingAsset <- Asset.decode
-    sellingUnits <- Decode.long
+    sellingUnits <- long
     price <- Price.decode
   } yield CreatePassiveSellOfferOperation(Amount(sellingUnits, sellingAsset), buyingAsset, price)
 }
@@ -521,18 +521,18 @@ case class SetOptionsOperation(inflationDestination: Option[PublicKeyOps] = None
       Encode.opt(signer)
 }
 
-object SetOptionsOperation {
+object SetOptionsOperation extends Decode {
 
   def decode: State[Seq[Byte], SetOptionsOperation] = for {
-    inflationDestination <- Decode.opt(KeyPair.decode)
-    clearFlags <- Decode.opt(Decode.int.map(IssuerFlags.from))
-    setFlags <- Decode.opt(Decode.int.map(IssuerFlags.from))
-    masterKeyWeight <- Decode.opt(Decode.int)
-    lowThreshold <- Decode.opt(Decode.int)
-    mediumThreshold <- Decode.opt(Decode.int)
-    highThreshold <- Decode.opt(Decode.int)
-    homeDomain <- Decode.opt(Decode.string)
-    signer <- Decode.opt(Signer.decode)
+    inflationDestination <- opt(KeyPair.decode)
+    clearFlags <- opt(int.map(IssuerFlags.from))
+    setFlags <- opt(int.map(IssuerFlags.from))
+    masterKeyWeight <- opt(int)
+    lowThreshold <- opt(int)
+    mediumThreshold <- opt(int)
+    highThreshold <- opt(int)
+    homeDomain <- opt(string)
+    signer <- opt(Signer.decode)
   } yield SetOptionsOperation(inflationDestination, clearFlags, setFlags, masterKeyWeight, lowThreshold,
     mediumThreshold, highThreshold, homeDomain, signer)
 
@@ -558,12 +558,14 @@ case object AuthorizationImmutableFlag extends IssuerFlag {
   val s = "auth_immutable_flag"
 }
 
-object IssuerFlags {
+object IssuerFlags extends Decode {
   val all: Set[IssuerFlag] = Set(AuthorizationRequiredFlag, AuthorizationRevocableFlag, AuthorizationImmutableFlag)
 
   def apply(i: Int): Option[IssuerFlag] = all.find(_.i == i)
 
   def from(i: Int): Set[IssuerFlag] = all.filter { f => (i & f.i) == f.i }
+
+  val decode: State[Seq[Byte], Set[IssuerFlag]] = int.map(from)
 }
 
 /**
@@ -599,15 +601,15 @@ case class AllowTrustOperation(trustor: PublicKeyOps,
 
 }
 
-object AllowTrustOperation {
+object AllowTrustOperation extends Decode {
   def decode: State[Seq[Byte], AllowTrustOperation] = for {
     trustor <- KeyPair.decode
-    assetCodeLength <- Decode.int.map {
+    assetCodeLength <- int.map {
       case 1 => 4
       case 2 => 12
     }
-    assetCode <- Decode.bytes(assetCodeLength).map(_.toArray).map(ByteArrays.paddedByteArrayToString)
-    authorize <- Decode.bool
+    assetCode <- bytes(assetCodeLength).map(_.toArray).map(ByteArrays.paddedByteArrayToString)
+    authorize <- bool
   } yield AllowTrustOperation(trustor, assetCode, authorize)
 }
 
@@ -678,10 +680,10 @@ object WriteDataOperation {
 }
 
 
-object ManageDataOperation {
+object ManageDataOperation extends Decode {
   def decode: State[Seq[Byte], ManageDataOperation] = for {
-    name <- Decode.string
-    value <- Decode.opt(Decode.padded())
+    name <- string
+    value <- opt(padded())
   } yield value match {
     case Some(v) => WriteDataOperation(name, v.toArray)
     case None => DeleteDataOperation(name)
@@ -702,6 +704,6 @@ case class BumpSequenceOperation(bumpTo: Long,
   override def encode: Stream[Byte] = super.encode ++ Encode.int(11) ++ Encode.long(bumpTo)
 }
 
-object BumpSequenceOperation {
-  def decode: State[Seq[Byte], BumpSequenceOperation] = Decode.long.map(BumpSequenceOperation(_))
+object BumpSequenceOperation extends Decode {
+  def decode: State[Seq[Byte], BumpSequenceOperation] = long.map(BumpSequenceOperation(_))
 }

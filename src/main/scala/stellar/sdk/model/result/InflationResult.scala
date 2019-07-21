@@ -7,9 +7,9 @@ import stellar.sdk.{KeyPair, PublicKey}
 
 sealed abstract class InflationResult(val opResultCode: Int) extends ProcessedOperationResult(opCode = 9)
 
-object InflationResult {
-  val decode: State[Seq[Byte], InflationResult] = Decode.int.flatMap {
-    case 0 => Decode.arr(InflationPayout.decode).map(InflationSuccess)
+object InflationResult extends Decode {
+  val decode: State[Seq[Byte], InflationResult] = int.flatMap {
+    case 0 => arr(InflationPayout.decode).map(InflationSuccess)
     case -1 => State.pure(InflationNotDue)
   }
 }
@@ -31,9 +31,9 @@ case class InflationPayout(recipient: PublicKey, amount: NativeAmount) extends E
   def encode: Stream[Byte] = recipient.encode ++ Encode.long(amount.units)
 }
 
-object InflationPayout {
+object InflationPayout extends Decode {
   val decode: State[Seq[Byte], InflationPayout] = for {
     recipient <- KeyPair.decode
-    units <- Decode.long
+    units <- long
   } yield InflationPayout(recipient, NativeAmount(units))
 }

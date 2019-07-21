@@ -57,15 +57,15 @@ case class TransactionNotAttempted(reason: Code, feeCharged: NativeAmount) exten
 }
 
 
-object TransactionResult {
+object TransactionResult extends Decode {
 
   def decodeXDR(base64: String) = decode.run(ByteArrays.base64(base64)).value._2
 
   def decode: State[Seq[Byte], TransactionResult] = for {
-    feeCharged <- Decode.long.map(NativeAmount)
+    feeCharged <- long.map(NativeAmount)
     result <- Code.decode
     operationResults <- result.decodeOperationResults
-    _ <- Decode.int
+    _ <- int
   } yield result match {
     case Successful => TransactionSuccess(feeCharged, operationResults)
     case OperationsFailed => TransactionFailure(feeCharged, operationResults)
@@ -73,7 +73,7 @@ object TransactionResult {
   }
 
   sealed abstract class Code(val id: Int) {
-    val decodeOperationResults: State[Seq[Byte], Seq[OperationResult]] = Decode.arr(OperationResult.decode)
+    val decodeOperationResults: State[Seq[Byte], Seq[OperationResult]] = arr(OperationResult.decode)
   }
 
   sealed trait OperationsNotAttempted {
@@ -96,7 +96,7 @@ object TransactionResult {
   case object UnspecifiedInternalError extends Code(-11) with OperationsNotAttempted
 
   object Code {
-    def decode: State[Seq[Byte], Code] = Decode.int.map(apply)
+    def decode: State[Seq[Byte], Code] = int.map(apply)
     
     def apply(i: Int): Code = i match {
       case 0 => Successful

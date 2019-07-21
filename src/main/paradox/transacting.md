@@ -102,4 +102,11 @@ and need to be decoded via a similar method on `SignedTransaction`.
 
 @@snip [DocExamples.scala](../../test/scala/stellar/sdk/model/TransactionSpec.scala) { #xdr_signed_serde_example }
 
+## Meta Data
+
+All transaction post and history responses include an XDR payload that describes the effects that the transaction had
+on the ledger. The field `resultMetaXDR` is the base64-encoded XDR payload. The method `ledgerEntries` will decode the
+payload into an instance of @scaladoc[TransactionLedgerEntries](stellar.sdk.model.ledger.TransactionLedgerEntries).
+
+
 Continue reading to learn how to obtain historical data from network via @ref:[Queries](queries.md).

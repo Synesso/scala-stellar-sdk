@@ -12,9 +12,9 @@ import stellar.sdk.util.ByteArrays
   */
 sealed trait StrKey {
   val kind: Byte
-  val hash: Array[Byte]
-  def checksum: Array[Byte] = ByteArrays.checksum(kind +: hash)
-  def encodeToChars: Array[Char] = codec.encode(kind +: hash ++: checksum).map(_.toChar)
+  val hash: Seq[Byte]
+  def checksum: Seq[Byte] = ByteArrays.checksum((kind +: hash).toArray)
+  def encodeToChars: Seq[Char] = codec.encode((kind +: hash ++: checksum).toArray).map(_.toChar)
 }
 
 /**
@@ -23,32 +23,32 @@ sealed trait StrKey {
   */
 sealed trait SignerStrKey extends StrKey with Encodable
 
-case class AccountId(hash: Array[Byte]) extends SignerStrKey {
+case class AccountId(hash: Seq[Byte]) extends SignerStrKey {
   val kind: Byte = (6 << 3).toByte // G
   def encode: Stream[Byte] = Encode.int(0) ++ Encode.bytes(32, hash)
 }
 
-case class Seed(hash: Array[Byte]) extends StrKey {
+case class Seed(hash: Seq[Byte]) extends StrKey {
   val kind: Byte = (18 << 3).toByte // S
 }
 
-case class PreAuthTx(hash: Array[Byte]) extends SignerStrKey {
+case class PreAuthTx(hash: Seq[Byte]) extends SignerStrKey {
   val kind: Byte = (19 << 3).toByte // T
   def encode: Stream[Byte] = Encode.int(1) ++ Encode.bytes(32, hash)
 }
 
-case class SHA256Hash(hash: Array[Byte]) extends SignerStrKey {
+case class SHA256Hash(hash: Seq[Byte]) extends SignerStrKey {
   val kind: Byte = (23 << 3).toByte // X
   def encode: Stream[Byte] = Encode.int(2) ++ Encode.bytes(32, hash)
 }
 
-object StrKey {
+object StrKey extends Decode {
 
   val codec = new Base32()
 
   def decode: State[Seq[Byte], SignerStrKey] = for {
-    discriminant <- Decode.int
-    bs <- Decode.bytes(32).map(_.toArray)
+    discriminant <- int
+    bs <- bytes(32).map(_.toArray)
   } yield discriminant match {
     case 0 => AccountId(bs)
     case 1 => PreAuthTx(bs)
@@ -56,10 +56,10 @@ object StrKey {
   }
 
   def decodeFromString(key: String): StrKey = decodeFromChars(key.toCharArray)
-  def decodeFromChars(key: Array[Char]): StrKey = {
+  def decodeFromChars(key: Seq[Char]): StrKey = {
     assert(key.forall(_ <= 127), s"Illegal characters in provided StrKey")
 
-    val bytes = key.map(_.toByte)
+    val bytes = key.map(_.toByte).toArray
     val decoded: Array[Byte] = codec.decode(bytes)
     assert(decoded.length == 35, s"Incorrect length. Expected 35 bytes, got ${decoded.length} in StrKey: $key")
 

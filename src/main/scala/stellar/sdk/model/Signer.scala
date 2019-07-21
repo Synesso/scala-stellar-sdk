@@ -9,9 +9,9 @@ case class Signer(key: SignerStrKey, weight: Int) extends Encodable {
   def encode: Stream[Byte] = key.encode ++ Encode.int(weight)
 }
 
-object Signer {
+object Signer extends Decode {
   def decode: State[Seq[Byte], Signer] = for {
     key <- StrKey.decode
-    weight <- Decode.int
+    weight <- int
   } yield Signer(key, weight)
 }

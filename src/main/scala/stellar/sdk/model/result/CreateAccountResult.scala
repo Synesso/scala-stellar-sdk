@@ -5,8 +5,8 @@ import stellar.sdk.model.xdr.Decode
 
 sealed abstract class CreateAccountResult(val opResultCode: Int) extends ProcessedOperationResult(opCode = 0)
 
-object CreateAccountResult {
-  val decode: State[Seq[Byte], CreateAccountResult] = Decode.int.map {
+object CreateAccountResult extends Decode {
+  val decode: State[Seq[Byte], CreateAccountResult] = int.map {
     case 0 => CreateAccountSuccess
     case -1 => CreateAccountMalformed
     case -2 => CreateAccountUnderfunded

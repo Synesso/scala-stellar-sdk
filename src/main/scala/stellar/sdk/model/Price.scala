@@ -15,9 +15,9 @@ case class Price(n: Int, d: Int) {
   override def toString: String = s"$n:$d"
 }
 
-object Price {
+object Price extends Decode {
   def decode: State[Seq[Byte], Price] = for {
-    n <- Decode.int
-    d <- Decode.int
+    n <- int
+    d <- int
   } yield Price(n, d)
 }

@@ -5,8 +5,8 @@ import stellar.sdk.model.xdr.Decode
 
 sealed abstract class BumpSequenceResult(val opResultCode: Int) extends ProcessedOperationResult(opCode = 11)
 
-object BumpSequenceResult {
-  val decode: State[Seq[Byte], BumpSequenceResult] = Decode.int.map {
+object BumpSequenceResult extends Decode {
+  val decode: State[Seq[Byte], BumpSequenceResult] = int.map {
     case 0 => BumpSequenceSuccess
     case -1 => BumpSequenceBadSeqNo
   }

@@ -5,6 +5,7 @@ import java.time.ZonedDateTime
 import org.json4s.DefaultFormats
 import org.json4s.JsonAST.JObject
 import stellar.sdk.model._
+import stellar.sdk.model.ledger.TransactionLedgerEntries
 import stellar.sdk.model.response.ResponseParser
 import stellar.sdk.util.ByteArrays.base64
 import stellar.sdk.{KeyPair, PublicKey}
@@ -21,6 +22,8 @@ case class TransactionHistory(hash: String, ledgerId: Long, createdAt: ZonedDate
                               validBefore: Option[ZonedDateTime]) {
 
   lazy val result: TransactionResult = TransactionResult.decodeXDR(resultXDR)
+
+  def ledgerEntries: TransactionLedgerEntries = TransactionLedgerEntries.decodeXDR(resultMetaXDR)
 
   @deprecated("v0.7.2", "Replaced by `feeCharged`")
   val feePaid: NativeAmount = feeCharged

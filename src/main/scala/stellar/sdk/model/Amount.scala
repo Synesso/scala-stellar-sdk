@@ -26,7 +26,7 @@ case class IssuedAmount(units: Long, asset: NonNativeAsset) extends Amount {
   override def toString: String = s"$toDisplayUnits $asset"
 }
 
-object Amount {
+object Amount extends Decode {
   private val decimalPlaces = 7
   private val toIntegralFactor = BigDecimal(math.pow(10, decimalPlaces))
 
@@ -57,7 +57,7 @@ object Amount {
 
   def decode: State[Seq[Byte], Amount] = for {
     asset <- Asset.decode
-    units <- Decode.long
+    units <- long
   } yield apply(units, asset)
 }
 
