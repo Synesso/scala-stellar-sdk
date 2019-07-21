@@ -8,13 +8,13 @@ import scala.util.{Failure, Try}
 class TransactionLedgerEntriesSpec extends Specification with LedgerEntryGenerators with LazyLogging {
 
   "a ledger entry" should {
-    "serde to/from XDR" >> prop { entry: LedgerEntry =>
-      val triedEntry = Try(LedgerEntry.decode.run(entry.encode.toArray).value._2)
-      triedEntry match {
-        case Failure(_) => logger.error(s"Failed to decode $entry")
+    "serde to/from XDR" >> prop { entries: TransactionLedgerEntries =>
+      val triedEntries = Try(TransactionLedgerEntries.decode.run(entries.encode.toArray).value._2)
+      triedEntries match {
+        case Failure(_) => logger.error(s"Failed to decode $entries")
         case _ =>
       }
-      triedEntry must beSuccessfulTry(entry)
+      triedEntries must beSuccessfulTry(entries)
     }
   }
 

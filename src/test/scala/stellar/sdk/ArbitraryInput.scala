@@ -150,6 +150,11 @@ trait ArbitraryInput extends ScalaCheck {
 
   implicit def arbTradeAggregation: Arbitrary[TradeAggregation] = Arbitrary(genTradeAggregation)
 
+  def genListOfNM[T](low: Int, high: Int, gen: Gen[T]) = for {
+    size <- Gen.choose(low, high)
+    xs <- Gen.listOfN(size, gen)
+  } yield xs
+
   def round(d: Double): Double = "%.7f".formatLocal(Locale.ROOT, d).toDouble
 
   def genKeyPair: Gen[KeyPair] = Gen.oneOf(Seq(KeyPair.random))

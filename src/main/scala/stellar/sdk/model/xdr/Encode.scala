@@ -2,7 +2,6 @@ package stellar.sdk.model.xdr
 
 import java.nio.ByteBuffer
 import java.nio.charset.StandardCharsets.UTF_8
-import java.nio.charset.{Charset, StandardCharsets}
 import java.time.Instant
 
 trait Encodable {
@@ -59,3 +58,5 @@ object Encode {
   def bool(b: Boolean): Stream[Byte] = if (b) int(1) else int(0)
 
 }
+
+case class Encoded(encode: Stream[Byte]) extends Encodable
