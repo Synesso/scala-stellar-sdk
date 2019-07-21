@@ -61,7 +61,16 @@ trait LedgerEntryGenerators extends ArbitraryInput {
     liabilities <- Gen.option(genLiabilities)
   } yield TrustLineEntry(account, asset, balance, limit, issuerAuthorized, liabilities, lastModifiedLedgerSeq)
 
-  val genLedgerEntry: Gen[LedgerEntry] = Gen.oneOf(genAccountEntry, genTrustLineEntry)
+  val genOfferEntry: Gen[OfferEntry] = for {
+    lastModifiedLedgerSeq <- Gen.posNum[Int]
+    account <- genPublicKey
+    offerId <- Gen.posNum[Long]
+    selling <- genAmount
+    buying <- genAsset
+    price <- genPrice
+  } yield OfferEntry(account, offerId, selling, buying, price, lastModifiedLedgerSeq)
+
+  val genLedgerEntry: Gen[LedgerEntry] = Gen.oneOf(genAccountEntry, genTrustLineEntry, genOfferEntry)
 
   implicit val arbLedgerEntry = Arbitrary(genLedgerEntry)
 

@@ -186,14 +186,24 @@ object TrustLineEntry extends Decode {
  */
 case class OfferEntry(account: PublicKeyOps, offerId: Long, selling: Amount, buying: Asset, price: Price,
                       lastModifiedLedgerSeq: Int) extends LedgerEntry {
-  override def encode: Stream[Byte] = ???
+
+  override def encode: Stream[Byte] = Encode.int(lastModifiedLedgerSeq) ++
+    Encode.int(2) ++
+    account.encode ++
+    Encode.long(offerId) ++
+    selling.asset.encode ++
+    buying.encode ++
+    Encode.long(selling.units) ++
+    price.encode ++
+    Encode.long(0)
+
 }
 
 object OfferEntry extends Decode {
   val decode: State[Seq[Byte], OfferEntry] = for {
     account <- KeyPair.decode
     offerId <- long
-    selling <- Asset.decode
+    selling <- Asset.decode // TODO (jem) - this this the correct order?
     buying <- Asset.decode
     units <- long
     price <- Price.decode
