@@ -81,4 +81,32 @@ trait LedgerEntryGenerators extends ArbitraryInput {
 
   implicit val arbLedgerEntry = Arbitrary(genLedgerEntry)
 
+
+  // LedgerEntryChanges
+
+  val genLedgerEntryCreate: Gen[LedgerEntryCreate] = genLedgerEntry.map(LedgerEntryCreate)
+  val genLedgerEntryUpdate: Gen[LedgerEntryUpdate] = genLedgerEntry.map(LedgerEntryUpdate)
+  val genLedgerEntryDelete: Gen[LedgerEntryDelete] = genLedgerKey.map(LedgerEntryDelete)
+  val genLedgerEntryState: Gen[LedgerEntryState] = genLedgerEntry.map(LedgerEntryState)
+
+  val genLedgerEntryChange: Gen[LedgerEntryChange] =
+    Gen.oneOf(genLedgerEntryCreate, genLedgerEntryUpdate, genLedgerEntryDelete, genLedgerEntryState)
+
+  implicit val arbLedgerEntryChange = Arbitrary(genLedgerEntryChange)
+
+
+/*
+
+
+  // TransactionLedgerEntries
+  val genTransactionLedgerEntriesv0: Gen[TransactionLedgerEntries] = for {
+    entries <- Gen.listOf(Gen.listOf(genLedgerEntry))
+  } yield TransactionLedgerEntries(Nil, entries)
+
+  val genTransactionLedgerEntries: Gen[TransactionLedgerEntries] =
+    Gen.oneOf(genTransactionLedgerEntriesv0, genTransactionLedgerEntriesv1)
+
+  implicit val arbTransactionLedgerEntries = Arbitrary(genTransactionLedgerEntries)
+*/
+
 }
