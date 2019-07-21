@@ -1,21 +1,23 @@
 package stellar.sdk.model.ledger
 
 import cats.data.State
-import stellar.sdk.{KeyPair, PublicKey}
-import stellar.sdk.model.{Amount, Asset, Price, Signer, Thresholds}
 import stellar.sdk.model.op.{IssuerFlag, IssuerFlags}
-import stellar.sdk.model.xdr.Decode
+import stellar.sdk.model.xdr.{Decode, Encodable, Encode}
+import stellar.sdk.model._
+import stellar.sdk.{KeyPair, PublicKeyOps}
 
-sealed trait LedgerEntry
+sealed trait LedgerEntry extends Encodable {
+  val lastModifiedLedgerSeq: Int
+}
 
 object LedgerEntry extends Decode {
   val decode: State[Seq[Byte], LedgerEntry] = for {
-    lastModifiedLedgerSeq <- int // TODO (jem) - Include this value.
+    lastModifiedLedgerSeq <- int
     entry <- switch[LedgerEntry](
-      widen(AccountEntry.decode),
-      widen(TrustLineEntry.decode),
-      widen(OfferEntry.decode),
-      widen(DataEntry.decode)
+      widen(AccountEntry.decode.map(_.copy(lastModifiedLedgerSeq = lastModifiedLedgerSeq))),
+      widen(TrustLineEntry.decode.map(_.copy(lastModifiedLedgerSeq = lastModifiedLedgerSeq))),
+      widen(OfferEntry.decode.map(_.copy(lastModifiedLedgerSeq = lastModifiedLedgerSeq))),
+      widen(DataEntry.decode.map(_.copy(lastModifiedLedgerSeq = lastModifiedLedgerSeq)))
     )
   } yield entry
 }
@@ -59,10 +61,25 @@ object LedgerEntry extends Decode {
 //  };
 
  */
-case class AccountEntry(account: PublicKey, balance: Long, seqNum: Long, numSubEntries: Int,
-                        inflationDestination: Option[PublicKey], flags: Set[IssuerFlag],
+case class AccountEntry(account: PublicKeyOps, balance: Long, seqNum: Long, numSubEntries: Int,
+                        inflationDestination: Option[PublicKeyOps], flags: Set[IssuerFlag],
                         homeDomain: Option[String], thresholds: Thresholds, signers: Seq[Signer],
-                        liabilities: Option[Liabilities]) extends LedgerEntry
+                        liabilities: Option[Liabilities], lastModifiedLedgerSeq: Int) extends LedgerEntry {
+
+  override def encode: Stream[Byte] = Encode.int(lastModifiedLedgerSeq) ++
+    Encode.int(0) ++
+    account.encode ++
+    Encode.long(balance) ++
+    Encode.long(seqNum) ++
+    Encode.int(numSubEntries) ++
+    Encode.opt(inflationDestination) ++
+    Encode.int(flags.map(_.i + 0).fold(0)(_ | _)) ++
+    Encode.string(homeDomain.getOrElse("")) ++
+    thresholds.encode ++
+    Encode.arr(signers) ++
+    Encode.opt(liabilities)
+
+}
 
 object AccountEntry extends Decode {
   val decode: State[Seq[Byte], AccountEntry] = for {
@@ -75,12 +92,9 @@ object AccountEntry extends Decode {
     homeDomain <- string.map(Some(_).filter(_.nonEmpty))
     thresholds <- Thresholds.decode
     signers <- arr(Signer.decode)
-    liabilities <- switch[Option[Liabilities]](
-      State.pure(None),
-      Liabilities.decode.map(Some(_))
-    )
+    liabilities <- opt(Liabilities.decode)
   } yield AccountEntry(account, balance, seqNum, numSubEntries, inflationDestination, flags, homeDomain, thresholds,
-      signers, liabilities)
+      signers, liabilities, -1)
 }
 
 /*
@@ -116,8 +130,12 @@ object AccountEntry extends Decode {
 //  };
 
  */
-case class TrustLineEntry(account: PublicKey, asset: Asset, balance: Long, limit: Long,
-                          issuerAuthorized: Boolean, liabilities: Option[Liabilities]) extends LedgerEntry
+case class TrustLineEntry(account: PublicKeyOps, asset: Asset, balance: Long, limit: Long,
+                          issuerAuthorized: Boolean, liabilities: Option[Liabilities], lastModifiedLedgerSeq: Int)
+  extends LedgerEntry {
+
+  override def encode: Stream[Byte] = ???
+}
 
 object TrustLineEntry extends Decode {
   val decode: State[Seq[Byte], TrustLineEntry] = for {
@@ -130,7 +148,7 @@ object TrustLineEntry extends Decode {
       State.pure(None),
       Liabilities.decode.map(Some(_))
     )
-  } yield TrustLineEntry(account, asset, balance, limit, issuerAuthorized, liabilities)
+  } yield TrustLineEntry(account, asset, balance, limit, issuerAuthorized, liabilities, -1)
 }
 
 /*
@@ -159,7 +177,10 @@ object TrustLineEntry extends Decode {
 //      ext;
 //  };
  */
-case class OfferEntry(account: PublicKey, offerId: Long, selling: Amount, buying: Asset, price: Price) extends LedgerEntry
+case class OfferEntry(account: PublicKeyOps, offerId: Long, selling: Amount, buying: Asset, price: Price,
+                      lastModifiedLedgerSeq: Int) extends LedgerEntry {
+  override def encode: Stream[Byte] = ???
+}
 
 object OfferEntry extends Decode {
   val decode: State[Seq[Byte], OfferEntry] = for {
@@ -171,7 +192,7 @@ object OfferEntry extends Decode {
     price <- Price.decode
     _ <- int // flags
     _ <- int // ext
-  } yield OfferEntry(account, offerId, Amount(units, selling), buying, price)
+  } yield OfferEntry(account, offerId, Amount(units, selling), buying, price, -1)
 }
 
 
@@ -192,7 +213,9 @@ object OfferEntry extends Decode {
 //  };
 
  */
-case class DataEntry(account: PublicKey, name: String, value: Seq[Byte]) extends LedgerEntry
+case class DataEntry(account: PublicKeyOps, name: String, value: Seq[Byte], lastModifiedLedgerSeq: Int) extends LedgerEntry {
+  override def encode: Stream[Byte] = ???
+}
 
 object DataEntry extends Decode {
   val decode: State[Seq[Byte], DataEntry] = for {
@@ -200,5 +223,5 @@ object DataEntry extends Decode {
     name <- string
     value <- bytes
     _ <- int
-  } yield DataEntry(account, name, value)
+  } yield DataEntry(account, name, value, -1)
 }

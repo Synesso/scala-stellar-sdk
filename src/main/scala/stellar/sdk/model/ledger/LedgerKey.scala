@@ -1,13 +1,11 @@
 package stellar.sdk.model.ledger
 
 import cats.data.State
-import stellar.sdk.{KeyPair, PublicKey, PublicKeyOps}
+import stellar.sdk.model.xdr.{Decode, Encodable, Encode}
 import stellar.sdk.model.{Asset, NonNativeAsset}
-import stellar.sdk.model.xdr.{Decode, Encode}
+import stellar.sdk.{KeyPair, PublicKeyOps}
 
-sealed trait LedgerKey {
-  def encode: Stream[Byte]
-}
+sealed trait LedgerKey extends Encodable
 
 object LedgerKey extends Decode {
 

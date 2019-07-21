@@ -18,7 +18,7 @@ case class KeyPair(pk: EdDSAPublicKey, sk: EdDSAPrivateKey) extends PublicKeyOps
   /**
     * Returns the human readable secret seed encoded in strkey.
     */
-  def secretSeed: Array[Char] = Seed(sk.getSeed).encodeToChars
+  def secretSeed: Seq[Char] = Seed(sk.getSeed.toSeq).encodeToChars
 
   /**
     * Sign the provided data with the private key.
@@ -102,12 +102,7 @@ object KeyPair extends Decode {
     * @param seed Char array containing strkey encoded Stellar secret seed.
     * @return { @link KeyPair}
     */
-  def fromSecretSeed(seed: Array[Char]): KeyPair = {
-    val decoded = StrKey.decodeFromChars(seed)
-    val kp = fromSecretSeed(decoded.hash)
-    Arrays.fill(decoded.hash, 0.toByte)
-    kp
-  }
+  def fromSecretSeed(seed: Seq[Char]): KeyPair = fromSecretSeed(StrKey.decodeFromChars(seed).hash.toArray)
 
   /**
     * <strong>Insecure</strong> Creates a new Stellar KeyPair from a strkey encoded Stellar secret seed.
@@ -121,7 +116,7 @@ object KeyPair extends Decode {
     val charSeed = seed.toCharArray
     Try {
       val decoded = StrKey.decodeFromChars(charSeed)
-      val kp = fromSecretSeed(decoded.hash)
+      val kp = fromSecretSeed(decoded.hash.toArray)
       Arrays.fill(charSeed, ' ')
       kp
     } match {
@@ -137,7 +132,7 @@ object KeyPair extends Decode {
     * @return { @link KeyPair}
     */
   def fromSecretSeed(seed: Array[Byte]): KeyPair = {
-    val privKeySpec = new EdDSAPrivateKeySpec(seed, ed25519)
+    val privKeySpec = new EdDSAPrivateKeySpec(seed.toArray, ed25519)
     val publicKeySpec = new EdDSAPublicKeySpec(privKeySpec.getA.toByteArray, ed25519)
     KeyPair(new EdDSAPublicKey(publicKeySpec), new EdDSAPrivateKey(privKeySpec))
   }
@@ -148,7 +143,8 @@ object KeyPair extends Decode {
     * @param passphrase the secret passphrase.
     * @return ( @link KeyPair }
     */
-  def fromPassphrase(passphrase: String): KeyPair = fromSecretSeed(ByteArrays.sha256(passphrase.getBytes("UTF-8")))
+  def fromPassphrase(passphrase: String): KeyPair =
+    fromSecretSeed(ByteArrays.sha256(passphrase.getBytes("UTF-8")))
 
   /**
     * Creates a new Stellar verifying key from a 32 byte address.
@@ -156,8 +152,8 @@ object KeyPair extends Decode {
     * @param publicKey The 32 byte public key.
     * @return { @link PublicKey }
     */
-  def fromPublicKey(publicKey: Array[Byte]): PublicKey = {
-    PublicKey(new EdDSAPublicKey(new EdDSAPublicKeySpec(publicKey, ed25519)))
+  def fromPublicKey(publicKey: Seq[Byte]): PublicKey = {
+    PublicKey(new EdDSAPublicKey(new EdDSAPublicKeySpec(publicKey.toArray, ed25519)))
   }
 
   /**
