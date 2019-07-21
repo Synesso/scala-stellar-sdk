@@ -4,6 +4,7 @@ import cats.data.State
 import stellar.sdk.model.xdr.{Decode, Encodable, Encode}
 
 sealed trait LedgerEntryChange extends Encodable
+
 case class LedgerEntryCreate(entry: LedgerEntry) extends LedgerEntryChange {
   override def encode: Stream[Byte] = Encode.int(0) ++ entry.encode ++ Encode.int(0)
 }

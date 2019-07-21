@@ -4,6 +4,14 @@ import cats.data.State
 import stellar.sdk.model.xdr.{Decode, Encodable, Encode, Encoded}
 import stellar.sdk.util.ByteArrays
 
+/**
+  * Meta data about the effect a transaction had on the ledger it was transacted in.
+  * @param txnLevelChanges the ledger changes caused by the transaction itself (not any one specific operation).
+  *                        In earlier versions of the protocol, this field was not present. In such cases the field will
+  *                        be `None`.
+  * @param operationLevelChanges the ledger changes caused by the individual operations. The order of the outer sequence
+  *                              matched the order of operations in the transaction.
+  */
 case class TransactionLedgerEntries(txnLevelChanges: Option[Seq[LedgerEntryChange]],
                                     operationLevelChanges: Seq[Seq[LedgerEntryChange]]) extends Encodable {
 
