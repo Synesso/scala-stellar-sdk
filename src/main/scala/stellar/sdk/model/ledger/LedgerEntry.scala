@@ -23,43 +23,42 @@ object LedgerEntry extends Decode {
 }
 
 /*
-//      AccountID accountID;      // master public key for this account
-//      int64 balance;            // in stroops
-//      SequenceNumber seqNum;    // last sequence number used for this account
-//      uint32 numSubEntries;     // number of sub-entries this account has
-//                                // drives the reserve
-//      AccountID* inflationDest; // Account to vote for during inflation
-//      uint32 flags;             // see AccountFlags
-//
-//      string32 homeDomain; // can be used for reverse federation and memo lookup
-//
-//      // fields used for signatures
-//      // thresholds stores unsigned bytes: [weight of master|low|medium|high]
-//      Thresholds thresholds;
-//
-//      Signer signers<20>; // possible signers for this account
-//
-//      // reserved for future use
-//      union switch (int v)
-//      {
-//      case 0:
-//          void;
-//      case 1:
-//          struct
-//          {
-//              Liabilities liabilities;
-//
-//              union switch (int v)
-//              {
-//              case 0:
-//                  void;
-//              }
-//              ext;
-//          } v1;
-//      }
-//      ext;
-//  };
+      AccountID accountID;      // master public key for this account
+      int64 balance;            // in stroops
+      SequenceNumber seqNum;    // last sequence number used for this account
+      uint32 numSubEntries;     // number of sub-entries this account has
+                                // drives the reserve
+      AccountID* inflationDest; // Account to vote for during inflation
+      uint32 flags;             // see AccountFlags
 
+      string32 homeDomain; // can be used for reverse federation and memo lookup
+
+      // fields used for signatures
+      // thresholds stores unsigned bytes: [weight of master|low|medium|high]
+      Thresholds thresholds;
+
+      Signer signers<20>; // possible signers for this account
+
+      // reserved for future use
+      union switch (int v)
+      {
+      case 0:
+          void;
+      case 1:
+          struct
+          {
+              Liabilities liabilities;
+
+              union switch (int v)
+              {
+              case 0:
+                  void;
+              }
+              ext;
+          } v1;
+      }
+      ext;
+  };
  */
 case class AccountEntry(account: PublicKeyOps, balance: Long, seqNum: Long, numSubEntries: Int,
                         inflationDestination: Option[PublicKeyOps], flags: Set[IssuerFlag],
@@ -98,36 +97,36 @@ object AccountEntry extends Decode {
 }
 
 /*
-//  struct TrustLineEntry
-//  {
-//      AccountID accountID; // account this trustline belongs to
-//      Asset asset;         // type of asset (with issuer)
-//      int64 balance;       // how much of this asset the user has.
-//                           // Asset defines the unit for this;
-//
-//      int64 limit;  // balance cannot be above this
-//      uint32 flags; // see TrustLineFlags
-//
-//      // reserved for future use
-//      union switch (int v)
-//      {
-//      case 0:
-//          void;
-//      case 1:
-//          struct
-//          {
-//              Liabilities liabilities;
-//
-//              union switch (int v)
-//              {
-//              case 0:
-//                  void;
-//              }
-//              ext;
-//          } v1;
-//      }
-//      ext;
-//  };
+  struct TrustLineEntry
+  {
+      AccountID accountID; // account this trustline belongs to
+      Asset asset;         // type of asset (with issuer)
+      int64 balance;       // how much of this asset the user has.
+                           // Asset defines the unit for this;
+
+      int64 limit;  // balance cannot be above this
+      uint32 flags; // see TrustLineFlags
+
+      // reserved for future use
+      union switch (int v)
+      {
+      case 0:
+          void;
+      case 1:
+          struct
+          {
+              Liabilities liabilities;
+
+              union switch (int v)
+              {
+              case 0:
+                  void;
+              }
+              ext;
+          } v1;
+      }
+      ext;
+  };
  */
 case class TrustLineEntry(account: PublicKeyOps, asset: NonNativeAsset, balance: Long, limit: Long,
                           issuerAuthorized: Boolean, liabilities: Option[Liabilities], lastModifiedLedgerSeq: Int)
@@ -159,30 +158,30 @@ object TrustLineEntry extends Decode {
 }
 
 /*
-//  struct OfferEntry
-//  {
-//      AccountID sellerID;
-//      int64 offerID;
-//      Asset selling; // A
-//      Asset buying;  // B
-//      int64 amount;  // amount of A
-//
-//      /* price for this offer:
-//          price of A in terms of B
-//          price=AmountB/AmountA=priceNumerator/priceDenominator
-//          price is after fees
-//      */
-//      Price price;
-//      uint32 flags; // see OfferEntryFlags
-//
-//      // reserved for future use
-//      union switch (int v)
-//      {
-//      case 0:
-//          void;
-//      }
-//      ext;
-//  };
+  struct OfferEntry
+  {
+      AccountID sellerID;
+      int64 offerID;
+      Asset selling; // A
+      Asset buying;  // B
+      int64 amount;  // amount of A
+
+      /* price for this offer:
+          price of A in terms of B
+          price=AmountB/AmountA=priceNumerator/priceDenominator
+          price is after fees
+      */
+      Price price;
+      uint32 flags; // see OfferEntryFlags
+
+      // reserved for future use
+      union switch (int v)
+      {
+      case 0:
+          void;
+      }
+      ext;
+  };
  */
 case class OfferEntry(account: PublicKeyOps, offerId: Long, selling: Amount, buying: Asset, price: Price,
                       lastModifiedLedgerSeq: Int) extends LedgerEntry {
@@ -203,7 +202,7 @@ object OfferEntry extends Decode {
   val decode: State[Seq[Byte], OfferEntry] = for {
     account <- KeyPair.decode
     offerId <- long
-    selling <- Asset.decode // TODO (jem) - this this the correct order?
+    selling <- Asset.decode
     buying <- Asset.decode
     units <- long
     price <- Price.decode
@@ -214,21 +213,20 @@ object OfferEntry extends Decode {
 
 
 /*
-//  struct DataEntry
-//  {
-//      AccountID accountID; // account this data belongs to
-//      string64 dataName;
-//      DataValue dataValue;
-//
-//      // reserved for future use
-//      union switch (int v)
-//      {
-//      case 0:
-//          void;
-//      }
-//      ext;
-//  };
+  struct DataEntry
+  {
+      AccountID accountID; // account this data belongs to
+      string64 dataName;
+      DataValue dataValue;
 
+      // reserved for future use
+      union switch (int v)
+      {
+      case 0:
+          void;
+      }
+      ext;
+  };
  */
 case class DataEntry(account: PublicKeyOps, name: String, value: Seq[Byte], lastModifiedLedgerSeq: Int) extends LedgerEntry {
   override def encode: Stream[Byte] = Encode.int(lastModifiedLedgerSeq) ++

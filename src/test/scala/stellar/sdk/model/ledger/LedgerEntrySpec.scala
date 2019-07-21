@@ -2,6 +2,7 @@ package stellar.sdk.model.ledger
 
 import com.typesafe.scalalogging.LazyLogging
 import org.specs2.mutable.Specification
+import stellar.sdk.util.ByteArrays
 
 import scala.util.{Failure, Try}
 
