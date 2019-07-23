@@ -72,7 +72,7 @@ lazy val root = (project in file("."))
     Defaults.itSettings,
     target in Compile in doc := target.value / "paradox" / "site" / "main" / "api",
     libraryDependencies ++= List(
-      "commons-codec" % "commons-codec" % "1.12",
+      "commons-codec" % "commons-codec" % "1.13",
       "net.i2p.crypto" % "eddsa" % "0.3.0",
       "com.typesafe.akka" %% "akka-http" % "10.1.9",
       "com.typesafe.akka" %% "akka-stream" % "2.5.23",
