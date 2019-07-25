@@ -3,7 +3,7 @@ package stellar.sdk.model.response
 import org.json4s.DefaultFormats
 import org.json4s.JsonAST.JObject
 import stellar.sdk.Network
-import stellar.sdk.model.ledger.TransactionLedgerEntries
+import stellar.sdk.model.ledger.{LedgerEntryChange, LedgerEntryChanges, TransactionLedgerEntries}
 import stellar.sdk.model.result._
 import stellar.sdk.model.{NativeAmount, SignedTransaction}
 

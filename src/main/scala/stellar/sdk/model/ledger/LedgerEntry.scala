@@ -233,7 +233,7 @@ case class DataEntry(account: PublicKeyOps, name: String, value: Seq[Byte], last
     Encode.int(3) ++
     account.encode ++
     Encode.string(name) ++
-    Encode.bytes(value) ++
+    Encode.padded(value) ++
     Encode.int(0)
 }
 
@@ -241,7 +241,7 @@ object DataEntry extends Decode {
   val decode: State[Seq[Byte], DataEntry] = for {
     account <- KeyPair.decode
     name <- string
-    value <- bytes
+    value <- padded()
     _ <- int
   } yield DataEntry(account, name, value, -1)
 }
