@@ -38,7 +38,8 @@ object Encode {
 
   def string(s: String): Stream[Byte] = padded(s.getBytes(UTF_8))
 
-  def opt(o: Option[Encodable]): Stream[Byte] = o.map(t => int(1) ++ t.encode).getOrElse(int(0))
+  def opt(o: Option[Encodable], ifPresent: Int = 1, ifAbsent: Int = 0): Stream[Byte] =
+    o.map(t => int(ifPresent) ++ t.encode).getOrElse(int(ifAbsent))
 
   private def optT[T](o: Option[T], encode: T => Stream[Byte]) =
     o.map(encode).map(int(1) ++ _).getOrElse(int(0))

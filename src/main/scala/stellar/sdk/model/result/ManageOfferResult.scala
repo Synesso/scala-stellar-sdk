@@ -15,7 +15,7 @@ object ManageOfferResult extends Decode {
         OfferEntry.decode.map(Some(_: OfferEntry)),
         State.pure(Option.empty[OfferEntry])
       )
-    } yield ManageOfferSuccess(claims) // TODO (jem) - add entry
+    } yield ManageOfferSuccess(claims, entry)
     case -1 => State.pure(ManageOfferMalformed)
     case -2 => State.pure(ManageOfferSellNoTrust)
     case -3 => State.pure(ManageOfferBuyNoTrust)
@@ -35,9 +35,10 @@ object ManageOfferResult extends Decode {
   * ManageOffer operation was successful.
   *
   * @param claims the trades that were effected as a result of posting this offer.
+  * @param entry the offer entry that was newly created or updated.
   */
-case class ManageOfferSuccess(claims: Seq[OfferClaim]) extends ManageOfferResult(0) {
-  override def encode: Stream[Byte] = super.encode ++ Encode.arr(claims)
+case class ManageOfferSuccess(claims: Seq[OfferClaim], entry: Option[OfferEntry]) extends ManageOfferResult(0) {
+  override def encode: Stream[Byte] = super.encode ++ Encode.arr(claims) ++ Encode.opt(entry, ifPresent = 0, ifAbsent = 2)
 }
 
 /**

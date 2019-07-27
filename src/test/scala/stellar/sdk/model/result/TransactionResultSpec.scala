@@ -1,9 +1,11 @@
 package stellar.sdk.model.result
 
+import org.scalacheck.Arbitrary
 import org.specs2.mutable.Specification
-import stellar.sdk.model.NativeAmount
+import stellar.sdk.model.ledger.OfferEntry
+import stellar.sdk.model.{Amount, Asset, NativeAmount, Price}
 import stellar.sdk.model.result.TransactionResult._
-import stellar.sdk.{ArbitraryInput, DomainMatchers}
+import stellar.sdk.{ArbitraryInput, DomainMatchers, KeyPair}
 
 import scala.util.Try
 
@@ -89,23 +91,4 @@ class TransactionResultSpec extends Specification with ArbitraryInput with Domai
       t.sequenceUpdated mustEqual t.feeCharged.units != 0
     }
   }
-
-  // todo - reimplement [#53]
-  /*
-    "An XDR transaction meta" should {
-      "be decodable" >> {
-        Try(TxResult.decodeMetaXDR(
-          "AAAAAAAAAAEAAAADAAAAAAB18EMAAAAAAAAAALkbMPgKFokh2tU1rsRPDtL3uWLY9iSRNbA6yzSbKbMbAAAAAACYloAAdfBDAA" +
-            "AAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAwB18EMAAAAAAAAAAJYHU4BtUa8ACOZZzHII4+FtEgRa9lBknmI+jQ8" +
-            "MmbfYAAAAF0h255wAdeiJAAAAAQAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAQB18EMAAAAAAAAAAJYHU4BtUa8ACOZZ" +
-            "zHII4+FtEgRa9lBknmI+jQ8MmbfYAAAAF0feURwAdeiJAAAAAQAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAA")) must
-          beSuccessfulTry[TransactionMeta]
-      }
-      "return failure when not decodable" >> {
-        Try(TxResult.decodeMetaXDR("foo")) must beFailedTry[TransactionMeta]
-      }
-    }
-  */
-
-
 }

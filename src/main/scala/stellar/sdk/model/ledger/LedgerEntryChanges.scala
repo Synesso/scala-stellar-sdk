@@ -1,6 +1,7 @@
 package stellar.sdk.model.ledger
 
 import cats.data.State
+import stellar.sdk.model.ledger.LedgerEntry.{int, switch, widen}
 import stellar.sdk.model.ledger.TransactionLedgerEntries.{arr, decode}
 import stellar.sdk.model.xdr.{Decode, Encodable, Encode}
 import stellar.sdk.util.ByteArrays

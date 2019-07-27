@@ -22,7 +22,6 @@ abstract class ProcessedOperationResult(opCode: Int) extends OperationResult(opC
 }
 
 
-// TODO (jem) - Review XDR from here, especially around manage offers.
 object OperationResult extends Decode {
 
   val decode: State[Seq[Byte], OperationResult] = int.flatMap {

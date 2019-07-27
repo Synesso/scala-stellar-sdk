@@ -60,6 +60,14 @@ trait Decode extends LazyLogging {
     }
   }
 
+  // TODO (jem) - All switches should use this instead and Discriminators should be held in the parent (switcher not switchee).
+  def switchInt[T](zero: State[Seq[Byte], T], others: State[Seq[Byte], T]*): State[Seq[Byte], (T, Int)] = int.flatMap {
+    case 0 => zero.map(_ -> 0)
+    case n =>  Try(others(n - 1).map(_ -> n)).getOrElse {
+      throw new IllegalArgumentException(s"No parser defined for discriminant $n")
+    }
+  }
+
   def opt[T](parseT: State[Seq[Byte], T]): State[Seq[Byte], Option[T]] = bool.flatMap {
     case true => parseT.map(Some(_))
     case false => State.pure(None)

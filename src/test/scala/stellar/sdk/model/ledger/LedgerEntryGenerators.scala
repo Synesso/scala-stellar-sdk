@@ -37,7 +37,6 @@ trait LedgerEntryGenerators extends ArbitraryInput {
 
   // LedgerEntries
   val genAccountEntry: Gen[AccountEntry] = for {
-    lastModifiedLedgerSeq <- Gen.posNum[Int]
     account <- genPublicKey
     balance <- Gen.posNum[Long]
     seqNum <- Gen.posNum[Long]
@@ -49,35 +48,32 @@ trait LedgerEntryGenerators extends ArbitraryInput {
     signers <- Gen.listOf(genSigner)
     liabilities <- Gen.option(genLiabilities)
   } yield AccountEntry(account, balance, seqNum, numSubEntries, inflationDestination, flags, homeDomain,
-    thresholds, signers, liabilities, lastModifiedLedgerSeq)
+    thresholds, signers, liabilities)
 
   val genTrustLineEntry: Gen[TrustLineEntry] = for {
-    lastModifiedLedgerSeq <- Gen.posNum[Int]
     account <- genPublicKey
     asset <- genNonNativeAsset
     balance <- Gen.posNum[Long]
     limit <- Gen.posNum[Long]
     issuerAuthorized <- Gen.oneOf(true, false)
     liabilities <- Gen.option(genLiabilities)
-  } yield TrustLineEntry(account, asset, balance, limit, issuerAuthorized, liabilities, lastModifiedLedgerSeq)
-
-  val genOfferEntry: Gen[OfferEntry] = for {
-    lastModifiedLedgerSeq <- Gen.posNum[Int]
-    account <- genPublicKey
-    offerId <- Gen.posNum[Long]
-    selling <- genAmount
-    buying <- genAsset
-    price <- genPrice
-  } yield OfferEntry(account, offerId, selling, buying, price, lastModifiedLedgerSeq)
+  } yield TrustLineEntry(account, asset, balance, limit, issuerAuthorized, liabilities)
 
   val genDataEntry: Gen[DataEntry] = for {
-    lastModifiedLedgerSeq <- Gen.posNum[Int]
     account <- genPublicKey
     name <- Gen.identifier
     value <- Gen.identifier.map(_.getBytes("UTF-8"))
-  } yield DataEntry(account, name, value, lastModifiedLedgerSeq)
+  } yield DataEntry(account, name, value)
 
-  val genLedgerEntry: Gen[LedgerEntry] = Gen.oneOf(genAccountEntry, genTrustLineEntry, genOfferEntry, genDataEntry)
+  val genLedgerEntryData: Gen[(LedgerEntryData, Int)] = for {
+    idx <- Gen.choose(0, 3)
+    data <- List(genAccountEntry, genTrustLineEntry, genOfferEntry, genDataEntry)(idx)
+  } yield data -> idx
+
+  val genLedgerEntry: Gen[LedgerEntry] = for {
+    lastModifiedLedgerSeq <- Gen.posNum[Int]
+    (data, idx) <- genLedgerEntryData
+  } yield LedgerEntry(lastModifiedLedgerSeq, data, idx)
 
   implicit val arbLedgerEntry = Arbitrary(genLedgerEntry)
 
