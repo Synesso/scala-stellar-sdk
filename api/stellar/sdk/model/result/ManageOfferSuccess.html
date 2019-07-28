@@ -628,12 +628,13 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <span class="name">ManageOfferSuccess</span><span class="params">(<span name="claims">claims: <span class="extype" name="scala.Seq">Seq</span>[<a href="OfferClaim.html" class="extype" name="stellar.sdk.model.result.OfferClaim">OfferClaim</a>]</span>)</span><span class="result"> extends <a href="ManageOfferResult.html" class="extype" name="stellar.sdk.model.result.ManageOfferResult">ManageOfferResult</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <span class="name">ManageOfferSuccess</span><span class="params">(<span name="claims">claims: <span class="extype" name="scala.Seq">Seq</span>[<a href="OfferClaim.html" class="extype" name="stellar.sdk.model.result.OfferClaim">OfferClaim</a>]</span>, <span name="entry">entry: <span class="extype" name="scala.Option">Option</span>[<a href="../ledger/OfferEntry.html" class="extype" name="stellar.sdk.model.ledger.OfferEntry">OfferEntry</a>]</span>)</span><span class="result"> extends <a href="ManageOfferResult.html" class="extype" name="stellar.sdk.model.result.ManageOfferResult">ManageOfferResult</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4>
 
       
-          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>ManageOffer operation was successful.</p></div><dl class="paramcmts block"><dt class="param">claims</dt><dd class="cmt"><p>the trades that were effected as a result of posting this offer.</p></dd></dl><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>ManageOffer operation was successful.
+</p></div><dl class="paramcmts block"><dt class="param">claims</dt><dd class="cmt"><p>the trades that were effected as a result of posting this offer.</p></dd><dt class="param">entry</dt><dd class="cmt"><p>the offer entry that was newly created or updated.</p></dd></dl><div class="toggleContainer block">
           <span class="toggle">
             Linear Supertypes
           </span>
@@ -684,9 +685,9 @@
         <div id="constructors" class="members">
               <h3>Instance Constructors</h3>
               <ol><li name="stellar.sdk.model.result.ManageOfferSuccess#&lt;init&gt;" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="&lt;init&gt;(claims:Seq[stellar.sdk.model.result.OfferClaim]):stellar.sdk.model.result.ManageOfferSuccess"></a><a id="&lt;init&gt;:ManageOfferSuccess"></a>
+      <a id="&lt;init&gt;(claims:Seq[stellar.sdk.model.result.OfferClaim],entry:Option[stellar.sdk.model.ledger.OfferEntry]):stellar.sdk.model.result.ManageOfferSuccess"></a><a id="&lt;init&gt;:ManageOfferSuccess"></a>
       <span class="permalink">
-      <a href="../../../../stellar/sdk/model/result/ManageOfferSuccess.html#&lt;init&gt;(claims:Seq[stellar.sdk.model.result.OfferClaim]):stellar.sdk.model.result.ManageOfferSuccess" title="Permalink">
+      <a href="../../../../stellar/sdk/model/result/ManageOfferSuccess.html#&lt;init&gt;(claims:Seq[stellar.sdk.model.result.OfferClaim],entry:Option[stellar.sdk.model.ledger.OfferEntry]):stellar.sdk.model.result.ManageOfferSuccess" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -695,10 +696,10 @@
         <span class="kind">new</span>
       </span>
       <span class="symbol">
-        <span class="name">ManageOfferSuccess</span><span class="params">(<span name="claims">claims: <span class="extype" name="scala.Seq">Seq</span>[<a href="OfferClaim.html" class="extype" name="stellar.sdk.model.result.OfferClaim">OfferClaim</a>]</span>)</span>
+        <span class="name">ManageOfferSuccess</span><span class="params">(<span name="claims">claims: <span class="extype" name="scala.Seq">Seq</span>[<a href="OfferClaim.html" class="extype" name="stellar.sdk.model.result.OfferClaim">OfferClaim</a>]</span>, <span name="entry">entry: <span class="extype" name="scala.Option">Option</span>[<a href="../ledger/OfferEntry.html" class="extype" name="stellar.sdk.model.ledger.OfferEntry">OfferEntry</a>]</span>)</span>
       </span>
       
-      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt class="param">claims</dt><dd class="cmt"><p>the trades that were effected as a result of posting this offer.</p></dd></dl></div>
+      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt class="param">claims</dt><dd class="cmt"><p>the trades that were effected as a result of posting this offer.</p></dd><dt class="param">entry</dt><dd class="cmt"><p>the offer entry that was newly created or updated.</p></dd></dl></div>
     </li></ol>
             </div>
 
@@ -829,6 +830,22 @@
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="stellar.sdk.model.result.ManageOfferSuccess">ManageOfferSuccess</a> → <a href="ProcessedOperationResult.html" class="extype" name="stellar.sdk.model.result.ProcessedOperationResult">ProcessedOperationResult</a> → <a href="OperationResult.html" class="extype" name="stellar.sdk.model.result.OperationResult">OperationResult</a> → <a href="../xdr/Encodable.html" class="extype" name="stellar.sdk.model.xdr.Encodable">Encodable</a></dd></dl></div>
+    </li><li name="stellar.sdk.model.result.ManageOfferSuccess#entry" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="entry:Option[stellar.sdk.model.ledger.OfferEntry]"></a><a id="entry:Option[OfferEntry]"></a>
+      <span class="permalink">
+      <a href="../../../../stellar/sdk/model/result/ManageOfferSuccess.html#entry:Option[stellar.sdk.model.ledger.OfferEntry]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">entry</span><span class="result">: <span class="extype" name="scala.Option">Option</span>[<a href="../ledger/OfferEntry.html" class="extype" name="stellar.sdk.model.ledger.OfferEntry">OfferEntry</a>]</span>
+      </span>
+      
+      
     </li><li name="scala.AnyRef#eq" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="eq(x$1:AnyRef):Boolean"></a><a id="eq(AnyRef):Boolean"></a>
       <span class="permalink">

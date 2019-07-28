@@ -192,7 +192,7 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <span class="name">RawPage</span><span class="params">(<span name="inner">inner: <span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="org.json4s.JValue">JValue</span>]</span>, <span name="nextLink">nextLink: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <span class="name">RawPage</span><span class="params">(<span name="inner">inner: <span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="org.json4s.JValue">JValue</span>]</span>, <span name="nextLink">nextLink: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4>
 
@@ -248,9 +248,9 @@
         <div id="constructors" class="members">
               <h3>Instance Constructors</h3>
               <ol><li name="stellar.sdk.inet.RawPage#&lt;init&gt;" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="&lt;init&gt;(inner:Seq[org.json4s.JValue],nextLink:String):stellar.sdk.inet.RawPage"></a><a id="&lt;init&gt;:RawPage"></a>
+      <a id="&lt;init&gt;(inner:Seq[org.json4s.JValue],nextLink:Option[String]):stellar.sdk.inet.RawPage"></a><a id="&lt;init&gt;:RawPage"></a>
       <span class="permalink">
-      <a href="../../../stellar/sdk/inet/RawPage.html#&lt;init&gt;(inner:Seq[org.json4s.JValue],nextLink:String):stellar.sdk.inet.RawPage" title="Permalink">
+      <a href="../../../stellar/sdk/inet/RawPage.html#&lt;init&gt;(inner:Seq[org.json4s.JValue],nextLink:Option[String]):stellar.sdk.inet.RawPage" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -259,7 +259,7 @@
         <span class="kind">new</span>
       </span>
       <span class="symbol">
-        <span class="name">RawPage</span><span class="params">(<span name="inner">inner: <span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="org.json4s.JValue">JValue</span>]</span>, <span name="nextLink">nextLink: <span class="extype" name="scala.Predef.String">String</span></span>)</span>
+        <span class="name">RawPage</span><span class="params">(<span name="inner">inner: <span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="org.json4s.JValue">JValue</span>]</span>, <span name="nextLink">nextLink: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>)</span>
       </span>
       
       
@@ -467,9 +467,9 @@
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
     </li><li name="stellar.sdk.inet.RawPage#nextLink" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="nextLink:String"></a>
+      <a id="nextLink:Option[String]"></a>
       <span class="permalink">
-      <a href="../../../stellar/sdk/inet/RawPage.html#nextLink:String" title="Permalink">
+      <a href="../../../stellar/sdk/inet/RawPage.html#nextLink:Option[String]" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -478,7 +478,7 @@
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">nextLink</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
+        <span class="name">nextLink</span><span class="result">: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>
       </span>
       
       

@@ -628,7 +628,7 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <span class="name">TransactionHistory</span><span class="params">(<span name="hash">hash: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="ledgerId">ledgerId: <span class="extype" name="scala.Long">Long</span></span>, <span name="createdAt">createdAt: <span class="extype" name="java.time.ZonedDateTime">ZonedDateTime</span></span>, <span name="account">account: <a href="../../PublicKey.html" class="extype" name="stellar.sdk.PublicKey">PublicKey</a></span>, <span name="sequence">sequence: <span class="extype" name="scala.Long">Long</span></span>, <span name="feePaid">feePaid: <a href="../NativeAmount.html" class="extype" name="stellar.sdk.model.NativeAmount">NativeAmount</a></span>, <span name="operationCount">operationCount: <span class="extype" name="scala.Int">Int</span></span>, <span name="memo">memo: <a href="../Memo.html" class="extype" name="stellar.sdk.model.Memo">Memo</a></span>, <span name="signatures">signatures: <span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>, <span name="envelopeXDR">envelopeXDR: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="resultXDR">resultXDR: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="resultMetaXDR">resultMetaXDR: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="feeMetaXDR">feeMetaXDR: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="validAfter">validAfter: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="java.time.ZonedDateTime">ZonedDateTime</span>]</span>, <span name="validBefore">validBefore: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="java.time.ZonedDateTime">ZonedDateTime</span>]</span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <span class="name">TransactionHistory</span><span class="params">(<span name="hash">hash: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="ledgerId">ledgerId: <span class="extype" name="scala.Long">Long</span></span>, <span name="createdAt">createdAt: <span class="extype" name="java.time.ZonedDateTime">ZonedDateTime</span></span>, <span name="account">account: <a href="../../PublicKey.html" class="extype" name="stellar.sdk.PublicKey">PublicKey</a></span>, <span name="sequence">sequence: <span class="extype" name="scala.Long">Long</span></span>, <span name="maxFee">maxFee: <a href="../NativeAmount.html" class="extype" name="stellar.sdk.model.NativeAmount">NativeAmount</a></span>, <span name="feeCharged">feeCharged: <a href="../NativeAmount.html" class="extype" name="stellar.sdk.model.NativeAmount">NativeAmount</a></span>, <span name="operationCount">operationCount: <span class="extype" name="scala.Int">Int</span></span>, <span name="memo">memo: <a href="../Memo.html" class="extype" name="stellar.sdk.model.Memo">Memo</a></span>, <span name="signatures">signatures: <span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>, <span name="envelopeXDR">envelopeXDR: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="resultXDR">resultXDR: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="resultMetaXDR">resultMetaXDR: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="feeMetaXDR">feeMetaXDR: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="validAfter">validAfter: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="java.time.ZonedDateTime">ZonedDateTime</span>]</span>, <span name="validBefore">validBefore: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="java.time.ZonedDateTime">ZonedDateTime</span>]</span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4>
 
@@ -685,9 +685,9 @@
         <div id="constructors" class="members">
               <h3>Instance Constructors</h3>
               <ol><li name="stellar.sdk.model.result.TransactionHistory#&lt;init&gt;" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="&lt;init&gt;(hash:String,ledgerId:Long,createdAt:java.time.ZonedDateTime,account:stellar.sdk.PublicKey,sequence:Long,feePaid:stellar.sdk.model.NativeAmount,operationCount:Int,memo:stellar.sdk.model.Memo,signatures:Seq[String],envelopeXDR:String,resultXDR:String,resultMetaXDR:String,feeMetaXDR:String,validAfter:Option[java.time.ZonedDateTime],validBefore:Option[java.time.ZonedDateTime]):stellar.sdk.model.result.TransactionHistory"></a><a id="&lt;init&gt;:TransactionHistory"></a>
+      <a id="&lt;init&gt;(hash:String,ledgerId:Long,createdAt:java.time.ZonedDateTime,account:stellar.sdk.PublicKey,sequence:Long,maxFee:stellar.sdk.model.NativeAmount,feeCharged:stellar.sdk.model.NativeAmount,operationCount:Int,memo:stellar.sdk.model.Memo,signatures:Seq[String],envelopeXDR:String,resultXDR:String,resultMetaXDR:String,feeMetaXDR:String,validAfter:Option[java.time.ZonedDateTime],validBefore:Option[java.time.ZonedDateTime]):stellar.sdk.model.result.TransactionHistory"></a><a id="&lt;init&gt;:TransactionHistory"></a>
       <span class="permalink">
-      <a href="../../../../stellar/sdk/model/result/TransactionHistory.html#&lt;init&gt;(hash:String,ledgerId:Long,createdAt:java.time.ZonedDateTime,account:stellar.sdk.PublicKey,sequence:Long,feePaid:stellar.sdk.model.NativeAmount,operationCount:Int,memo:stellar.sdk.model.Memo,signatures:Seq[String],envelopeXDR:String,resultXDR:String,resultMetaXDR:String,feeMetaXDR:String,validAfter:Option[java.time.ZonedDateTime],validBefore:Option[java.time.ZonedDateTime]):stellar.sdk.model.result.TransactionHistory" title="Permalink">
+      <a href="../../../../stellar/sdk/model/result/TransactionHistory.html#&lt;init&gt;(hash:String,ledgerId:Long,createdAt:java.time.ZonedDateTime,account:stellar.sdk.PublicKey,sequence:Long,maxFee:stellar.sdk.model.NativeAmount,feeCharged:stellar.sdk.model.NativeAmount,operationCount:Int,memo:stellar.sdk.model.Memo,signatures:Seq[String],envelopeXDR:String,resultXDR:String,resultMetaXDR:String,feeMetaXDR:String,validAfter:Option[java.time.ZonedDateTime],validBefore:Option[java.time.ZonedDateTime]):stellar.sdk.model.result.TransactionHistory" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -696,7 +696,7 @@
         <span class="kind">new</span>
       </span>
       <span class="symbol">
-        <span class="name">TransactionHistory</span><span class="params">(<span name="hash">hash: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="ledgerId">ledgerId: <span class="extype" name="scala.Long">Long</span></span>, <span name="createdAt">createdAt: <span class="extype" name="java.time.ZonedDateTime">ZonedDateTime</span></span>, <span name="account">account: <a href="../../PublicKey.html" class="extype" name="stellar.sdk.PublicKey">PublicKey</a></span>, <span name="sequence">sequence: <span class="extype" name="scala.Long">Long</span></span>, <span name="feePaid">feePaid: <a href="../NativeAmount.html" class="extype" name="stellar.sdk.model.NativeAmount">NativeAmount</a></span>, <span name="operationCount">operationCount: <span class="extype" name="scala.Int">Int</span></span>, <span name="memo">memo: <a href="../Memo.html" class="extype" name="stellar.sdk.model.Memo">Memo</a></span>, <span name="signatures">signatures: <span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>, <span name="envelopeXDR">envelopeXDR: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="resultXDR">resultXDR: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="resultMetaXDR">resultMetaXDR: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="feeMetaXDR">feeMetaXDR: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="validAfter">validAfter: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="java.time.ZonedDateTime">ZonedDateTime</span>]</span>, <span name="validBefore">validBefore: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="java.time.ZonedDateTime">ZonedDateTime</span>]</span>)</span>
+        <span class="name">TransactionHistory</span><span class="params">(<span name="hash">hash: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="ledgerId">ledgerId: <span class="extype" name="scala.Long">Long</span></span>, <span name="createdAt">createdAt: <span class="extype" name="java.time.ZonedDateTime">ZonedDateTime</span></span>, <span name="account">account: <a href="../../PublicKey.html" class="extype" name="stellar.sdk.PublicKey">PublicKey</a></span>, <span name="sequence">sequence: <span class="extype" name="scala.Long">Long</span></span>, <span name="maxFee">maxFee: <a href="../NativeAmount.html" class="extype" name="stellar.sdk.model.NativeAmount">NativeAmount</a></span>, <span name="feeCharged">feeCharged: <a href="../NativeAmount.html" class="extype" name="stellar.sdk.model.NativeAmount">NativeAmount</a></span>, <span name="operationCount">operationCount: <span class="extype" name="scala.Int">Int</span></span>, <span name="memo">memo: <a href="../Memo.html" class="extype" name="stellar.sdk.model.Memo">Memo</a></span>, <span name="signatures">signatures: <span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>, <span name="envelopeXDR">envelopeXDR: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="resultXDR">resultXDR: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="resultMetaXDR">resultMetaXDR: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="feeMetaXDR">feeMetaXDR: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="validAfter">validAfter: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="java.time.ZonedDateTime">ZonedDateTime</span>]</span>, <span name="validBefore">validBefore: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="java.time.ZonedDateTime">ZonedDateTime</span>]</span>)</span>
       </span>
       
       
@@ -862,6 +862,38 @@
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
+    </li><li name="stellar.sdk.model.result.TransactionHistory#feeCharged" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="feeCharged:stellar.sdk.model.NativeAmount"></a><a id="feeCharged:NativeAmount"></a>
+      <span class="permalink">
+      <a href="../../../../stellar/sdk/model/result/TransactionHistory.html#feeCharged:stellar.sdk.model.NativeAmount" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">feeCharged</span><span class="result">: <a href="../NativeAmount.html" class="extype" name="stellar.sdk.model.NativeAmount">NativeAmount</a></span>
+      </span>
+      
+      
+    </li><li name="stellar.sdk.model.result.TransactionHistory#feeLedgerEntries" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="feeLedgerEntries:Seq[stellar.sdk.model.ledger.LedgerEntryChange]"></a><a id="feeLedgerEntries:Seq[LedgerEntryChange]"></a>
+      <span class="permalink">
+      <a href="../../../../stellar/sdk/model/result/TransactionHistory.html#feeLedgerEntries:Seq[stellar.sdk.model.ledger.LedgerEntryChange]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">feeLedgerEntries</span><span class="result">: <span class="extype" name="scala.Seq">Seq</span>[<a href="../ledger/LedgerEntryChange.html" class="extype" name="stellar.sdk.model.ledger.LedgerEntryChange">LedgerEntryChange</a>]</span>
+      </span>
+      
+      
     </li><li name="stellar.sdk.model.result.TransactionHistory#feeMetaXDR" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="feeMetaXDR:String"></a>
       <span class="permalink">
@@ -875,22 +907,6 @@
       </span>
       <span class="symbol">
         <span class="name">feeMetaXDR</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
-      </span>
-      
-      
-    </li><li name="stellar.sdk.model.result.TransactionHistory#feePaid" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="feePaid:stellar.sdk.model.NativeAmount"></a><a id="feePaid:NativeAmount"></a>
-      <span class="permalink">
-      <a href="../../../../stellar/sdk/model/result/TransactionHistory.html#feePaid:stellar.sdk.model.NativeAmount" title="Permalink">
-        <i class="material-icons"></i>
-      </a>
-    </span>
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">val</span>
-      </span>
-      <span class="symbol">
-        <span class="name">feePaid</span><span class="result">: <a href="../NativeAmount.html" class="extype" name="stellar.sdk.model.NativeAmount">NativeAmount</a></span>
       </span>
       
       
@@ -967,6 +983,22 @@
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
+    </li><li name="stellar.sdk.model.result.TransactionHistory#ledgerEntries" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="ledgerEntries:stellar.sdk.model.ledger.TransactionLedgerEntries"></a><a id="ledgerEntries:TransactionLedgerEntries"></a>
+      <span class="permalink">
+      <a href="../../../../stellar/sdk/model/result/TransactionHistory.html#ledgerEntries:stellar.sdk.model.ledger.TransactionLedgerEntries" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">ledgerEntries</span><span class="result">: <a href="../ledger/TransactionLedgerEntries.html" class="extype" name="stellar.sdk.model.ledger.TransactionLedgerEntries">TransactionLedgerEntries</a></span>
+      </span>
+      
+      
     </li><li name="stellar.sdk.model.result.TransactionHistory#ledgerId" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="ledgerId:Long"></a>
       <span class="permalink">
@@ -980,6 +1012,22 @@
       </span>
       <span class="symbol">
         <span class="name">ledgerId</span><span class="result">: <span class="extype" name="scala.Long">Long</span></span>
+      </span>
+      
+      
+    </li><li name="stellar.sdk.model.result.TransactionHistory#maxFee" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="maxFee:stellar.sdk.model.NativeAmount"></a><a id="maxFee:NativeAmount"></a>
+      <span class="permalink">
+      <a href="../../../../stellar/sdk/model/result/TransactionHistory.html#maxFee:stellar.sdk.model.NativeAmount" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">maxFee</span><span class="result">: <a href="../NativeAmount.html" class="extype" name="stellar.sdk.model.NativeAmount">NativeAmount</a></span>
       </span>
       
       
@@ -1271,7 +1319,29 @@
 
         
 
-        
+        <div class="values members">
+              <h3>Deprecated Value Members</h3>
+              <ol><li name="stellar.sdk.model.result.TransactionHistory#feePaid" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="feePaid:stellar.sdk.model.NativeAmount"></a><a id="feePaid:NativeAmount"></a>
+      <span class="permalink">
+      <a href="../../../../stellar/sdk/model/result/TransactionHistory.html#feePaid:stellar.sdk.model.NativeAmount" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name deprecated" title="Deprecated: (Since version Replaced by feeCharged) v0.7.2">feePaid</span><span class="result">: <a href="../NativeAmount.html" class="extype" name="stellar.sdk.model.NativeAmount">NativeAmount</a></span>
+      </span>
+      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Annotations</dt><dd>
+                <span class="name">@deprecated</span>
+              
+        </dd><dt>Deprecated</dt><dd class="cmt"><p><i>(Since version Replaced by <code>feeCharged</code>)</i> v0.7.2</p></dd></dl></div>
+    </li></ol>
+            </div>
         </div>
 
         <div id="inheritedMembers">

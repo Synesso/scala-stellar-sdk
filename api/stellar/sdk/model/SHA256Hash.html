@@ -117,6 +117,22 @@
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../index.html" class="extype" name="stellar.sdk">sdk</a></dd></dl></div>
+    </li><li name="stellar.sdk.model.ledger" visbl="pub" class="indented4 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="ledger"></a><a id="ledger:ledger"></a>
+      <span class="permalink">
+      <a href="../../../stellar/sdk/model/index.html#ledger" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">package</span>
+      </span>
+      <span class="symbol">
+        <a title="" href="ledger/index.html"><span class="name">ledger</span></a>
+      </span>
+      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="index.html" class="extype" name="stellar.sdk.model">model</a></dd></dl></div>
     </li><li name="stellar.sdk.model.op" visbl="pub" class="indented4 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="op"></a><a id="op:op"></a>
       <span class="permalink">
@@ -195,6 +211,10 @@
                         <a href="Amount.html" title="">Amount</a>
                       </li><li class="current-entities indented3">
                         <span class="separator"></span>
+                        <a class="object" href="AmountParser$.html" title=""></a>
+                        <a href="AmountParser$.html" title="">AmountParser</a>
+                      </li><li class="current-entities indented3">
+                        <span class="separator"></span>
                         <a class="object" href="Asc$.html" title=""></a>
                         <a href="Asc$.html" title="">Asc</a>
                       </li><li class="current-entities indented3">
@@ -233,6 +253,10 @@
                         <a class="object" href="IssuedAsset4$.html" title=""></a>
                         <a class="class" href="IssuedAsset4.html" title="Represents all assets with codes 1-4 characters long."></a>
                         <a href="IssuedAsset4.html" title="Represents all assets with codes 1-4 characters long.">IssuedAsset4</a>
+                      </li><li class="current-entities indented3">
+                        <a class="object" href="LedgerThresholds$.html" title=""></a>
+                        <a class="class" href="LedgerThresholds.html" title="The thresholds for operations on this account, as described in transaction meta data for ledger effects."></a>
+                        <a href="LedgerThresholds.html" title="The thresholds for operations on this account, as described in transaction meta data for ledger effects.">LedgerThresholds</a>
                       </li><li class="current-entities indented3">
                         <a class="object" href="Memo$.html" title=""></a>
                         <a class="trait" href="Memo.html" title=""></a>
@@ -291,6 +315,14 @@
                         <a href="OrderBookDeserializer$.html" title="">OrderBookDeserializer</a>
                       </li><li class="current-entities indented3">
                         <span class="separator"></span>
+                        <a class="class" href="PaymentPath.html" title=""></a>
+                        <a href="PaymentPath.html" title="">PaymentPath</a>
+                      </li><li class="current-entities indented3">
+                        <span class="separator"></span>
+                        <a class="object" href="PaymentPathDeserializer$.html" title=""></a>
+                        <a href="PaymentPathDeserializer$.html" title="">PaymentPathDeserializer</a>
+                      </li><li class="current-entities indented3">
+                        <span class="separator"></span>
                         <a class="class" href="PreAuthTx.html" title=""></a>
                         <a href="PreAuthTx.html" title="">PreAuthTx</a>
                       </li><li class="current-entities indented3">
@@ -327,8 +359,8 @@
                         <a href="StrKey.html" title="A StrKey (Stellar Key) is a typed, encoded byte array.">StrKey</a>
                       </li><li class="current-entities indented3">
                         <span class="separator"></span>
-                        <a class="class" href="Thresholds.html" title=""></a>
-                        <a href="Thresholds.html" title="">Thresholds</a>
+                        <a class="class" href="Thresholds.html" title="The thresholds for operations on this account."></a>
+                        <a href="Thresholds.html" title="The thresholds for operations on this account.">Thresholds</a>
                       </li><li class="current-entities indented3">
                         <a class="object" href="TimeBounds$.html" title=""></a>
                         <a class="class" href="TimeBounds.html" title=""></a>
@@ -337,6 +369,14 @@
                         <span class="separator"></span>
                         <a class="class" href="Trade.html" title=""></a>
                         <a href="Trade.html" title="">Trade</a>
+                      </li><li class="current-entities indented3">
+                        <a class="object" href="TradeAggregation$.html" title=""></a>
+                        <a class="class" href="TradeAggregation.html" title=""></a>
+                        <a href="TradeAggregation.html" title="">TradeAggregation</a>
+                      </li><li class="current-entities indented3">
+                        <span class="separator"></span>
+                        <a class="object" href="TradeAggregationDeserializer$.html" title=""></a>
+                        <a href="TradeAggregationDeserializer$.html" title="">TradeAggregationDeserializer</a>
                       </li><li class="current-entities indented3">
                         <span class="separator"></span>
                         <a class="object" href="TradeDeserializer$.html" title=""></a>
@@ -368,7 +408,7 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <span class="name">SHA256Hash</span><span class="params">(<span name="hash">hash: <span class="extype" name="scala.Array">Array</span>[<span class="extype" name="scala.Byte">Byte</span>]</span>)</span><span class="result"> extends <a href="SignerStrKey.html" class="extype" name="stellar.sdk.model.SignerStrKey">SignerStrKey</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <span class="name">SHA256Hash</span><span class="params">(<span name="hash">hash: <span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Byte">Byte</span>]</span>)</span><span class="result"> extends <a href="SignerStrKey.html" class="extype" name="stellar.sdk.model.SignerStrKey">SignerStrKey</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4>
 
@@ -424,9 +464,9 @@
         <div id="constructors" class="members">
               <h3>Instance Constructors</h3>
               <ol><li name="stellar.sdk.model.SHA256Hash#&lt;init&gt;" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="&lt;init&gt;(hash:Array[Byte]):stellar.sdk.model.SHA256Hash"></a><a id="&lt;init&gt;:SHA256Hash"></a>
+      <a id="&lt;init&gt;(hash:Seq[Byte]):stellar.sdk.model.SHA256Hash"></a><a id="&lt;init&gt;:SHA256Hash"></a>
       <span class="permalink">
-      <a href="../../../stellar/sdk/model/SHA256Hash.html#&lt;init&gt;(hash:Array[Byte]):stellar.sdk.model.SHA256Hash" title="Permalink">
+      <a href="../../../stellar/sdk/model/SHA256Hash.html#&lt;init&gt;(hash:Seq[Byte]):stellar.sdk.model.SHA256Hash" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -435,7 +475,7 @@
         <span class="kind">new</span>
       </span>
       <span class="symbol">
-        <span class="name">SHA256Hash</span><span class="params">(<span name="hash">hash: <span class="extype" name="scala.Array">Array</span>[<span class="extype" name="scala.Byte">Byte</span>]</span>)</span>
+        <span class="name">SHA256Hash</span><span class="params">(<span name="hash">hash: <span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Byte">Byte</span>]</span>)</span>
       </span>
       
       
@@ -514,9 +554,9 @@
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
     </li><li name="stellar.sdk.model.StrKey#checksum" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="checksum:Array[Byte]"></a>
+      <a id="checksum:Seq[Byte]"></a>
       <span class="permalink">
-      <a href="../../../stellar/sdk/model/SHA256Hash.html#checksum:Array[Byte]" title="Permalink">
+      <a href="../../../stellar/sdk/model/SHA256Hash.html#checksum:Seq[Byte]" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -525,7 +565,7 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">checksum</span><span class="result">: <span class="extype" name="scala.Array">Array</span>[<span class="extype" name="scala.Byte">Byte</span>]</span>
+        <span class="name">checksum</span><span class="result">: <span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Byte">Byte</span>]</span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="StrKey.html" class="extype" name="stellar.sdk.model.StrKey">StrKey</a></dd></dl></div>
@@ -570,9 +610,9 @@
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="stellar.sdk.model.SHA256Hash">SHA256Hash</a> → <a href="xdr/Encodable.html" class="extype" name="stellar.sdk.model.xdr.Encodable">Encodable</a></dd></dl></div>
     </li><li name="stellar.sdk.model.StrKey#encodeToChars" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="encodeToChars:Array[Char]"></a>
+      <a id="encodeToChars:Seq[Char]"></a>
       <span class="permalink">
-      <a href="../../../stellar/sdk/model/SHA256Hash.html#encodeToChars:Array[Char]" title="Permalink">
+      <a href="../../../stellar/sdk/model/SHA256Hash.html#encodeToChars:Seq[Char]" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -581,7 +621,7 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">encodeToChars</span><span class="result">: <span class="extype" name="scala.Array">Array</span>[<span class="extype" name="scala.Char">Char</span>]</span>
+        <span class="name">encodeToChars</span><span class="result">: <span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Char">Char</span>]</span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="StrKey.html" class="extype" name="stellar.sdk.model.StrKey">StrKey</a></dd></dl></div>
@@ -643,9 +683,9 @@
               
         </dd></dl></div>
     </li><li name="stellar.sdk.model.SHA256Hash#hash" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="hash:Array[Byte]"></a>
+      <a id="hash:Seq[Byte]"></a>
       <span class="permalink">
-      <a href="../../../stellar/sdk/model/SHA256Hash.html#hash:Array[Byte]" title="Permalink">
+      <a href="../../../stellar/sdk/model/SHA256Hash.html#hash:Seq[Byte]" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -654,7 +694,7 @@
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">hash</span><span class="result">: <span class="extype" name="scala.Array">Array</span>[<span class="extype" name="scala.Byte">Byte</span>]</span>
+        <span class="name">hash</span><span class="result">: <span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Byte">Byte</span>]</span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="stellar.sdk.model.SHA256Hash">SHA256Hash</a> → <a href="StrKey.html" class="extype" name="stellar.sdk.model.StrKey">StrKey</a></dd></dl></div>

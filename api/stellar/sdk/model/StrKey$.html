@@ -117,6 +117,22 @@
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../index.html" class="extype" name="stellar.sdk">sdk</a></dd></dl></div>
+    </li><li name="stellar.sdk.model.ledger" visbl="pub" class="indented4 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="ledger"></a><a id="ledger:ledger"></a>
+      <span class="permalink">
+      <a href="../../../stellar/sdk/model/index.html#ledger" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">package</span>
+      </span>
+      <span class="symbol">
+        <a title="" href="ledger/index.html"><span class="name">ledger</span></a>
+      </span>
+      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="index.html" class="extype" name="stellar.sdk.model">model</a></dd></dl></div>
     </li><li name="stellar.sdk.model.op" visbl="pub" class="indented4 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="op"></a><a id="op:op"></a>
       <span class="permalink">
@@ -195,6 +211,10 @@
                         <a href="Amount.html" title="">Amount</a>
                       </li><li class="current-entities indented3">
                         <span class="separator"></span>
+                        <a class="object" href="AmountParser$.html" title=""></a>
+                        <a href="AmountParser$.html" title="">AmountParser</a>
+                      </li><li class="current-entities indented3">
+                        <span class="separator"></span>
                         <a class="object" href="Asc$.html" title=""></a>
                         <a href="Asc$.html" title="">Asc</a>
                       </li><li class="current-entities indented3">
@@ -233,6 +253,10 @@
                         <a class="object" href="IssuedAsset4$.html" title=""></a>
                         <a class="class" href="IssuedAsset4.html" title="Represents all assets with codes 1-4 characters long."></a>
                         <a href="IssuedAsset4.html" title="Represents all assets with codes 1-4 characters long.">IssuedAsset4</a>
+                      </li><li class="current-entities indented3">
+                        <a class="object" href="LedgerThresholds$.html" title=""></a>
+                        <a class="class" href="LedgerThresholds.html" title="The thresholds for operations on this account, as described in transaction meta data for ledger effects."></a>
+                        <a href="LedgerThresholds.html" title="The thresholds for operations on this account, as described in transaction meta data for ledger effects.">LedgerThresholds</a>
                       </li><li class="current-entities indented3">
                         <a class="object" href="Memo$.html" title=""></a>
                         <a class="trait" href="Memo.html" title=""></a>
@@ -291,6 +315,14 @@
                         <a href="OrderBookDeserializer$.html" title="">OrderBookDeserializer</a>
                       </li><li class="current-entities indented3">
                         <span class="separator"></span>
+                        <a class="class" href="PaymentPath.html" title=""></a>
+                        <a href="PaymentPath.html" title="">PaymentPath</a>
+                      </li><li class="current-entities indented3">
+                        <span class="separator"></span>
+                        <a class="object" href="PaymentPathDeserializer$.html" title=""></a>
+                        <a href="PaymentPathDeserializer$.html" title="">PaymentPathDeserializer</a>
+                      </li><li class="current-entities indented3">
+                        <span class="separator"></span>
                         <a class="class" href="PreAuthTx.html" title=""></a>
                         <a href="PreAuthTx.html" title="">PreAuthTx</a>
                       </li><li class="current-entities indented3">
@@ -327,8 +359,8 @@
                         <a href="StrKey.html" title="A StrKey (Stellar Key) is a typed, encoded byte array.">StrKey</a>
                       </li><li class="current-entities indented3">
                         <span class="separator"></span>
-                        <a class="class" href="Thresholds.html" title=""></a>
-                        <a href="Thresholds.html" title="">Thresholds</a>
+                        <a class="class" href="Thresholds.html" title="The thresholds for operations on this account."></a>
+                        <a href="Thresholds.html" title="The thresholds for operations on this account.">Thresholds</a>
                       </li><li class="current-entities indented3">
                         <a class="object" href="TimeBounds$.html" title=""></a>
                         <a class="class" href="TimeBounds.html" title=""></a>
@@ -337,6 +369,14 @@
                         <span class="separator"></span>
                         <a class="class" href="Trade.html" title=""></a>
                         <a href="Trade.html" title="">Trade</a>
+                      </li><li class="current-entities indented3">
+                        <a class="object" href="TradeAggregation$.html" title=""></a>
+                        <a class="class" href="TradeAggregation.html" title=""></a>
+                        <a href="TradeAggregation.html" title="">TradeAggregation</a>
+                      </li><li class="current-entities indented3">
+                        <span class="separator"></span>
+                        <a class="object" href="TradeAggregationDeserializer$.html" title=""></a>
+                        <a href="TradeAggregationDeserializer$.html" title="">TradeAggregationDeserializer</a>
                       </li><li class="current-entities indented3">
                         <span class="separator"></span>
                         <a class="object" href="TradeDeserializer$.html" title=""></a>
@@ -370,7 +410,7 @@
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <span class="name">StrKey</span>
+        <span class="name">StrKey</span><span class="result"> extends <a href="xdr/Decode.html" class="extype" name="stellar.sdk.model.xdr.Decode">Decode</a></span>
       </span>
       </h4>
 
@@ -379,7 +419,7 @@
           <span class="toggle">
             Linear Supertypes
           </span>
-          <div class="superTypes hiddenContent"><span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
+          <div class="superTypes hiddenContent"><a href="xdr/Decode.html" class="extype" name="stellar.sdk.model.xdr.Decode">Decode</a>, <span class="extype" name="com.typesafe.scalalogging.LazyLogging">LazyLogging</span>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div></div>
         
 
@@ -405,7 +445,7 @@
                   <span class="filtertype">Inherited<br />
                   </span>
                   <ol id="linearization">
-                    <li class="in" name="stellar.sdk.model.StrKey"><span>StrKey</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                    <li class="in" name="stellar.sdk.model.StrKey"><span>StrKey</span></li><li class="in" name="stellar.sdk.model.xdr.Decode"><span>Decode</span></li><li class="in" name="com.typesafe.scalalogging.LazyLogging"><span>LazyLogging</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
                   </ol>
                 </div><div class="ancestors">
               <span class="filtertype"></span>
@@ -480,6 +520,22 @@
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
+    </li><li name="stellar.sdk.model.xdr.Decode#arr" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="arr[T](parseT:cats.data.State[Seq[Byte],T]):cats.data.State[Seq[Byte],Seq[T]]"></a><a id="arr[T](State[Seq[Byte],T]):State[Seq[Byte],Seq[T]]"></a>
+      <span class="permalink">
+      <a href="../../../stellar/sdk/model/StrKey$.html#arr[T](parseT:cats.data.State[Seq[Byte],T]):cats.data.State[Seq[Byte],Seq[T]]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">arr</span><span class="tparams">[<span name="T">T</span>]</span><span class="params">(<span name="parseT">parseT: <span class="extype" name="cats.data.State">State</span>[<span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Byte">Byte</span>], <span class="extype" name="stellar.sdk.model.xdr.Decode.arr.T">T</span>]</span>)</span><span class="result">: <span class="extype" name="cats.data.State">State</span>[<span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Byte">Byte</span>], <span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="stellar.sdk.model.xdr.Decode.arr.T">T</span>]]</span>
+      </span>
+      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="xdr/Decode.html" class="extype" name="stellar.sdk.model.xdr.Decode">Decode</a></dd></dl></div>
     </li><li name="scala.Any#asInstanceOf" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="asInstanceOf[T0]:T0"></a>
       <span class="permalink">
@@ -496,6 +552,54 @@
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
+    </li><li name="stellar.sdk.model.xdr.Decode#bool" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="bool:cats.data.State[Seq[Byte],Boolean]"></a><a id="bool:State[Seq[Byte],Boolean]"></a>
+      <span class="permalink">
+      <a href="../../../stellar/sdk/model/StrKey$.html#bool:cats.data.State[Seq[Byte],Boolean]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">bool</span><span class="result">: <span class="extype" name="cats.data.State">State</span>[<span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Byte">Byte</span>], <span class="extype" name="scala.Boolean">Boolean</span>]</span>
+      </span>
+      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="xdr/Decode.html" class="extype" name="stellar.sdk.model.xdr.Decode">Decode</a></dd></dl></div>
+    </li><li name="stellar.sdk.model.xdr.Decode#bytes" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="bytes(len:Int):cats.data.State[Seq[Byte],Seq[Byte]]"></a><a id="bytes(Int):State[Seq[Byte],Seq[Byte]]"></a>
+      <span class="permalink">
+      <a href="../../../stellar/sdk/model/StrKey$.html#bytes(len:Int):cats.data.State[Seq[Byte],Seq[Byte]]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">bytes</span><span class="params">(<span name="len">len: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result">: <span class="extype" name="cats.data.State">State</span>[<span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Byte">Byte</span>], <span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Byte">Byte</span>]]</span>
+      </span>
+      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="xdr/Decode.html" class="extype" name="stellar.sdk.model.xdr.Decode">Decode</a></dd></dl></div>
+    </li><li name="stellar.sdk.model.xdr.Decode#bytes" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="bytes:cats.data.State[Seq[Byte],Seq[Byte]]"></a><a id="bytes:State[Seq[Byte],Seq[Byte]]"></a>
+      <span class="permalink">
+      <a href="../../../stellar/sdk/model/StrKey$.html#bytes:cats.data.State[Seq[Byte],Seq[Byte]]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">bytes</span><span class="result">: <span class="extype" name="cats.data.State">State</span>[<span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Byte">Byte</span>], <span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Byte">Byte</span>]]</span>
+      </span>
+      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="xdr/Decode.html" class="extype" name="stellar.sdk.model.xdr.Decode">Decode</a></dd></dl></div>
     </li><li name="scala.AnyRef#clone" visbl="prt" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="clone():Object"></a><a id="clone():AnyRef"></a>
       <span class="permalink">
@@ -553,9 +657,9 @@
       
       
     </li><li name="stellar.sdk.model.StrKey#decodeFromChars" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="decodeFromChars(key:Array[Char]):stellar.sdk.model.StrKey"></a><a id="decodeFromChars(Array[Char]):StrKey"></a>
+      <a id="decodeFromChars(key:Seq[Char]):stellar.sdk.model.StrKey"></a><a id="decodeFromChars(Seq[Char]):StrKey"></a>
       <span class="permalink">
-      <a href="../../../stellar/sdk/model/StrKey$.html#decodeFromChars(key:Array[Char]):stellar.sdk.model.StrKey" title="Permalink">
+      <a href="../../../stellar/sdk/model/StrKey$.html#decodeFromChars(key:Seq[Char]):stellar.sdk.model.StrKey" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -564,7 +668,7 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">decodeFromChars</span><span class="params">(<span name="key">key: <span class="extype" name="scala.Array">Array</span>[<span class="extype" name="scala.Char">Char</span>]</span>)</span><span class="result">: <a href="StrKey.html" class="extype" name="stellar.sdk.model.StrKey">StrKey</a></span>
+        <span class="name">decodeFromChars</span><span class="params">(<span name="key">key: <span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Char">Char</span>]</span>)</span><span class="result">: <a href="StrKey.html" class="extype" name="stellar.sdk.model.StrKey">StrKey</a></span>
       </span>
       
       
@@ -584,6 +688,22 @@
       </span>
       
       
+    </li><li name="stellar.sdk.model.xdr.Decode#drop" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="drop[T](parse:cats.data.State[Seq[Byte],_])(t:T):cats.data.State[Seq[Byte],T]"></a><a id="drop[T](State[Seq[Byte],_])(T):State[Seq[Byte],T]"></a>
+      <span class="permalink">
+      <a href="../../../stellar/sdk/model/StrKey$.html#drop[T](parse:cats.data.State[Seq[Byte],_])(t:T):cats.data.State[Seq[Byte],T]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">drop</span><span class="tparams">[<span name="T">T</span>]</span><span class="params">(<span name="parse">parse: <span class="extype" name="cats.data.State">State</span>[<span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Byte">Byte</span>], _]</span>)</span><span class="params">(<span name="t">t: <span class="extype" name="stellar.sdk.model.xdr.Decode.drop.T">T</span></span>)</span><span class="result">: <span class="extype" name="cats.data.State">State</span>[<span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Byte">Byte</span>], <span class="extype" name="stellar.sdk.model.xdr.Decode.drop.T">T</span>]</span>
+      </span>
+      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="xdr/Decode.html" class="extype" name="stellar.sdk.model.xdr.Decode">Decode</a></dd></dl></div>
     </li><li name="scala.AnyRef#eq" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="eq(x$1:AnyRef):Boolean"></a><a id="eq(AnyRef):Boolean"></a>
       <span class="permalink">
@@ -676,6 +796,38 @@
                 <span class="name">@native</span><span class="args">()</span>
               
         </dd></dl></div>
+    </li><li name="stellar.sdk.model.xdr.Decode#instant" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="instant:cats.data.State[Seq[Byte],java.time.Instant]"></a><a id="instant:State[Seq[Byte],Instant]"></a>
+      <span class="permalink">
+      <a href="../../../stellar/sdk/model/StrKey$.html#instant:cats.data.State[Seq[Byte],java.time.Instant]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">instant</span><span class="result">: <span class="extype" name="cats.data.State">State</span>[<span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Byte">Byte</span>], <span class="extype" name="java.time.Instant">Instant</span>]</span>
+      </span>
+      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="xdr/Decode.html" class="extype" name="stellar.sdk.model.xdr.Decode">Decode</a></dd></dl></div>
+    </li><li name="stellar.sdk.model.xdr.Decode#int" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="int:cats.data.State[Seq[Byte],Int]"></a><a id="int:State[Seq[Byte],Int]"></a>
+      <span class="permalink">
+      <a href="../../../stellar/sdk/model/StrKey$.html#int:cats.data.State[Seq[Byte],Int]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">int</span><span class="result">: <span class="extype" name="cats.data.State">State</span>[<span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Byte">Byte</span>], <span class="extype" name="scala.Int">Int</span>]</span>
+      </span>
+      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="xdr/Decode.html" class="extype" name="stellar.sdk.model.xdr.Decode">Decode</a></dd></dl></div>
     </li><li name="scala.Any#isInstanceOf" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="isInstanceOf[T0]:Boolean"></a>
       <span class="permalink">
@@ -692,6 +844,57 @@
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
+    </li><li name="stellar.sdk.model.xdr.Decode#log" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="log[T](t:T):cats.data.State[Seq[Byte],Unit]"></a><a id="log[T](T):State[Seq[Byte],Unit]"></a>
+      <span class="permalink">
+      <a href="../../../stellar/sdk/model/StrKey$.html#log[T](t:T):cats.data.State[Seq[Byte],Unit]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">log</span><span class="tparams">[<span name="T">T</span>]</span><span class="params">(<span name="t">t: <span class="extype" name="stellar.sdk.model.xdr.Decode.log.T">T</span></span>)</span><span class="result">: <span class="extype" name="cats.data.State">State</span>[<span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Byte">Byte</span>], <span class="extype" name="scala.Unit">Unit</span>]</span>
+      </span>
+      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="xdr/Decode.html" class="extype" name="stellar.sdk.model.xdr.Decode">Decode</a></dd></dl></div>
+    </li><li name="com.typesafe.scalalogging.LazyLogging#logger" visbl="prt" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="logger:com.typesafe.scalalogging.Logger"></a><a id="logger:Logger"></a>
+      <span class="permalink">
+      <a href="../../../stellar/sdk/model/StrKey$.html#logger:com.typesafe.scalalogging.Logger" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">lazy val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">logger</span><span class="result">: <span class="extype" name="com.typesafe.scalalogging.Logger">Logger</span></span>
+      </span>
+      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd>LazyLogging</dd><dt>Annotations</dt><dd>
+                <span class="name">@transient</span><span class="args">()</span>
+              
+        </dd></dl></div>
+    </li><li name="stellar.sdk.model.xdr.Decode#long" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="long:cats.data.State[Seq[Byte],Long]"></a><a id="long:State[Seq[Byte],Long]"></a>
+      <span class="permalink">
+      <a href="../../../stellar/sdk/model/StrKey$.html#long:cats.data.State[Seq[Byte],Long]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">long</span><span class="result">: <span class="extype" name="cats.data.State">State</span>[<span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Byte">Byte</span>], <span class="extype" name="scala.Long">Long</span>]</span>
+      </span>
+      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="xdr/Decode.html" class="extype" name="stellar.sdk.model.xdr.Decode">Decode</a></dd></dl></div>
     </li><li name="scala.AnyRef#ne" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="ne(x$1:AnyRef):Boolean"></a><a id="ne(AnyRef):Boolean"></a>
       <span class="permalink">
@@ -746,6 +949,102 @@
                 <span class="name">@native</span><span class="args">()</span>
               
         </dd></dl></div>
+    </li><li name="stellar.sdk.model.xdr.Decode#opt" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="opt[T](parseT:cats.data.State[Seq[Byte],T]):cats.data.State[Seq[Byte],Option[T]]"></a><a id="opt[T](State[Seq[Byte],T]):State[Seq[Byte],Option[T]]"></a>
+      <span class="permalink">
+      <a href="../../../stellar/sdk/model/StrKey$.html#opt[T](parseT:cats.data.State[Seq[Byte],T]):cats.data.State[Seq[Byte],Option[T]]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">opt</span><span class="tparams">[<span name="T">T</span>]</span><span class="params">(<span name="parseT">parseT: <span class="extype" name="cats.data.State">State</span>[<span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Byte">Byte</span>], <span class="extype" name="stellar.sdk.model.xdr.Decode.opt.T">T</span>]</span>)</span><span class="result">: <span class="extype" name="cats.data.State">State</span>[<span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Byte">Byte</span>], <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="stellar.sdk.model.xdr.Decode.opt.T">T</span>]]</span>
+      </span>
+      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="xdr/Decode.html" class="extype" name="stellar.sdk.model.xdr.Decode">Decode</a></dd></dl></div>
+    </li><li name="stellar.sdk.model.xdr.Decode#padded" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="padded(multipleOf:Int):cats.data.State[Seq[Byte],Seq[Byte]]"></a><a id="padded(Int):State[Seq[Byte],Seq[Byte]]"></a>
+      <span class="permalink">
+      <a href="../../../stellar/sdk/model/StrKey$.html#padded(multipleOf:Int):cats.data.State[Seq[Byte],Seq[Byte]]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">padded</span><span class="params">(<span name="multipleOf">multipleOf: <span class="extype" name="scala.Int">Int</span> = <span class="symbol">4</span></span>)</span><span class="result">: <span class="extype" name="cats.data.State">State</span>[<span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Byte">Byte</span>], <span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Byte">Byte</span>]]</span>
+      </span>
+      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="xdr/Decode.html" class="extype" name="stellar.sdk.model.xdr.Decode">Decode</a></dd></dl></div>
+    </li><li name="stellar.sdk.model.xdr.Decode#seq" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="seq[T](qty:Int,parseT:cats.data.State[Seq[Byte],T]):cats.data.State[Seq[Byte],Seq[T]]"></a><a id="seq[T](Int,State[Seq[Byte],T]):State[Seq[Byte],Seq[T]]"></a>
+      <span class="permalink">
+      <a href="../../../stellar/sdk/model/StrKey$.html#seq[T](qty:Int,parseT:cats.data.State[Seq[Byte],T]):cats.data.State[Seq[Byte],Seq[T]]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">seq</span><span class="tparams">[<span name="T">T</span>]</span><span class="params">(<span name="qty">qty: <span class="extype" name="scala.Int">Int</span></span>, <span name="parseT">parseT: <span class="extype" name="cats.data.State">State</span>[<span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Byte">Byte</span>], <span class="extype" name="stellar.sdk.model.xdr.Decode.seq.T">T</span>]</span>)</span><span class="result">: <span class="extype" name="cats.data.State">State</span>[<span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Byte">Byte</span>], <span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="stellar.sdk.model.xdr.Decode.seq.T">T</span>]]</span>
+      </span>
+      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="xdr/Decode.html" class="extype" name="stellar.sdk.model.xdr.Decode">Decode</a></dd></dl></div>
+    </li><li name="stellar.sdk.model.xdr.Decode#string" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="string:cats.data.State[Seq[Byte],String]"></a><a id="string:State[Seq[Byte],String]"></a>
+      <span class="permalink">
+      <a href="../../../stellar/sdk/model/StrKey$.html#string:cats.data.State[Seq[Byte],String]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">string</span><span class="result">: <span class="extype" name="cats.data.State">State</span>[<span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Byte">Byte</span>], <span class="extype" name="scala.Predef.String">String</span>]</span>
+      </span>
+      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="xdr/Decode.html" class="extype" name="stellar.sdk.model.xdr.Decode">Decode</a></dd></dl></div>
+    </li><li name="stellar.sdk.model.xdr.Decode#switch" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="switch[T](zero:cats.data.State[Seq[Byte],T],others:cats.data.State[Seq[Byte],T]*):cats.data.IndexedStateT[cats.Eval,Seq[Byte],Seq[Byte],T]"></a><a id="switch[T](State[Seq[Byte],T],State[Seq[Byte],T]*):IndexedStateT[Eval,Seq[Byte],Seq[Byte],T]"></a>
+      <span class="permalink">
+      <a href="../../../stellar/sdk/model/StrKey$.html#switch[T](zero:cats.data.State[Seq[Byte],T],others:cats.data.State[Seq[Byte],T]*):cats.data.IndexedStateT[cats.Eval,Seq[Byte],Seq[Byte],T]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">switch</span><span class="tparams">[<span name="T">T</span>]</span><span class="params">(<span name="zero">zero: <span class="extype" name="cats.data.State">State</span>[<span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Byte">Byte</span>], <span class="extype" name="stellar.sdk.model.xdr.Decode.switch.T">T</span>]</span>, <span name="others">others: <span class="extype" name="cats.data.State">State</span>[<span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Byte">Byte</span>], <span class="extype" name="stellar.sdk.model.xdr.Decode.switch.T">T</span>]*</span>)</span><span class="result">: <span class="extype" name="cats.data.IndexedStateT">IndexedStateT</span>[<span class="extype" name="cats.Eval">Eval</span>, <span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Byte">Byte</span>], <span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Byte">Byte</span>], <span class="extype" name="stellar.sdk.model.xdr.Decode.switch.T">T</span>]</span>
+      </span>
+      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="xdr/Decode.html" class="extype" name="stellar.sdk.model.xdr.Decode">Decode</a></dd></dl></div>
+    </li><li name="stellar.sdk.model.xdr.Decode#switchInt" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="switchInt[T](zero:cats.data.State[Seq[Byte],T],others:cats.data.State[Seq[Byte],T]*):cats.data.State[Seq[Byte],(T,Int)]"></a><a id="switchInt[T](State[Seq[Byte],T],State[Seq[Byte],T]*):State[Seq[Byte],(T,Int)]"></a>
+      <span class="permalink">
+      <a href="../../../stellar/sdk/model/StrKey$.html#switchInt[T](zero:cats.data.State[Seq[Byte],T],others:cats.data.State[Seq[Byte],T]*):cats.data.State[Seq[Byte],(T,Int)]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">switchInt</span><span class="tparams">[<span name="T">T</span>]</span><span class="params">(<span name="zero">zero: <span class="extype" name="cats.data.State">State</span>[<span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Byte">Byte</span>], <span class="extype" name="stellar.sdk.model.xdr.Decode.switchInt.T">T</span>]</span>, <span name="others">others: <span class="extype" name="cats.data.State">State</span>[<span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Byte">Byte</span>], <span class="extype" name="stellar.sdk.model.xdr.Decode.switchInt.T">T</span>]*</span>)</span><span class="result">: <span class="extype" name="cats.data.State">State</span>[<span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Byte">Byte</span>], (<span class="extype" name="stellar.sdk.model.xdr.Decode.switchInt.T">T</span>, <span class="extype" name="scala.Int">Int</span>)]</span>
+      </span>
+      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="xdr/Decode.html" class="extype" name="stellar.sdk.model.xdr.Decode">Decode</a></dd></dl></div>
     </li><li name="scala.AnyRef#synchronized" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="synchronized[T0](x$1:=&gt;T0):T0"></a><a id="synchronized[T0](⇒T0):T0"></a>
       <span class="permalink">
@@ -846,6 +1145,22 @@
     </span>)</span>
               
         </dd></dl></div>
+    </li><li name="stellar.sdk.model.xdr.Decode#widen" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="widen[A,W,O&lt;:W](s:cats.data.State[A,O]):cats.data.State[A,W]"></a><a id="widen[A,W,O&lt;:W](State[A,O]):State[A,W]"></a>
+      <span class="permalink">
+      <a href="../../../stellar/sdk/model/StrKey$.html#widen[A,W,O&lt;:W](s:cats.data.State[A,O]):cats.data.State[A,W]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">widen</span><span class="tparams">[<span name="A">A</span>, <span name="W">W</span>, <span name="O">O &lt;: <span class="extype" name="stellar.sdk.model.xdr.Decode.widen.W">W</span></span>]</span><span class="params">(<span name="s">s: <span class="extype" name="cats.data.State">State</span>[<span class="extype" name="stellar.sdk.model.xdr.Decode.widen.A">A</span>, <span class="extype" name="stellar.sdk.model.xdr.Decode.widen.O">O</span>]</span>)</span><span class="result">: <span class="extype" name="cats.data.State">State</span>[<span class="extype" name="stellar.sdk.model.xdr.Decode.widen.A">A</span>, <span class="extype" name="stellar.sdk.model.xdr.Decode.widen.W">W</span>]</span>
+      </span>
+      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="xdr/Decode.html" class="extype" name="stellar.sdk.model.xdr.Decode">Decode</a></dd></dl></div>
     </li>
               </ol>
             </div>
@@ -856,7 +1171,11 @@
         </div>
 
         <div id="inheritedMembers">
-        <div class="parent" name="scala.AnyRef">
+        <div class="parent" name="stellar.sdk.model.xdr.Decode">
+              <h3>Inherited from <a href="xdr/Decode.html" class="extype" name="stellar.sdk.model.xdr.Decode">Decode</a></h3>
+            </div><div class="parent" name="com.typesafe.scalalogging.LazyLogging">
+              <h3>Inherited from <span class="extype" name="com.typesafe.scalalogging.LazyLogging">LazyLogging</span></h3>
+            </div><div class="parent" name="scala.AnyRef">
               <h3>Inherited from <span class="extype" name="scala.AnyRef">AnyRef</span></h3>
             </div><div class="parent" name="scala.Any">
               <h3>Inherited from <span class="extype" name="scala.Any">Any</span></h3>

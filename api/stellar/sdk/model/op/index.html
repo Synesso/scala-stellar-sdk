@@ -117,6 +117,22 @@
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../../index.html" class="extype" name="stellar.sdk">sdk</a></dd></dl></div>
+    </li><li name="stellar.sdk.model.ledger" visbl="pub" class="indented4 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="ledger"></a><a id="ledger:ledger"></a>
+      <span class="permalink">
+      <a href="../../../stellar/sdk/model/index.html#ledger" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">package</span>
+      </span>
+      <span class="symbol">
+        <a title="" href="../ledger/index.html"><span class="name">ledger</span></a>
+      </span>
+      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../index.html" class="extype" name="stellar.sdk.model">model</a></dd></dl></div>
     </li><li name="stellar.sdk.model.op" visbl="pub" class="indented4 current" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="op"></a><a id="op:op"></a>
       <span class="permalink">
@@ -254,7 +270,7 @@
                         <a class="class" href="UpdateSellOfferOperation.html" title="Updates a sell offer in the Stellar network."></a>
                         <a href="UpdateSellOfferOperation.html" title="Updates a sell offer in the Stellar network.">UpdateSellOfferOperation</a>
                       </li><li class="current-entities indented4">
-                        <span class="separator"></span>
+                        <a class="object" href="WriteDataOperation$.html" title=""></a>
                         <a class="class" href="WriteDataOperation.html" title="Creates or updates a Data Entry (name/value pair) for an account."></a>
                         <a href="WriteDataOperation.html" title="Creates or updates a Data Entry (name/value pair) for an account.">WriteDataOperation</a>
                       </li><li name="stellar.sdk.model.response" visbl="pub" class="indented4 " data-isabs="false" fullComment="yes" group="Ungrouped">
@@ -786,7 +802,7 @@ fiat asset payment.
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a title="Creates or updates a Data Entry (name/value pair) for an account." href="WriteDataOperation.html"><span class="name">WriteDataOperation</span></a><span class="params">(<span name="name">name: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="value">value: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="sourceAccount">sourceAccount: <span class="extype" name="scala.Option">Option</span>[<a href="../../PublicKeyOps.html" class="extype" name="stellar.sdk.PublicKeyOps">PublicKeyOps</a>] = <span class="symbol">None</span></span>)</span><span class="result"> extends <a href="ManageDataOperation.html" class="extype" name="stellar.sdk.model.op.ManageDataOperation">ManageDataOperation</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a title="Creates or updates a Data Entry (name/value pair) for an account." href="WriteDataOperation.html"><span class="name">WriteDataOperation</span></a><span class="params">(<span name="name">name: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="value">value: <span class="extype" name="scala.Array">Array</span>[<span class="extype" name="scala.Byte">Byte</span>]</span>, <span name="sourceAccount">sourceAccount: <span class="extype" name="scala.Option">Option</span>[<a href="../../PublicKeyOps.html" class="extype" name="stellar.sdk.PublicKeyOps">PublicKeyOps</a>] = <span class="symbol">None</span></span>)</span><span class="result"> extends <a href="ManageDataOperation.html" class="extype" name="stellar.sdk.model.op.ManageDataOperation">ManageDataOperation</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       
       <p class="shortcomment cmt">Creates or updates a Data Entry (name/value pair) for an account.</p><div class="fullcomment"><div class="comment cmt"><p>Creates or updates a Data Entry (name/value pair) for an account.
@@ -827,7 +843,7 @@ fiat asset payment.
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a title="" href="AllowTrustOperation$.html"><span class="name">AllowTrustOperation</span></a><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a title="" href="AllowTrustOperation$.html"><span class="name">AllowTrustOperation</span></a><span class="result"> extends <a href="../xdr/Decode.html" class="extype" name="stellar.sdk.model.xdr.Decode">Decode</a> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       
       
@@ -891,7 +907,7 @@ fiat asset payment.
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a title="" href="BumpSequenceOperation$.html"><span class="name">BumpSequenceOperation</span></a><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a title="" href="BumpSequenceOperation$.html"><span class="name">BumpSequenceOperation</span></a><span class="result"> extends <a href="../xdr/Decode.html" class="extype" name="stellar.sdk.model.xdr.Decode">Decode</a> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       
       
@@ -923,7 +939,7 @@ fiat asset payment.
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a title="" href="CreateAccountOperation$.html"><span class="name">CreateAccountOperation</span></a><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a title="" href="CreateAccountOperation$.html"><span class="name">CreateAccountOperation</span></a><span class="result"> extends <a href="../xdr/Decode.html" class="extype" name="stellar.sdk.model.xdr.Decode">Decode</a> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       
       
@@ -939,7 +955,7 @@ fiat asset payment.
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a title="" href="CreatePassiveSellOfferOperation$.html"><span class="name">CreatePassiveSellOfferOperation</span></a><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a title="" href="CreatePassiveSellOfferOperation$.html"><span class="name">CreatePassiveSellOfferOperation</span></a><span class="result"> extends <a href="../xdr/Decode.html" class="extype" name="stellar.sdk.model.xdr.Decode">Decode</a> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       
       
@@ -955,7 +971,7 @@ fiat asset payment.
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a title="" href="IssuerFlags$.html"><span class="name">IssuerFlags</span></a>
+        <a title="" href="IssuerFlags$.html"><span class="name">IssuerFlags</span></a><span class="result"> extends <a href="../xdr/Decode.html" class="extype" name="stellar.sdk.model.xdr.Decode">Decode</a></span>
       </span>
       
       
@@ -971,7 +987,7 @@ fiat asset payment.
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a title="" href="ManageBuyOfferOperation$.html"><span class="name">ManageBuyOfferOperation</span></a>
+        <a title="" href="ManageBuyOfferOperation$.html"><span class="name">ManageBuyOfferOperation</span></a><span class="result"> extends <a href="../xdr/Decode.html" class="extype" name="stellar.sdk.model.xdr.Decode">Decode</a></span>
       </span>
       
       
@@ -987,7 +1003,7 @@ fiat asset payment.
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a title="" href="ManageDataOperation$.html"><span class="name">ManageDataOperation</span></a>
+        <a title="" href="ManageDataOperation$.html"><span class="name">ManageDataOperation</span></a><span class="result"> extends <a href="../xdr/Decode.html" class="extype" name="stellar.sdk.model.xdr.Decode">Decode</a></span>
       </span>
       
       
@@ -1003,7 +1019,7 @@ fiat asset payment.
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a title="" href="ManageSellOfferOperation$.html"><span class="name">ManageSellOfferOperation</span></a>
+        <a title="" href="ManageSellOfferOperation$.html"><span class="name">ManageSellOfferOperation</span></a><span class="result"> extends <a href="../xdr/Decode.html" class="extype" name="stellar.sdk.model.xdr.Decode">Decode</a></span>
       </span>
       
       
@@ -1019,7 +1035,7 @@ fiat asset payment.
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a title="" href="Operation$.html"><span class="name">Operation</span></a>
+        <a title="" href="Operation$.html"><span class="name">Operation</span></a><span class="result"> extends <a href="../xdr/Decode.html" class="extype" name="stellar.sdk.model.xdr.Decode">Decode</a></span>
       </span>
       
       
@@ -1051,7 +1067,7 @@ fiat asset payment.
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a title="" href="PathPaymentOperation$.html"><span class="name">PathPaymentOperation</span></a><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a title="" href="PathPaymentOperation$.html"><span class="name">PathPaymentOperation</span></a><span class="result"> extends <a href="../xdr/Decode.html" class="extype" name="stellar.sdk.model.xdr.Decode">Decode</a> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       
       
@@ -1083,7 +1099,7 @@ fiat asset payment.
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a title="" href="SetOptionsOperation$.html"><span class="name">SetOptionsOperation</span></a><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a title="" href="SetOptionsOperation$.html"><span class="name">SetOptionsOperation</span></a><span class="result"> extends <a href="../xdr/Decode.html" class="extype" name="stellar.sdk.model.xdr.Decode">Decode</a> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       
       
@@ -1100,6 +1116,22 @@ fiat asset payment.
       </span>
       <span class="symbol">
         <a title="" href="TransactedOperationDeserializer$.html"><span class="name">TransactedOperationDeserializer</span></a><span class="result"> extends <a href="../response/ResponseParser.html" class="extype" name="stellar.sdk.model.response.ResponseParser">ResponseParser</a>[<a href="Transacted.html" class="extype" name="stellar.sdk.model.op.Transacted">Transacted</a>[<a href="Operation.html" class="extype" name="stellar.sdk.model.op.Operation">Operation</a>]]</span>
+      </span>
+      
+      
+    </li><li name="stellar.sdk.model.op.WriteDataOperation" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="WriteDataOperation"></a><a id="WriteDataOperation:WriteDataOperation"></a>
+      <span class="permalink">
+      <a href="../../../../stellar/sdk/model/op/index.html#WriteDataOperation" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a title="" href="WriteDataOperation$.html"><span class="name">WriteDataOperation</span></a><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       
       

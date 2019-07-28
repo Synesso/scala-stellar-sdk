@@ -117,6 +117,22 @@
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../index.html" class="extype" name="stellar.sdk">sdk</a></dd></dl></div>
+    </li><li name="stellar.sdk.model.ledger" visbl="pub" class="indented4 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="ledger"></a><a id="ledger:ledger"></a>
+      <span class="permalink">
+      <a href="../../../stellar/sdk/model/index.html#ledger" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">package</span>
+      </span>
+      <span class="symbol">
+        <a title="" href="ledger/index.html"><span class="name">ledger</span></a>
+      </span>
+      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="index.html" class="extype" name="stellar.sdk.model">model</a></dd></dl></div>
     </li><li name="stellar.sdk.model.op" visbl="pub" class="indented4 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="op"></a><a id="op:op"></a>
       <span class="permalink">
@@ -195,6 +211,10 @@
                         <a href="Amount.html" title="">Amount</a>
                       </li><li class="current-entities indented3">
                         <span class="separator"></span>
+                        <a class="object" href="AmountParser$.html" title=""></a>
+                        <a href="AmountParser$.html" title="">AmountParser</a>
+                      </li><li class="current-entities indented3">
+                        <span class="separator"></span>
                         <a class="object" href="Asc$.html" title=""></a>
                         <a href="Asc$.html" title="">Asc</a>
                       </li><li class="current-entities indented3">
@@ -233,6 +253,10 @@
                         <a class="object" href="IssuedAsset4$.html" title=""></a>
                         <a class="class" href="IssuedAsset4.html" title="Represents all assets with codes 1-4 characters long."></a>
                         <a href="IssuedAsset4.html" title="Represents all assets with codes 1-4 characters long.">IssuedAsset4</a>
+                      </li><li class="current-entities indented3">
+                        <a class="object" href="LedgerThresholds$.html" title=""></a>
+                        <a class="class" href="LedgerThresholds.html" title="The thresholds for operations on this account, as described in transaction meta data for ledger effects."></a>
+                        <a href="LedgerThresholds.html" title="The thresholds for operations on this account, as described in transaction meta data for ledger effects.">LedgerThresholds</a>
                       </li><li class="current-entities indented3">
                         <a class="object" href="Memo$.html" title=""></a>
                         <a class="trait" href="Memo.html" title=""></a>
@@ -291,6 +315,14 @@
                         <a href="OrderBookDeserializer$.html" title="">OrderBookDeserializer</a>
                       </li><li class="current-entities indented3">
                         <span class="separator"></span>
+                        <a class="class" href="PaymentPath.html" title=""></a>
+                        <a href="PaymentPath.html" title="">PaymentPath</a>
+                      </li><li class="current-entities indented3">
+                        <span class="separator"></span>
+                        <a class="object" href="PaymentPathDeserializer$.html" title=""></a>
+                        <a href="PaymentPathDeserializer$.html" title="">PaymentPathDeserializer</a>
+                      </li><li class="current-entities indented3">
+                        <span class="separator"></span>
                         <a class="class" href="PreAuthTx.html" title=""></a>
                         <a href="PreAuthTx.html" title="">PreAuthTx</a>
                       </li><li class="current-entities indented3">
@@ -327,8 +359,8 @@
                         <a href="StrKey.html" title="A StrKey (Stellar Key) is a typed, encoded byte array.">StrKey</a>
                       </li><li class="current-entities indented3">
                         <span class="separator"></span>
-                        <a class="class" href="" title=""></a>
-                        <a href="" title="">Thresholds</a>
+                        <a class="class" href="" title="The thresholds for operations on this account."></a>
+                        <a href="" title="The thresholds for operations on this account.">Thresholds</a>
                       </li><li class="current-entities indented3">
                         <a class="object" href="TimeBounds$.html" title=""></a>
                         <a class="class" href="TimeBounds.html" title=""></a>
@@ -337,6 +369,14 @@
                         <span class="separator"></span>
                         <a class="class" href="Trade.html" title=""></a>
                         <a href="Trade.html" title="">Trade</a>
+                      </li><li class="current-entities indented3">
+                        <a class="object" href="TradeAggregation$.html" title=""></a>
+                        <a class="class" href="TradeAggregation.html" title=""></a>
+                        <a href="TradeAggregation.html" title="">TradeAggregation</a>
+                      </li><li class="current-entities indented3">
+                        <span class="separator"></span>
+                        <a class="object" href="TradeAggregationDeserializer$.html" title=""></a>
+                        <a href="TradeAggregationDeserializer$.html" title="">TradeAggregationDeserializer</a>
                       </li><li class="current-entities indented3">
                         <span class="separator"></span>
                         <a class="object" href="TradeDeserializer$.html" title=""></a>
@@ -373,7 +413,8 @@
       </h4>
 
       
-          <div id="comment" class="fullcommenttop"><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>The thresholds for operations on this account.</p></div><dl class="paramcmts block"><dt class="param">low</dt><dd class="cmt"><p>The weight required for a valid transaction including the Allow Trust and Bump Sequence operations.</p></dd><dt class="param">med</dt><dd class="cmt"><p>The weight required for a valid transaction including the Create Account, Payment, Path Payment, Manage
+           Buy Offer, Manage Sell Offer, Create Passive Sell Offer, Change Trust, Inflation, and Manage Data operations.</p></dd><dt class="param">high</dt><dd class="cmt"><p>The weight required for a valid transaction including the Account Merge and Set Options operations.</p></dd></dl><div class="toggleContainer block">
           <span class="toggle">
             Linear Supertypes
           </span>
@@ -423,7 +464,7 @@
         <div id="allMembers">
         <div id="constructors" class="members">
               <h3>Instance Constructors</h3>
-              <ol><li name="stellar.sdk.model.Thresholds#&lt;init&gt;" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+              <ol><li name="stellar.sdk.model.Thresholds#&lt;init&gt;" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="&lt;init&gt;(low:Int,med:Int,high:Int):stellar.sdk.model.Thresholds"></a><a id="&lt;init&gt;:Thresholds"></a>
       <span class="permalink">
       <a href="../../../stellar/sdk/model/Thresholds.html#&lt;init&gt;(low:Int,med:Int,high:Int):stellar.sdk.model.Thresholds" title="Permalink">
@@ -438,7 +479,8 @@
         <span class="name">Thresholds</span><span class="params">(<span name="low">low: <span class="extype" name="scala.Int">Int</span></span>, <span name="med">med: <span class="extype" name="scala.Int">Int</span></span>, <span name="high">high: <span class="extype" name="scala.Int">Int</span></span>)</span>
       </span>
       
-      
+      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt class="param">low</dt><dd class="cmt"><p>The weight required for a valid transaction including the Allow Trust and Bump Sequence operations.</p></dd><dt class="param">med</dt><dd class="cmt"><p>The weight required for a valid transaction including the Create Account, Payment, Path Payment, Manage
+           Buy Offer, Manage Sell Offer, Create Passive Sell Offer, Change Trust, Inflation, and Manage Data operations.</p></dd><dt class="param">high</dt><dd class="cmt"><p>The weight required for a valid transaction including the Account Merge and Set Options operations.</p></dd></dl></div>
     </li></ol>
             </div>
 

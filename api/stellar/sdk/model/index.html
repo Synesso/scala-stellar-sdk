@@ -133,6 +133,22 @@
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../index.html" class="extype" name="stellar.sdk">sdk</a></dd></dl></div>
+    </li><li name="stellar.sdk.model.ledger" visbl="pub" class="indented4 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="ledger"></a><a id="ledger:ledger"></a>
+      <span class="permalink">
+      <a href="../../../stellar/sdk/model/index.html#ledger" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">package</span>
+      </span>
+      <span class="symbol">
+        <a title="" href="ledger/index.html"><span class="name">ledger</span></a>
+      </span>
+      
+      
     </li><li name="stellar.sdk.model.op" visbl="pub" class="indented4 " data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="op"></a><a id="op:op"></a>
       <span class="permalink">
@@ -211,6 +227,10 @@
                         <a href="Amount.html" title="">Amount</a>
                       </li><li class="current-entities indented3">
                         <span class="separator"></span>
+                        <a class="object" href="AmountParser$.html" title=""></a>
+                        <a href="AmountParser$.html" title="">AmountParser</a>
+                      </li><li class="current-entities indented3">
+                        <span class="separator"></span>
                         <a class="object" href="Asc$.html" title=""></a>
                         <a href="Asc$.html" title="">Asc</a>
                       </li><li class="current-entities indented3">
@@ -249,6 +269,10 @@
                         <a class="object" href="IssuedAsset4$.html" title=""></a>
                         <a class="class" href="IssuedAsset4.html" title="Represents all assets with codes 1-4 characters long."></a>
                         <a href="IssuedAsset4.html" title="Represents all assets with codes 1-4 characters long.">IssuedAsset4</a>
+                      </li><li class="current-entities indented3">
+                        <a class="object" href="LedgerThresholds$.html" title=""></a>
+                        <a class="class" href="LedgerThresholds.html" title="The thresholds for operations on this account, as described in transaction meta data for ledger effects."></a>
+                        <a href="LedgerThresholds.html" title="The thresholds for operations on this account, as described in transaction meta data for ledger effects.">LedgerThresholds</a>
                       </li><li class="current-entities indented3">
                         <a class="object" href="Memo$.html" title=""></a>
                         <a class="trait" href="Memo.html" title=""></a>
@@ -307,6 +331,14 @@
                         <a href="OrderBookDeserializer$.html" title="">OrderBookDeserializer</a>
                       </li><li class="current-entities indented3">
                         <span class="separator"></span>
+                        <a class="class" href="PaymentPath.html" title=""></a>
+                        <a href="PaymentPath.html" title="">PaymentPath</a>
+                      </li><li class="current-entities indented3">
+                        <span class="separator"></span>
+                        <a class="object" href="PaymentPathDeserializer$.html" title=""></a>
+                        <a href="PaymentPathDeserializer$.html" title="">PaymentPathDeserializer</a>
+                      </li><li class="current-entities indented3">
+                        <span class="separator"></span>
                         <a class="class" href="PreAuthTx.html" title=""></a>
                         <a href="PreAuthTx.html" title="">PreAuthTx</a>
                       </li><li class="current-entities indented3">
@@ -343,8 +375,8 @@
                         <a href="StrKey.html" title="A StrKey (Stellar Key) is a typed, encoded byte array.">StrKey</a>
                       </li><li class="current-entities indented3">
                         <span class="separator"></span>
-                        <a class="class" href="Thresholds.html" title=""></a>
-                        <a href="Thresholds.html" title="">Thresholds</a>
+                        <a class="class" href="Thresholds.html" title="The thresholds for operations on this account."></a>
+                        <a href="Thresholds.html" title="The thresholds for operations on this account.">Thresholds</a>
                       </li><li class="current-entities indented3">
                         <a class="object" href="TimeBounds$.html" title=""></a>
                         <a class="class" href="TimeBounds.html" title=""></a>
@@ -353,6 +385,14 @@
                         <span class="separator"></span>
                         <a class="class" href="Trade.html" title=""></a>
                         <a href="Trade.html" title="">Trade</a>
+                      </li><li class="current-entities indented3">
+                        <a class="object" href="TradeAggregation$.html" title=""></a>
+                        <a class="class" href="TradeAggregation.html" title=""></a>
+                        <a href="TradeAggregation.html" title="">TradeAggregation</a>
+                      </li><li class="current-entities indented3">
+                        <span class="separator"></span>
+                        <a class="object" href="TradeAggregationDeserializer$.html" title=""></a>
+                        <a href="TradeAggregationDeserializer$.html" title="">TradeAggregationDeserializer</a>
                       </li><li class="current-entities indented3">
                         <span class="separator"></span>
                         <a class="object" href="TradeDeserializer$.html" title=""></a>
@@ -468,7 +508,7 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a title="" href="AccountId.html"><span class="name">AccountId</span></a><span class="params">(<span name="hash">hash: <span class="extype" name="scala.Array">Array</span>[<span class="extype" name="scala.Byte">Byte</span>]</span>)</span><span class="result"> extends <a href="SignerStrKey.html" class="extype" name="stellar.sdk.model.SignerStrKey">SignerStrKey</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a title="" href="AccountId.html"><span class="name">AccountId</span></a><span class="params">(<span name="hash">hash: <span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Byte">Byte</span>]</span>)</span><span class="result"> extends <a href="SignerStrKey.html" class="extype" name="stellar.sdk.model.SignerStrKey">SignerStrKey</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       
       
@@ -618,6 +658,25 @@
       
       <p class="shortcomment cmt">Represents all assets with codes 1-4 characters long.</p><div class="fullcomment"><div class="comment cmt"><p>Represents all assets with codes 1-4 characters long.
 </p></div><dl class="attributes block"> <dt>See also</dt><dd><span class="cmt"><p><a href="https://www.stellar.org/developers/learn/concepts/assets.html" target="_blank">Assets</a></p></span></dd></dl></div>
+    </li><li name="stellar.sdk.model.LedgerThresholds" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="LedgerThresholdsextendsEncodablewithProductwithSerializable"></a><a id="LedgerThresholds:LedgerThresholds"></a>
+      <span class="permalink">
+      <a href="../../../stellar/sdk/model/index.html#LedgerThresholdsextendsEncodablewithProductwithSerializable" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a title="The thresholds for operations on this account, as described in transaction meta data for ledger effects." href="LedgerThresholds.html"><span class="name">LedgerThresholds</span></a><span class="params">(<span name="master">master: <span class="extype" name="scala.Int">Int</span></span>, <span name="low">low: <span class="extype" name="scala.Int">Int</span></span>, <span name="med">med: <span class="extype" name="scala.Int">Int</span></span>, <span name="high">high: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result"> extends <a href="xdr/Encodable.html" class="extype" name="stellar.sdk.model.xdr.Encodable">Encodable</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      
+      <p class="shortcomment cmt">The thresholds for operations on this account, as described in transaction meta data for ledger effects.</p><div class="fullcomment"><div class="comment cmt"><p>The thresholds for operations on this account, as described in transaction meta data for ledger effects.
+This differs from @see<a href="Thresholds.html" class="extype" name="stellar.sdk.model.Thresholds">Thresholds</a> in that it also contains the master weight for the account's primary signature.
+</p></div><dl class="paramcmts block"><dt class="param">master</dt><dd class="cmt"><p>The weight provided by the primary signature for this account.</p></dd><dt class="param">low</dt><dd class="cmt"><p>The weight required for a valid transaction including the Allow Trust and Bump Sequence operations.</p></dd><dt class="param">med</dt><dd class="cmt"><p>The weight required for a valid transaction including the Create Account, Payment, Path Payment, Manage
+           Buy Offer, Manage Sell Offer, Create Passive Sell Offer, Change Trust, Inflation, and Manage Data operations.</p></dd><dt class="param">high</dt><dd class="cmt"><p>The weight required for a valid transaction including the Account Merge and Set Options operations.</p></dd></dl></div>
     </li><li name="stellar.sdk.model.Memo" visbl="pub" class="indented0 " data-isabs="true" fullComment="no" group="Ungrouped">
       <a id="MemoextendsAnyRef"></a><a id="Memo:Memo"></a>
       <span class="permalink">
@@ -778,6 +837,22 @@
       </span>
       
       
+    </li><li name="stellar.sdk.model.PaymentPath" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="PaymentPathextendsProductwithSerializable"></a><a id="PaymentPath:PaymentPath"></a>
+      <span class="permalink">
+      <a href="../../../stellar/sdk/model/index.html#PaymentPathextendsProductwithSerializable" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a title="" href="PaymentPath.html"><span class="name">PaymentPath</span></a><span class="params">(<span name="source">source: <a href="Amount.html" class="extype" name="stellar.sdk.model.Amount">Amount</a></span>, <span name="destination">destination: <a href="Amount.html" class="extype" name="stellar.sdk.model.Amount">Amount</a></span>, <span name="path">path: <span class="extype" name="scala.Seq">Seq</span>[<a href="Asset.html" class="extype" name="stellar.sdk.model.Asset">Asset</a>]</span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      
+      
     </li><li name="stellar.sdk.model.PreAuthTx" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="PreAuthTxextendsSignerStrKeywithProductwithSerializable"></a><a id="PreAuthTx:PreAuthTx"></a>
       <span class="permalink">
@@ -790,7 +865,7 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a title="" href="PreAuthTx.html"><span class="name">PreAuthTx</span></a><span class="params">(<span name="hash">hash: <span class="extype" name="scala.Array">Array</span>[<span class="extype" name="scala.Byte">Byte</span>]</span>)</span><span class="result"> extends <a href="SignerStrKey.html" class="extype" name="stellar.sdk.model.SignerStrKey">SignerStrKey</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a title="" href="PreAuthTx.html"><span class="name">PreAuthTx</span></a><span class="params">(<span name="hash">hash: <span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Byte">Byte</span>]</span>)</span><span class="result"> extends <a href="SignerStrKey.html" class="extype" name="stellar.sdk.model.SignerStrKey">SignerStrKey</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       
       
@@ -838,7 +913,7 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a title="" href="SHA256Hash.html"><span class="name">SHA256Hash</span></a><span class="params">(<span name="hash">hash: <span class="extype" name="scala.Array">Array</span>[<span class="extype" name="scala.Byte">Byte</span>]</span>)</span><span class="result"> extends <a href="SignerStrKey.html" class="extype" name="stellar.sdk.model.SignerStrKey">SignerStrKey</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a title="" href="SHA256Hash.html"><span class="name">SHA256Hash</span></a><span class="params">(<span name="hash">hash: <span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Byte">Byte</span>]</span>)</span><span class="result"> extends <a href="SignerStrKey.html" class="extype" name="stellar.sdk.model.SignerStrKey">SignerStrKey</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       
       
@@ -854,7 +929,7 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a title="" href="Seed.html"><span class="name">Seed</span></a><span class="params">(<span name="hash">hash: <span class="extype" name="scala.Array">Array</span>[<span class="extype" name="scala.Byte">Byte</span>]</span>)</span><span class="result"> extends <a href="StrKey.html" class="extype" name="stellar.sdk.model.StrKey">StrKey</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a title="" href="Seed.html"><span class="name">Seed</span></a><span class="params">(<span name="hash">hash: <span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Byte">Byte</span>]</span>)</span><span class="result"> extends <a href="StrKey.html" class="extype" name="stellar.sdk.model.StrKey">StrKey</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       
       
@@ -924,7 +999,7 @@
       </span>
       
       <p class="shortcomment cmt">A StrKey (Stellar Key) is a typed, encoded byte array.</p>
-    </li><li name="stellar.sdk.model.Thresholds" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+    </li><li name="stellar.sdk.model.Thresholds" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="ThresholdsextendsProductwithSerializable"></a><a id="Thresholds:Thresholds"></a>
       <span class="permalink">
       <a href="../../../stellar/sdk/model/index.html#ThresholdsextendsProductwithSerializable" title="Permalink">
@@ -936,10 +1011,11 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a title="" href="Thresholds.html"><span class="name">Thresholds</span></a><span class="params">(<span name="low">low: <span class="extype" name="scala.Int">Int</span></span>, <span name="med">med: <span class="extype" name="scala.Int">Int</span></span>, <span name="high">high: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a title="The thresholds for operations on this account." href="Thresholds.html"><span class="name">Thresholds</span></a><span class="params">(<span name="low">low: <span class="extype" name="scala.Int">Int</span></span>, <span name="med">med: <span class="extype" name="scala.Int">Int</span></span>, <span name="high">high: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       
-      
+      <p class="shortcomment cmt">The thresholds for operations on this account.</p><div class="fullcomment"><div class="comment cmt"><p>The thresholds for operations on this account.</p></div><dl class="paramcmts block"><dt class="param">low</dt><dd class="cmt"><p>The weight required for a valid transaction including the Allow Trust and Bump Sequence operations.</p></dd><dt class="param">med</dt><dd class="cmt"><p>The weight required for a valid transaction including the Create Account, Payment, Path Payment, Manage
+           Buy Offer, Manage Sell Offer, Create Passive Sell Offer, Change Trust, Inflation, and Manage Data operations.</p></dd><dt class="param">high</dt><dd class="cmt"><p>The weight required for a valid transaction including the Account Merge and Set Options operations.</p></dd></dl></div>
     </li><li name="stellar.sdk.model.TimeBounds" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="TimeBoundsextendsEncodablewithProductwithSerializable"></a><a id="TimeBounds:TimeBounds"></a>
       <span class="permalink">
@@ -969,6 +1045,22 @@
       </span>
       <span class="symbol">
         <a title="" href="Trade.html"><span class="name">Trade</span></a><span class="params">(<span name="id">id: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="ledgerCloseTime">ledgerCloseTime: <span class="extype" name="java.time.ZonedDateTime">ZonedDateTime</span></span>, <span name="offerId">offerId: <span class="extype" name="scala.Long">Long</span></span>, <span name="baseOfferId">baseOfferId: <span class="extype" name="scala.Long">Long</span></span>, <span name="counterOfferId">counterOfferId: <span class="extype" name="scala.Long">Long</span></span>, <span name="baseAccount">baseAccount: <a href="../PublicKeyOps.html" class="extype" name="stellar.sdk.PublicKeyOps">PublicKeyOps</a></span>, <span name="baseAmount">baseAmount: <a href="Amount.html" class="extype" name="stellar.sdk.model.Amount">Amount</a></span>, <span name="counterAccount">counterAccount: <a href="../PublicKeyOps.html" class="extype" name="stellar.sdk.PublicKeyOps">PublicKeyOps</a></span>, <span name="counterAmount">counterAmount: <a href="Amount.html" class="extype" name="stellar.sdk.model.Amount">Amount</a></span>, <span name="baseIsSeller">baseIsSeller: <span class="extype" name="scala.Boolean">Boolean</span></span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      
+      
+    </li><li name="stellar.sdk.model.TradeAggregation" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="TradeAggregationextendsProductwithSerializable"></a><a id="TradeAggregation:TradeAggregation"></a>
+      <span class="permalink">
+      <a href="../../../stellar/sdk/model/index.html#TradeAggregationextendsProductwithSerializable" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a title="" href="TradeAggregation.html"><span class="name">TradeAggregation</span></a><span class="params">(<span name="instant">instant: <span class="extype" name="java.time.Instant">Instant</span></span>, <span name="tradeCount">tradeCount: <span class="extype" name="scala.Int">Int</span></span>, <span name="baseVolume">baseVolume: <span class="extype" name="scala.Double">Double</span></span>, <span name="counterVolume">counterVolume: <span class="extype" name="scala.Double">Double</span></span>, <span name="average">average: <span class="extype" name="scala.Double">Double</span></span>, <span name="open">open: <a href="Price.html" class="extype" name="stellar.sdk.model.Price">Price</a></span>, <span name="high">high: <a href="Price.html" class="extype" name="stellar.sdk.model.Price">Price</a></span>, <span name="low">low: <a href="Price.html" class="extype" name="stellar.sdk.model.Price">Price</a></span>, <span name="close">close: <a href="Price.html" class="extype" name="stellar.sdk.model.Price">Price</a></span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       
       
@@ -1008,7 +1100,23 @@
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a title="" href="Amount$.html"><span class="name">Amount</span></a>
+        <a title="" href="Amount$.html"><span class="name">Amount</span></a><span class="result"> extends <a href="xdr/Decode.html" class="extype" name="stellar.sdk.model.xdr.Decode">Decode</a></span>
+      </span>
+      
+      
+    </li><li name="stellar.sdk.model.AmountParser" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="AmountParser"></a><a id="AmountParser:AmountParser"></a>
+      <span class="permalink">
+      <a href="../../../stellar/sdk/model/index.html#AmountParser" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a title="" href="AmountParser$.html"><span class="name">AmountParser</span></a>
       </span>
       
       
@@ -1040,7 +1148,7 @@
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a title="" href="Asset$.html"><span class="name">Asset</span></a>
+        <a title="" href="Asset$.html"><span class="name">Asset</span></a><span class="result"> extends <a href="xdr/Decode.html" class="extype" name="stellar.sdk.model.xdr.Decode">Decode</a></span>
       </span>
       
       
@@ -1088,7 +1196,7 @@
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a title="" href="IssuedAsset12$.html"><span class="name">IssuedAsset12</span></a><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a title="" href="IssuedAsset12$.html"><span class="name">IssuedAsset12</span></a><span class="result"> extends <a href="xdr/Decode.html" class="extype" name="stellar.sdk.model.xdr.Decode">Decode</a> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       
       
@@ -1104,7 +1212,23 @@
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a title="" href="IssuedAsset4$.html"><span class="name">IssuedAsset4</span></a><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a title="" href="IssuedAsset4$.html"><span class="name">IssuedAsset4</span></a><span class="result"> extends <a href="xdr/Decode.html" class="extype" name="stellar.sdk.model.xdr.Decode">Decode</a> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      
+      
+    </li><li name="stellar.sdk.model.LedgerThresholds" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="LedgerThresholds"></a><a id="LedgerThresholds:LedgerThresholds"></a>
+      <span class="permalink">
+      <a href="../../../stellar/sdk/model/index.html#LedgerThresholds" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a title="" href="LedgerThresholds$.html"><span class="name">LedgerThresholds</span></a><span class="result"> extends <a href="xdr/Decode.html" class="extype" name="stellar.sdk.model.xdr.Decode">Decode</a> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       
       
@@ -1120,7 +1244,7 @@
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a title="" href="Memo$.html"><span class="name">Memo</span></a>
+        <a title="" href="Memo$.html"><span class="name">Memo</span></a><span class="result"> extends <a href="xdr/Decode.html" class="extype" name="stellar.sdk.model.xdr.Decode">Decode</a></span>
       </span>
       
       
@@ -1220,6 +1344,22 @@
       </span>
       
       
+    </li><li name="stellar.sdk.model.PaymentPathDeserializer" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="PaymentPathDeserializer"></a><a id="PaymentPathDeserializer:PaymentPathDeserializer"></a>
+      <span class="permalink">
+      <a href="../../../stellar/sdk/model/index.html#PaymentPathDeserializer" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a title="" href="PaymentPathDeserializer$.html"><span class="name">PaymentPathDeserializer</span></a><span class="result"> extends <a href="response/ResponseParser.html" class="extype" name="stellar.sdk.model.response.ResponseParser">ResponseParser</a>[<a href="PaymentPath.html" class="extype" name="stellar.sdk.model.PaymentPath">PaymentPath</a>]</span>
+      </span>
+      
+      
     </li><li name="stellar.sdk.model.Price" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="Price"></a><a id="Price:Price"></a>
       <span class="permalink">
@@ -1232,7 +1372,7 @@
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a title="" href="Price$.html"><span class="name">Price</span></a><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a title="" href="Price$.html"><span class="name">Price</span></a><span class="result"> extends <a href="xdr/Decode.html" class="extype" name="stellar.sdk.model.xdr.Decode">Decode</a> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       
       
@@ -1248,7 +1388,7 @@
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a title="" href="SignedTransaction$.html"><span class="name">SignedTransaction</span></a><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a title="" href="SignedTransaction$.html"><span class="name">SignedTransaction</span></a><span class="result"> extends <a href="xdr/Decode.html" class="extype" name="stellar.sdk.model.xdr.Decode">Decode</a> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       
       
@@ -1264,7 +1404,7 @@
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a title="" href="Signer$.html"><span class="name">Signer</span></a><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a title="" href="Signer$.html"><span class="name">Signer</span></a><span class="result"> extends <a href="xdr/Decode.html" class="extype" name="stellar.sdk.model.xdr.Decode">Decode</a> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       
       
@@ -1280,7 +1420,7 @@
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a title="" href="StrKey$.html"><span class="name">StrKey</span></a>
+        <a title="" href="StrKey$.html"><span class="name">StrKey</span></a><span class="result"> extends <a href="xdr/Decode.html" class="extype" name="stellar.sdk.model.xdr.Decode">Decode</a></span>
       </span>
       
       
@@ -1296,7 +1436,39 @@
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a title="" href="TimeBounds$.html"><span class="name">TimeBounds</span></a><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a title="" href="TimeBounds$.html"><span class="name">TimeBounds</span></a><span class="result"> extends <a href="xdr/Decode.html" class="extype" name="stellar.sdk.model.xdr.Decode">Decode</a> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      
+      
+    </li><li name="stellar.sdk.model.TradeAggregation" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="TradeAggregation"></a><a id="TradeAggregation:TradeAggregation"></a>
+      <span class="permalink">
+      <a href="../../../stellar/sdk/model/index.html#TradeAggregation" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a title="" href="TradeAggregation$.html"><span class="name">TradeAggregation</span></a><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      
+      
+    </li><li name="stellar.sdk.model.TradeAggregationDeserializer" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="TradeAggregationDeserializer"></a><a id="TradeAggregationDeserializer:TradeAggregationDeserializer"></a>
+      <span class="permalink">
+      <a href="../../../stellar/sdk/model/index.html#TradeAggregationDeserializer" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a title="" href="TradeAggregationDeserializer$.html"><span class="name">TradeAggregationDeserializer</span></a><span class="result"> extends <a href="response/ResponseParser.html" class="extype" name="stellar.sdk.model.response.ResponseParser">ResponseParser</a>[<a href="TradeAggregation.html" class="extype" name="stellar.sdk.model.TradeAggregation">TradeAggregation</a>]</span>
       </span>
       
       
@@ -1328,7 +1500,7 @@
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a title="" href="Transaction$.html"><span class="name">Transaction</span></a><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a title="" href="Transaction$.html"><span class="name">Transaction</span></a><span class="result"> extends <a href="xdr/Decode.html" class="extype" name="stellar.sdk.model.xdr.Decode">Decode</a> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       
       

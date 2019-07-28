@@ -135,8 +135,8 @@
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../index.html" class="extype" name="stellar.sdk.model">model</a></dd></dl></div>
     </li><li class="current-entities indented4">
                         <span class="separator"></span>
-                        <a class="object" href="Decode$.html" title=""></a>
-                        <a href="Decode$.html" title="">Decode</a>
+                        <a class="trait" href="Decode.html" title=""></a>
+                        <a href="Decode.html" title="">Decode</a>
                       </li><li class="current-entities indented4">
                         <span class="separator"></span>
                         <a class="trait" href="Encodable.html" title=""></a>
@@ -145,6 +145,10 @@
                         <span class="separator"></span>
                         <a class="object" href="" title=""></a>
                         <a href="" title="">Encode</a>
+                      </li><li class="current-entities indented4">
+                        <span class="separator"></span>
+                        <a class="class" href="Encoded.html" title=""></a>
+                        <a href="Encoded.html" title="">Encoded</a>
                       </li>
               </ul>
             </div>
@@ -609,9 +613,9 @@
               
         </dd></dl></div>
     </li><li name="stellar.sdk.model.xdr.Encode#opt" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="opt(o:Option[stellar.sdk.model.xdr.Encodable]):Stream[Byte]"></a><a id="opt(Option[Encodable]):Stream[Byte]"></a>
+      <a id="opt(o:Option[stellar.sdk.model.xdr.Encodable],ifPresent:Int,ifAbsent:Int):Stream[Byte]"></a><a id="opt(Option[Encodable],Int,Int):Stream[Byte]"></a>
       <span class="permalink">
-      <a href="../../../../stellar/sdk/model/xdr/Encode$.html#opt(o:Option[stellar.sdk.model.xdr.Encodable]):Stream[Byte]" title="Permalink">
+      <a href="../../../../stellar/sdk/model/xdr/Encode$.html#opt(o:Option[stellar.sdk.model.xdr.Encodable],ifPresent:Int,ifAbsent:Int):Stream[Byte]" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -620,7 +624,7 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">opt</span><span class="params">(<span name="o">o: <span class="extype" name="scala.Option">Option</span>[<a href="Encodable.html" class="extype" name="stellar.sdk.model.xdr.Encodable">Encodable</a>]</span>)</span><span class="result">: <span class="extype" name="scala.Stream">Stream</span>[<span class="extype" name="scala.Byte">Byte</span>]</span>
+        <span class="name">opt</span><span class="params">(<span name="o">o: <span class="extype" name="scala.Option">Option</span>[<a href="Encodable.html" class="extype" name="stellar.sdk.model.xdr.Encodable">Encodable</a>]</span>, <span name="ifPresent">ifPresent: <span class="extype" name="scala.Int">Int</span> = <span class="symbol">1</span></span>, <span name="ifAbsent">ifAbsent: <span class="extype" name="scala.Int">Int</span> = <span class="symbol">0</span></span>)</span><span class="result">: <span class="extype" name="scala.Stream">Stream</span>[<span class="extype" name="scala.Byte">Byte</span>]</span>
       </span>
       
       
@@ -685,6 +689,22 @@
       </span>
       <span class="symbol">
         <span class="name">optString</span><span class="params">(<span name="o">o: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>)</span><span class="result">: <span class="extype" name="scala.Stream">Stream</span>[<span class="extype" name="scala.Byte">Byte</span>]</span>
+      </span>
+      
+      
+    </li><li name="stellar.sdk.model.xdr.Encode#padded" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="padded(bs:Seq[Byte],multipleOf:Int):Stream[Byte]"></a><a id="padded(Seq[Byte],Int):Stream[Byte]"></a>
+      <span class="permalink">
+      <a href="../../../../stellar/sdk/model/xdr/Encode$.html#padded(bs:Seq[Byte],multipleOf:Int):Stream[Byte]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">padded</span><span class="params">(<span name="bs">bs: <span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Byte">Byte</span>]</span>, <span name="multipleOf">multipleOf: <span class="extype" name="scala.Int">Int</span> = <span class="symbol">4</span></span>)</span><span class="result">: <span class="extype" name="scala.Stream">Stream</span>[<span class="extype" name="scala.Byte">Byte</span>]</span>
       </span>
       
       

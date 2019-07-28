@@ -117,6 +117,22 @@
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../../index.html" class="extype" name="stellar.sdk">sdk</a></dd></dl></div>
+    </li><li name="stellar.sdk.model.ledger" visbl="pub" class="indented4 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="ledger"></a><a id="ledger:ledger"></a>
+      <span class="permalink">
+      <a href="../../../stellar/sdk/model/index.html#ledger" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">package</span>
+      </span>
+      <span class="symbol">
+        <a title="" href="../ledger/index.html"><span class="name">ledger</span></a>
+      </span>
+      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../index.html" class="extype" name="stellar.sdk.model">model</a></dd></dl></div>
     </li><li name="stellar.sdk.model.op" visbl="pub" class="indented4 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="op"></a><a id="op:op"></a>
       <span class="permalink">
@@ -183,8 +199,8 @@
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../index.html" class="extype" name="stellar.sdk.model">model</a></dd></dl></div>
     </li><li class="current-entities indented4">
                         <span class="separator"></span>
-                        <a class="object" href="Decode$.html" title=""></a>
-                        <a href="Decode$.html" title="">Decode</a>
+                        <a class="trait" href="Decode.html" title=""></a>
+                        <a href="Decode.html" title="">Decode</a>
                       </li><li class="current-entities indented4">
                         <span class="separator"></span>
                         <a class="trait" href="Encodable.html" title=""></a>
@@ -193,6 +209,10 @@
                         <span class="separator"></span>
                         <a class="object" href="Encode$.html" title=""></a>
                         <a href="Encode$.html" title="">Encode</a>
+                      </li><li class="current-entities indented4">
+                        <span class="separator"></span>
+                        <a class="class" href="Encoded.html" title=""></a>
+                        <a href="Encoded.html" title="">Encoded</a>
                       </li>
               </ul>
             </div>
@@ -256,7 +276,23 @@
 
         <div id="types" class="types members">
               <h3>Type Members</h3>
-              <ol><li name="stellar.sdk.model.xdr.Encodable" visbl="pub" class="indented0 " data-isabs="true" fullComment="no" group="Ungrouped">
+              <ol><li name="stellar.sdk.model.xdr.Decode" visbl="pub" class="indented0 " data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="DecodeextendsLazyLogging"></a><a id="Decode:Decode"></a>
+      <span class="permalink">
+      <a href="../../../../stellar/sdk/model/xdr/index.html#DecodeextendsLazyLogging" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a title="" href="Decode.html"><span class="name">Decode</span></a><span class="result"> extends <span class="extype" name="com.typesafe.scalalogging.LazyLogging">LazyLogging</span></span>
+      </span>
+      
+      
+    </li><li name="stellar.sdk.model.xdr.Encodable" visbl="pub" class="indented0 " data-isabs="true" fullComment="no" group="Ungrouped">
       <a id="EncodableextendsAnyRef"></a><a id="Encodable:Encodable"></a>
       <span class="permalink">
       <a href="../../../../stellar/sdk/model/xdr/index.html#EncodableextendsAnyRef" title="Permalink">
@@ -272,6 +308,22 @@
       </span>
       
       
+    </li><li name="stellar.sdk.model.xdr.Encoded" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="EncodedextendsEncodablewithProductwithSerializable"></a><a id="Encoded:Encoded"></a>
+      <span class="permalink">
+      <a href="../../../../stellar/sdk/model/xdr/index.html#EncodedextendsEncodablewithProductwithSerializable" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a title="" href="Encoded.html"><span class="name">Encoded</span></a><span class="params">(<span name="encode">encode: <span class="extype" name="scala.Stream">Stream</span>[<span class="extype" name="scala.Byte">Byte</span>]</span>)</span><span class="result"> extends <a href="Encodable.html" class="extype" name="stellar.sdk.model.xdr.Encodable">Encodable</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      
+      
     </li></ol>
             </div>
 
@@ -280,23 +332,7 @@
         <div class="values members">
               <h3>Value Members</h3>
               <ol>
-                <li name="stellar.sdk.model.xdr.Decode" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="Decode"></a><a id="Decode:Decode"></a>
-      <span class="permalink">
-      <a href="../../../../stellar/sdk/model/xdr/index.html#Decode" title="Permalink">
-        <i class="material-icons"></i>
-      </a>
-    </span>
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">object</span>
-      </span>
-      <span class="symbol">
-        <a title="" href="Decode$.html"><span class="name">Decode</span></a>
-      </span>
-      
-      
-    </li><li name="stellar.sdk.model.xdr.Encode" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+                <li name="stellar.sdk.model.xdr.Encode" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="Encode"></a><a id="Encode:Encode"></a>
       <span class="permalink">
       <a href="../../../../stellar/sdk/model/xdr/index.html#Encode" title="Permalink">

@@ -254,7 +254,7 @@
                         <a class="class" href="UpdateSellOfferOperation.html" title="Updates a sell offer in the Stellar network."></a>
                         <a href="UpdateSellOfferOperation.html" title="Updates a sell offer in the Stellar network.">UpdateSellOfferOperation</a>
                       </li><li class="current-entities indented4">
-                        <span class="separator"></span>
+                        <a class="object" href="WriteDataOperation$.html" title=""></a>
                         <a class="class" href="" title="Creates or updates a Data Entry (name/value pair) for an account."></a>
                         <a href="" title="Creates or updates a Data Entry (name/value pair) for an account.">WriteDataOperation</a>
                       </li>
@@ -264,14 +264,16 @@
           <div id="content">
             <body class="class type">
       <div id="definition">
-        <div class="big-circle class">c</div>
+        <a href="WriteDataOperation$.html" title="See companion object"><div class="big-circle class-companion-object">c</div></a>
         <p id="owner"><a href="../../../index.html" class="extype" name="stellar">stellar</a>.<a href="../../index.html" class="extype" name="stellar.sdk">sdk</a>.<a href="../index.html" class="extype" name="stellar.sdk.model">model</a>.<a href="index.html" class="extype" name="stellar.sdk.model.op">op</a></p>
-        <h1>WriteDataOperation<span class="permalink">
+        <h1><a href="WriteDataOperation$.html" title="See companion object">WriteDataOperation</a><span class="permalink">
       <a href="../../../../stellar/sdk/model/op/WriteDataOperation.html" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span></h1>
-        <h3><span class="morelinks"></span></h3>
+        <h3><span class="morelinks"><div>
+            Companion <a href="WriteDataOperation$.html" title="See companion object">object WriteDataOperation</a>
+          </div></span></h3>
       </div>
 
       <h4 id="signature" class="signature">
@@ -280,7 +282,7 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <span class="name">WriteDataOperation</span><span class="params">(<span name="name">name: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="value">value: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="sourceAccount">sourceAccount: <span class="extype" name="scala.Option">Option</span>[<a href="../../PublicKeyOps.html" class="extype" name="stellar.sdk.PublicKeyOps">PublicKeyOps</a>] = <span class="symbol">None</span></span>)</span><span class="result"> extends <a href="ManageDataOperation.html" class="extype" name="stellar.sdk.model.op.ManageDataOperation">ManageDataOperation</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <span class="name">WriteDataOperation</span><span class="params">(<span name="name">name: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="value">value: <span class="extype" name="scala.Array">Array</span>[<span class="extype" name="scala.Byte">Byte</span>]</span>, <span name="sourceAccount">sourceAccount: <span class="extype" name="scala.Option">Option</span>[<a href="../../PublicKeyOps.html" class="extype" name="stellar.sdk.PublicKeyOps">PublicKeyOps</a>] = <span class="symbol">None</span></span>)</span><span class="result"> extends <a href="ManageDataOperation.html" class="extype" name="stellar.sdk.model.op.ManageDataOperation">ManageDataOperation</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4>
 
@@ -337,9 +339,9 @@
         <div id="constructors" class="members">
               <h3>Instance Constructors</h3>
               <ol><li name="stellar.sdk.model.op.WriteDataOperation#&lt;init&gt;" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="&lt;init&gt;(name:String,value:String,sourceAccount:Option[stellar.sdk.PublicKeyOps]):stellar.sdk.model.op.WriteDataOperation"></a><a id="&lt;init&gt;:WriteDataOperation"></a>
+      <a id="&lt;init&gt;(name:String,value:Array[Byte],sourceAccount:Option[stellar.sdk.PublicKeyOps]):stellar.sdk.model.op.WriteDataOperation"></a><a id="&lt;init&gt;:WriteDataOperation"></a>
       <span class="permalink">
-      <a href="../../../../stellar/sdk/model/op/WriteDataOperation.html#&lt;init&gt;(name:String,value:String,sourceAccount:Option[stellar.sdk.PublicKeyOps]):stellar.sdk.model.op.WriteDataOperation" title="Permalink">
+      <a href="../../../../stellar/sdk/model/op/WriteDataOperation.html#&lt;init&gt;(name:String,value:Array[Byte],sourceAccount:Option[stellar.sdk.PublicKeyOps]):stellar.sdk.model.op.WriteDataOperation" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -348,7 +350,7 @@
         <span class="kind">new</span>
       </span>
       <span class="symbol">
-        <span class="name">WriteDataOperation</span><span class="params">(<span name="name">name: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="value">value: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="sourceAccount">sourceAccount: <span class="extype" name="scala.Option">Option</span>[<a href="../../PublicKeyOps.html" class="extype" name="stellar.sdk.PublicKeyOps">PublicKeyOps</a>] = <span class="symbol">None</span></span>)</span>
+        <span class="name">WriteDataOperation</span><span class="params">(<span name="name">name: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="value">value: <span class="extype" name="scala.Array">Array</span>[<span class="extype" name="scala.Byte">Byte</span>]</span>, <span name="sourceAccount">sourceAccount: <span class="extype" name="scala.Option">Option</span>[<a href="../../PublicKeyOps.html" class="extype" name="stellar.sdk.PublicKeyOps">PublicKeyOps</a>] = <span class="symbol">None</span></span>)</span>
       </span>
       
       <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt class="param">sourceAccount</dt><dd class="cmt"><p>the account effecting this operation, if different from the owning account of the transaction</p></dd></dl></div>
@@ -642,9 +644,9 @@
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
     </li><li name="stellar.sdk.model.op.WriteDataOperation#value" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="value:String"></a>
+      <a id="value:Array[Byte]"></a>
       <span class="permalink">
-      <a href="../../../../stellar/sdk/model/op/WriteDataOperation.html#value:String" title="Permalink">
+      <a href="../../../../stellar/sdk/model/op/WriteDataOperation.html#value:Array[Byte]" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -653,7 +655,7 @@
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">value</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
+        <span class="name">value</span><span class="result">: <span class="extype" name="scala.Array">Array</span>[<span class="extype" name="scala.Byte">Byte</span>]</span>
       </span>
       
       

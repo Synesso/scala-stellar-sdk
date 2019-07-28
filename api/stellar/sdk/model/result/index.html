@@ -117,6 +117,22 @@
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../../index.html" class="extype" name="stellar.sdk">sdk</a></dd></dl></div>
+    </li><li name="stellar.sdk.model.ledger" visbl="pub" class="indented4 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="ledger"></a><a id="ledger:ledger"></a>
+      <span class="permalink">
+      <a href="../../../stellar/sdk/model/index.html#ledger" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">package</span>
+      </span>
+      <span class="symbol">
+        <a title="" href="../ledger/index.html"><span class="name">ledger</span></a>
+      </span>
+      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../index.html" class="extype" name="stellar.sdk.model">model</a></dd></dl></div>
     </li><li name="stellar.sdk.model.op" visbl="pub" class="indented4 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="op"></a><a id="op:op"></a>
       <span class="permalink">
@@ -920,10 +936,11 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a title="ManageOffer operation was successful." href="ManageOfferSuccess.html"><span class="name">ManageOfferSuccess</span></a><span class="params">(<span name="claims">claims: <span class="extype" name="scala.Seq">Seq</span>[<a href="OfferClaim.html" class="extype" name="stellar.sdk.model.result.OfferClaim">OfferClaim</a>]</span>)</span><span class="result"> extends <a href="ManageOfferResult.html" class="extype" name="stellar.sdk.model.result.ManageOfferResult">ManageOfferResult</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a title="ManageOffer operation was successful." href="ManageOfferSuccess.html"><span class="name">ManageOfferSuccess</span></a><span class="params">(<span name="claims">claims: <span class="extype" name="scala.Seq">Seq</span>[<a href="OfferClaim.html" class="extype" name="stellar.sdk.model.result.OfferClaim">OfferClaim</a>]</span>, <span name="entry">entry: <span class="extype" name="scala.Option">Option</span>[<a href="../ledger/OfferEntry.html" class="extype" name="stellar.sdk.model.ledger.OfferEntry">OfferEntry</a>]</span>)</span><span class="result"> extends <a href="ManageOfferResult.html" class="extype" name="stellar.sdk.model.result.ManageOfferResult">ManageOfferResult</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       
-      <p class="shortcomment cmt">ManageOffer operation was successful.</p><div class="fullcomment"><div class="comment cmt"><p>ManageOffer operation was successful.</p></div><dl class="paramcmts block"><dt class="param">claims</dt><dd class="cmt"><p>the trades that were effected as a result of posting this offer.</p></dd></dl></div>
+      <p class="shortcomment cmt">ManageOffer operation was successful.</p><div class="fullcomment"><div class="comment cmt"><p>ManageOffer operation was successful.
+</p></div><dl class="paramcmts block"><dt class="param">claims</dt><dd class="cmt"><p>the trades that were effected as a result of posting this offer.</p></dd><dt class="param">entry</dt><dd class="cmt"><p>the offer entry that was newly created or updated.</p></dd></dl></div>
     </li><li name="stellar.sdk.model.result.OfferClaim" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="OfferClaimextendsEncodablewithProductwithSerializable"></a><a id="OfferClaim:OfferClaim"></a>
       <span class="permalink">
@@ -1080,7 +1097,7 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a title="A transaction that has been included in the ledger sometime in the past." href="TransactionHistory.html"><span class="name">TransactionHistory</span></a><span class="params">(<span name="hash">hash: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="ledgerId">ledgerId: <span class="extype" name="scala.Long">Long</span></span>, <span name="createdAt">createdAt: <span class="extype" name="java.time.ZonedDateTime">ZonedDateTime</span></span>, <span name="account">account: <a href="../../PublicKey.html" class="extype" name="stellar.sdk.PublicKey">PublicKey</a></span>, <span name="sequence">sequence: <span class="extype" name="scala.Long">Long</span></span>, <span name="feePaid">feePaid: <a href="../NativeAmount.html" class="extype" name="stellar.sdk.model.NativeAmount">NativeAmount</a></span>, <span name="operationCount">operationCount: <span class="extype" name="scala.Int">Int</span></span>, <span name="memo">memo: <a href="../Memo.html" class="extype" name="stellar.sdk.model.Memo">Memo</a></span>, <span name="signatures">signatures: <span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>, <span name="envelopeXDR">envelopeXDR: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="resultXDR">resultXDR: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="resultMetaXDR">resultMetaXDR: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="feeMetaXDR">feeMetaXDR: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="validAfter">validAfter: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="java.time.ZonedDateTime">ZonedDateTime</span>]</span>, <span name="validBefore">validBefore: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="java.time.ZonedDateTime">ZonedDateTime</span>]</span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a title="A transaction that has been included in the ledger sometime in the past." href="TransactionHistory.html"><span class="name">TransactionHistory</span></a><span class="params">(<span name="hash">hash: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="ledgerId">ledgerId: <span class="extype" name="scala.Long">Long</span></span>, <span name="createdAt">createdAt: <span class="extype" name="java.time.ZonedDateTime">ZonedDateTime</span></span>, <span name="account">account: <a href="../../PublicKey.html" class="extype" name="stellar.sdk.PublicKey">PublicKey</a></span>, <span name="sequence">sequence: <span class="extype" name="scala.Long">Long</span></span>, <span name="maxFee">maxFee: <a href="../NativeAmount.html" class="extype" name="stellar.sdk.model.NativeAmount">NativeAmount</a></span>, <span name="feeCharged">feeCharged: <a href="../NativeAmount.html" class="extype" name="stellar.sdk.model.NativeAmount">NativeAmount</a></span>, <span name="operationCount">operationCount: <span class="extype" name="scala.Int">Int</span></span>, <span name="memo">memo: <a href="../Memo.html" class="extype" name="stellar.sdk.model.Memo">Memo</a></span>, <span name="signatures">signatures: <span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>, <span name="envelopeXDR">envelopeXDR: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="resultXDR">resultXDR: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="resultMetaXDR">resultMetaXDR: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="feeMetaXDR">feeMetaXDR: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="validAfter">validAfter: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="java.time.ZonedDateTime">ZonedDateTime</span>]</span>, <span name="validBefore">validBefore: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="java.time.ZonedDateTime">ZonedDateTime</span>]</span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       
       <p class="shortcomment cmt">A transaction that has been included in the ledger sometime in the past.</p>
@@ -1250,7 +1267,7 @@ E.g. The source and destination accounts are the same.
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a title="" href="AccountMergeResult$.html"><span class="name">AccountMergeResult</span></a>
+        <a title="" href="AccountMergeResult$.html"><span class="name">AccountMergeResult</span></a><span class="result"> extends <a href="../xdr/Decode.html" class="extype" name="stellar.sdk.model.xdr.Decode">Decode</a></span>
       </span>
       
       
@@ -1380,7 +1397,7 @@ E.g. The limit was less than zero, or the asset was malformed, or the native ass
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a title="" href="AllowTrustResult$.html"><span class="name">AllowTrustResult</span></a>
+        <a title="" href="AllowTrustResult$.html"><span class="name">AllowTrustResult</span></a><span class="result"> extends <a href="../xdr/Decode.html" class="extype" name="stellar.sdk.model.xdr.Decode">Decode</a></span>
       </span>
       
       
@@ -1460,7 +1477,7 @@ E.g. The limit was less than zero, or the asset was malformed, or the native ass
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a title="" href="BumpSequenceResult$.html"><span class="name">BumpSequenceResult</span></a>
+        <a title="" href="BumpSequenceResult$.html"><span class="name">BumpSequenceResult</span></a><span class="result"> extends <a href="../xdr/Decode.html" class="extype" name="stellar.sdk.model.xdr.Decode">Decode</a></span>
       </span>
       
       
@@ -1558,7 +1575,7 @@ E.g. The limit was less than zero, or the asset was malformed, or the native ass
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a title="" href="ChangeTrustResult$.html"><span class="name">ChangeTrustResult</span></a>
+        <a title="" href="ChangeTrustResult$.html"><span class="name">ChangeTrustResult</span></a><span class="result"> extends <a href="../xdr/Decode.html" class="extype" name="stellar.sdk.model.xdr.Decode">Decode</a></span>
       </span>
       
       
@@ -1654,7 +1671,7 @@ E.g. The limit was less than zero, or the asset was malformed, or the native ass
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a title="" href="CreateAccountResult$.html"><span class="name">CreateAccountResult</span></a>
+        <a title="" href="CreateAccountResult$.html"><span class="name">CreateAccountResult</span></a><span class="result"> extends <a href="../xdr/Decode.html" class="extype" name="stellar.sdk.model.xdr.Decode">Decode</a></span>
       </span>
       
       
@@ -1818,7 +1835,7 @@ the amount was less than zero, or the price numerator or denominator were zero o
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a title="" href="CreatePassiveSellOfferResult$.html"><span class="name">CreatePassiveSellOfferResult</span></a>
+        <a title="" href="CreatePassiveSellOfferResult$.html"><span class="name">CreatePassiveSellOfferResult</span></a><span class="result"> extends <a href="../xdr/Decode.html" class="extype" name="stellar.sdk.model.xdr.Decode">Decode</a></span>
       </span>
       
       
@@ -1948,7 +1965,7 @@ the amount was less than zero, or the price numerator or denominator were zero o
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a title="" href="InflationPayout$.html"><span class="name">InflationPayout</span></a><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a title="" href="InflationPayout$.html"><span class="name">InflationPayout</span></a><span class="result"> extends <a href="../xdr/Decode.html" class="extype" name="stellar.sdk.model.xdr.Decode">Decode</a> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       
       
@@ -1964,7 +1981,7 @@ the amount was less than zero, or the price numerator or denominator were zero o
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a title="" href="InflationResult$.html"><span class="name">InflationResult</span></a>
+        <a title="" href="InflationResult$.html"><span class="name">InflationResult</span></a><span class="result"> extends <a href="../xdr/Decode.html" class="extype" name="stellar.sdk.model.xdr.Decode">Decode</a></span>
       </span>
       
       
@@ -1996,7 +2013,7 @@ the amount was less than zero, or the price numerator or denominator were zero o
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a title="" href="ManageDataResult$.html"><span class="name">ManageDataResult</span></a>
+        <a title="" href="ManageDataResult$.html"><span class="name">ManageDataResult</span></a><span class="result"> extends <a href="../xdr/Decode.html" class="extype" name="stellar.sdk.model.xdr.Decode">Decode</a></span>
       </span>
       
       
@@ -2144,7 +2161,7 @@ the amount was less than zero, or the price numerator or denominator were zero o
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a title="" href="ManageOfferResult$.html"><span class="name">ManageOfferResult</span></a>
+        <a title="" href="ManageOfferResult$.html"><span class="name">ManageOfferResult</span></a><span class="result"> extends <a href="../xdr/Decode.html" class="extype" name="stellar.sdk.model.xdr.Decode">Decode</a></span>
       </span>
       
       
@@ -2242,7 +2259,7 @@ the amount was less than zero, or the price numerator or denominator were zero o
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a title="" href="OfferClaim$.html"><span class="name">OfferClaim</span></a><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a title="" href="OfferClaim$.html"><span class="name">OfferClaim</span></a><span class="result"> extends <a href="../xdr/Decode.html" class="extype" name="stellar.sdk.model.xdr.Decode">Decode</a> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       
       
@@ -2274,7 +2291,7 @@ the amount was less than zero, or the price numerator or denominator were zero o
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a title="" href="OperationResult$.html"><span class="name">OperationResult</span></a>
+        <a title="" href="OperationResult$.html"><span class="name">OperationResult</span></a><span class="result"> extends <a href="../xdr/Decode.html" class="extype" name="stellar.sdk.model.xdr.Decode">Decode</a></span>
       </span>
       
       
@@ -2388,7 +2405,7 @@ E.g. The destination or sendMax amounts were negative, or the any of the asset w
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a title="" href="PathPaymentResult$.html"><span class="name">PathPaymentResult</span></a>
+        <a title="" href="PathPaymentResult$.html"><span class="name">PathPaymentResult</span></a><span class="result"> extends <a href="../xdr/Decode.html" class="extype" name="stellar.sdk.model.xdr.Decode">Decode</a></span>
       </span>
       
       
@@ -2584,7 +2601,7 @@ E.g. The amount was negative, or the asset was invalid.
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a title="" href="PaymentResult$.html"><span class="name">PaymentResult</span></a>
+        <a title="" href="PaymentResult$.html"><span class="name">PaymentResult</span></a><span class="result"> extends <a href="../xdr/Decode.html" class="extype" name="stellar.sdk.model.xdr.Decode">Decode</a></span>
       </span>
       
       
@@ -2762,7 +2779,7 @@ E.g. The amount was negative, or the asset was invalid.
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a title="" href="SetOptionsResult$.html"><span class="name">SetOptionsResult</span></a>
+        <a title="" href="SetOptionsResult$.html"><span class="name">SetOptionsResult</span></a><span class="result"> extends <a href="../xdr/Decode.html" class="extype" name="stellar.sdk.model.xdr.Decode">Decode</a></span>
       </span>
       
       
@@ -2858,7 +2875,7 @@ E.g. The amount was negative, or the asset was invalid.
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a title="" href="TransactionResult$.html"><span class="name">TransactionResult</span></a>
+        <a title="" href="TransactionResult$.html"><span class="name">TransactionResult</span></a><span class="result"> extends <a href="../xdr/Decode.html" class="extype" name="stellar.sdk.model.xdr.Decode">Decode</a></span>
       </span>
       
       
