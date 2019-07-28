@@ -1,5 +1,6 @@
 package stellar.sdk
 
+import java.io.EOFException
 import java.net.URI
 import java.time.{Instant, Period}
 
@@ -65,7 +66,10 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
           val eventualTransactionPostResponse = signatories.foldLeft(signedTransaction)(_ sign _).submit()
           val transactionPostResponse = Await.result(eventualTransactionPostResponse, 5 minutes)
           transactionPostResponse must beLike[TransactionPostResponse] {
-            case _: TransactionApproved => ok
+            case a: TransactionApproved =>
+              a.ledgerEntries // can decode
+              a.result // can decode
+              ok
             case r: TransactionRejected =>
               logger.info(r.detail)
               r.opResultCodes.foreach(s => logger.info(s" - $s"))
@@ -487,6 +491,8 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
           t.feeCharged mustEqual NativeAmount(1700)
           t.operationCount mustEqual 17
           t.memo mustEqual NoMemo
+          t.ledgerEntries must not(throwAn[EOFException])
+          t.feeLedgerEntries must not(throwAn[EOFException])
       }.awaitFor(10.seconds)
     }
 

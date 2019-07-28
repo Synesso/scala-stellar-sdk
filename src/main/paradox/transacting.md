@@ -108,5 +108,6 @@ All transaction post and history responses include an XDR payload that describes
 on the ledger. The field `resultMetaXDR` is the base64-encoded XDR payload. The method `ledgerEntries` will decode the
 payload into an instance of @scaladoc[TransactionLedgerEntries](stellar.sdk.model.ledger.TransactionLedgerEntries).
 
+Similarly, the ledger effect of the fees is made available via the `feeMetaXDR` field and the `feeLedgerEntries` method.
 
 Continue reading to learn how to obtain historical data from network via @ref:[Queries](queries.md).

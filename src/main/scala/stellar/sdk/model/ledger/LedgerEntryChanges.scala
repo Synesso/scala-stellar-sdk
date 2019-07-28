@@ -1,7 +1,10 @@
 package stellar.sdk.model.ledger
 
 import cats.data.State
+import stellar.sdk.model.ledger.LedgerEntry.{int, switch, widen}
+import stellar.sdk.model.ledger.TransactionLedgerEntries.{arr, decode}
 import stellar.sdk.model.xdr.{Decode, Encodable, Encode}
+import stellar.sdk.util.ByteArrays
 
 sealed trait LedgerEntryChange extends Encodable
 
@@ -23,13 +26,17 @@ case class LedgerEntryState(entry: LedgerEntry) extends LedgerEntryChange {
 
 object LedgerEntryChange extends Decode {
 
-  val decode: State[Seq[Byte], LedgerEntryChange] = for {
-    entry <- switch[LedgerEntryChange](
-      widen(LedgerEntry.decode.map(LedgerEntryCreate).flatMap(drop(int))),
-      widen(LedgerEntry.decode.map(LedgerEntryUpdate).flatMap(drop(int))),
-      widen(LedgerKey.decode.map(LedgerEntryDelete)),
-      widen(LedgerEntry.decode.map(LedgerEntryState).flatMap(drop(int)))
-    )
-  } yield entry
+  val decode: State[Seq[Byte], LedgerEntryChange] = switch[LedgerEntryChange](
+    widen(LedgerEntry.decode.map(LedgerEntryCreate).flatMap(drop(int))),
+    widen(LedgerEntry.decode.map(LedgerEntryUpdate).flatMap(drop(int))),
+    widen(LedgerKey.decode.map(LedgerEntryDelete)),
+    widen(LedgerEntry.decode.map(LedgerEntryState).flatMap(drop(int)))
+  )
 }
 
+object LedgerEntryChanges {
+
+  def decodeXDR(base64: String): Seq[LedgerEntryChange] =
+    arr(LedgerEntryChange.decode).run(ByteArrays.base64(base64)).value._2
+
+}

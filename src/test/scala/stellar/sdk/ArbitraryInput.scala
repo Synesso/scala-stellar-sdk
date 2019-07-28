@@ -9,6 +9,7 @@ import org.apache.commons.codec.binary.Base64
 import org.scalacheck.{Arbitrary, Gen}
 import org.specs2.ScalaCheck
 import stellar.sdk.model._
+import stellar.sdk.model.ledger.OfferEntry
 import stellar.sdk.model.op._
 import stellar.sdk.model.response._
 import stellar.sdk.model.result.TransactionResult._
@@ -667,8 +668,21 @@ trait ArbitraryInput extends ScalaCheck {
     ManageDataSuccess, ManageDataNotSupportedYet, DeleteDataNameNotFound, AddDataLowReserve, AddDataInvalidName
   )
 
+  val genOfferEntry: Gen[OfferEntry] = for {
+    account <- genPublicKey
+    offerId <- Gen.posNum[Long]
+    selling <- genAmount
+    buying <- genAsset
+    price <- genPrice
+  } yield OfferEntry(account, offerId, selling, buying, price)
+
+  def genManageOfferSuccess: Gen[ManageOfferSuccess] = for {
+    claims <- Gen.listOf(genOfferClaim)
+    entry <- Gen.option(genOfferEntry)
+  } yield ManageOfferSuccess(claims, entry)
+
   def genManageOfferResult: Gen[ManageOfferResult] = Gen.oneOf(
-    Gen.listOf(genOfferClaim).map(ManageOfferSuccess),
+    genManageOfferSuccess,
     Gen.const(ManageOfferMalformed), Gen.const(ManageOfferBuyNoTrust), Gen.const(ManageOfferSellNoTrust),
     Gen.const(ManageOfferBuyNoAuth), Gen.const(ManageOfferSellNoAuth),
     Gen.const(ManageOfferBuyNoIssuer), Gen.const(ManageOfferSellNoIssuer),

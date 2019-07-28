@@ -17,6 +17,7 @@ As this project is pre 1.0, breaking changes may happen for minor version bumps.
 - [#35](https://github.com/Synesso/scala-stellar-sdk/issues/35) Support for trade aggregations endpoint `/trade_aggregations`.
 - [#53](https://github.com/Synesso/scala-stellar-sdk/issues/53) On-the-fly decoding of transaction meta-info about the
     entries affecting the ledger.
+- [#120](https://github.com/Synesso/scala-stellar-sdk/issues/120) On-the-fly decoding of transaction fee meta-info.
 
 ### Changed
 - [#92](https://github.com/Synesso/scala-stellar-sdk/issues/92) Horizon Release v0.18.0 compatibility. Added fields

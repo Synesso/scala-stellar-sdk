@@ -1,13 +1,21 @@
 package stellar.sdk.model.result
 
 import cats.data.State
+import stellar.sdk.model.ledger.OfferEntry
 import stellar.sdk.model.xdr.{Decode, Encode}
 
 sealed abstract class ManageOfferResult(val opResultCode: Int) extends ProcessedOperationResult(opCode = 3)
 
 object ManageOfferResult extends Decode {
   val decode: State[Seq[Byte], ManageOfferResult] = int.flatMap {
-    case 0 => arr(OfferClaim.decode).map(ManageOfferSuccess)
+    case 0 => for {
+      claims <- arr(OfferClaim.decode)
+      entry <- switch[Option[OfferEntry]](
+        OfferEntry.decode.map(Some(_: OfferEntry)),
+        OfferEntry.decode.map(Some(_: OfferEntry)),
+        State.pure(Option.empty[OfferEntry])
+      )
+    } yield ManageOfferSuccess(claims, entry)
     case -1 => State.pure(ManageOfferMalformed)
     case -2 => State.pure(ManageOfferSellNoTrust)
     case -3 => State.pure(ManageOfferBuyNoTrust)
@@ -25,10 +33,12 @@ object ManageOfferResult extends Decode {
 
 /**
   * ManageOffer operation was successful.
+  *
   * @param claims the trades that were effected as a result of posting this offer.
+  * @param entry the offer entry that was newly created or updated.
   */
-case class ManageOfferSuccess(claims: Seq[OfferClaim]) extends ManageOfferResult(0) {
-  override def encode: Stream[Byte] = super.encode ++ Encode.arr(claims)
+case class ManageOfferSuccess(claims: Seq[OfferClaim], entry: Option[OfferEntry]) extends ManageOfferResult(0) {
+  override def encode: Stream[Byte] = super.encode ++ Encode.arr(claims) ++ Encode.opt(entry, ifPresent = 0, ifAbsent = 2)
 }
 
 /**

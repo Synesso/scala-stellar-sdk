@@ -21,9 +21,8 @@ abstract class ProcessedOperationResult(opCode: Int) extends OperationResult(opC
       Encode.int(opResultCode) // the operation result code
 }
 
-object OperationResult extends Decode {
 
-//  private def widen[A, W, O <: W](s: State[A, O]): State[A, W] = s.map(w => w: W)
+object OperationResult extends Decode {
 
   val decode: State[Seq[Byte], OperationResult] = int.flatMap {
     case -3 => widen(State.pure(OperationNotSupportedResult))
@@ -41,7 +40,8 @@ object OperationResult extends Decode {
       widen(AccountMergeResult.decode),
       widen(InflationResult.decode),
       widen(ManageDataResult.decode),
-      widen(BumpSequenceResult.decode)
+      widen(BumpSequenceResult.decode),
+      widen(ManageOfferResult.decode)
     )
   }
 }

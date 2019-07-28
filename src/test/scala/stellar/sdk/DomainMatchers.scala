@@ -227,7 +227,7 @@ trait DomainMatchers extends AnyMatchers with MustExpectations with SequenceMatc
 
   def serdeUsing[E <: Encodable](decoder: State[Seq[Byte], E]): Matcher[E] = beLike {
     case expected: Encodable =>
-      val encoded = expected.encode
+      val encoded = expected.encode.toList
       val (remaining, actual) = decoder.run(encoded).value
       actual mustEqual expected
       remaining must beEmpty

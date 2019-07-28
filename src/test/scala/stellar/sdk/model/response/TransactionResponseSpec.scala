@@ -67,20 +67,6 @@ class TransactionResponseSpec extends Specification with ArbitraryInput with Dom
       rejection.sequenceIncremented must beFalse
     }
 
-    // todo - reimplement [#53]
-/*
-    "provide access to the XDR Transaction Result Meta" >> {
-      TransactionApproved("", 1, "", "", "AAAAAAAAAAEAAAACAAAAAAAACVIAAAAAAAAAAPV0vlN3VR04WFNx2dsyXUyxlcIhv99+eHwdMjqmf" +
-        "MHaAAAAF0h26AAAAAlSAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAQAACVIAAAAAAAAAAGXNhLrhGtltTwCpmqlarh7" +
-        "s1DB2hIkbP//jgzn4Fos/AAHGqAnsV5wAAAk9AAAAAQAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAA").resultMeta must
-        beLike { case tm: TransactionMeta =>
-          tm.getDiscriminant mustEqual 0
-          tm.getOperations must haveSize(1)
-          tm.getOperations.head.getChanges.getLedgerEntryChanges must haveSize(2)
-        }
-    }
-*/
-
     "deserialise from JSON" >> prop { tpr: TransactionApproved =>
       val json = ("hash" -> tpr.hash) ~ ("ledger" -> tpr.ledger) ~ ("envelope_xdr" -> tpr.envelopeXDR) ~
         ("result_xdr" -> tpr.resultXDR) ~ ("result_meta_xdr" -> tpr.resultMetaXDR)

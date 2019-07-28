@@ -69,7 +69,7 @@ object AccountRespDeserializer extends ResponseParser[AccountResponse]({ o: JObj
   val JObject(dataFields) = o \ "data"
   val data = dataFields.toMap.mapValues(_.extract[String]).mapValues(ByteArrays.base64)
 
-  AccountResponse(id, seq, subEntryCount, Thresholds(lowThreshold, mediumThreshold, highThreshold), authRequired,
-    authRevocable, balances, signers, data)
+  AccountResponse(id, seq, subEntryCount, Thresholds(lowThreshold, mediumThreshold, highThreshold),
+    authRequired, authRevocable, balances, signers, data)
 
 })
