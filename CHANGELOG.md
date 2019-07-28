@@ -4,6 +4,10 @@ As this project is pre 1.0, breaking changes may happen for minor version bumps.
 
 ## Next version
 
+Nothing, yet.
+
+## 0.8.0
+
 ### Breaking changes
 
 - `AccountResponse` now models account data values as `Array[Byte]`, not `String` (See below).
