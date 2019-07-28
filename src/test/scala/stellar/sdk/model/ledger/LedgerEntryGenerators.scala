@@ -2,6 +2,7 @@ package stellar.sdk.model.ledger
 
 import org.scalacheck.{Arbitrary, Gen}
 import stellar.sdk.ArbitraryInput
+import stellar.sdk.model.LedgerThresholds
 import stellar.sdk.model.op.IssuerFlag
 
 trait LedgerEntryGenerators extends ArbitraryInput {
@@ -11,6 +12,11 @@ trait LedgerEntryGenerators extends ArbitraryInput {
     buying <- Gen.posNum[Long]
     selling <- Gen.posNum[Long]
   } yield Liabilities(buying, selling)
+
+  val genLedgerThresholds: Gen[LedgerThresholds] = for {
+    baseThresholds <- genThresholds
+    master <- Gen.choose(0, 255)
+  } yield LedgerThresholds(master, baseThresholds.low, baseThresholds.med, baseThresholds.high)
 
   // LedgerKeys
   val genAccountKey: Gen[AccountKey] = genPublicKey.map(AccountKey.apply)
@@ -44,7 +50,7 @@ trait LedgerEntryGenerators extends ArbitraryInput {
     inflationDestination <- Gen.option(genPublicKey)
     flags <- Gen.containerOf[Set, IssuerFlag](genIssuerFlag)
     homeDomain <- Gen.option(Gen.identifier)
-    thresholds <- genThresholds
+    thresholds <- genLedgerThresholds
     signers <- Gen.listOf(genSigner)
     liabilities <- Gen.option(genLiabilities)
   } yield AccountEntry(account, balance, seqNum, numSubEntries, inflationDestination, flags, homeDomain,

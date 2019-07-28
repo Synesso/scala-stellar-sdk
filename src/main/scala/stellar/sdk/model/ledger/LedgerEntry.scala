@@ -65,7 +65,7 @@ object LedgerEntry extends Decode {
  */
 case class AccountEntry(account: PublicKeyOps, balance: Long, seqNum: Long, numSubEntries: Int,
                         inflationDestination: Option[PublicKeyOps], flags: Set[IssuerFlag],
-                        homeDomain: Option[String], thresholds: Thresholds, signers: Seq[Signer],
+                        homeDomain: Option[String], thresholds: LedgerThresholds, signers: Seq[Signer],
                         liabilities: Option[Liabilities]) extends LedgerEntryData {
 
   override def encode: Stream[Byte] =
@@ -91,7 +91,7 @@ object AccountEntry extends Decode {
     inflationDestination <- opt(KeyPair.decode)
     flags <- IssuerFlags.decode
     homeDomain <- string.map(Some(_).filter(_.nonEmpty))
-    thresholds <- Thresholds.decode
+    thresholds <- LedgerThresholds.decode
     signers <- arr(Signer.decode)
     liabilities <- opt(Liabilities.decode)
   } yield AccountEntry(account, balance, seqNum, numSubEntries, inflationDestination, flags, homeDomain, thresholds,
