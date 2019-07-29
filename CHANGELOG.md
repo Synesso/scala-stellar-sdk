@@ -4,7 +4,10 @@ As this project is pre 1.0, breaking changes may happen for minor version bumps.
 
 ## Next version
 
-Nothing, yet.
+### Breaking changes
+
+- [#121](https://github.com/Synesso/scala-stellar-sdk/issues/121) Transaction fees are no longer implicit. The initiator
+        of a transaction needs to explicitly specify the maximum fee that they are prepared to pay.
 
 ## 0.8.0
 

@@ -163,7 +163,7 @@ trait ArbitraryInput extends ScalaCheck {
   def genPublicKey: Gen[PublicKey] = genKeyPair.map(kp => PublicKey(kp.pk))
 
   def genAccount: Gen[Account] = for {
-    kp <- genKeyPair
+    kp <- genPublicKey
     seq <- Gen.posNum[Long]
   } yield {
     Account(kp, seq)
@@ -445,16 +445,10 @@ trait ArbitraryInput extends ScalaCheck {
     memo <- genMemo
     operations <- Gen.nonEmptyListOf(genOperation)
     timeBounds <- Gen.option(genTimeBounds)
+    maxFee <- genNativeAmount.map(a => NativeAmount(math.max(a.units, operations.size * 100)))
   } yield {
-    Transaction(source, operations, memo, timeBounds)
+    Transaction(source, operations, memo, timeBounds, maxFee)
   }
-
-//  def genSignature: Gen[XDRSignature] =
-//    Gen.nonEmptyContainerOf[Array, Byte](Arbitrary.arbByte.arbitrary).map { bs: Array[Byte] =>
-//      val s = new XDRSignature
-//      s.setSignature(bs)
-//      s
-//    }
 
   def genSignedTransaction: Gen[SignedTransaction] = for {
     txn <- genTransaction

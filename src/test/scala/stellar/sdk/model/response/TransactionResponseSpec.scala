@@ -32,7 +32,7 @@ class TransactionResponseSpec extends Specification with ArbitraryInput with Dom
             )
             txn.timeBounds must beNone
             txn.memo mustEqual NoMemo
-            txn.fee must beSome(txn.calculatedFee)
+            txn.maxFee mustEqual NativeAmount(100)
             signatures.map(_.data).map(bytesToHex(_)) mustEqual Seq("E70E7F0F381793BB4BF91E3E950950" +
               "4A0011ED6A9F6EB7E1C7D3EB5A050B033CD2C0F965DF8B0AEAD611B970440FD2A4C71B9F6F926CA3C5C7A3AA3CFB74FC0E"
             )
