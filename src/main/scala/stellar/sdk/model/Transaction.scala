@@ -1,6 +1,7 @@
 package stellar.sdk.model
 
 import cats.data._
+import stellar.sdk.model.TimeBounds.Unbounded
 import stellar.sdk.model.op.Operation
 import stellar.sdk.model.response.TransactionPostResponse
 import stellar.sdk.model.xdr.Encode.{arr, int, long, opt}
@@ -14,7 +15,7 @@ import scala.concurrent.{ExecutionContext, Future}
 case class Transaction(source: Account,
                        operations: Seq[Operation] = Nil,
                        memo: Memo = NoMemo,
-                       timeBounds: Option[TimeBounds] = None,
+                       timeBounds: TimeBounds,
                        maxFee: NativeAmount)(implicit val network: Network) extends Encodable {
 
   private val BaseFee = 100L
@@ -44,7 +45,7 @@ case class Transaction(source: Account,
     source.publicKey.encode ++
       int(maxFee.units.toInt) ++
       long(source.sequenceNumber) ++
-      opt(timeBounds) ++
+      opt(Some(timeBounds).filterNot(_ == Unbounded)) ++
       memo.encode ++
       arr(operations) ++
       int(0)
@@ -63,7 +64,7 @@ object Transaction extends Decode {
       publicKey <- KeyPair.decode
       fee <- int
       seqNo <- long
-      timeBounds <- opt(TimeBounds.decode)
+      timeBounds <- opt(TimeBounds.decode).map(_.getOrElse(Unbounded))
       memo <- Memo.decode
       ops <- arr(Operation.decode)
       _ <- int

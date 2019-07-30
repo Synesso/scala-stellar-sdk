@@ -9,6 +9,7 @@ import stellar.sdk._
 import stellar.sdk.model.op.CreateAccountOperation
 import stellar.sdk.model.result._
 import org.json4s.JsonDSL._
+import stellar.sdk.model.TimeBounds.Unbounded
 import stellar.sdk.model._
 
 class TransactionResponseSpec extends Specification with ArbitraryInput with DomainMatchers {
@@ -30,7 +31,7 @@ class TransactionResponseSpec extends Specification with ArbitraryInput with Dom
                 NativeAmount(10000000)
               )
             )
-            txn.timeBounds must beNone
+            txn.timeBounds must beEqualTo(Unbounded)
             txn.memo mustEqual NoMemo
             txn.maxFee mustEqual NativeAmount(100)
             signatures.map(_.data).map(bytesToHex(_)) mustEqual Seq("E70E7F0F381793BB4BF91E3E950950" +

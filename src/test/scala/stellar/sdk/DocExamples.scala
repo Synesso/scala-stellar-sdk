@@ -10,6 +10,7 @@ import akka.stream.scaladsl.Source
 import org.apache.commons.codec.binary.Hex
 import org.json4s.CustomSerializer
 import stellar.sdk.inet.HorizonAccess
+import stellar.sdk.model.TimeBounds.Unbounded
 import stellar.sdk.model._
 import stellar.sdk.model.op._
 import stellar.sdk.model.response._
@@ -353,14 +354,14 @@ class DocExamples() {
         CreateAccountOperation(aliceKey),
         CreateAccountOperation(bobKey),
         PaymentOperation(charlieKey, Amount.lumens(42))
-      ), maxFee = NativeAmount(100))
+      ), timeBounds = Unbounded, maxFee = NativeAmount(100))
       // #transaction_createwithops_example
     }
 
     def `show how to add operations afterwards`() = {
       val account = Account(sourceKey, nextSequenceNumber)
       // #transaction_addops_example
-      val txn = Transaction(account, maxFee = NativeAmount(100))
+      val txn = Transaction(account, timeBounds = Unbounded, maxFee = NativeAmount(100))
         .add(PaymentOperation(aliceKey, Amount.lumens(100)))
         .add(PaymentOperation(bobKey, Amount.lumens(77)))
         .add(PaymentOperation(charlieKey, Amount.lumens(4.08)))
@@ -376,7 +377,7 @@ class DocExamples() {
       val account = Account(sourceKey, nextSequenceNumber)
       val operation = PaymentOperation(aliceKey, Amount.lumens(100))
       // #transaction_signing_example
-      val transaction = Transaction(account, maxFee = NativeAmount(100)).add(operation)
+      val transaction = Transaction(account, timeBounds = Unbounded, maxFee = NativeAmount(100)).add(operation)
       val signedTransaction: SignedTransaction = transaction.sign(sourceKey)
       // #transaction_signing_example
     }
@@ -385,7 +386,7 @@ class DocExamples() {
       val jointAccount = Account(sourceKey, nextSequenceNumber)
       val operation = PaymentOperation(aliceKey, Amount.lumens(100))
       // #joint_transaction_signing_example
-      val transaction = Transaction(jointAccount, maxFee = NativeAmount(100)).add(operation)
+      val transaction = Transaction(jointAccount, timeBounds = Unbounded, maxFee = NativeAmount(100)).add(operation)
       val signedTransaction: SignedTransaction = transaction.sign(aliceKey, bobKey)
       // #joint_transaction_signing_example
     }
@@ -394,7 +395,7 @@ class DocExamples() {
       val account = Account(sourceKey, nextSequenceNumber)
       val operation = PaymentOperation(aliceKey, Amount.lumens(100))
       // #transaction_submit_example
-      val transaction = Transaction(account, maxFee = NativeAmount(100)).add(operation).sign(sourceKey)
+      val transaction = Transaction(account, timeBounds = Unbounded, maxFee = NativeAmount(100)).add(operation).sign(sourceKey)
       val response: Future[TransactionPostResponse] = transaction.submit()
       // #transaction_submit_example
     }
@@ -403,7 +404,7 @@ class DocExamples() {
       val account = Account(sourceKey, nextSequenceNumber)
       val operation = PaymentOperation(aliceKey, Amount.lumens(100))
       // #transaction_response_example
-      Transaction(account, maxFee = NativeAmount(100)).add(operation).sign(sourceKey).submit().foreach {
+      Transaction(account, timeBounds = Unbounded, maxFee = NativeAmount(100)).add(operation).sign(sourceKey).submit().foreach {
         case ok: TransactionApproved => println(ok.feeCharged)
         case ko => println(ko)
       }

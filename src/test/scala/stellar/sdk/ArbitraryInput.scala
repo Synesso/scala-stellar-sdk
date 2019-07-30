@@ -444,7 +444,7 @@ trait ArbitraryInput extends ScalaCheck {
     source <- genAccount
     memo <- genMemo
     operations <- Gen.nonEmptyListOf(genOperation)
-    timeBounds <- Gen.option(genTimeBounds)
+    timeBounds <- genTimeBounds
     maxFee <- genNativeAmount.map(a => NativeAmount(math.max(a.units, operations.size * 100)))
   } yield {
     Transaction(source, operations, memo, timeBounds, maxFee)
