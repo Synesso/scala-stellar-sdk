@@ -658,7 +658,7 @@ case class DeleteDataOperation(name: String, sourceAccount: Option[PublicKeyOps]
   * @param sourceAccount the account effecting this operation, if different from the owning account of the transaction
   * @see [[https://www.stellar.org/developers/horizon/reference/resources/operation.html#manage-data endpoint doc]]
   */
-case class WriteDataOperation(name: String, value: Array[Byte], sourceAccount: Option[PublicKeyOps] = None) extends ManageDataOperation {
+case class WriteDataOperation(name: String, value: Seq[Byte], sourceAccount: Option[PublicKeyOps] = None) extends ManageDataOperation {
 
   require(name.getBytes(UTF_8).length <= 64, s"name cannot be greater than 64 bytes, was ${name.length}")
   require(value.length <= 64 && value.nonEmpty, s"value must be non-empty and cannot be greater than 64 bytes, was ${value.length}")

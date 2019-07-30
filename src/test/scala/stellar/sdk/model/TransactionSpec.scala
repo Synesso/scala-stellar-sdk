@@ -8,23 +8,15 @@ import stellar.sdk.{ArbitraryInput, DomainMatchers, KeyPair, model}
 
 class TransactionSpec extends Specification with ArbitraryInput with DomainMatchers {
 
-  "the default transaction fee" should {
-    "be equal to 100 * the quantity of operations" >> prop { (source: Account, ops: Seq[Operation]) =>
-      model.Transaction(source, ops, NoMemo).calculatedFee mustEqual NativeAmount(ops.size * 100)
-    }.setGen2(Gen.nonEmptyListOf(genOperation))
-  }
-
   "a transaction" should {
 
     "serde via xdr bytes" >> prop { transaction: Transaction =>
-      val (remaining, actual) = Transaction.decode.run(transaction.encode).value
-      actual must beEquivalentTo(transaction)
-      remaining must beEmpty
+      transaction must serdeUsing(Transaction.decode)
     }
 
     "allow adding of operations one at a time" >> prop { (source: Account, ops: Seq[Operation]) =>
-      val expected = model.Transaction(source, ops, NoMemo)
-      val actual = ops.foldLeft(model.Transaction(source, memo = NoMemo)) { case (txn, op) => txn add op }
+      val expected = model.Transaction(source, ops, NoMemo, maxFee = NativeAmount(100))
+      val actual = ops.foldLeft(model.Transaction(source, memo = NoMemo, maxFee = NativeAmount(100))) { case (txn, op) => txn add op }
       actual mustEqual expected
     }
 
@@ -37,6 +29,15 @@ class TransactionSpec extends Specification with ArbitraryInput with DomainMatch
       actual must beEquivalentTo(expected)
     }.setGen2(Gen.nonEmptyListOf(genKeyPair))
 
+    "calc the minFee as 100 stroops * the quantity of operations" >> prop { (source: Account, ops: Seq[Operation]) =>
+      model.Transaction(source, ops, NoMemo, maxFee = NativeAmount(100)).minFee mustEqual NativeAmount(ops.size * 100)
+    }.setGen2(Gen.nonEmptyListOf(genOperation))
+
+    "disallow signing if the maxFee is insufficient" >> prop { (source: Account, ops: Seq[Operation], signer: KeyPair) =>
+      val maxFee = NativeAmount(ops.size * 100 - 1)
+      model.Transaction(source, ops, NoMemo, maxFee = maxFee).sign(signer) must throwAn[AssertionError]
+    }.setGen2(Gen.nonEmptyListOf(genOperation))
+
     "express signed transaction envelope as base64" >> {
       // specific example lifted from java sdk
       val source = KeyPair.fromSecretSeed("SCH27VUZZ6UAKB67BDNF6FA42YMBMQCBKXWGMFD5TZ6S5ZZCZFLRXKHS")
@@ -46,69 +47,21 @@ class TransactionSpec extends Specification with ArbitraryInput with DomainMatch
       val account = Account(source, seqNum)
       val txn = Transaction(
         source = account,
-        operations = Seq(CreateAccountOperation(dest, NativeAmount(20000000000L)))
+        operations = Seq(CreateAccountOperation(dest, NativeAmount(20000000000L))),
+        maxFee = NativeAmount(100)
       ).sign(source)
 
       txn.encodeXDR mustEqual "AAAAAF7FIiDToW1fOYUFBC0dmyufJbFTOa2GQESGz+S2h5ViAAAAZAAKVaMAAAABAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAA7eBSYbzcL5UKo7oXO24y1ckX+XuCtkDsyNHOp1n1bxAAAAAEqBfIAAAAAAAAAAABtoeVYgAAAEDLki9Oi700N60Lo8gUmEFHbKvYG4QSqXiLIt9T0ru2O5BphVl/jR9tYtHAD+UeDYhgXNgwUxqTEu1WukvEyYcD"
       txn.transaction.source must beEquivalentTo(account)
-      txn.transaction.calculatedFee mustEqual NativeAmount(100)
     }
   }
 
   "signing a transaction" should {
     "add a signature to that transaction" >> prop { (source: Account, op: Operation, signers: Seq[KeyPair]) =>
-      val signatures = model.Transaction(source, Seq(op), NoMemo).sign(signers.head, signers.tail: _*).signatures
+      val signatures = model.Transaction(source, Seq(op), NoMemo, maxFee = NativeAmount(100)).sign(signers.head, signers.tail: _*).signatures
       signatures must haveSize(signers.length)
     }.setGen3(Gen.nonEmptyListOf(genKeyPair))
   }
-
-/*
-  "a signed transaction" should {
-    "serialise to xdr" >> prop { (t: Transaction, signer: KeyPair) =>
-      t.sign(signer).toXDR must haveClass[TransactionEnvelope]
-    }
-  }
-*/
-
-/*
-  "an unsigned transaction" should {
-    "serialise to xdr" >> prop { txn: Transaction =>
-      val xdr = txn.toXDR
-      xdr.getExt.getDiscriminant mustEqual 0
-      xdr.getFee.getUint32 mustEqual txn.calculatedFee.units
-      xdr.getSeqNum.getSequenceNumber.getInt64 mustEqual txn.source.sequenceNumber
-      xdr.getSourceAccount.getAccountID must beEquivalentTo(txn.source.publicKey.getXDRPublicKey)
-      xdr.getMemo must beEquivalentTo(txn.memo.toXDR)
-      Option(xdr.getTimeBounds) must beLike {
-        case None => txn.timeBounds must beNone
-        case Some(tb1) =>
-          txn.timeBounds must beSome[TimeBounds].like {
-            case TimeBounds(start, end) =>
-              tb1.getMinTime.getUint64 mustEqual start.toEpochMilli
-              tb1.getMaxTime.getUint64 mustEqual end.toEpochMilli
-          }
-      }
-      forall(txn.operations.zip(xdr.getOperations.map(Operation.fromXDR))) {
-        case (expected: Operation, actualTry: Try[Operation]) =>
-          actualTry must beSuccessfulTry[Operation].like { case actual =>
-            actual must beEquivalentTo(expected)
-          }
-      }
-    }
-
-    "ser/de to/from xdr" >> prop { txn: Transaction =>
-      Transaction.fromXDR(txn.toXDR) must beLike {
-        case Transaction(source, ops, memo, timeBounds, fee) =>
-          source.publicKey.accountId mustEqual txn.source.publicKey.accountId
-          source.sequenceNumber mustEqual txn.source.sequenceNumber
-          ops mustEqual txn.operations
-          memo must beEquivalentTo(txn.memo)
-          timeBounds mustEqual txn.timeBounds
-          fee mustEqual (txn.fee orElse Some(txn.calculatedFee))
-      }
-    }
-  }
-*/
 
   "decoding transaction from xdr string" should {
     "be successful for unsigned transactions" >> prop { txn: Transaction =>
@@ -143,7 +96,7 @@ class TransactionSpec extends Specification with ArbitraryInput with DomainMatch
                 KeyPair.fromAccountId("GCXFGNIR72AV62Q4WIXFUT35CKL3WOMB7KL3OES4UW27CH2DC2BAHMZH"),
                 NativeAmount(10000000)
               )
-            ), MemoText("Hi Zy, heres an angpao!"), None, Some(NativeAmount(100))
+            ), MemoText("Hi Zy, heres an angpao!"), None, NativeAmount(100)
           )
 
           signatures.map(_.hint).map(bytesToHex(_)) mustEqual Seq("615F9BF7")

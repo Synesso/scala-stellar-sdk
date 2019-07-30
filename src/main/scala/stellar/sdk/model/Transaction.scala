@@ -15,24 +15,19 @@ case class Transaction(source: Account,
                        operations: Seq[Operation] = Nil,
                        memo: Memo = NoMemo,
                        timeBounds: Option[TimeBounds] = None,
-                       fee: Option[NativeAmount] = None)(implicit val network: Network) extends Encodable {
+                       maxFee: NativeAmount)(implicit val network: Network) extends Encodable {
 
   private val BaseFee = 100L
   private val EnvelopeTypeTx = 2
 
   def add(op: Operation): Transaction = this.copy(operations = operations :+ op)
 
-  /**
-    * @return The maximum of
-    *         A: The fee derived from the quantity of transactions; or
-    *         B: the specified `fee`.
-    */
-  def calculatedFee: NativeAmount = {
-    val minFee = BaseFee * operations.size
-    NativeAmount(math.max(minFee, fee.map(_.units).getOrElse(minFee)))
-  }
+  def minFee: NativeAmount = NativeAmount(operations.size * BaseFee)
 
   def sign(key: KeyPair, otherKeys: KeyPair*): SignedTransaction = {
+    assert(minFee.units <= maxFee.units,
+      "Insufficient maxFee. Allow at least 100 stroops per operation. " +
+        s"[maxFee=${maxFee.units}, operations=${operations.size}.")
     val h = hash.toArray
     val signatures = (key +: otherKeys).map(_.sign(h))
     SignedTransaction(this, signatures)
@@ -47,7 +42,7 @@ case class Transaction(source: Account,
 
   def encode: Stream[Byte] = {
     source.publicKey.encode ++
-      int(calculatedFee.units.toInt) ++
+      int(maxFee.units.toInt) ++
       long(source.sequenceNumber) ++
       opt(timeBounds) ++
       memo.encode ++
@@ -73,7 +68,7 @@ object Transaction extends Decode {
       ops <- arr(Operation.decode)
       _ <- int
     } yield {
-    Transaction(Account(publicKey, seqNo), ops, memo, timeBounds, Some(NativeAmount(fee)))
+    Transaction(Account(publicKey, seqNo), ops, memo, timeBounds, NativeAmount(fee))
   }
 }
 

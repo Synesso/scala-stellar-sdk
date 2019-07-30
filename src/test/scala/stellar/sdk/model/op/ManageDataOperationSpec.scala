@@ -17,7 +17,7 @@ class ManageDataOperationSpec extends Specification with ArbitraryInput with Dom
 
   def doc[O <: ManageDataOperation](op: Transacted[O]) = {
     val dataValue = op.operation match {
-      case WriteDataOperation(_, value, _) => Base64.encodeBase64String(value)
+      case WriteDataOperation(_, value, _) => Base64.encodeBase64String(value.toArray)
       case _ => ""
     }
 
