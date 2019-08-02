@@ -2,7 +2,7 @@
 
 As this project is pre 1.0, breaking changes may happen for minor version bumps. A breaking change will get clearly notified in this log.
 
-## Next version
+## 0.9.0
 
 ### Breaking changes
 
@@ -11,6 +11,11 @@ As this project is pre 1.0, breaking changes may happen for minor version bumps.
 - [#129](https://github.com/Synesso/scala-stellar-sdk/issues/129) Timebounds are no longer implicit either. The initiator
         of a transaction needs to explicitly specify the timebounds of the transaction. The constant
         `TimeBounds.Unbounded` is introduced to provide a short-cut for unbounded behaviour.
+
+### Added
+
+- `TimeBounds` can be defined in terms of a timeout from 'now', with `TimeBounds.timeout(Duration)`.
+
 
 ## 0.8.0
 

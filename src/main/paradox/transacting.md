@@ -62,6 +62,21 @@ affects multiple accounts. This enables techniques such as the
 [channel pattern](https://www.lumenauts.com/blog/boosting-tps-with-stellar-channels). Each operation has an optional
 constructor parameter `sourceAccount: Option[PublicKey]` where the source account can be specified.
 
+### TimeBounds
+
+As of v0.9.0, the valid date range for a transaction must be specified. The network will reject any transaction submitted
+outside of the range defined. To help define `TimeBound`s, the constant @scaladoc[Unbounded](stellar.sdk.model.TimeBounds.Unbounded)
+represents all time. Additionally, @scaladoc[TimeBounds.timeout](stellar.sdk.model.TimeBounds.timeout)  will specify a
+`TimeBound` from the current time until some given timeout duration.
+
+### Maximum Fee
+
+As of v0.9.0, the maximum fee payable must be specified explicitly. The network will reject the transaction if the
+maximum fee is not at least `100 stroops x number of operations`. If accepted the actual fee charged will be the cheapest
+it can be, given current network demand but will never exceed the specified maximum fee. If the maximum fee is too low
+for the network's demand at time of submission, the transaction will not be accepted.
+
+
 ### Signatures
 
 Before a transaction will be accepted by the network, it must be signed with at least one key. In the most basic case,
