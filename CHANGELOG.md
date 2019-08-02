@@ -8,6 +8,9 @@ As this project is pre 1.0, breaking changes may happen for minor version bumps.
 
 - [#121](https://github.com/Synesso/scala-stellar-sdk/issues/121) Transaction fees are no longer implicit. The initiator
         of a transaction needs to explicitly specify the maximum fee that they are prepared to pay.
+- [#129](https://github.com/Synesso/scala-stellar-sdk/issues/129) Timebounds are no longer implicit either. The initiator
+        of a transaction needs to explicitly specify the timebounds of the transaction. The constant
+        `TimeBounds.Unbounded` is introduced to provide a short-cut for unbounded behaviour.
 
 ## 0.8.0
 
