@@ -5,6 +5,8 @@ import java.time.Instant
 import cats.data.State
 import stellar.sdk.model.xdr.{Decode, Encodable}
 
+import scala.concurrent.duration.Duration
+
 case class TimeBounds(start: Instant, end: Instant) extends Encodable {
   require(start.isBefore(end))
 
@@ -22,5 +24,10 @@ object TimeBounds extends Decode {
   } yield TimeBounds(start, end)
 
   val Unbounded = TimeBounds(Instant.MIN, Instant.MAX)
+
+  def timeout(duration: Duration) = {
+    val now = Instant.now()
+    TimeBounds(now, now.plusMillis(duration.toMillis))
+  }
 
 }
