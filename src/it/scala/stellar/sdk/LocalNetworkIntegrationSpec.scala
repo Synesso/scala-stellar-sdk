@@ -13,6 +13,7 @@ import org.specs2.concurrent.ExecutionEnv
 import org.specs2.mutable.Specification
 import stellar.sdk.inet.HorizonEntityNotFound
 import stellar.sdk.model.Amount.lumens
+import stellar.sdk.model.TimeBounds.Unbounded
 import stellar.sdk.model.TradeAggregation.FifteenMinutes
 import stellar.sdk.model._
 import stellar.sdk.model.op._
@@ -62,7 +63,10 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
           logger.debug(s"Transacting ${xs.size} operation(s)")
           val opAccountIds = xs.flatMap(_.sourceAccount).map(_.accountId).toSet
           val signatories = accounts.filter(a => opAccountIds.contains(a.accountId))
-          val signedTransaction = xs.foldLeft(model.Transaction(masterAccount, maxFee = NativeAmount(100 * batch.size)))(_ add _).sign(masterAccountKey)
+          val signedTransaction = xs.foldLeft(model.Transaction(masterAccount,
+            timeBounds = Unbounded,
+            maxFee = NativeAmount(100 * batch.size))
+          )(_ add _).sign(masterAccountKey)
           val eventualTransactionPostResponse = signatories.foldLeft(signedTransaction)(_ sign _).submit()
           val transactionPostResponse = Await.result(eventualTransactionPostResponse, 5 minutes)
           transactionPostResponse must beLike[TransactionPostResponse] {
@@ -143,7 +147,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
         // #payment_example
           for {
             sourceAccount <- network.account(payerKeyPair)
-            response <- model.Transaction(sourceAccount, maxFee = NativeAmount(100))
+            response <- model.Transaction(sourceAccount, timeBounds = Unbounded, maxFee = NativeAmount(100))
               .add(PaymentOperation(payeePublicKey, lumens(5000)))
               .sign(payerKeyPair)
               .submit()

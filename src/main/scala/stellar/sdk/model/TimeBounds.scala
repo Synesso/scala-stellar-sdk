@@ -20,4 +20,7 @@ object TimeBounds extends Decode {
     start <- instant
     end <- instant
   } yield TimeBounds(start, end)
+
+  val Unbounded = TimeBounds(Instant.MIN, Instant.MAX)
+
 }

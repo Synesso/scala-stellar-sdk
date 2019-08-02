@@ -22,7 +22,7 @@ object Encode {
     buffer.array().toStream
   }
 
-  def instant(i: Instant): Stream[Byte] = long(i.toEpochMilli / 1000)
+  def instant(i: Instant): Stream[Byte] = long(i.getEpochSecond)
 
   def bytes(len: Int, bs: Seq[Byte]): Stream[Byte] = {
     require(bs.length == len)

@@ -2,6 +2,7 @@ package stellar.sdk.model
 
 import org.scalacheck.Gen
 import org.specs2.mutable.Specification
+import stellar.sdk.model.TimeBounds.Unbounded
 import stellar.sdk.model.op.{CreateAccountOperation, Operation, PaymentOperation}
 import stellar.sdk.util.ByteArrays.bytesToHex
 import stellar.sdk.{ArbitraryInput, DomainMatchers, KeyPair, model}
@@ -15,8 +16,10 @@ class TransactionSpec extends Specification with ArbitraryInput with DomainMatch
     }
 
     "allow adding of operations one at a time" >> prop { (source: Account, ops: Seq[Operation]) =>
-      val expected = model.Transaction(source, ops, NoMemo, maxFee = NativeAmount(100))
-      val actual = ops.foldLeft(model.Transaction(source, memo = NoMemo, maxFee = NativeAmount(100))) { case (txn, op) => txn add op }
+      val expected = model.Transaction(source, ops, NoMemo, timeBounds = Unbounded, maxFee = NativeAmount(100))
+      val actual = ops.foldLeft(model.Transaction(source, memo = NoMemo, timeBounds = Unbounded, maxFee = NativeAmount(100))) {
+        case (txn, op) => txn add op
+      }
       actual mustEqual expected
     }
 
@@ -30,12 +33,12 @@ class TransactionSpec extends Specification with ArbitraryInput with DomainMatch
     }.setGen2(Gen.nonEmptyListOf(genKeyPair))
 
     "calc the minFee as 100 stroops * the quantity of operations" >> prop { (source: Account, ops: Seq[Operation]) =>
-      model.Transaction(source, ops, NoMemo, maxFee = NativeAmount(100)).minFee mustEqual NativeAmount(ops.size * 100)
+      model.Transaction(source, ops, NoMemo, timeBounds = Unbounded, maxFee = NativeAmount(100)).minFee mustEqual NativeAmount(ops.size * 100)
     }.setGen2(Gen.nonEmptyListOf(genOperation))
 
     "disallow signing if the maxFee is insufficient" >> prop { (source: Account, ops: Seq[Operation], signer: KeyPair) =>
       val maxFee = NativeAmount(ops.size * 100 - 1)
-      model.Transaction(source, ops, NoMemo, maxFee = maxFee).sign(signer) must throwAn[AssertionError]
+      model.Transaction(source, ops, NoMemo, timeBounds = Unbounded, maxFee = maxFee).sign(signer) must throwAn[AssertionError]
     }.setGen2(Gen.nonEmptyListOf(genOperation))
 
     "express signed transaction envelope as base64" >> {
@@ -48,6 +51,7 @@ class TransactionSpec extends Specification with ArbitraryInput with DomainMatch
       val txn = Transaction(
         source = account,
         operations = Seq(CreateAccountOperation(dest, NativeAmount(20000000000L))),
+        timeBounds = Unbounded,
         maxFee = NativeAmount(100)
       ).sign(source)
 
@@ -58,7 +62,8 @@ class TransactionSpec extends Specification with ArbitraryInput with DomainMatch
 
   "signing a transaction" should {
     "add a signature to that transaction" >> prop { (source: Account, op: Operation, signers: Seq[KeyPair]) =>
-      val signatures = model.Transaction(source, Seq(op), NoMemo, maxFee = NativeAmount(100)).sign(signers.head, signers.tail: _*).signatures
+      val signatures = model.Transaction(source, Seq(op), NoMemo, timeBounds = Unbounded, maxFee = NativeAmount(100))
+        .sign(signers.head, signers.tail: _*).signatures
       signatures must haveSize(signers.length)
     }.setGen3(Gen.nonEmptyListOf(genKeyPair))
   }
@@ -96,7 +101,7 @@ class TransactionSpec extends Specification with ArbitraryInput with DomainMatch
                 KeyPair.fromAccountId("GCXFGNIR72AV62Q4WIXFUT35CKL3WOMB7KL3OES4UW27CH2DC2BAHMZH"),
                 NativeAmount(10000000)
               )
-            ), MemoText("Hi Zy, heres an angpao!"), None, NativeAmount(100)
+            ), MemoText("Hi Zy, heres an angpao!"), Unbounded, NativeAmount(100)
           )
 
           signatures.map(_.hint).map(bytesToHex(_)) mustEqual Seq("615F9BF7")
