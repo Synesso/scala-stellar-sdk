@@ -203,7 +203,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
         body mustEqual ("type" -> "https://stellar.org/horizon-errors/not_found") ~
           ("title" -> "Resource Missing") ~
           ("status" -> 404) ~
-          ("detail" -> "The resource at the url requested was not found.  This is usually occurs for one of two reasons:  The url requested is not valid, or no data in our database could be found with the parameters provided.")
+          ("detail" -> "The resource at the url requested was not found.  This usually occurs for one of two reasons:  The url requested is not valid, or no data in our database could be found with the parameters provided.")
       }.awaitFor(30 seconds)
     }
 
@@ -223,7 +223,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
         body mustEqual ("type" -> "https://stellar.org/horizon-errors/not_found") ~
           ("title" -> "Resource Missing") ~
           ("status" -> 404) ~
-          ("detail" -> "The resource at the url requested was not found.  This is usually occurs for one of two reasons:  The url requested is not valid, or no data in our database could be found with the parameters provided.")
+          ("detail" -> "The resource at the url requested was not found.  This usually occurs for one of two reasons:  The url requested is not valid, or no data in our database could be found with the parameters provided.")
       }.awaitFor(5.seconds)
     }
 
@@ -237,7 +237,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
         body mustEqual ("type" -> "https://stellar.org/horizon-errors/not_found") ~
           ("title" -> "Resource Missing") ~
           ("status" -> 404) ~
-          ("detail" -> "The resource at the url requested was not found.  This is usually occurs for one of two reasons:  The url requested is not valid, or no data in our database could be found with the parameters provided.")
+          ("detail" -> "The resource at the url requested was not found.  This usually occurs for one of two reasons:  The url requested is not valid, or no data in our database could be found with the parameters provided.")
       }.awaitFor(5.seconds)
     }
   }
