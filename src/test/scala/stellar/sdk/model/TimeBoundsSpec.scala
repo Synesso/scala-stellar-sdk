@@ -29,7 +29,7 @@ class TimeBoundsSpec extends Specification with ArbitraryInput with DomainMatche
     "be via a 'from-now' timeout" >> {
       val now = Instant.now().toEpochMilli
       val tb = TimeBounds.timeout(1.minute)
-      tb.start.toEpochMilli must beCloseTo(now, delta = 100)
+      tb.start.toEpochMilli must beCloseTo(now - 5000, delta = 100)
       tb.end.toEpochMilli must beCloseTo(now + 60000, delta = 100)
     }
   }

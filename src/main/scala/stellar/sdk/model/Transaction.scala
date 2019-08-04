@@ -26,16 +26,13 @@ case class Transaction(source: Account,
   def minFee: NativeAmount = NativeAmount(operations.size * BaseFee)
 
   def sign(key: KeyPair, otherKeys: KeyPair*): SignedTransaction = {
-    assert(minFee.units <= maxFee.units,
-      "Insufficient maxFee. Allow at least 100 stroops per operation. " +
-        s"[maxFee=${maxFee.units}, operations=${operations.size}.")
     val h = hash.toArray
     val signatures = (key +: otherKeys).map(_.sign(h))
     SignedTransaction(this, signatures)
   }
 
   def sign(preImage: Seq[Byte]): SignedTransaction = {
-    val signedPreImage = Signature(preImage.toArray, ByteArrays.sha256(preImage))
+    val signedPreImage = Signature(preImage.toArray, ByteArrays.sha256(preImage).drop(28))
     val signatures = List(signedPreImage)
     SignedTransaction(this, signatures)
   }
@@ -80,6 +77,10 @@ object Transaction extends Decode {
 }
 
 case class SignedTransaction(transaction: Transaction, signatures: Seq[Signature]) {
+
+  assert(transaction.minFee.units <= transaction.maxFee.units,
+    "Insufficient maxFee. Allow at least 100 stroops per operation. " +
+      s"[maxFee=${transaction.maxFee.units}, operations=${transaction.operations.size}].")
 
   def submit()(implicit ec: ExecutionContext): Future[TransactionPostResponse] = {
     transaction.network.submit(this)

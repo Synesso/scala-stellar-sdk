@@ -27,7 +27,7 @@ object TimeBounds extends Decode {
 
   def timeout(duration: Duration) = {
     val now = Instant.now()
-    TimeBounds(now, now.plusMillis(duration.toMillis))
+    TimeBounds(now.minusSeconds(5), now.plusMillis(duration.toMillis))
   }
 
 }

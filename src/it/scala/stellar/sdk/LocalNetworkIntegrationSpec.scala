@@ -140,7 +140,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
           CreateSellOfferOperation(IssuedAmount(10000000, chinchillaA), chinchillaMaster, Price(1, 1), Some(accnA)),
           PathPaymentOperation(IssuedAmount(1, chinchillaMaster), accnB, IssuedAmount(1, chinchillaA), Nil),
           BumpSequenceOperation(masterAccount.sequenceNumber + 20),
-          SetOptionsOperation(signer = Some(Signer(SHA256Hash(ByteArrays.sha256(dachshundB.encode)), 3)))
+          SetOptionsOperation(signer = Some(Signer(SHA256Hash(ByteArrays.sha256(dachshundB.encode)), 3)), sourceAccount = Some(accnD))
         )
 
         // example of creating and submitting a payment transaction
@@ -416,7 +416,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
     }
 
     "list the details of a given operation" >> {
-      network.operationsByTransaction("e151e8cbb8d7a8e63bffdfc0cf08cbe4e64ed6e938f3b4ae0dbebf9b0667062c")
+      network.operationsByTransaction("ed3592ccaba4df850684ade75bbde6c88f5cc9e537350d874baa6345fe787097")
         .map(_.drop(2).head) must beLike[Transacted[Operation]] {
         case op =>
           op.operation must beLike[Operation] {
@@ -461,7 +461,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
     }
 
     "filter payments by transaction" >> {
-      network.paymentsByTransaction("e151e8cbb8d7a8e63bffdfc0cf08cbe4e64ed6e938f3b4ae0dbebf9b0667062c") must
+      network.paymentsByTransaction("ed3592ccaba4df850684ade75bbde6c88f5cc9e537350d874baa6345fe787097") must
         beLike[Seq[Transacted[PayOperation]]] {
           case Seq(op) =>
             op.operation must beEquivalentTo(PathPaymentOperation(
@@ -574,6 +574,23 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
     "return an empty page when the underlying resource does not exist" >> {
       network.horizon.getStream("/does_not_exist", TradeDeserializer, Now, Asc) must beEmpty[Stream[Trade]]
           .awaitFor(10.seconds)
+    }
+  }
+
+  "transacting with a hash signer" should {
+    "work when it has been added" >> {
+      for {
+        account <- network.account(accnD)
+        txn = Transaction(
+          source = account,
+          operations = List(CreateAccountOperation(KeyPair.random, startingBalance = lumens(100))),
+          timeBounds = TimeBounds.Unbounded,
+          maxFee = NativeAmount(100))
+          .sign(dachshundB.encode)
+        txnResult <- txn.submit()
+      } yield txnResult must beLike[TransactionPostResponse] { case r =>
+        r.isSuccess must beTrue
+      }
     }
   }
 }
