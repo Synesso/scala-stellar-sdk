@@ -1,5 +1,19 @@
 # Development
 
+## Ideas
+
+Looking for something to work on? Check the [issues list](https://github.com/Synesso/scala-stellar-sdk/issues). 
+
+The milestone currently in focus is 
+[closing the gap between current state and the SDF minimum SDK requirements](https://github.com/Synesso/scala-stellar-sdk/milestone/1).
+
+
+
+## Compiling & Testing.
+
+`sbt test it:test`
+
+
 ## Deployment Checklist
 
 1. Update & push CHANGELOG.md & README.md (version number)
