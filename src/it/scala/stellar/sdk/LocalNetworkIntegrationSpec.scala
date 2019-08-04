@@ -71,6 +71,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
           val transactionPostResponse = Await.result(eventualTransactionPostResponse, 5 minutes)
           transactionPostResponse must beLike[TransactionPostResponse] {
             case a: TransactionApproved =>
+              logger.debug(s"Approved. Hash is ${a.hash}")
               a.ledgerEntries // can decode
               a.result // can decode
               ok
@@ -138,7 +139,8 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
           CreateSellOfferOperation(IssuedAmount(800000000, chinchillaA), NativeAsset, Price(80, 4), Some(accnA)),
           CreateSellOfferOperation(IssuedAmount(10000000, chinchillaA), chinchillaMaster, Price(1, 1), Some(accnA)),
           PathPaymentOperation(IssuedAmount(1, chinchillaMaster), accnB, IssuedAmount(1, chinchillaA), Nil),
-          BumpSequenceOperation(masterAccount.sequenceNumber + 20)
+          BumpSequenceOperation(masterAccount.sequenceNumber + 20),
+          SetOptionsOperation(signer = Some(Signer(SHA256Hash(ByteArrays.sha256(dachshundB.encode)), 3)))
         )
 
         // example of creating and submitting a payment transaction
@@ -277,7 +279,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
   "effect endpoint" should {
     "parse all effects" >> {
       val effects = network.effects()
-      effects.map(_.size) must beEqualTo(235).awaitFor(10 seconds)
+      effects.map(_.size) must beEqualTo(237).awaitFor(10 seconds)
     }
 
     "filter effects by account" >> {
@@ -368,7 +370,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
 
   "operation endpoint" should {
     "list all operations" >> {
-      network.operations().map(_.size) must beEqualTo(130).awaitFor(10.seconds)
+      network.operations().map(_.size) must beEqualTo(131).awaitFor(10.seconds)
     }
 
     "list operations by account" >> {
@@ -414,7 +416,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
     }
 
     "list the details of a given operation" >> {
-      network.operationsByTransaction("4b55f0095aa1e7e19c731a60f2f28271cd64c1f5359206c54a82bc9c7c4e81ad")
+      network.operationsByTransaction("e151e8cbb8d7a8e63bffdfc0cf08cbe4e64ed6e938f3b4ae0dbebf9b0667062c")
         .map(_.drop(2).head) must beLike[Transacted[Operation]] {
         case op =>
           op.operation must beLike[Operation] {
@@ -459,7 +461,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
     }
 
     "filter payments by transaction" >> {
-      network.paymentsByTransaction("4b55f0095aa1e7e19c731a60f2f28271cd64c1f5359206c54a82bc9c7c4e81ad") must
+      network.paymentsByTransaction("e151e8cbb8d7a8e63bffdfc0cf08cbe4e64ed6e938f3b4ae0dbebf9b0667062c") must
         beLike[Seq[Transacted[PayOperation]]] {
           case Seq(op) =>
             op.operation must beEquivalentTo(PathPaymentOperation(
