@@ -92,6 +92,9 @@ has received all necessary signatures.
 
 Additionally, a transaction will fail if it has too many signatures.
 
+Finally, a transaction may be signed with any arbitrary byte array in order to match a hash signer. See
+[Hash(x) signing](https://www.stellar.org/developers/guides/concepts/multi-sig.html#hashx) for a summary. 
+
 ## Submitting
 
 Once a transaction is signed (and therefore is of type `SignedTransaction`) it can be submitted to the network.

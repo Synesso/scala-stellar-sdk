@@ -1,6 +1,6 @@
 package stellar.sdk.model
 
-import org.scalacheck.Gen
+import org.scalacheck.{Arbitrary, Gen}
 import org.specs2.mutable.Specification
 import stellar.sdk.model.TimeBounds.Unbounded
 import stellar.sdk.model.op.{CreateAccountOperation, Operation, PaymentOperation}
@@ -60,12 +60,20 @@ class TransactionSpec extends Specification with ArbitraryInput with DomainMatch
     }
   }
 
-  "signing a transaction" should {
+  "signing a transaction with a keypair" should {
     "add a signature to that transaction" >> prop { (source: Account, op: Operation, signers: Seq[KeyPair]) =>
       val signatures = model.Transaction(source, Seq(op), NoMemo, timeBounds = Unbounded, maxFee = NativeAmount(100))
         .sign(signers.head, signers.tail: _*).signatures
       signatures must haveSize(signers.length)
     }.setGen3(Gen.nonEmptyListOf(genKeyPair))
+  }
+
+  "signing a transaction with a pre-image" should {
+    "add a signature to that transaction" >> prop { (source: Account, op: Operation, preImages: Seq[Array[Byte]]) =>
+      val transaction = model.Transaction(source, Seq(op), NoMemo, timeBounds = Unbounded, maxFee = NativeAmount(100))
+      val signedTxn = transaction.sign(preImages.head.toSeq)
+      preImages.tail.map(_.toSeq).foldLeft(signedTxn) { _ sign _ }.signatures must haveSize(preImages.length)
+    }.setGen3(Gen.nonEmptyListOf(Gen.containerOf[Array, Byte](Arbitrary.arbByte.arbitrary)))
   }
 
   "decoding transaction from xdr string" should {

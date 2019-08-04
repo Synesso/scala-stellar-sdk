@@ -34,6 +34,12 @@ case class Transaction(source: Account,
     SignedTransaction(this, signatures)
   }
 
+  def sign(preImage: Seq[Byte]): SignedTransaction = {
+    val signedPreImage = Signature(preImage.toArray, ByteArrays.sha256(preImage))
+    val signatures = List(signedPreImage)
+    SignedTransaction(this, signatures)
+  }
+
   def hash: Seq[Byte] = ByteArrays.sha256(network.networkId ++ Encode.int(EnvelopeTypeTx) ++ encode)
 
   /**
@@ -81,6 +87,9 @@ case class SignedTransaction(transaction: Transaction, signatures: Seq[Signature
 
   def sign(key: KeyPair): SignedTransaction =
     this.copy(signatures = key.sign(transaction.hash.toArray) +: signatures)
+
+  def sign(preImage: Seq[Byte]): SignedTransaction =
+    this.copy(signatures = Signature(preImage.toArray, ByteArrays.sha256(preImage)) +: signatures)
 
   /**
     * The base64 encoding of the XDR form of this signed transaction.

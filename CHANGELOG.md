@@ -15,7 +15,9 @@ As this project is pre 1.0, breaking changes may happen for minor version bumps.
 ### Added
 
 - `TimeBounds` can be defined in terms of a timeout from 'now', with `TimeBounds.timeout(Duration)`.
-
+- [#66](https://github.com/Synesso/scala-stellar-sdk/issues/66) Transactions can be signed with any arbitrary byte array.
+        This provides the ability to match a hash signer with shared data. (See 
+        [Hash(x) signing](https://www.stellar.org/developers/guides/concepts/multi-sig.html#hashx) for more details).
 
 ## 0.8.0
 
