@@ -84,9 +84,9 @@ lazy val root = (project in file("."))
       "org.typelevel" %% "cats-core" % "1.6.1",
       "tech.sparse" %%  "toml-scala" % "0.2.1",
       "com.softwaremill.retry" %% "retry" % "0.3.3",
-      "org.specs2" %% "specs2-core" % "4.6.0" % "test,it",
-      "org.specs2" %% "specs2-mock" % "4.6.0" % "test",
-      "org.specs2" %% "specs2-scalacheck" % "4.6.0" % "test"
+      "org.specs2" %% "specs2-core" % "4.7.0" % "test,it",
+      "org.specs2" %% "specs2-mock" % "4.7.0" % "test",
+      "org.specs2" %% "specs2-scalacheck" % "4.7.0" % "test"
     )
   )
 
