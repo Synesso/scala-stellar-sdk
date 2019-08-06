@@ -5,7 +5,7 @@ import scoverage.ScoverageKeys.coverageMinimum
 lazy val commonSettings = Seq(
   name := "scala-stellar-sdk",
   organization := "io.github.synesso",
-  scalaVersion := "2.12.8",
+  scalaVersion := "2.12.9",
   homepage := Some(url("https://github.com/synesso/scala-stellar-sdk")),
   startYear := Some(2018),
   description := "Perform Stellar (distributed payments platform) operations from your Scala application. " +
@@ -13,7 +13,7 @@ lazy val commonSettings = Seq(
   developers := List(
     Developer("jem", "Jem Mawson", "jem.mawson@gmail.com", url = url("https://keybase.io/jem"))
   ),
-  crossScalaVersions := Seq("2.12.8"),
+  crossScalaVersions := Seq("2.12.9"),
   scalacOptions ++= Seq(
     "-Yrangepos",
     "-unchecked",

@@ -13,7 +13,7 @@ class TradeAggregationSpec extends Specification with ArbitraryInput {
       val json =
         s"""
           |{
-          |  "timestamp": ${ta.instant.toEpochMilli},
+          |  "timestamp": ${ta.instant.toEpochMilli.toString},
           |  "trade_count": ${ta.tradeCount},
           |  "base_volume": "${ta.baseVolume}",
           |  "counter_volume": "${ta.counterVolume}",
@@ -36,7 +36,7 @@ class TradeAggregationSpec extends Specification with ArbitraryInput {
           |  "close": "${ta.close.asDecimalString}",
           |  "close_r": {
           |    "N": ${ta.close.n},
-          |    "D": ${ta.close.d}
+          |    "D": ${ta.close.d.toString}
           |  }
           |}
         """.stripMargin
