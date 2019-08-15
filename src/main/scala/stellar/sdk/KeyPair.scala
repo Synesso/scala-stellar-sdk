@@ -6,6 +6,7 @@ import java.util.Arrays
 import cats.data.State
 import net.i2p.crypto.eddsa._
 import net.i2p.crypto.eddsa.spec._
+import stellar.sdk.model.domain.DomainInfo
 import stellar.sdk.model.{AccountId, Seed, StrKey}
 import stellar.sdk.model.xdr.{Decode, Encodable, Encode}
 import stellar.sdk.util.ByteArrays

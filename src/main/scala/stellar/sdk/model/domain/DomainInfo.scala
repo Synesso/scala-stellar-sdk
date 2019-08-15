@@ -1,12 +1,13 @@
-package stellar.sdk
+package stellar.sdk.model.domain
 
 import akka.actor.ActorSystem
 import akka.http.scaladsl.model.ContentTypes._
 import akka.http.scaladsl.model.Uri
 import akka.http.scaladsl.unmarshalling.{FromEntityUnmarshaller, Unmarshaller}
 import stellar.sdk.inet.WebClient
+import stellar.sdk.{DefaultActorSystem, FederationServer, KeyPair, PublicKey}
 import toml.Value
-import toml.Value.{Arr, Str}
+import toml.Value.{Arr, Str, Tbl}
 
 import scala.concurrent.Future
 
@@ -25,6 +26,7 @@ case class DomainInfo(federationServer: Option[FederationServer] = None,
                       uriRequestSigningKey: Option[PublicKey] = None,
                       version: Option[String] = None,
                       accounts: List[PublicKey] = List.empty[PublicKey],
+                      issuerDocumentation: Option[IssuerDocumentation] = None,
                      )
 
 object DomainInfo {
@@ -38,12 +40,12 @@ object DomainInfo {
 
   private[sdk] def from(doc: String): DomainInfo = {
     toml.Toml.parse(doc) match {
-      case Left(msg) => throw DomainInfoParseException(msg, doc)
+      case Left(msg) => throw DomainInfoParseException(msg)
       case Right(tbl) =>
 
         def parseTomlValue[T](key: String, parser: PartialFunction[Value, T]) =
           tbl.values.get(key).map(parser.applyOrElse(_, {
-            v: Value => throw DomainInfoParseException(s"value for $key was not of the expected type. [value=$v]", doc)
+            v: Value => throw DomainInfoParseException(s"value for $key was not of the expected type. [value=$v]")
           }))
 
         DomainInfo(
@@ -57,7 +59,8 @@ object DomainInfo {
           uriRequestSigningKey = parseTomlValue("URI_REQUEST_SIGNING_KEY", { case Str(s) => KeyPair.fromAccountId(s) }),
           version = parseTomlValue("VERSION", { case Str(s) => s }),
           accounts = parseTomlValue("ACCOUNTS", { case Arr(xs) => xs.map { case Str(s) => KeyPair.fromAccountId(s) }})
-              .getOrElse(Nil)
+              .getOrElse(Nil),
+          issuerDocumentation = parseTomlValue("DOCUMENTATION", { case tbl: Tbl => IssuerDocumentation.parse(tbl) })
         )
     }
   }
@@ -81,6 +84,5 @@ object DomainInfo {
 /**
   * The document could not be parsed into a DomainInfo instance.
   * @param msg the reason the parsing failed.
-  * @param doc the document that could not be parsed.
   */
-case class DomainInfoParseException(msg: String, doc: String) extends Exception(msg)
+case class DomainInfoParseException(msg: String) extends Exception(msg)

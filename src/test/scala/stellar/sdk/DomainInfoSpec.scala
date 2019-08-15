@@ -7,6 +7,7 @@ import org.specs2.mutable.Specification
 import org.specs2.specification.AfterAll
 import stellar.sdk.StubServer.ReplyWithText
 import stellar.sdk.inet.RestException
+import stellar.sdk.model.domain.{DomainInfo, DomainInfoParseException}
 
 import scala.concurrent.Future
 import scala.concurrent.duration._
@@ -120,7 +121,98 @@ class DomainInfoSpec(implicit ee: ExecutionEnv) extends Specification with After
         .map(_.accounts) must throwA[RestException]
         .awaitFor(5.seconds)
     }
+  }
 
+  "Documentation TOML parsing" should {
+    def doc(k: String, v: String) =
+      s"""[DOCUMENTATION]
+         |$k=$v
+        """.stripMargin
+
+    "find organisation name" >> {
+      roundTripDomainInfo(doc("ORG_NAME", """"SausageDog"""")).map(_.issuerDocumentation.flatMap(_.name)) must
+        beSome("SausageDog").awaitFor(5.seconds)
+    }
+
+    "find 'doing business as' name" >> {
+      roundTripDomainInfo(doc("ORG_DBA", """"Border Collie"""")).map(_.issuerDocumentation.flatMap(_.doingBusinessAs)) must
+        beSome("Border Collie").awaitFor(5.seconds)
+    }
+
+    "find url" >> {
+      roundTripDomainInfo(doc("ORG_URL", """"https://puppies.com/"""")).map(
+        _.issuerDocumentation.flatMap(_.url)) must
+        beSome(Uri("https://puppies.com/")).awaitFor(5.seconds)
+    }
+
+    "find logo" >> {
+      roundTripDomainInfo(doc("ORG_LOGO", """"https://puppies.com/le_puppy.png"""")).map(
+        _.issuerDocumentation.flatMap(_.logo)) must
+        beSome(Uri("https://puppies.com/le_puppy.png")).awaitFor(5.seconds)
+    }
+
+    "find description" >> {
+      roundTripDomainInfo(doc("ORG_DESCRIPTION", """"a place for humans to love dogs""""))
+        .map(_.issuerDocumentation.flatMap(_.description)) must
+        beSome("a place for humans to love dogs").awaitFor(5.seconds)
+      }
+
+    "find physical address" >> {
+      roundTripDomainInfo(doc("ORG_PHYSICAL_ADDRESS", """"123 Woof Lane"""")).map(_.issuerDocumentation
+        .flatMap(_.physicalAddress)) must beSome("123 Woof Lane").awaitFor(5.seconds)
+    }
+
+    "find physical address attestation" >> {
+      roundTripDomainInfo(doc("ORG_PHYSICAL_ADDRESS_ATTESTATION", """"https://puppies.com/address.pdf"""")).map(
+        _.issuerDocumentation.flatMap(_.physicalAddressAttestation)) must
+        beSome(Uri("https://puppies.com/address.pdf")).awaitFor(5.seconds)
+    }
+
+    "find phone number" >> {
+      roundTripDomainInfo(doc("ORG_PHONE_NUMBER", """"1800-woof-woof"""")).map(_.issuerDocumentation
+        .flatMap(_.phoneNumber)) must beSome("1800-woof-woof").awaitFor(5.seconds)
+    }
+
+    "find phone number attestation" >> {
+      roundTripDomainInfo(doc("ORG_PHONE_NUMBER_ATTESTATION", """"https://puppies.com/phone.pdf"""")).map(
+        _.issuerDocumentation.flatMap(_.phoneNumberAttestation)) must
+        beSome(Uri("https://puppies.com/phone.pdf")).awaitFor(5.seconds)
+    }
+
+    "find keybase account name" >> {
+      roundTripDomainInfo(doc("ORG_KEYBASE", """"puppi3s"""")).map(_.issuerDocumentation
+        .flatMap(_.keybase)) must beSome("puppi3s").awaitFor(5.seconds)
+    }
+
+    "find twitter handle" >> {
+      roundTripDomainInfo(doc("ORG_TWITTER", """"le_puppies"""")).map(_.issuerDocumentation
+        .flatMap(_.twitter)) must beSome("le_puppies").awaitFor(5.seconds)
+    }
+
+    "find github account name" >> {
+      roundTripDomainInfo(doc("ORG_GITHUB", """"püpp33s"""")).map(_.issuerDocumentation
+        .flatMap(_.github)) must beSome("püpp33s").awaitFor(5.seconds)
+    }
+
+    "find official email" >> {
+      roundTripDomainInfo(doc("ORG_OFFICIAL_EMAIL", """"puppies@woof.com"""")).map(_.issuerDocumentation
+        .flatMap(_.email)) must beSome("puppies@woof.com").awaitFor(5.seconds)
+    }
+
+    "find licensing authority" >> {
+      roundTripDomainInfo(doc("ORG_LICENSING_AUTHORITY", """"RSPCA"""")).map(_.issuerDocumentation
+        .flatMap(_.licensingAuthority)) must beSome("RSPCA").awaitFor(5.seconds)
+    }
+
+    "find license type" >> {
+      roundTripDomainInfo(doc("ORG_LICENSE_TYPE", """"BARK-BARK"""")).map(_.issuerDocumentation
+        .flatMap(_.licenseType)) must beSome("BARK-BARK").awaitFor(5.seconds)
+    }
+
+    "find license number" >> {
+      roundTripDomainInfo(doc("ORG_LICENSE_NUMBER", """"7-Zark-7"""")).map(_.issuerDocumentation
+        .flatMap(_.licenseNumber)) must beSome("7-Zark-7").awaitFor(5.seconds)
+    }
   }
 
   private def roundTripDomainInfo(content: String): Future[DomainInfo] = {
