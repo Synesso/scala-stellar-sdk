@@ -14,6 +14,8 @@ As this project is pre 1.0, breaking changes may happen for minor version bumps.
 
 ### Added
 
+- [#96](https://github.com/Synesso/scala-stellar-sdk/issues/96) Full support for `well-known.toml` fields in the 
+        `DomainInfo` class. Previously only `FEDERATION_SERVER` was supported. Now all fields are available.
 - `TimeBounds` can be defined in terms of a timeout from 'now', with `TimeBounds.timeout(Duration)`.
 - [#66](https://github.com/Synesso/scala-stellar-sdk/issues/66) Transactions can be signed with any arbitrary byte array.
         This provides the ability to match a hash signer with shared data. (See 

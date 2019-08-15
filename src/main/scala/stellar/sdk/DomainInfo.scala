@@ -4,9 +4,9 @@ import akka.actor.ActorSystem
 import akka.http.scaladsl.model.ContentTypes._
 import akka.http.scaladsl.model.Uri
 import akka.http.scaladsl.unmarshalling.{FromEntityUnmarshaller, Unmarshaller}
-import akka.util.ByteString
 import stellar.sdk.inet.WebClient
-import toml.Value.Str
+import toml.Value
+import toml.Value.{Arr, Str}
 
 import scala.concurrent.Future
 
@@ -15,7 +15,17 @@ import scala.concurrent.Future
   *
   * @see https://www.stellar.org/developers/guides/concepts/stellar-toml.html
   */
-case class DomainInfo(federationServer: FederationServer)
+case class DomainInfo(federationServer: Option[FederationServer] = None,
+                      authServer: Option[Uri] = None,
+                      transferServer: Option[Uri] = None,
+                      kycServer: Option[Uri] = None,
+                      webAuthEndpoint: Option[Uri] = None,
+                      signerKey: Option[PublicKey] = None,
+                      horizonEndpoint: Option[Uri] = None,
+                      uriRequestSigningKey: Option[PublicKey] = None,
+                      version: Option[String] = None,
+                      accounts: List[PublicKey] = List.empty[PublicKey],
+                     )
 
 object DomainInfo {
 
@@ -30,13 +40,29 @@ object DomainInfo {
     toml.Toml.parse(doc) match {
       case Left(msg) => throw DomainInfoParseException(msg, doc)
       case Right(tbl) =>
-        tbl.values.get("FEDERATION_SERVER") match {
-          case Some(Str(fs)) => DomainInfo(FederationServer(fs))
-          case Some(_) => throw DomainInfoParseException("value for FEDERATION_SERVER was not a String", doc)
-          case None => throw DomainInfoParseException("No entry for FEDERATION_SERVER", doc)
-        }
+
+        def parseTomlValue[T](key: String, parser: PartialFunction[Value, T]) =
+          tbl.values.get(key).map(parser.applyOrElse(_, {
+            v: Value => throw DomainInfoParseException(s"value for $key was not of the expected type. [value=$v]", doc)
+          }))
+
+        DomainInfo(
+          federationServer = parseTomlValue("FEDERATION_SERVER", { case Str(s) => FederationServer(s) }),
+          authServer = parseTomlValue("AUTH_SERVER", { case Str(s) => Uri(s) }),
+          transferServer = parseTomlValue("TRANSFER_SERVER", { case Str(s) => Uri(s) }),
+          kycServer = parseTomlValue("KYC_SERVER", { case Str(s) => Uri(s) }),
+          webAuthEndpoint = parseTomlValue("WEB_AUTH_ENDPOINT", { case Str(s) => Uri(s) }),
+          signerKey = parseTomlValue("SIGNER_KEY", { case Str(s) => KeyPair.fromAccountId(s) }),
+          horizonEndpoint = parseTomlValue("HORIZON_URL", { case Str(s) => Uri(s) }),
+          uriRequestSigningKey = parseTomlValue("URI_REQUEST_SIGNING_KEY", { case Str(s) => KeyPair.fromAccountId(s) }),
+          version = parseTomlValue("VERSION", { case Str(s) => s }),
+          accounts = parseTomlValue("ACCOUNTS", { case Arr(xs) => xs.map { case Str(s) => KeyPair.fromAccountId(s) }})
+              .getOrElse(Nil)
+        )
     }
   }
+
+
 
   /**
     * Returns domain info for the given domain's base URI string.
