@@ -2,17 +2,18 @@ package stellar.sdk
 
 import akka.http.scaladsl.model.Uri
 import akka.http.scaladsl.model.Uri.Path
+import org.scalacheck.Arbitrary
 import org.specs2.concurrent.ExecutionEnv
 import org.specs2.mutable.Specification
 import org.specs2.specification.AfterAll
 import stellar.sdk.StubServer.ReplyWithText
 import stellar.sdk.inet.RestException
-import stellar.sdk.model.domain.{DomainInfo, DomainInfoParseException}
+import stellar.sdk.model.domain.{DomainInfo, DomainInfoGenerators, DomainInfoParseException, PointOfContact}
 
 import scala.concurrent.Future
 import scala.concurrent.duration._
 
-class DomainInfoSpec(implicit ee: ExecutionEnv) extends Specification with AfterAll {
+class DomainInfoSpec(implicit ee: ExecutionEnv) extends Specification with AfterAll with DomainInfoGenerators {
 
   sequential
 
@@ -212,6 +213,28 @@ class DomainInfoSpec(implicit ee: ExecutionEnv) extends Specification with After
     "find license number" >> {
       roundTripDomainInfo(doc("ORG_LICENSE_NUMBER", """"7-Zark-7"""")).map(_.issuerDocumentation
         .flatMap(_.licenseNumber)) must beSome("7-Zark-7").awaitFor(5.seconds)
+    }
+  }
+
+  "principals parsing" should {
+    implicit val arb = Arbitrary(genPointOfContact)
+
+    def doc(poc: PointOfContact): String =
+      s"""[[PRINCIPALS]]
+         |${poc.name.map(v => s"""name="$v"""").getOrElse("")}
+         |${poc.email.map(v => s"""email="$v"""").getOrElse("")}
+         |${poc.keybase.map(v => s"""keybase="$v"""").getOrElse("")}
+         |${poc.telegram.map(v => s"""telegram="$v"""").getOrElse("")}
+         |${poc.twitter.map(v => s"""twitter="$v"""").getOrElse("")}
+         |${poc.github.map(v => s"""github="$v"""").getOrElse("")}
+         |${poc.idPhotoHash.map(v => s"""id_photo_hash="$v"""").getOrElse("")}
+         |${poc.verificationPhotoHash.map(v => s"""verification_photo_hash="$v"""").getOrElse("")}
+       """.stripMargin
+
+    "find the point of contact" >> prop { pocs: List[PointOfContact] =>
+      val toml = pocs.map(doc).mkString("\n")
+      roundTripDomainInfo(toml).map(_.pointsOfContact) must
+        beEqualTo(pocs).awaitFor(5.seconds)
     }
   }
 

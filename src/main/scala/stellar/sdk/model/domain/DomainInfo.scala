@@ -27,6 +27,7 @@ case class DomainInfo(federationServer: Option[FederationServer] = None,
                       version: Option[String] = None,
                       accounts: List[PublicKey] = List.empty[PublicKey],
                       issuerDocumentation: Option[IssuerDocumentation] = None,
+                      pointsOfContact: List[PointOfContact] = Nil,
                      )
 
 object DomainInfo {
@@ -60,7 +61,11 @@ object DomainInfo {
           version = parseTomlValue("VERSION", { case Str(s) => s }),
           accounts = parseTomlValue("ACCOUNTS", { case Arr(xs) => xs.map { case Str(s) => KeyPair.fromAccountId(s) }})
               .getOrElse(Nil),
-          issuerDocumentation = parseTomlValue("DOCUMENTATION", { case tbl: Tbl => IssuerDocumentation.parse(tbl) })
+          issuerDocumentation = parseTomlValue("DOCUMENTATION", { case tbl: Tbl => IssuerDocumentation.parse(tbl) }),
+          pointsOfContact = parseTomlValue("PRINCIPALS", { case Arr(values) =>
+            values.map{ case tbl: Tbl  => PointOfContact.parse(tbl) }}
+          ).toList.flatten
+
         )
     }
   }
