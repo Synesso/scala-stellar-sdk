@@ -8,7 +8,7 @@ import org.specs2.mutable.Specification
 import org.specs2.specification.AfterAll
 import stellar.sdk.StubServer.ReplyWithText
 import stellar.sdk.inet.RestException
-import stellar.sdk.model.domain.{DomainInfo, DomainInfoGenerators, DomainInfoParseException, PointOfContact}
+import stellar.sdk.model.domain.{Currency, DomainInfo, DomainInfoGenerators, DomainInfoParseException, PointOfContact}
 
 import scala.concurrent.Future
 import scala.concurrent.duration._
@@ -217,7 +217,7 @@ class DomainInfoSpec(implicit ee: ExecutionEnv) extends Specification with After
   }
 
   "principals parsing" should {
-    implicit val arb = Arbitrary(genPointOfContact)
+    implicit val arb: Arbitrary[PointOfContact] = Arbitrary(genPointOfContact)
 
     def doc(poc: PointOfContact): String =
       s"""[[PRINCIPALS]]
@@ -235,6 +235,48 @@ class DomainInfoSpec(implicit ee: ExecutionEnv) extends Specification with After
       val toml = pocs.map(doc).mkString("\n")
       roundTripDomainInfo(toml).map(_.pointsOfContact) must
         beEqualTo(pocs).awaitFor(5.seconds)
+    }
+  }
+
+  "currencies parsing" should {
+    implicit val arb: Arbitrary[Currency] = Arbitrary(genCurrency)
+
+    def doc(ccy: Currency): String = {
+      val collateral = ccy.collateral match {
+        case Nil => ""
+        case xs =>
+          s"""collateral_addresses=${xs.map(_.address).mkString("[\"", "\",\"", "\"]")}
+             |collateral_address_messages=${xs.map(_.message).mkString("[\"", "\",\"", "\"]")}
+             |collateral_address_signatures=${xs.map(_.proof).mkString("[\"", "\",\"", "\"]")}""".stripMargin
+      }
+
+      s"""[[CURRENCIES]]
+         |${ccy.asset.map(_.code).map(v => s"""code${if (v.contains('?')) "_template" else ""}="$v"""").getOrElse("")}
+         |${ccy.asset.map(_.issuer.accountId).map(v => s"""issuer="$v"""").getOrElse("")}
+         |${ccy.status.map(v => s"""status="${v.toString.toLowerCase}"""").getOrElse("")}
+         |display_decimals=${ccy.displayDecimals}
+         |${ccy.name.map(v => s"""name="$v"""").getOrElse("")}
+         |${ccy.description.map(v => s"""desc="$v"""").getOrElse("")}
+         |${ccy.conditions.map(v => s"""conditions="$v"""").getOrElse("")}
+         |${ccy.image.map(v => s"""image="$v"""").getOrElse("")}
+         |${ccy.fixedQuantity.map(v => s"""fixed_number=$v""").getOrElse("")}
+         |${ccy.maxQuantity.map(v => s"""max_number=$v""").getOrElse("")}
+         |${ccy.isUnlimited.map(v => s"""is_unlimited=$v""").getOrElse("")}
+         |${ccy.isAnchored.map(v => s"""is_asset_anchored=$v""").getOrElse("")}
+         |${ccy.anchoredAssetType.map(v => s"""anchor_asset_type="$v"""").getOrElse("")}
+         |${ccy.anchoredAsset.map(v => s"""anchor_asset="$v"""").getOrElse("")}
+         |${ccy.redemptionInstructions.map(v => s"""redemption_instructions="$v"""").getOrElse("")}
+         |$collateral
+         |regulated=${ccy.isRegulated.toString}
+         |${ccy.approvalServer.map(v => s"""approval_server="$v"""").getOrElse("")}
+         |${ccy.approvalCriteria.map(v => s"""approval_criteria="$v"""").getOrElse("")}
+       """.stripMargin
+    }
+
+    "find the currency" >> prop { ccys: List[Currency] =>
+      val toml = ccys.map(doc).mkString("\n")
+      roundTripDomainInfo(toml).map(_.currencies) must
+        beEqualTo(ccys).awaitFor(5.seconds)
     }
   }
 

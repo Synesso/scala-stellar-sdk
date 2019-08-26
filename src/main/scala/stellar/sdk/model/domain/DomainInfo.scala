@@ -28,9 +28,10 @@ case class DomainInfo(federationServer: Option[FederationServer] = None,
                       accounts: List[PublicKey] = List.empty[PublicKey],
                       issuerDocumentation: Option[IssuerDocumentation] = None,
                       pointsOfContact: List[PointOfContact] = Nil,
+                      currencies: List[Currency] = Nil,
                      )
 
-object DomainInfo {
+object DomainInfo extends TomlParsers {
 
   implicit private val unmarshaller: FromEntityUnmarshaller[DomainInfo] =
     Unmarshaller.byteStringUnmarshaller
@@ -51,20 +52,23 @@ object DomainInfo {
 
         DomainInfo(
           federationServer = parseTomlValue("FEDERATION_SERVER", { case Str(s) => FederationServer(s) }),
-          authServer = parseTomlValue("AUTH_SERVER", { case Str(s) => Uri(s) }),
-          transferServer = parseTomlValue("TRANSFER_SERVER", { case Str(s) => Uri(s) }),
-          kycServer = parseTomlValue("KYC_SERVER", { case Str(s) => Uri(s) }),
-          webAuthEndpoint = parseTomlValue("WEB_AUTH_ENDPOINT", { case Str(s) => Uri(s) }),
-          signerKey = parseTomlValue("SIGNER_KEY", { case Str(s) => KeyPair.fromAccountId(s) }),
-          horizonEndpoint = parseTomlValue("HORIZON_URL", { case Str(s) => Uri(s) }),
-          uriRequestSigningKey = parseTomlValue("URI_REQUEST_SIGNING_KEY", { case Str(s) => KeyPair.fromAccountId(s) }),
-          version = parseTomlValue("VERSION", { case Str(s) => s }),
-          accounts = parseTomlValue("ACCOUNTS", { case Arr(xs) => xs.map { case Str(s) => KeyPair.fromAccountId(s) }})
+          authServer = parseTomlValue("AUTH_SERVER", uri),
+          transferServer = parseTomlValue("TRANSFER_SERVER", uri),
+          kycServer = parseTomlValue("KYC_SERVER", uri),
+          webAuthEndpoint = parseTomlValue("WEB_AUTH_ENDPOINT", uri),
+          signerKey = parseTomlValue("SIGNER_KEY", publicKey),
+          horizonEndpoint = parseTomlValue("HORIZON_URL", uri),
+          uriRequestSigningKey = parseTomlValue("URI_REQUEST_SIGNING_KEY", publicKey),
+          version = parseTomlValue("VERSION", string),
+          accounts = parseTomlValue("ACCOUNTS", { case Arr(xs) => xs.map(publicKey) })
               .getOrElse(Nil),
           issuerDocumentation = parseTomlValue("DOCUMENTATION", { case tbl: Tbl => IssuerDocumentation.parse(tbl) }),
           pointsOfContact = parseTomlValue("PRINCIPALS", { case Arr(values) =>
             values.map{ case tbl: Tbl  => PointOfContact.parse(tbl) }}
-          ).toList.flatten
+          ).getOrElse(List.empty),
+          currencies = parseTomlValue("CURRENCIES", { case Arr(values) =>
+              values.map { case tbl: Tbl => Currency.parse(tbl) }
+          }).getOrElse(List.empty)
 
         )
     }

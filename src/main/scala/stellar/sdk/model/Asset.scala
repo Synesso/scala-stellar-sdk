@@ -11,7 +11,7 @@ sealed trait Asset extends Encodable {
 
 object Asset extends Decode {
   def apply(code: String, issuer: PublicKeyOps): NonNativeAsset = {
-    require(code.matches("[a-zA-Z0-9]+"), s"Asset code $code does not match [a-zA-Z0-9]+")
+    require(code.matches("[a-zA-Z0-9?]+"), s"Asset code $code does not match [a-zA-Z0-9]+")
     if (code.length <= 4) IssuedAsset4.of(code, issuer) else IssuedAsset12.of(code, issuer)
   }
 
