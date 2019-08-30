@@ -7,7 +7,7 @@ import toml.Value
 import toml.Value.Tbl
 
 /**
-  *
+  * Currency data as defined in a `stellar.toml` file.
   * @param asset           The issued token. The asset code may be a template. `?` characters represent single character
   *                        wildcards. This allows the currency to represent multiple assets that share the same info.
   *                        An example is futures, where the only difference between issues is the date of the contract.

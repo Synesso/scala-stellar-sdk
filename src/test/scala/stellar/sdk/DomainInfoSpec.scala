@@ -8,7 +8,7 @@ import org.specs2.mutable.Specification
 import org.specs2.specification.AfterAll
 import stellar.sdk.StubServer.ReplyWithText
 import stellar.sdk.inet.RestException
-import stellar.sdk.model.domain.{Currency, DomainInfo, DomainInfoGenerators, DomainInfoParseException, PointOfContact}
+import stellar.sdk.model.domain.{Currency, DomainInfo, DomainInfoGenerators, DomainInfoParseException, PointOfContact, Validator}
 
 import scala.concurrent.Future
 import scala.concurrent.duration._
@@ -270,12 +270,31 @@ class DomainInfoSpec(implicit ee: ExecutionEnv) extends Specification with After
          |regulated=${ccy.isRegulated.toString}
          |${ccy.approvalServer.map(v => s"""approval_server="$v"""").getOrElse("")}
          |${ccy.approvalCriteria.map(v => s"""approval_criteria="$v"""").getOrElse("")}
-       """.stripMargin
+         |""".stripMargin
     }
 
     "find the currency" >> prop { ccys: List[Currency] =>
       val toml = ccys.map(doc).mkString("\n")
       roundTripDomainInfo(toml).map(_.currencies) must
+        beEqualTo(ccys).awaitFor(5.seconds)
+    }
+  }
+
+  "validators parsing" should {
+    implicit val arb: Arbitrary[Validator] = Arbitrary(genValidator)
+
+    def doc(validator: Validator): String =
+      s"""[[VALIDATORS]]
+         |${validator.alias.map(v => s"""ALIAS="$v"""").getOrElse("")}
+         |${validator.displayName.map(v => s"""DISPLAY_NAME="$v"""").getOrElse("")}
+         |${validator.publicKey.map(v => s"""PUBLIC_KEY="${v.accountId}"""").getOrElse("")}
+         |${validator.host.map(v => s"""HOST="$v"""").getOrElse("")}
+         |${validator.history.map(v => s"""HISTORY="$v"""").getOrElse("")}
+         |""".stripMargin
+
+    "find the validator" >> prop { ccys: List[Validator] =>
+      val toml = ccys.map(doc).mkString("\n")
+      roundTripDomainInfo(toml).map(_.validators) must
         beEqualTo(ccys).awaitFor(5.seconds)
     }
   }

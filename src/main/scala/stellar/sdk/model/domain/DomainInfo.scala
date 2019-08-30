@@ -29,6 +29,7 @@ case class DomainInfo(federationServer: Option[FederationServer] = None,
                       issuerDocumentation: Option[IssuerDocumentation] = None,
                       pointsOfContact: List[PointOfContact] = Nil,
                       currencies: List[Currency] = Nil,
+                      validators: List[Validator] = Nil,
                      )
 
 object DomainInfo extends TomlParsers {
@@ -68,8 +69,10 @@ object DomainInfo extends TomlParsers {
           ).getOrElse(List.empty),
           currencies = parseTomlValue("CURRENCIES", { case Arr(values) =>
               values.map { case tbl: Tbl => Currency.parse(tbl) }
+          }).getOrElse(List.empty),
+          validators = parseTomlValue("VALIDATORS", { case Arr(values) =>
+              values.map { case tbl: Tbl => Validator.parse(tbl) }
           }).getOrElse(List.empty)
-
         )
     }
   }

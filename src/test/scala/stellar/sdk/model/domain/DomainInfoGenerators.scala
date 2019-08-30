@@ -61,4 +61,11 @@ trait DomainInfoGenerators extends ArbitraryInput {
     isUnlimited, isAnchored, assetType, anchoredAsset, redemptionInstructions, collateral,
     isRegulated, approvalServer, approvalCriteria)
 
+  val genValidator: Gen[Validator] = for {
+    alias <- Gen.option(Gen.identifier)
+    displayName <- Gen.option(Gen.identifier)
+    publicKey <- Gen.option(genPublicKey)
+    host <- Gen.option(Gen.identifier)
+    history <- Gen.option(genUri)
+  } yield Validator(alias, displayName, publicKey, host, history)
 }
