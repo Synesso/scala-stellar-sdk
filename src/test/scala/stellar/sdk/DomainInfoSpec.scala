@@ -233,8 +233,7 @@ class DomainInfoSpec(implicit ee: ExecutionEnv) extends Specification with After
 
     "find the point of contact" >> prop { pocs: List[PointOfContact] =>
       val toml = pocs.map(doc).mkString("\n")
-      roundTripDomainInfo(toml).map(_.pointsOfContact) must
-        beEqualTo(pocs).awaitFor(5.seconds)
+      DomainInfo.from(toml).pointsOfContact mustEqual pocs
     }
   }
 
@@ -275,8 +274,7 @@ class DomainInfoSpec(implicit ee: ExecutionEnv) extends Specification with After
 
     "find the currency" >> prop { ccys: List[Currency] =>
       val toml = ccys.map(doc).mkString("\n")
-      roundTripDomainInfo(toml).map(_.currencies) must
-        beEqualTo(ccys).awaitFor(5.seconds)
+      DomainInfo.from(toml).currencies mustEqual ccys
     }
   }
 
@@ -292,10 +290,9 @@ class DomainInfoSpec(implicit ee: ExecutionEnv) extends Specification with After
          |${validator.history.map(v => s"""HISTORY="$v"""").getOrElse("")}
          |""".stripMargin
 
-    "find the validator" >> prop { ccys: List[Validator] =>
-      val toml = ccys.map(doc).mkString("\n")
-      roundTripDomainInfo(toml).map(_.validators) must
-        beEqualTo(ccys).awaitFor(5.seconds)
+    "find the validator" >> prop { validators: List[Validator] =>
+      val toml = validators.map(doc).mkString("\n")
+      DomainInfo.from(toml).validators mustEqual validators
     }
   }
 
