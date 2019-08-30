@@ -23,9 +23,7 @@ object Validator extends TomlParsers {
 
   def parse(tbl: Tbl): Validator = {
     def parseTomlValue[T](key: String, parser: PartialFunction[Value, T]) =
-      tbl.values.get(key).map(parser.applyOrElse(_, {
-        v: Value => throw DomainInfoParseException(s"value for $key was not of the expected type. [value=$v]")
-      }))
+      super.parseTomlValue(tbl, key, parser)
 
     Validator(
       alias = parseTomlValue("ALIAS", string),

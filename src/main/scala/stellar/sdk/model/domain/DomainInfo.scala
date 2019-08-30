@@ -41,15 +41,13 @@ object DomainInfo extends TomlParsers {
         case (data, charset) => data.decodeString(charset.nioCharset.name)
       }.map(from)
 
-  private[sdk] def from(doc: String): DomainInfo = {
+  def from(doc: String): DomainInfo = {
     toml.Toml.parse(doc) match {
       case Left(msg) => throw DomainInfoParseException(msg)
       case Right(tbl) =>
 
         def parseTomlValue[T](key: String, parser: PartialFunction[Value, T]) =
-          tbl.values.get(key).map(parser.applyOrElse(_, {
-            v: Value => throw DomainInfoParseException(s"value for $key was not of the expected type. [value=$v]")
-          }))
+          super.parseTomlValue(tbl, key, parser)
 
         DomainInfo(
           federationServer = parseTomlValue("FEDERATION_SERVER", { case Str(s) => FederationServer(s) }),

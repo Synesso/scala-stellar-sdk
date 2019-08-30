@@ -3,7 +3,7 @@ package stellar.sdk.model.domain
 import akka.http.scaladsl.model.Uri
 import stellar.sdk.{KeyPair, PublicKey}
 import toml.Value
-import toml.Value.{Arr, Bool, Num, Str}
+import toml.Value.{Arr, Bool, Num, Str, Tbl}
 
 trait TomlParsers {
   val string: PartialFunction[Value, String] = { case Str(s) => s }
@@ -15,4 +15,9 @@ trait TomlParsers {
   def array[T](inner: PartialFunction[Value, T]): PartialFunction[Value, List[T]] = {
     case Arr(values) => values.map(inner)
   }
+  def parseTomlValue[T](tbl: Tbl, key: String, parser: PartialFunction[Value, T]): Option[T] =
+    tbl.values.get(key).map(parser.applyOrElse(_, {
+      v: Value => throw DomainInfoParseException(s"value for $key was not of the expected type. [value=$v]")
+    }))
+
 }

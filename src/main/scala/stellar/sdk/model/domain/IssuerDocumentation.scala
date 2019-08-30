@@ -31,9 +31,7 @@ object IssuerDocumentation extends TomlParsers {
 
   def parse(tbl: Tbl): IssuerDocumentation = {
     def parseTomlValue[T](key: String, parser: PartialFunction[Value, T]) =
-      tbl.values.get(key).map(parser.applyOrElse(_, {
-        v: Value => throw DomainInfoParseException(s"value for $key was not of the expected type. [value=$v]")
-      }))
+      super.parseTomlValue(tbl, key, parser)
 
     IssuerDocumentation(
       name = parseTomlValue("ORG_NAME", string),

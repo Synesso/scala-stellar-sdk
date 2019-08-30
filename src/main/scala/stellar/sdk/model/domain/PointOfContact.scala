@@ -15,9 +15,7 @@ case class PointOfContact(name: Option[String],
 object PointOfContact extends TomlParsers {
   def parse(tbl: Tbl): PointOfContact = {
     def parseTomlValue[T](key: String, parser: PartialFunction[Value, T]) =
-      tbl.values.get(key).map(parser.applyOrElse(_, {
-        v: Value => throw DomainInfoParseException(s"value for $key was not of the expected type. [value=$v]")
-      }))
+      super.parseTomlValue(tbl, key, parser)
 
     PointOfContact(
       name = parseTomlValue("name", string),
