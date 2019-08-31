@@ -177,7 +177,7 @@ object KeyPair extends Decode {
   def fromAddress(address: String)(implicit ec: ExecutionContext): Future[PublicKey] = {
     address match {
       case AddressRegex(name, domain) =>
-        DomainInfo.forDomain(s"https://$domain").recoverWith { case t => DomainInfo.forDomain(s"http://$domain") }
+        DomainInfo.forDomain(s"https://$domain").recoverWith { case _ => DomainInfo.forDomain(s"http://$domain") }
           .flatMap {
             case Some(info) => info.federationServer match {
               case Some(fedServer) => fedServer.byName(s"$name*$domain").map(_.map(_.account))

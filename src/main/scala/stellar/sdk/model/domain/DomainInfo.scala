@@ -9,7 +9,7 @@ import stellar.sdk.{DefaultActorSystem, FederationServer, KeyPair, PublicKey}
 import toml.Value
 import toml.Value.{Arr, Str, Tbl}
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContextExecutor, Future}
 
 /**
   * Data provided by a domain's `stellar.toml`.
@@ -83,9 +83,9 @@ object DomainInfo extends TomlParsers {
   def forDomain(uri: String)
                (implicit sys: ActorSystem = DefaultActorSystem.system): Future[Option[DomainInfo]] = {
 
-    implicit val ec = sys.dispatcher
+    implicit val ec: ExecutionContextExecutor = sys.dispatcher
 
-    lazy val client = new WebClient(Uri(uri))
+    lazy val client = new WebClient(Uri(if (uri.startsWith("http")) uri else s"https://$uri"))
 
     client.get[DomainInfo](Uri.Path("/.well-known/stellar.toml"))
   }

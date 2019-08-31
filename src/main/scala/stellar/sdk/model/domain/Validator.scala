@@ -13,11 +13,11 @@ import toml.Value.Tbl
   * @param host The IP:port or domain:port peers can use to connect to the node
   * @param history The location of the history archive published by this validator
   */
-case class Validator(alias: Option[String],
-                     displayName: Option[String],
-                     publicKey: Option[PublicKey],
-                     host: Option[String],
-                     history: Option[Uri])
+case class Validator(alias: Option[String] = None,
+                     displayName: Option[String] = None,
+                     publicKey: Option[PublicKey] = None,
+                     host: Option[String] = None,
+                     history: Option[Uri] = None)
 
 object Validator extends TomlParsers {
 
