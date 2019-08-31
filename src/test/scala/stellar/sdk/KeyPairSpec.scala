@@ -3,17 +3,23 @@ package stellar.sdk
 import org.apache.commons.codec.binary.Hex
 import org.specs2.concurrent.ExecutionEnv
 import org.specs2.mutable.Specification
+import org.specs2.specification.AfterAll
+import stellar.sdk.StubServer.ReplyWithText
 import stellar.sdk.util.ByteArrays
 
-import scala.concurrent.Future
+import scala.concurrent.{Await, Future}
 import scala.concurrent.duration._
 
-class KeyPairSpec(implicit ee: ExecutionEnv) extends Specification with ArbitraryInput with DomainMatchers {
+class KeyPairSpec(implicit ee: ExecutionEnv) extends Specification with ArbitraryInput with DomainMatchers with AfterAll {
 
   private val keyPair = KeyPair.fromSecretSeed(
     Hex.decodeHex("1123740522f11bfef6b3671f51e159ccf589ccf8965262dd5f97d1721d383dd4")
   )
   private val sig = "587d4b472eeef7d07aafcd0b049640b0bb3f39784118c2e2b73a04fa2f64c9c538b4b2d0f5335e968a480021fdc23e98c0ddf424cb15d8131df8cb6c4bb58309"
+
+  val server = new StubServer()
+
+  override def afterAll(): Unit = server.stop()
 
   "signed data" should {
     "be verified by the signing key" >> prop { msg: String =>
@@ -113,6 +119,11 @@ class KeyPairSpec(implicit ee: ExecutionEnv) extends Specification with Arbitrar
 
     "fail when the name does not exist" >> {
       KeyPair.fromAddress("asodifuawehksdjhlsduyfasdjfh*stronghold.co") must throwA[NoSuchAddress].awaitFor(1.minute)
+    }
+
+    "fail when the well-known.toml doesn't contain a federation server" >> {
+      server.expectGet(".well-known/stellar.toml", Map.empty, ReplyWithText("FOO=123"))
+      KeyPair.fromAddress("abc*localhost:8002") must throwA[NoSuchAddress].awaitFor(1.minute)
     }
 
     "fail when the domain does not resolve" >> {

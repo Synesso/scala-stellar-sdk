@@ -59,7 +59,7 @@ class WebClient(base: Uri)
       case _ if status.isFailure =>
         Unmarshal(entity).to[String].map(e => throw RestException(s"${status.reason} - $e"))
       case _ => Unmarshal(entity).to[T].map(Some(_)).recoverWith { case t: Throwable =>
-        throw RestException(s"Could not parse entity to target type: ${t.getMessage}")
+        throw RestException(s"Could not parse entity to target type.", t)
       }
     }
   }
@@ -73,4 +73,4 @@ class WebClient(base: Uri)
 /**
   * Indicates that something went wrong with a REST operation.
   */
-case class RestException(message: String) extends Exception(message)
+case class RestException(message: String, t: Throwable = None.orNull) extends Exception(message, t)

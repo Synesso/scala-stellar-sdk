@@ -6,6 +6,7 @@ import java.util.Arrays
 import cats.data.State
 import net.i2p.crypto.eddsa._
 import net.i2p.crypto.eddsa.spec._
+import stellar.sdk.model.domain.DomainInfo
 import stellar.sdk.model.{AccountId, Seed, StrKey}
 import stellar.sdk.model.xdr.{Decode, Encodable, Encode}
 import stellar.sdk.util.ByteArrays
@@ -176,10 +177,13 @@ object KeyPair extends Decode {
   def fromAddress(address: String)(implicit ec: ExecutionContext): Future[PublicKey] = {
     address match {
       case AddressRegex(name, domain) =>
-        DomainInfo.forDomain(s"https://$domain")
+        DomainInfo.forDomain(s"https://$domain").recoverWith { case _ => DomainInfo.forDomain(s"http://$domain") }
           .flatMap {
-            case Some(info) => info.federationServer.byName(s"$name*$domain").map(_.map(_.account))
+            case Some(info) => info.federationServer match {
+              case Some(fedServer) => fedServer.byName(s"$name*$domain").map(_.map(_.account))
                 .map(_.getOrElse(throw NoSuchAddress(address, new Exception(s"Address not found on ${info.federationServer}"))))
+              case _ => Future(throw NoSuchAddress(address, new Exception("Domain info did not contain federation server")))
+            }
             case None => Future(throw NoSuchAddress(address, new Exception("Domain info could not be found")))
           }
           .recover {

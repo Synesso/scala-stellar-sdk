@@ -70,5 +70,6 @@ is [@jem](https://keybase.io/jem).
 * [Key Pairs](key_pairs.md)
 * [Queries](queries.md)
 * [Sources](sources.md)
+* [Domains](domains.md)
 
 @@@
