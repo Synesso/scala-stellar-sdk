@@ -81,7 +81,7 @@ lazy val root = (project in file("."))
       "org.json4s" %% "json4s-native" % "3.6.7",
       "com.typesafe.scala-logging" %% "scala-logging" % "3.9.2",
       "ch.qos.logback" % "logback-classic" % "1.2.3",
-      "org.typelevel" %% "cats-core" % "1.6.1",
+      "org.typelevel" %% "cats-core" % "2.0.0",
       "tech.sparse" %%  "toml-scala" % "0.2.1",
       "com.softwaremill.retry" %% "retry" % "0.3.3",
       "org.specs2" %% "specs2-core" % "4.7.0" % "test,it",
