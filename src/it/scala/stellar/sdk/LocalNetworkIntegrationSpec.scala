@@ -138,7 +138,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
           InflationOperation(),
           CreateSellOfferOperation(IssuedAmount(800000000, chinchillaA), NativeAsset, Price(80, 4), Some(accnA)),
           CreateSellOfferOperation(IssuedAmount(10000000, chinchillaA), chinchillaMaster, Price(1, 1), Some(accnA)),
-          PathPaymentOperation(IssuedAmount(1, chinchillaMaster), accnB, IssuedAmount(1, chinchillaA), Nil),
+          PathPaymentStrictReceiveOperation(IssuedAmount(1, chinchillaMaster), accnB, IssuedAmount(1, chinchillaA), Nil),
           BumpSequenceOperation(masterAccount.sequenceNumber + 20),
           SetOptionsOperation(signer = Some(Signer(SHA256Hash(ByteArrays.sha256(dachshundB.encode)), 3)), sourceAccount = Some(accnD))
         )
@@ -454,7 +454,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
         operation <- network.paymentsByLedger(ledgerId)
       } yield operation) must beLike[Seq[Transacted[PayOperation]]] {
         case Seq(op) =>
-          op.operation must beEquivalentTo(PathPaymentOperation(
+          op.operation must beEquivalentTo(PathPaymentStrictReceiveOperation(
             IssuedAmount(1, chinchillaMaster), accnB, IssuedAmount(1, chinchillaA), Nil
           ))
       }.awaitFor(10.seconds)
@@ -464,7 +464,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
       network.paymentsByTransaction("ed3592ccaba4df850684ade75bbde6c88f5cc9e537350d874baa6345fe787097") must
         beLike[Seq[Transacted[PayOperation]]] {
           case Seq(op) =>
-            op.operation must beEquivalentTo(PathPaymentOperation(
+            op.operation must beEquivalentTo(PathPaymentStrictReceiveOperation(
               IssuedAmount(1, chinchillaMaster), accnB, IssuedAmount(1, chinchillaA), Nil
             ))
         }.awaitFor(10.seconds)

@@ -50,7 +50,7 @@ The available operations are:
 * @scaladoc[DeleteBuyOffer](stellar.sdk.model.op.DeleteBuyOfferOperation)
 * @scaladoc[DeleteSellOffer](stellar.sdk.model.op.DeleteSellOfferOperation)
 * @scaladoc[Inflation](stellar.sdk.model.op.InflationOperation)
-* @scaladoc[PathPayment](stellar.sdk.model.op.PathPaymentOperation)
+* @scaladoc[PathPaymentStrictReceive](stellar.sdk.model.op.PathPaymentStrictReceiveOperation)
 * @scaladoc[Payment](stellar.sdk.model.op.PaymentOperation)
 * @scaladoc[SetOptions](stellar.sdk.model.op.SetOptionsOperation)
 * @scaladoc[UpdateBuyOffer](stellar.sdk.model.op.UpdateBuyOfferOperation)

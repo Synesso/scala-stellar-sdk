@@ -64,7 +64,7 @@ trait ArbitraryInput extends ScalaCheck {
 
   implicit def arbInflationOperation: Arbitrary[InflationOperation] = Arbitrary(genInflationOperation)
 
-  implicit def arbPathPaymentOperation: Arbitrary[PathPaymentOperation] = Arbitrary(genPathPaymentOperation)
+  implicit def arbPathPaymentOperation: Arbitrary[PathPaymentStrictReceiveOperation] = Arbitrary(genPathPaymentOperation)
 
   implicit def arbPaymentOperation: Arbitrary[PaymentOperation] = Arbitrary(genPaymentOperation)
 
@@ -343,14 +343,14 @@ trait ArbitraryInput extends ScalaCheck {
   def genManageBuyOfferOperation: Gen[ManageBuyOfferOperation] =
     Gen.oneOf(genCreateBuyOfferOperation, genDeleteBuyOfferOperation, genUpdateBuyOfferOperation)
 
-  def genPathPaymentOperation: Gen[PathPaymentOperation] = for {
+  def genPathPaymentOperation: Gen[PathPaymentStrictReceiveOperation] = for {
     sendMax <- genAmount
     destAccount <- genPublicKey
     destAmount <- genAmount
     path <- Gen.listOf(genAsset)
     sourceAccount <- Gen.option(genPublicKey)
   } yield {
-    PathPaymentOperation(sendMax, destAccount, destAmount, path, sourceAccount)
+    PathPaymentStrictReceiveOperation(sendMax, destAccount, destAmount, path, sourceAccount)
   }
 
   def genPaymentOperation: Gen[PaymentOperation] = for {

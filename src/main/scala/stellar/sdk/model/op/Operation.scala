@@ -28,7 +28,7 @@ object Operation extends Decode {
       int.flatMap {
         case 0 => widen(CreateAccountOperation.decode.map(_.copy(sourceAccount = source)))
         case 1 => widen(PaymentOperation.decode.map(_.copy(sourceAccount = source)))
-        case 2 => widen(PathPaymentOperation.decode.map(_.copy(sourceAccount = source)))
+        case 2 => widen(PathPaymentStrictReceiveOperation.decode.map(_.copy(sourceAccount = source)))
         case 3 => widen(ManageSellOfferOperation.decode.map {
           case x: CreateSellOfferOperation => x.copy(sourceAccount = source)
           case x: UpdateSellOfferOperation => x.copy(sourceAccount = source)
@@ -106,7 +106,7 @@ object OperationDeserializer extends ResponseParser[Operation]({ o: JObject =>
     case "path_payment" =>
       val JArray(pathJs) = o \ "path"
       val path: List[Asset] = pathJs.map(a => asset(obj = a))
-      PathPaymentOperation(amount("source_max", "source_"), account("to"), amount(), path, sourceAccount)
+      PathPaymentStrictReceiveOperation(amount("source_max", "source_"), account("to"), amount(), path, sourceAccount)
     case "manage_offer" | "manage_sell_offer" =>
       (o \ "offer_id").extract[Long] match {
         case 0L => CreateSellOfferOperation(
@@ -260,11 +260,11 @@ object PaymentOperation {
   * @param sourceAccount the account effecting this operation, if different from the owning account of the transaction
   * @see [[https://www.stellar.org/developers/horizon/reference/resources/operation.html#path-payment endpoint doc]]
   */
-case class PathPaymentOperation(sendMax: Amount,
-                                destinationAccount: PublicKeyOps,
-                                destinationAmount: Amount,
-                                path: Seq[Asset] = Nil,
-                                sourceAccount: Option[PublicKeyOps] = None) extends PayOperation {
+case class PathPaymentStrictReceiveOperation(sendMax: Amount,
+                                             destinationAccount: PublicKeyOps,
+                                             destinationAmount: Amount,
+                                             path: Seq[Asset] = Nil,
+                                             sourceAccount: Option[PublicKeyOps] = None) extends PayOperation {
 
   override def encode: Stream[Byte] =
     super.encode ++
@@ -275,14 +275,14 @@ case class PathPaymentOperation(sendMax: Amount,
       Encode.arr(path)
 }
 
-object PathPaymentOperation extends Decode {
+object PathPaymentStrictReceiveOperation extends Decode {
 
-  def decode: State[Seq[Byte], PathPaymentOperation] = for {
+  def decode: State[Seq[Byte], PathPaymentStrictReceiveOperation] = for {
     sendMax <- Amount.decode
     destAccount <- KeyPair.decode
     destAmount <- Amount.decode
     path <- arr(Asset.decode)
-  } yield PathPaymentOperation(sendMax, destAccount, destAmount, path)
+  } yield PathPaymentStrictReceiveOperation(sendMax, destAccount, destAmount, path)
 
 }
 
