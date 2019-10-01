@@ -8,23 +8,23 @@ import org.specs2.mutable.Specification
 import stellar.sdk.util.ByteArrays.base64
 import stellar.sdk.{ArbitraryInput, DomainMatchers}
 
-class PathPaymentOperationSpec extends Specification with ArbitraryInput with DomainMatchers with JsonSnippets {
+class PathPaymentStrictReceiveOperationSpec extends Specification with ArbitraryInput with DomainMatchers with JsonSnippets {
 
-  implicit val arb: Arbitrary[Transacted[PathPaymentOperation]] = Arbitrary(genTransacted(genPathPaymentOperation))
+  implicit val arb: Arbitrary[Transacted[PathPaymentStrictReceiveOperation]] = Arbitrary(genTransacted(genPathPaymentOperation))
   implicit val formats = Serialization.formats(NoTypeHints) + TransactedOperationDeserializer
 
   "path payment operation" should {
-    "serde via xdr string" >> prop { actual: PathPaymentOperation =>
+    "serde via xdr string" >> prop { actual: PathPaymentStrictReceiveOperation =>
       Operation.decodeXDR(base64(actual.encode)) must beEquivalentTo(actual)
     }
 
-    "serde via xdr bytes" >> prop { actual: PathPaymentOperation =>
+    "serde via xdr bytes" >> prop { actual: PathPaymentStrictReceiveOperation =>
       val (remaining, decoded) = Operation.decode.run(actual.encode).value
       decoded mustEqual actual
       remaining must beEmpty
     }
 
-    "parse from json" >> prop { op: Transacted[PathPaymentOperation] =>
+    "parse from json" >> prop { op: Transacted[PathPaymentStrictReceiveOperation] =>
       val doc =
         s"""
            |{
