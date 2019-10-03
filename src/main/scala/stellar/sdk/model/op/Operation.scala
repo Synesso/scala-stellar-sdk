@@ -50,9 +50,9 @@ object Operation extends Decode {
           case x: UpdateBuyOfferOperation => x.copy(sourceAccount = source)
           case x: DeleteBuyOfferOperation => x.copy(sourceAccount = source)
         })
+        case 13 => widen(PathPaymentStrictSendOperation.decode.map(_.copy(sourceAccount = source)))
       }
     }
-//  private def widen[A, W, O <: W](s: State[A, O]): State[A, W] = s.map(w => w: W)
 
   def decodeXDR(base64: String): Operation = decode.run(ByteArrays.base64(base64)).value._2
 }
@@ -103,10 +103,14 @@ object OperationDeserializer extends ResponseParser[Operation]({ o: JObject =>
   (o \ "type").extract[String] match {
     case "create_account" => CreateAccountOperation(account(), nativeAmount("starting_balance"), sourceAccount)
     case "payment" => PaymentOperation(account("to"), amount(), sourceAccount)
-    case "path_payment" =>
+    case "path_payment" | "path_payment_strict_receive" =>
       val JArray(pathJs) = o \ "path"
       val path: List[Asset] = pathJs.map(a => asset(obj = a))
       PathPaymentStrictReceiveOperation(amount("source_max", "source_"), account("to"), amount(), path, sourceAccount)
+    case "path_payment_strict_send" =>
+      val JArray(pathJs) = o \ "path"
+      val path: List[Asset] = pathJs.map(a => asset(obj = a))
+      PathPaymentStrictSendOperation(amount(assetPrefix = "source_"), account("to"), amount(label = "destination_min"), path, sourceAccount)
     case "manage_offer" | "manage_sell_offer" =>
       (o \ "offer_id").extract[Long] match {
         case 0L => CreateSellOfferOperation(
@@ -252,6 +256,8 @@ object PaymentOperation {
   * Represents a payment from one account to another through a path. This type of payment starts as one type of asset
   * and ends as another type of asset. There can be other assets that are traded into and out of along the path.
   * Suitable orders must exist on the relevant order books for this operation to be successful.
+  * This operation specifies a precise amount to be received, and a maximum amount that can be sent.
+  * If you need to specify the amount sent, use PathPaymentStrictSendOperation instead.
   *
   * @param sendMax the maximum amount willing to be spent to effect the payment
   * @param destinationAccount the payment recipient
@@ -283,6 +289,46 @@ object PathPaymentStrictReceiveOperation extends Decode {
     destAmount <- Amount.decode
     path <- arr(Asset.decode)
   } yield PathPaymentStrictReceiveOperation(sendMax, destAccount, destAmount, path)
+
+}
+
+/**
+  * Represents a payment from one account to another through a path. This type of payment starts as one type of asset
+  * and ends as another type of asset. There can be other assets that are traded into and out of along the path.
+  * Suitable orders must exist on the relevant order books for this operation to be successful.
+  * This operation specifies a precise amount to be sent, and a minimum amount that can be received.
+  * If you need to specify the amount received, use PathPaymentStrictReceiveOperation instead.
+  *
+  * @param sendAmount the amount to be spent to effect the payment
+  * @param destinationAccount the payment recipient
+  * @param destinationMin the minimum amount that should be received
+  * @param path the intermediate assets to traverse (may be empty)
+  * @param sourceAccount the account effecting this operation, if different from the owning account of the transaction
+  * @see [[https://www.stellar.org/developers/learn/concepts/list-of-operations.html#path-payment-strict-send endpoint doc]]
+  */
+case class PathPaymentStrictSendOperation(sendAmount: Amount,
+                                          destinationAccount: PublicKeyOps,
+                                          destinationMin: Amount,
+                                          path: Seq[Asset] = Nil,
+                                          sourceAccount: Option[PublicKeyOps] = None) extends PayOperation {
+
+  override def encode: Stream[Byte] =
+    super.encode ++
+      Encode.int(13) ++
+      sendAmount.encode ++
+      destinationAccount.encode ++
+      destinationMin.encode ++
+      Encode.arr(path)
+}
+
+object PathPaymentStrictSendOperation extends Decode {
+
+  def decode: State[Seq[Byte], PathPaymentStrictSendOperation] = for {
+    sendAmount <- Amount.decode
+    destAccount <- KeyPair.decode
+    destMin <- Amount.decode
+    path <- arr(Asset.decode)
+  } yield PathPaymentStrictSendOperation(sendAmount, destAccount, destMin, path)
 
 }
 

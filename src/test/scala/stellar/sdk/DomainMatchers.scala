@@ -141,6 +141,16 @@ trait DomainMatchers extends AnyMatchers with MustExpectations with SequenceMatc
       }
   }
 
+  def beEquivalentTo(other: PathPaymentStrictSendOperation): Matcher[PathPaymentStrictSendOperation] = beLike[PathPaymentStrictSendOperation] {
+    case op =>
+      op.destinationMin must beEquivalentTo(other.destinationMin)
+      op.destinationAccount.accountId mustEqual other.destinationAccount.accountId
+      op.sendAmount must beEquivalentTo(other.sendAmount)
+      forall(op.path.zip(other.path)) {
+        case (expected: Asset, actual: Asset) => actual must beEquivalentTo(expected)
+      }
+  }
+
   def beEquivalentTo(other: PaymentOperation): Matcher[PaymentOperation] = beLike[PaymentOperation] {
     case op =>
       op.destinationAccount.accountId mustEqual other.destinationAccount.accountId
@@ -177,6 +187,7 @@ trait DomainMatchers extends AnyMatchers with MustExpectations with SequenceMatc
     case op: DeleteSellOfferOperation => other.asInstanceOf[DeleteSellOfferOperation] must beEquivalentTo(op)
     case op: UpdateSellOfferOperation => other.asInstanceOf[UpdateSellOfferOperation] must beEquivalentTo(op)
     case op: PathPaymentStrictReceiveOperation => other.asInstanceOf[PathPaymentStrictReceiveOperation] must beEquivalentTo(op)
+    case op: PathPaymentStrictSendOperation => other.asInstanceOf[PathPaymentStrictSendOperation] must beEquivalentTo(op)
     case op: PaymentOperation => other.asInstanceOf[PaymentOperation] must beEquivalentTo(op)
     case op: SetOptionsOperation => other.asInstanceOf[SetOptionsOperation] must beEquivalentTo(op)
     case op => other mustEqual op
