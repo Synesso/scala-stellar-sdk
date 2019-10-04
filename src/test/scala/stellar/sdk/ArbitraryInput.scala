@@ -64,7 +64,9 @@ trait ArbitraryInput extends ScalaCheck {
 
   implicit def arbInflationOperation: Arbitrary[InflationOperation] = Arbitrary(genInflationOperation)
 
-  implicit def arbPathPaymentOperation: Arbitrary[PathPaymentStrictReceiveOperation] = Arbitrary(genPathPaymentOperation)
+  implicit def arbPathPaymentStrictReceiveOperation: Arbitrary[PathPaymentStrictReceiveOperation] = Arbitrary(genPathPaymentStrictReceiveOperation)
+
+  implicit def arbPathPaymentStrictSendOperation: Arbitrary[PathPaymentStrictSendOperation] = Arbitrary(genPathPaymentStrictSendOperation)
 
   implicit def arbPaymentOperation: Arbitrary[PaymentOperation] = Arbitrary(genPaymentOperation)
 
@@ -105,7 +107,7 @@ trait ArbitraryInput extends ScalaCheck {
   implicit def arbHorizonCursor: Arbitrary[HorizonCursor] = Arbitrary(genHorizonCursor)
 
   implicit def arbOperationResult: Arbitrary[OperationResult] = Arbitrary(genOperationResult)
-  
+
   implicit def arbAccountMergeResult: Arbitrary[AccountMergeResult] = Arbitrary(genAccountMergeResult)
 
   implicit def arbAllowTrustResult: Arbitrary[AllowTrustResult] = Arbitrary(genAllowTrustResult)
@@ -343,7 +345,7 @@ trait ArbitraryInput extends ScalaCheck {
   def genManageBuyOfferOperation: Gen[ManageBuyOfferOperation] =
     Gen.oneOf(genCreateBuyOfferOperation, genDeleteBuyOfferOperation, genUpdateBuyOfferOperation)
 
-  def genPathPaymentOperation: Gen[PathPaymentStrictReceiveOperation] = for {
+  def genPathPaymentStrictReceiveOperation: Gen[PathPaymentStrictReceiveOperation] = for {
     sendMax <- genAmount
     destAccount <- genPublicKey
     destAmount <- genAmount
@@ -351,6 +353,16 @@ trait ArbitraryInput extends ScalaCheck {
     sourceAccount <- Gen.option(genPublicKey)
   } yield {
     PathPaymentStrictReceiveOperation(sendMax, destAccount, destAmount, path, sourceAccount)
+  }
+
+  def genPathPaymentStrictSendOperation: Gen[PathPaymentStrictSendOperation] = for {
+    sendAmount <- genAmount
+    destAccount <- genPublicKey
+    destinationMin <- genAmount
+    path <- Gen.listOf(genAsset)
+    sourceAccount <- Gen.option(genPublicKey)
+  } yield {
+    PathPaymentStrictSendOperation(sendAmount, destAccount, destinationMin, path, sourceAccount)
   }
 
   def genPaymentOperation: Gen[PaymentOperation] = for {
@@ -399,8 +411,8 @@ trait ArbitraryInput extends ScalaCheck {
   def genOperation: Gen[Operation] = {
     Gen.oneOf(genAccountMergeOperation, genAllowTrustOperation, genChangeTrustOperation, genCreateAccountOperation,
       genCreatePassiveSellOfferOperation, genInflationOperation, genManageDataOperation, genManageSellOfferOperation,
-      genManageBuyOfferOperation, genPathPaymentOperation, genPaymentOperation, genSetOptionsOperation,
-      genBumpSequenceOperation)
+      genManageBuyOfferOperation, genPathPaymentStrictReceiveOperation, genPaymentOperation, genSetOptionsOperation,
+      genBumpSequenceOperation, genPathPaymentStrictSendOperation)
   }
 
   def genPrice: Gen[Price] = for {
