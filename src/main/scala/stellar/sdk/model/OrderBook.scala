@@ -1,5 +1,7 @@
 package stellar.sdk.model
 
+import java.util.Locale
+
 import org.json4s.JsonAST.JObject
 import org.json4s.native.JsonMethods._
 import org.json4s.{DefaultFormats, JValue}
@@ -8,7 +10,16 @@ import stellar.sdk.model.response.ResponseParser
 
 case class OrderBook(selling: Asset, buying: Asset, bids: Seq[Order], asks: Seq[Order])
 
-case class Order(price: Price, quantity: Long)
+case class Order(price: Price, quantity: Long) {
+  def toDisplayUnits: String = "%.7f".formatLocal(Locale.ROOT, quantityBigDecimal)
+
+  def quantityBigDecimal: BigDecimal = BigDecimal(quantity) / Amount.toIntegralFactor
+
+  override def toString: String = s"Order(price=${price.asDecimalString}, quantity=$toDisplayUnits)"
+
+  def take(qty: Long): Option[Order] = Some(this.copy(quantity = quantity - qty))
+    .filter(_.quantity > 0)
+}
 
 object OrderBookDeserializer extends ResponseParser[OrderBook]({ o: JObject =>
   implicit val formats = DefaultFormats

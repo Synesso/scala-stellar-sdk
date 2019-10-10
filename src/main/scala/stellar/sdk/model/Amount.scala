@@ -15,20 +15,25 @@ sealed trait Amount extends Encodable {
   def toDisplayUnits: String = "%.7f".formatLocal(Locale.ROOT, BigDecimal(units) / Amount.toIntegralFactor)
 
   def encode: Stream[Byte] = asset.encode ++ Encode.long(units)
+
+  def minus(qty: Long): Amount
 }
 
 case class NativeAmount(units: Long) extends Amount {
   override val asset: Asset = NativeAsset
   override def toString: String = s"$toDisplayUnits XLM"
+
+  override def minus(qty: Long): Amount = this.copy(units = units - qty)
 }
 
 case class IssuedAmount(units: Long, asset: NonNativeAsset) extends Amount {
   override def toString: String = s"$toDisplayUnits $asset"
+  override def minus(qty: Long): Amount = this.copy(units = units - qty)
 }
 
 object Amount extends Decode {
   private val decimalPlaces = 7
-  private val toIntegralFactor = BigDecimal(math.pow(10, decimalPlaces))
+  val toIntegralFactor = BigDecimal(math.pow(10, decimalPlaces))
 
   def toBaseUnits(d: Double): Try[Long] = toBaseUnits(BigDecimal(d))
 
