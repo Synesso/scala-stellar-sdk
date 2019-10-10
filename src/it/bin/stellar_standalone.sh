@@ -1,7 +1,7 @@
 #!/bin/bash
 
-CONTAINER=synesso/stellar:v0.19.0
-PROTOCOL_VERSION=11
+CONTAINER=synesso/stellar:v0.22.0
+PROTOCOL_VERSION=12
 
 function container_started {
     local state=$(curl -s "http://localhost:11626/info" | jq -r .info.state)
