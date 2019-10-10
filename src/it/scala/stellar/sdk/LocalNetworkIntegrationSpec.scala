@@ -94,6 +94,10 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
   private val chinchillaMaster = Asset("Chinchilla", masterAccountKey)
   private val dachshundB = Asset("Dachshund", accnB)
 
+  // Transaction hashes. These will changed when setup operations change.
+  private val txnHash2 = "e13447898b27dbf278d4411022e2e6d0aae78ef70670c7af7834a1f2a6d191d8"
+  private val txnHash3 = "e2ea50797b96c3f7ad0a186a2e55cc3d417e69fbb6b9da0341e2f95c7e554d86"
+
   private def setupFixtures: Future[(Account, Account)] = {
     val futureAccountA = network.account(accnA).map(_.toAccount)
     val futureAccountB = network.account(accnB).map(_.toAccount)
@@ -135,7 +139,6 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
         transact(
           UpdateSellOfferOperation(2, lumens(5), chinchillaA, Price(1, 5), Some(accnB)),
           DeleteSellOfferOperation(4, beaverA, NativeAsset, Price(1, 3), Some(accnA)),
-          InflationOperation(),
           CreateSellOfferOperation(IssuedAmount(800000000, chinchillaA), NativeAsset, Price(80, 4), Some(accnA)),
           CreateSellOfferOperation(IssuedAmount(10000000, chinchillaA), chinchillaMaster, Price(1, 1), Some(accnA)),
           PathPaymentStrictReceiveOperation(IssuedAmount(1, chinchillaMaster), accnB, IssuedAmount(1, chinchillaA), Nil),
@@ -302,7 +305,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
     }
 
     "filter effects by transaction hash" >> {
-      val byTransaction = network.effectsByTransaction("e13447898b27dbf278d4411022e2e6d0aae78ef70670c7af7834a1f2a6d191d8").map(_.toList)
+      val byTransaction = network.effectsByTransaction(txnHash2).map(_.toList)
       byTransaction must beLike[List[EffectResponse]] {
         case List(
         EffectAccountDebited(_, accn1, amount1),
@@ -370,7 +373,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
 
   "operation endpoint" should {
     "list all operations" >> {
-      network.operations().map(_.size) must beEqualTo(131).awaitFor(10.seconds)
+      network.operations().map(_.size) must beEqualTo(130).awaitFor(10.seconds)
     }
 
     "list operations by account" >> {
@@ -395,7 +398,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
       }.awaitFor(10.seconds)
 
       "list operations by transaction" >> {
-        network.operationsByTransaction("e13447898b27dbf278d4411022e2e6d0aae78ef70670c7af7834a1f2a6d191d8")
+        network.operationsByTransaction(txnHash2)
           .map(_.head) must beLike[Transacted[Operation]] {
           case op =>
             op.operation must beLike[Operation] {
@@ -416,12 +419,13 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
     }
 
     "list the details of a given operation" >> {
-      network.operationsByTransaction("ed3592ccaba4df850684ade75bbde6c88f5cc9e537350d874baa6345fe787097")
-        .map(_.drop(2).head) must beLike[Transacted[Operation]] {
+      network.operationsByTransaction(txnHash3)
+        .map(_.drop(1).head) must beLike[Transacted[Operation]] {
         case op =>
           op.operation must beLike[Operation] {
-            case InflationOperation(source) =>
-              source.map(_.asPublicKey) must beSome(masterAccountKey.asPublicKey)
+            case DeleteSellOfferOperation(4, selling, NativeAsset, Price(1, 3), source) =>
+              selling mustEqual beaverA
+              source.map(_.asPublicKey) must beSome(accnA.asPublicKey)
           }
       }.awaitFor(10.seconds)
     }
@@ -461,7 +465,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
     }
 
     "filter payments by transaction" >> {
-      network.paymentsByTransaction("ed3592ccaba4df850684ade75bbde6c88f5cc9e537350d874baa6345fe787097") must
+      network.paymentsByTransaction(txnHash3) must
         beLike[Seq[Transacted[PayOperation]]] {
           case Seq(op) =>
             op.operation must beEquivalentTo(PathPaymentStrictReceiveOperation(
@@ -551,7 +555,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
       val source = network.transactionSource()
       val results: Future[Seq[TransactionHistory]] = source.take(1).runWith(Sink.seq[TransactionHistory])
       results.isCompleted must beFalse
-      transact(InflationOperation())
+      transact(PaymentOperation(accnA, NativeAmount(100), Some(accnA)))
       results.map(_.size) must beEqualTo(1).awaitFor(1 minute)
     }
   }
