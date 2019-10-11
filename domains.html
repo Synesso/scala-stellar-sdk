@@ -127,7 +127,7 @@ synesso/scala-stellar-sdk
 <ul style="display: none">
 <li class="md-nav__item md-version" id="project.version">
 <label class="md-nav__link" for="__version">
-<i class="md-icon" title="Version">label_outline</i> 0.10.0
+<i class="md-icon" title="Version">label_outline</i> 0.10.1
 </label>
 </li>
 </ul>
@@ -140,7 +140,7 @@ synesso/scala-stellar-sdk
 <h1><a href="#domains" name="domains" class="anchor"><span class="anchor-link"></span></a>Domains</h1>
 <p>Any domain with an interest in the Stellar network can publish their network information on their website. This format is defined by <a href="https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0001.md">SEP-0001</a> and is both human and machine readable.</p>
 <p>The SDK can parse all known fields as per v2.0.0 of the specification.</p>
-<pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/Synesso/scala-stellar-sdk/tree/v0.10.0/src/it/scala/stellar/sdk/DomainInfoItSpec.scala#L15-L47" target="_blank" title="Go to snippet source"></a><code class="language-scala">DomainInfo.forDomain(&quot;stellar.org&quot;) must beSome(
+<pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/Synesso/scala-stellar-sdk/tree/v0.10.1/src/it/scala/stellar/sdk/DomainInfoItSpec.scala#L15-L47" target="_blank" title="Go to snippet source"></a><code class="language-scala">DomainInfo.forDomain(&quot;stellar.org&quot;) must beSome(
   DomainInfo(
     issuerDocumentation = Some(IssuerDocumentation(
       name = Some(&quot;Stellar Development Foundation&quot;),
@@ -176,13 +176,13 @@ synesso/scala-stellar-sdk
 <p>The domain info spec is rich with data about the organizations that use the Stellar network. It is worth bearing in mind that the document is not mandatory and can contain errors. Only fields that align with the SEP will be parsed.</p>
 </div>
 <div>
-<a href="https://github.com/Synesso/scala-stellar-sdk/tree/v0.10.0/src/main/paradox/domains.md" title="Edit this page" class="md-source-file md-edit">
+<a href="https://github.com/Synesso/scala-stellar-sdk/tree/v0.10.1/src/main/paradox/domains.md" title="Edit this page" class="md-source-file md-edit">
 Edit this page
 </a>
 </div>
 <div class="print-only">
 <span class="md-source-file md-version">
-0.10.0
+0.10.1
 </span>
 </div>
 </article>
