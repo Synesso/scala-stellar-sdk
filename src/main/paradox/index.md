@@ -19,7 +19,11 @@ The code throughout this documentation is compiled against Scala $scalaBinaryVer
 
 ## Quick-start
 
-Add the SDK via your dependency management tool.
+Add the jitpack resolver.
+
+`resolvers += "jitpack" at "https://jitpack.io"`
+
+Then, add the SDK via your dependency management tool.
 
 @@dependency[sbt,Maven,Gradle] {
   group="$organization$"
