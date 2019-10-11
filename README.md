@@ -13,10 +13,11 @@ You can do what you like with this software, as long as you include the required
 
 ## Getting Started
 
-Add the [latest dependency](https://mvnrepository.com/artifact/io.github.synesso/scala-stellar-sdk) to your build tool. Here's how it might look in `build.sbt`
+Add the JitPack resolver and the [latest dependency](https://jitpack.io/#Synesso/scala-stellar-sdk) to your build tool. Here's how it might look in `build.sbt`
 
 ```scala
-libraryDependencies += "io.github.synesso" %% "scala-stellar-sdk" % "0.10.0"
+resolvers += "jitpack" at "https://jitpack.io"
+libraryDependencies += "com.github.synesso" %% "scala-stellar-sdk" % "0.10.1"
 ```
 
 From there, it is a simple affair to create and fund a new account on the test network.

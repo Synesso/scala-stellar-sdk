@@ -71,6 +71,7 @@ lazy val root = (project in file("."))
     dependencyUpdatesFailBuild := false,
     Defaults.itSettings,
     target in Compile in doc := target.value / "paradox" / "site" / "main" / "api",
+    publishLocalConfiguration := publishLocalConfiguration.value.withOverwrite(true),
     libraryDependencies ++= List(
       "commons-codec" % "commons-codec" % "1.13",
       "net.i2p.crypto" % "eddsa" % "0.3.0",
