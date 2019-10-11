@@ -2,6 +2,19 @@
 
 As this project is pre 1.0, breaking changes may happen for minor version bumps. A breaking change will get clearly notified in this log.
 
+## 0.10.0
+
+- [#156](https://github.com/Synesso/scala-stellar-sdk/issues/156) Adds support for Core v12 and Horizon v0.22.1
+
+### Breaking changes
+
+- In line with the changes to the core protocol:
+  - `PathPaymentOperation` has been renamed to `PathPaymentStrictReceiveOperation`
+  - `PathPaymentStrictSendOperation` has been added.
+
+  These operations are differentiated by which party (sender or receiver) will have their funds
+  explicitly stated. The other party will obtain the best rate available via the path supplied.
+
 ## 0.9.0
 
 ### Breaking changes
