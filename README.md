@@ -4,8 +4,8 @@
 [![Coverage](https://img.shields.io/codecov/c/gh/Synesso/scala-stellar-sdk.svg)](https://codecov.io/gh/Synesso/scala-stellar-sdk)
 [![Chat](https://img.shields.io/gitter/room/scala-stellar-sdk/community.svg)](https://gitter.im/scala-stellar-sdk/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Issues](https://img.shields.io/github/issues/Synesso/scala-stellar-sdk.svg)](https://github.com/Synesso/scala-stellar-sdk/issues)
-![Supports Stellar Horizon v0.19](https://img.shields.io/badge/Horizon-v0.19-blue.svg)
-![Supports Stellar Core v11](https://img.shields.io/badge/Core-v11-blue.svg)
+![Supports Stellar Horizon v0.22.1](https://img.shields.io/badge/Horizon-v0.22.1-blue.svg)
+![Supports Stellar Core v12](https://img.shields.io/badge/Core-v12-blue.svg)
 
 With the Stellar SDK for Scala, you can perform [Stellar](https://stellar.org/) operations from your Scala application. It provides the ability to access Stellar networks via any Horizon instance to build and submit transactions, query the state of the network and stream updates. You'll like this SDK, because it provides a more natural API for Scala developers than the official Java SDK.
 
@@ -16,7 +16,7 @@ You can do what you like with this software, as long as you include the required
 Add the [latest dependency](https://mvnrepository.com/artifact/io.github.synesso/scala-stellar-sdk) to your build tool. Here's how it might look in `build.sbt`
 
 ```scala
-libraryDependencies += "io.github.synesso" %% "scala-stellar-sdk" % "0.9.0"
+libraryDependencies += "io.github.synesso" %% "scala-stellar-sdk" % "0.10.0"
 ```
 
 From there, it is a simple affair to create and fund a new account on the test network.

@@ -41,7 +41,8 @@ object OperationResult extends Decode {
       widen(InflationResult.decode),
       widen(ManageDataResult.decode),
       widen(BumpSequenceResult.decode),
-      widen(ManageOfferResult.decode)
+      widen(ManageOfferResult.decode),
+      widen(PathPaymentResult.decode),
     )
   }
 }
