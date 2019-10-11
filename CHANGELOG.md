@@ -8,6 +8,8 @@ As this project is pre 1.0, breaking changes may happen for minor version bumps.
 
 ### Breaking changes
 
+- The project is no longer published to bintray and maven central. JitPack resolver needs to be
+    added. See README for a sample `build.sbt` config.
 - In line with the changes to the core protocol:
   - `PathPaymentOperation` has been renamed to `PathPaymentStrictReceiveOperation`
   - `PathPaymentStrictSendOperation` has been added.
