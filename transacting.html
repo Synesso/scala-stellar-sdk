@@ -137,7 +137,7 @@ synesso/scala-stellar-sdk
 <ul style="display: none">
 <li class="md-nav__item md-version" id="project.version">
 <label class="md-nav__link" for="__version">
-<i class="md-icon" title="Version">label_outline</i> 0.9.0
+<i class="md-icon" title="Version">label_outline</i> 0.10.0
 </label>
 </li>
 </ul>
@@ -169,14 +169,14 @@ synesso/scala-stellar-sdk
 <h1><a href="#transacting" name="transacting" class="anchor"><span class="anchor-link"></span></a>Transacting</h1>
 <p><a href="https://www.stellar.org/developers/guides/concepts/transactions.html">Transactions</a> are how changes such as payments, offers to trade or account creation are made to the network&rsquo;s ledger.</p>
 <h2><a href="#creating" name="creating" class="anchor"><span class="anchor-link"></span></a>Creating</h2>
-<p>Every transaction must originate from an existing account on the network and correctly specify the next <a href="https://www.stellar.org/developers/guides/concepts/accounts.html#sequence-number">sequence number</a>. Creating a new <code>Transaction</code> instance requires these two values, wrapped in an <a href="https://synesso.github.io/scala-stellar-sdk/api/stellar/sdk/Account.html">Account</a>.</p>
+<p>Every transaction must originate from an existing account on the network and correctly specify the next <a href="https://www.stellar.org/developers/guides/concepts/accounts.html#sequence-number">sequence number</a>. Creating a new <code>Transaction</code> instance requires these two values, wrapped in an <a href="https://synesso.github.io/scala-stellar-sdk/api/stellar/sdk/Account.html" title="stellar.sdk.Account"><code>Account</code></a>.</p>
 <p>Additionally, a <code>Network</code> must be implicit in scope. The choice of network will affect how the transaction is serialised.</p>
-<pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/Synesso/scala-stellar-sdk/tree/v0.9.0/src/it/scala/stellar/sdk/FriendBotSpec.scala#L42-L44" target="_blank" title="Go to snippet source"></a><code class="language-scala">implicit val network = TestNetwork
+<pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/Synesso/scala-stellar-sdk/tree/v0.10.0/src/it/scala/stellar/sdk/FriendBotSpec.scala#L42-L44" target="_blank" title="Go to snippet source"></a><code class="language-scala">implicit val network = TestNetwork
 val account = Account(accn, sequence)
 Transaction(account, maxFee = NativeAmount(100), timeBounds = TimeBounds.Unbounded)</code></pre>
 <h3><a href="#sequence-number" name="sequence-number" class="anchor"><span class="anchor-link"></span></a>Sequence Number</h3>
 <p>The sequence number for a new account is the id of the ledger in which is was created. The id increments by one with every submitted transaction. In simple architectures, it is possible to keep track of the next sequence number without querying the network. However, if this is not possible, or the number is unknown, you can directly substitute the response from the <a href="queries.html#accounts">account query</a> into the <code>Transaction</code> constructor.</p>
-<pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/Synesso/scala-stellar-sdk/tree/v0.9.0/src/it/scala/stellar/sdk/LocalNetworkIntegrationSpec.scala#L150-L156" target="_blank" title="Go to snippet source"></a><code class="language-scala">for {
+<pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/Synesso/scala-stellar-sdk/tree/v0.10.0/src/it/scala/stellar/sdk/LocalNetworkIntegrationSpec.scala#L154-L160" target="_blank" title="Go to snippet source"></a><code class="language-scala">for {
   sourceAccount &lt;- network.account(payerKeyPair)
   response &lt;- model.Transaction(sourceAccount, timeBounds = Unbounded, maxFee = NativeAmount(100))
     .add(PaymentOperation(payeePublicKey, lumens(5000)))
@@ -185,15 +185,15 @@ Transaction(account, maxFee = NativeAmount(100), timeBounds = TimeBounds.Unbound
 } yield response</code></pre>
 <p>As this example shows, transactions require additional data before they can be successfully processed.</p>
 <h3><a href="#operations" name="operations" class="anchor"><span class="anchor-link"></span></a>Operations</h3>
-<p>Without any <a href="https://synesso.github.io/scala-stellar-sdk/api/stellar/sdk/model/op/Operation.html">Operation</a>s, a transaction is not very useful. There can be as few as one and as many and one hundred operations added to each Transaction. These can be provided when constructing the Transaction.</p>
-<pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/Synesso/scala-stellar-sdk/tree/v0.9.0/src/test/scala/stellar/sdk/DocExamples.scala#L352-L357" target="_blank" title="Go to snippet source"></a><code class="language-scala">val account = Account(sourceKey, nextSequenceNumber)
+<p>Without any <a href="https://synesso.github.io/scala-stellar-sdk/api/stellar/sdk/model/op/Operation.html" title="stellar.sdk.model.op.Operation"><code>Operation</code></a>s, a transaction is not very useful. There can be as few as one and as many and one hundred operations added to each Transaction. These can be provided when constructing the Transaction.</p>
+<pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/Synesso/scala-stellar-sdk/tree/v0.10.0/src/test/scala/stellar/sdk/DocExamples.scala#L352-L357" target="_blank" title="Go to snippet source"></a><code class="language-scala">val account = Account(sourceKey, nextSequenceNumber)
 val txn = Transaction(account, Seq(
   CreateAccountOperation(aliceKey),
   CreateAccountOperation(bobKey),
   PaymentOperation(charlieKey, Amount.lumens(42))
 ), timeBounds = Unbounded, maxFee = NativeAmount(100))</code></pre>
 <p>Or they can be added afterwards.</p>
-<pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/Synesso/scala-stellar-sdk/tree/v0.9.0/src/test/scala/stellar/sdk/DocExamples.scala#L364-L372" target="_blank" title="Go to snippet source"></a><code class="language-scala">val txn = Transaction(account, timeBounds = Unbounded, maxFee = NativeAmount(100))
+<pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/Synesso/scala-stellar-sdk/tree/v0.10.0/src/test/scala/stellar/sdk/DocExamples.scala#L364-L372" target="_blank" title="Go to snippet source"></a><code class="language-scala">val txn = Transaction(account, timeBounds = Unbounded, maxFee = NativeAmount(100))
   .add(PaymentOperation(aliceKey, Amount.lumens(100)))
   .add(PaymentOperation(bobKey, Amount.lumens(77)))
   .add(PaymentOperation(charlieKey, Amount.lumens(4.08)))
@@ -204,70 +204,71 @@ val txn = Transaction(account, Seq(
   ))</code></pre>
 <p>The available operations are:</p>
 <ul>
-  <li><a href="https://synesso.github.io/scala-stellar-sdk/api/stellar/sdk/model/op/AccountMergeOperation.html">AccountMerge</a></li>
-  <li><a href="https://synesso.github.io/scala-stellar-sdk/api/stellar/sdk/model/op/AllowTrustOperation.html">AllowTrust</a></li>
-  <li><a href="https://synesso.github.io/scala-stellar-sdk/api/stellar/sdk/model/op/BumpSequenceOperation.html">BumpSequence</a></li>
-  <li><a href="https://synesso.github.io/scala-stellar-sdk/api/stellar/sdk/model/op/ChangeTrustOperation.html">ChangeTrust</a></li>
-  <li><a href="https://synesso.github.io/scala-stellar-sdk/api/stellar/sdk/model/op/CreateAccountOperation.html">CreateAccount</a></li>
-  <li><a href="https://synesso.github.io/scala-stellar-sdk/api/stellar/sdk/model/op/CreateBuyOfferOperation.html">CreateBuyOffer</a></li>
-  <li><a href="https://synesso.github.io/scala-stellar-sdk/api/stellar/sdk/model/op/CreateSellOfferOperation.html">CreateSellOffer</a></li>
-  <li><a href="https://synesso.github.io/scala-stellar-sdk/api/stellar/sdk/model/op/CreatePassiveSellOfferOperation.html">CreatePassiveSellOffer</a></li>
-  <li><a href="https://synesso.github.io/scala-stellar-sdk/api/stellar/sdk/model/op/DeleteDataOperation.html">DeleteData</a></li>
-  <li><a href="https://synesso.github.io/scala-stellar-sdk/api/stellar/sdk/model/op/DeleteBuyOfferOperation.html">DeleteBuyOffer</a></li>
-  <li><a href="https://synesso.github.io/scala-stellar-sdk/api/stellar/sdk/model/op/DeleteSellOfferOperation.html">DeleteSellOffer</a></li>
-  <li><a href="https://synesso.github.io/scala-stellar-sdk/api/stellar/sdk/model/op/InflationOperation.html">Inflation</a></li>
-  <li><a href="https://synesso.github.io/scala-stellar-sdk/api/stellar/sdk/model/op/PathPaymentOperation.html">PathPayment</a></li>
-  <li><a href="https://synesso.github.io/scala-stellar-sdk/api/stellar/sdk/model/op/PaymentOperation.html">Payment</a></li>
-  <li><a href="https://synesso.github.io/scala-stellar-sdk/api/stellar/sdk/model/op/SetOptionsOperation.html">SetOptions</a></li>
-  <li><a href="https://synesso.github.io/scala-stellar-sdk/api/stellar/sdk/model/op/UpdateBuyOfferOperation.html">UpdateBuyOffer</a></li>
-  <li><a href="https://synesso.github.io/scala-stellar-sdk/api/stellar/sdk/model/op/UpdateSellOfferOperation.html">UpdateSellOffer</a></li>
-  <li><a href="https://synesso.github.io/scala-stellar-sdk/api/stellar/sdk/model/op/WriteDataOperation.html">WriteData</a></li>
+  <li><a href="https://synesso.github.io/scala-stellar-sdk/api/stellar/sdk/model/op/AccountMergeOperation.html" title="stellar.sdk.model.op.AccountMergeOperation"><code>AccountMerge</code></a></li>
+  <li><a href="https://synesso.github.io/scala-stellar-sdk/api/stellar/sdk/model/op/AllowTrustOperation.html" title="stellar.sdk.model.op.AllowTrustOperation"><code>AllowTrust</code></a></li>
+  <li><a href="https://synesso.github.io/scala-stellar-sdk/api/stellar/sdk/model/op/BumpSequenceOperation.html" title="stellar.sdk.model.op.BumpSequenceOperation"><code>BumpSequence</code></a></li>
+  <li><a href="https://synesso.github.io/scala-stellar-sdk/api/stellar/sdk/model/op/ChangeTrustOperation.html" title="stellar.sdk.model.op.ChangeTrustOperation"><code>ChangeTrust</code></a></li>
+  <li><a href="https://synesso.github.io/scala-stellar-sdk/api/stellar/sdk/model/op/CreateAccountOperation.html" title="stellar.sdk.model.op.CreateAccountOperation"><code>CreateAccount</code></a></li>
+  <li><a href="https://synesso.github.io/scala-stellar-sdk/api/stellar/sdk/model/op/CreateBuyOfferOperation.html" title="stellar.sdk.model.op.CreateBuyOfferOperation"><code>CreateBuyOffer</code></a></li>
+  <li><a href="https://synesso.github.io/scala-stellar-sdk/api/stellar/sdk/model/op/CreateSellOfferOperation.html" title="stellar.sdk.model.op.CreateSellOfferOperation"><code>CreateSellOffer</code></a></li>
+  <li><a href="https://synesso.github.io/scala-stellar-sdk/api/stellar/sdk/model/op/CreatePassiveSellOfferOperation.html" title="stellar.sdk.model.op.CreatePassiveSellOfferOperation"><code>CreatePassiveSellOffer</code></a></li>
+  <li><a href="https://synesso.github.io/scala-stellar-sdk/api/stellar/sdk/model/op/DeleteDataOperation.html" title="stellar.sdk.model.op.DeleteDataOperation"><code>DeleteData</code></a></li>
+  <li><a href="https://synesso.github.io/scala-stellar-sdk/api/stellar/sdk/model/op/DeleteBuyOfferOperation.html" title="stellar.sdk.model.op.DeleteBuyOfferOperation"><code>DeleteBuyOffer</code></a></li>
+  <li><a href="https://synesso.github.io/scala-stellar-sdk/api/stellar/sdk/model/op/DeleteSellOfferOperation.html" title="stellar.sdk.model.op.DeleteSellOfferOperation"><code>DeleteSellOffer</code></a></li>
+  <li><a href="https://synesso.github.io/scala-stellar-sdk/api/stellar/sdk/model/op/InflationOperation.html" title="stellar.sdk.model.op.InflationOperation"><code>Inflation</code></a></li>
+  <li><a href="https://synesso.github.io/scala-stellar-sdk/api/stellar/sdk/model/op/PathPaymentStrictReceiveOperation.html" title="stellar.sdk.model.op.PathPaymentStrictReceiveOperation"><code>PathPaymentStrictReceive</code></a></li>
+  <li><a href="https://synesso.github.io/scala-stellar-sdk/api/stellar/sdk/model/op/PathPaymentStrictSendOperation.html" title="stellar.sdk.model.op.PathPaymentStrictSendOperation"><code>PathPaymentStrictSend</code></a></li>
+  <li><a href="https://synesso.github.io/scala-stellar-sdk/api/stellar/sdk/model/op/PaymentOperation.html" title="stellar.sdk.model.op.PaymentOperation"><code>Payment</code></a></li>
+  <li><a href="https://synesso.github.io/scala-stellar-sdk/api/stellar/sdk/model/op/SetOptionsOperation.html" title="stellar.sdk.model.op.SetOptionsOperation"><code>SetOptions</code></a></li>
+  <li><a href="https://synesso.github.io/scala-stellar-sdk/api/stellar/sdk/model/op/UpdateBuyOfferOperation.html" title="stellar.sdk.model.op.UpdateBuyOfferOperation"><code>UpdateBuyOffer</code></a></li>
+  <li><a href="https://synesso.github.io/scala-stellar-sdk/api/stellar/sdk/model/op/UpdateSellOfferOperation.html" title="stellar.sdk.model.op.UpdateSellOfferOperation"><code>UpdateSellOffer</code></a></li>
+  <li><a href="https://synesso.github.io/scala-stellar-sdk/api/stellar/sdk/model/op/WriteDataOperation.html" title="stellar.sdk.model.op.WriteDataOperation"><code>WriteData</code></a></li>
 </ul>
 <p>Operations need not originate from the same account as the transaction. In this way a single transaction can be issued that affects multiple accounts. This enables techniques such as the <a href="https://www.lumenauts.com/blog/boosting-tps-with-stellar-channels">channel pattern</a>. Each operation has an optional constructor parameter <code>sourceAccount: Option[PublicKey]</code> where the source account can be specified.</p>
 <h3><a href="#timebounds" name="timebounds" class="anchor"><span class="anchor-link"></span></a>TimeBounds</h3>
-<p>As of v0.9.0, the valid date range for a transaction must be specified. The network will reject any transaction submitted outside of the range defined. To help define <code>TimeBound</code>s, the constant <a href="https://synesso.github.io/scala-stellar-sdk/api/stellar/sdk/model/TimeBounds/Unbounded.html">Unbounded</a> represents all time. Additionally, <a href="https://synesso.github.io/scala-stellar-sdk/api/stellar/sdk/model/TimeBounds/timeout.html">TimeBounds.timeout</a> will specify a <code>TimeBound</code> from the current time until some given timeout duration.</p>
+<p>As of v0.9.0, the valid date range for a transaction must be specified. The network will reject any transaction submitted outside of the range defined. To help define <code>TimeBound</code>s, the constant <a href="https://synesso.github.io/scala-stellar-sdk/api/stellar/sdk/model/TimeBounds/Unbounded.html" title="stellar.sdk.model.TimeBounds.Unbounded"><code>Unbounded</code></a> represents all time. Additionally, <a href="https://synesso.github.io/scala-stellar-sdk/api/stellar/sdk/model/TimeBounds/timeout.html" title="stellar.sdk.model.TimeBounds.timeout"><code>TimeBounds.timeout</code></a> will specify a <code>TimeBound</code> from the current time until some given timeout duration.</p>
 <h3><a href="#maximum-fee" name="maximum-fee" class="anchor"><span class="anchor-link"></span></a>Maximum Fee</h3>
 <p>As of v0.9.0, the maximum fee payable must be specified explicitly. The network will reject the transaction if the maximum fee is not at least <code>100 stroops x number of operations</code>. If accepted the actual fee charged will be the cheapest it can be, given current network demand but will never exceed the specified maximum fee. If the maximum fee is too low for the network&rsquo;s demand at time of submission, the transaction will not be accepted.</p>
 <h3><a href="#signatures" name="signatures" class="anchor"><span class="anchor-link"></span></a>Signatures</h3>
 <p>Before a transaction will be accepted by the network, it must be signed with at least one key. In the most basic case, the transaction only needs to be signed by the source account. This is done by calling <code>.sign(KeyPair)</code>.</p>
-<pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/Synesso/scala-stellar-sdk/tree/v0.9.0/src/test/scala/stellar/sdk/DocExamples.scala#L380-L381" target="_blank" title="Go to snippet source"></a><code class="language-scala">val transaction = Transaction(account, timeBounds = Unbounded, maxFee = NativeAmount(100)).add(operation)
+<pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/Synesso/scala-stellar-sdk/tree/v0.10.0/src/test/scala/stellar/sdk/DocExamples.scala#L380-L381" target="_blank" title="Go to snippet source"></a><code class="language-scala">val transaction = Transaction(account, timeBounds = Unbounded, maxFee = NativeAmount(100)).add(operation)
 val signedTransaction: SignedTransaction = transaction.sign(sourceKey)</code></pre>
 <p>It may be that the source account has been modified to require more than one signature. Or, as mentioned earlier, one or more of the operations may affect other accounts. In either of these cases, the transaction will not be valid until it has received all necessary signatures.</p>
-<pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/Synesso/scala-stellar-sdk/tree/v0.9.0/src/test/scala/stellar/sdk/DocExamples.scala#L389-L390" target="_blank" title="Go to snippet source"></a><code class="language-scala">val transaction = Transaction(jointAccount, timeBounds = Unbounded, maxFee = NativeAmount(100)).add(operation)
+<pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/Synesso/scala-stellar-sdk/tree/v0.10.0/src/test/scala/stellar/sdk/DocExamples.scala#L389-L390" target="_blank" title="Go to snippet source"></a><code class="language-scala">val transaction = Transaction(jointAccount, timeBounds = Unbounded, maxFee = NativeAmount(100)).add(operation)
 val signedTransaction: SignedTransaction = transaction.sign(aliceKey, bobKey)</code></pre>
 <p>Additionally, a transaction will fail if it has too many signatures.</p>
 <p>Finally, a transaction may be signed with any arbitrary byte array in order to match a hash signer. See <a href="https://www.stellar.org/developers/guides/concepts/multi-sig.html#hashx">Hash(x) signing</a> for a summary. </p>
 <h2><a href="#submitting" name="submitting" class="anchor"><span class="anchor-link"></span></a>Submitting</h2>
 <p>Once a transaction is signed (and therefore is of type <code>SignedTransaction</code>) it can be submitted to the network.</p>
-<pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/Synesso/scala-stellar-sdk/tree/v0.9.0/src/test/scala/stellar/sdk/DocExamples.scala#L398-L399" target="_blank" title="Go to snippet source"></a><code class="language-scala">val transaction = Transaction(account, timeBounds = Unbounded, maxFee = NativeAmount(100)).add(operation).sign(sourceKey)
+<pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/Synesso/scala-stellar-sdk/tree/v0.10.0/src/test/scala/stellar/sdk/DocExamples.scala#L398-L399" target="_blank" title="Go to snippet source"></a><code class="language-scala">val transaction = Transaction(account, timeBounds = Unbounded, maxFee = NativeAmount(100)).add(operation).sign(sourceKey)
 val response: Future[TransactionPostResponse] = transaction.submit()</code></pre>
-<p>The eventual resulting <a href="https://synesso.github.io/scala-stellar-sdk/api/stellar/sdk/resp/TransactionPostResp.html">TransactionPostResp</a> contains metadata about the processed transaction, including the full results encoded as <a href="https://www.stellar.org/developers/guides/concepts/xdr.html">XDR</a>. Additionally, the XDR can be decoded on the fly by calling the relevant convenience methods.</p>
-<pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/Synesso/scala-stellar-sdk/tree/v0.9.0/src/test/scala/stellar/sdk/DocExamples.scala#L407-L410" target="_blank" title="Go to snippet source"></a><code class="language-scala">Transaction(account, timeBounds = Unbounded, maxFee = NativeAmount(100)).add(operation).sign(sourceKey).submit().foreach {
+<p>The eventual resulting <a href="https://synesso.github.io/scala-stellar-sdk/api/stellar/sdk/resp/TransactionPostResp.html" title="stellar.sdk.resp.TransactionPostResp"><code>TransactionPostResp</code></a> contains metadata about the processed transaction, including the full results encoded as <a href="https://www.stellar.org/developers/guides/concepts/xdr.html">XDR</a>. Additionally, the XDR can be decoded on the fly by calling the relevant convenience methods.</p>
+<pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/Synesso/scala-stellar-sdk/tree/v0.10.0/src/test/scala/stellar/sdk/DocExamples.scala#L407-L410" target="_blank" title="Go to snippet source"></a><code class="language-scala">Transaction(account, timeBounds = Unbounded, maxFee = NativeAmount(100)).add(operation).sign(sourceKey).submit().foreach {
   case ok: TransactionApproved =&gt; println(ok.feeCharged)
   case ko =&gt; println(ko)
 }</code></pre>
 <h2><a href="#xdr" name="xdr" class="anchor"><span class="anchor-link"></span></a>XDR</h2>
 <p>Transactions can be serialized to a base64-encoding of their XDR form. This is a strictly-defined format for transactions that is compatible across all supporting Stellar libraries and tooling. Given this, it is possible to save and load transaction state via XDR strings.</p>
-<pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/Synesso/scala-stellar-sdk/tree/v0.9.0/src/test/scala/stellar/sdk/model/TransactionSpec.scala#L84-L86" target="_blank" title="Go to snippet source"></a><code class="language-scala">val encoded: String = txn.encodeXDR
+<pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/Synesso/scala-stellar-sdk/tree/v0.10.0/src/test/scala/stellar/sdk/model/TransactionSpec.scala#L84-L86" target="_blank" title="Go to snippet source"></a><code class="language-scala">val encoded: String = txn.encodeXDR
 val decoded: Transaction = Transaction.decodeXDR(encoded)
 decoded must beEquivalentTo(txn)</code></pre>
 <p>Transactions with signatures are a different data structure (signatures are included in an envelope along with the transaction) and need to be decoded via a similar method on <code>SignedTransaction</code>.</p>
-<pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/Synesso/scala-stellar-sdk/tree/v0.9.0/src/test/scala/stellar/sdk/model/TransactionSpec.scala#L92-L94" target="_blank" title="Go to snippet source"></a><code class="language-scala">val encoded: String = signedTxn.encodeXDR
+<pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/Synesso/scala-stellar-sdk/tree/v0.10.0/src/test/scala/stellar/sdk/model/TransactionSpec.scala#L92-L94" target="_blank" title="Go to snippet source"></a><code class="language-scala">val encoded: String = signedTxn.encodeXDR
 val decoded: SignedTransaction = SignedTransaction.decodeXDR(encoded)
 decoded must beEquivalentTo(signedTxn)</code></pre>
 <h2><a href="#meta-data" name="meta-data" class="anchor"><span class="anchor-link"></span></a>Meta Data</h2>
-<p>All transaction post and history responses include an XDR payload that describes the effects that the transaction had on the ledger. The field <code>resultMetaXDR</code> is the base64-encoded XDR payload. The method <code>ledgerEntries</code> will decode the payload into an instance of <a href="https://synesso.github.io/scala-stellar-sdk/api/stellar/sdk/model/ledger/TransactionLedgerEntries.html">TransactionLedgerEntries</a>.</p>
+<p>All transaction post and history responses include an XDR payload that describes the effects that the transaction had on the ledger. The field <code>resultMetaXDR</code> is the base64-encoded XDR payload. The method <code>ledgerEntries</code> will decode the payload into an instance of <a href="https://synesso.github.io/scala-stellar-sdk/api/stellar/sdk/model/ledger/TransactionLedgerEntries.html" title="stellar.sdk.model.ledger.TransactionLedgerEntries"><code>TransactionLedgerEntries</code></a>.</p>
 <p>Similarly, the ledger effect of the fees is made available via the <code>feeMetaXDR</code> field and the <code>feeLedgerEntries</code> method.</p>
 <p>Continue reading to learn how to obtain historical data from network via <a href="queries.html">Queries</a>.</p>
 </div>
 <div>
-<a href="https://github.com/Synesso/scala-stellar-sdk/tree/v0.9.0/src/main/paradox/transacting.md" title="Edit this page" class="md-source-file md-edit">
+<a href="https://github.com/Synesso/scala-stellar-sdk/tree/v0.10.0/src/main/paradox/transacting.md" title="Edit this page" class="md-source-file md-edit">
 Edit this page
 </a>
 </div>
 <div class="print-only">
 <span class="md-source-file md-version">
-0.9.0
+0.10.0
 </span>
 </div>
 </article>

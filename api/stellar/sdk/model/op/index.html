@@ -254,9 +254,13 @@
                         <a class="object" href="OperationDeserializer$.html" title=""></a>
                         <a href="OperationDeserializer$.html" title="">OperationDeserializer</a>
                       </li><li class="current-entities indented4">
-                        <a class="object" href="PathPaymentOperation$.html" title=""></a>
-                        <a class="class" href="PathPaymentOperation.html" title="Represents a payment from one account to another through a path."></a>
-                        <a href="PathPaymentOperation.html" title="Represents a payment from one account to another through a path.">PathPaymentOperation</a>
+                        <a class="object" href="PathPaymentStrictReceiveOperation$.html" title=""></a>
+                        <a class="class" href="PathPaymentStrictReceiveOperation.html" title="Represents a payment from one account to another through a path."></a>
+                        <a href="PathPaymentStrictReceiveOperation.html" title="Represents a payment from one account to another through a path.">PathPaymentStrictReceiveOperation</a>
+                      </li><li class="current-entities indented4">
+                        <a class="object" href="PathPaymentStrictSendOperation$.html" title=""></a>
+                        <a class="class" href="PathPaymentStrictSendOperation.html" title="Represents a payment from one account to another through a path."></a>
+                        <a href="PathPaymentStrictSendOperation.html" title="Represents a payment from one account to another through a path.">PathPaymentStrictSendOperation</a>
                       </li><li class="current-entities indented4">
                         <span class="separator"></span>
                         <a class="trait" href="PayOperation.html" title="Marker trait for any operation that involves a payment (CreateAccountOperation, PaymentOperation, PathPaymentOperation, AccountMergeOperation)"></a>
@@ -587,23 +591,6 @@ with a smaller sequence number.
       
       <p class="shortcomment cmt">Deletes a sell offer in the Stellar network.</p><div class="fullcomment"><div class="comment cmt"><p>Deletes a sell offer in the Stellar network.
 </p></div><dl class="paramcmts block"><dt class="param">offerId</dt><dd class="cmt"><p>the id of the offer to be deleted</p></dd><dt class="param">selling</dt><dd class="cmt"><p>the asset being offered</p></dd><dt class="param">buying</dt><dd class="cmt"><p>the asset previously sought</p></dd><dt class="param">price</dt><dd class="cmt"><p>the price being offered</p></dd><dt class="param">sourceAccount</dt><dd class="cmt"><p>the account effecting this operation, if different from the owning account of the transaction</p></dd></dl><dl class="attributes block"> <dt>See also</dt><dd><span class="cmt"><p><a href="https://www.stellar.org/developers/horizon/reference/resources/operation.html#manage-offer" target="_blank">endpoint doc</a></p></span></dd></dl></div>
-    </li><li name="stellar.sdk.model.op.InflationOperation" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="InflationOperationextendsOperationwithProductwithSerializable"></a><a id="InflationOperation:InflationOperation"></a>
-      <span class="permalink">
-      <a href="../../../../stellar/sdk/model/op/InflationOperation.html" title="Permalink">
-        <i class="material-icons"></i>
-      </a>
-    </span>
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">case class</span>
-      </span>
-      <span class="symbol">
-        <a title="Requests that the network runs the inflation process." href="InflationOperation.html"><span class="name">InflationOperation</span></a><span class="params">(<span name="sourceAccount">sourceAccount: <span class="extype" name="scala.Option">Option</span>[<a href="../../PublicKeyOps.html" class="extype" name="stellar.sdk.PublicKeyOps">PublicKeyOps</a>] = <span class="symbol">None</span></span>)</span><span class="result"> extends <a href="Operation.html" class="extype" name="stellar.sdk.model.op.Operation">Operation</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
-      </span>
-      
-      <p class="shortcomment cmt">Requests that the network runs the inflation process.</p><div class="fullcomment"><div class="comment cmt"><p>Requests that the network runs the inflation process.
-</p></div><dl class="paramcmts block"><dt class="param">sourceAccount</dt><dd class="cmt"><p>the account effecting this operation, if different from the owning account of the transaction</p></dd></dl><dl class="attributes block"> <dt>See also</dt><dd><span class="cmt"><p><a href="https://www.stellar.org/developers/horizon/reference/resources/operation.html#inflation" target="_blank">endpoint doc</a></p></span></dd></dl></div>
     </li><li name="stellar.sdk.model.op.IssuerFlag" visbl="pub" class="indented0 " data-isabs="true" fullComment="no" group="Ungrouped">
       <a id="IssuerFlagextendsAnyRef"></a><a id="IssuerFlag:IssuerFlag"></a>
       <span class="permalink">
@@ -685,10 +672,10 @@ with a smaller sequence number.
       
       <p class="shortcomment cmt">An Operation represents a change to the ledger.</p><div class="fullcomment"><div class="comment cmt"><p>An Operation represents a change to the ledger. It is the action, as opposed to the effects resulting from that action.
 </p></div></div>
-    </li><li name="stellar.sdk.model.op.PathPaymentOperation" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="PathPaymentOperationextendsPayOperationwithProductwithSerializable"></a><a id="PathPaymentOperation:PathPaymentOperation"></a>
+    </li><li name="stellar.sdk.model.op.PathPaymentStrictReceiveOperation" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="PathPaymentStrictReceiveOperationextendsPayOperationwithProductwithSerializable"></a><a id="PathPaymentStrictReceiveOperation:PathPaymentStrictReceiveOperation"></a>
       <span class="permalink">
-      <a href="../../../../stellar/sdk/model/op/PathPaymentOperation.html" title="Permalink">
+      <a href="../../../../stellar/sdk/model/op/PathPaymentStrictReceiveOperation.html" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -697,13 +684,36 @@ with a smaller sequence number.
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a title="Represents a payment from one account to another through a path." href="PathPaymentOperation.html"><span class="name">PathPaymentOperation</span></a><span class="params">(<span name="sendMax">sendMax: <a href="../Amount.html" class="extype" name="stellar.sdk.model.Amount">Amount</a></span>, <span name="destinationAccount">destinationAccount: <a href="../../PublicKeyOps.html" class="extype" name="stellar.sdk.PublicKeyOps">PublicKeyOps</a></span>, <span name="destinationAmount">destinationAmount: <a href="../Amount.html" class="extype" name="stellar.sdk.model.Amount">Amount</a></span>, <span name="path">path: <span class="extype" name="scala.Seq">Seq</span>[<a href="../Asset.html" class="extype" name="stellar.sdk.model.Asset">Asset</a>] = <span class="symbol">Nil</span></span>, <span name="sourceAccount">sourceAccount: <span class="extype" name="scala.Option">Option</span>[<a href="../../PublicKeyOps.html" class="extype" name="stellar.sdk.PublicKeyOps">PublicKeyOps</a>] = <span class="symbol">None</span></span>)</span><span class="result"> extends <a href="PayOperation.html" class="extype" name="stellar.sdk.model.op.PayOperation">PayOperation</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a title="Represents a payment from one account to another through a path." href="PathPaymentStrictReceiveOperation.html"><span class="name">PathPaymentStrictReceiveOperation</span></a><span class="params">(<span name="sendMax">sendMax: <a href="../Amount.html" class="extype" name="stellar.sdk.model.Amount">Amount</a></span>, <span name="destinationAccount">destinationAccount: <a href="../../PublicKeyOps.html" class="extype" name="stellar.sdk.PublicKeyOps">PublicKeyOps</a></span>, <span name="destinationAmount">destinationAmount: <a href="../Amount.html" class="extype" name="stellar.sdk.model.Amount">Amount</a></span>, <span name="path">path: <span class="extype" name="scala.Seq">Seq</span>[<a href="../Asset.html" class="extype" name="stellar.sdk.model.Asset">Asset</a>] = <span class="symbol">Nil</span></span>, <span name="sourceAccount">sourceAccount: <span class="extype" name="scala.Option">Option</span>[<a href="../../PublicKeyOps.html" class="extype" name="stellar.sdk.PublicKeyOps">PublicKeyOps</a>] = <span class="symbol">None</span></span>)</span><span class="result"> extends <a href="PayOperation.html" class="extype" name="stellar.sdk.model.op.PayOperation">PayOperation</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       
       <p class="shortcomment cmt">Represents a payment from one account to another through a path.</p><div class="fullcomment"><div class="comment cmt"><p>Represents a payment from one account to another through a path. This type of payment starts as one type of asset
 and ends as another type of asset. There can be other assets that are traded into and out of along the path.
 Suitable orders must exist on the relevant order books for this operation to be successful.
+This operation specifies a precise amount to be received, and a maximum amount that can be sent.
+If you need to specify the amount sent, use PathPaymentStrictSendOperation instead.
 </p></div><dl class="paramcmts block"><dt class="param">sendMax</dt><dd class="cmt"><p>the maximum amount willing to be spent to effect the payment</p></dd><dt class="param">destinationAccount</dt><dd class="cmt"><p>the payment recipient</p></dd><dt class="param">destinationAmount</dt><dd class="cmt"><p>the exact amount to be received</p></dd><dt class="param">path</dt><dd class="cmt"><p>the intermediate assets to traverse (may be empty)</p></dd><dt class="param">sourceAccount</dt><dd class="cmt"><p>the account effecting this operation, if different from the owning account of the transaction</p></dd></dl><dl class="attributes block"> <dt>See also</dt><dd><span class="cmt"><p><a href="https://www.stellar.org/developers/horizon/reference/resources/operation.html#path-payment" target="_blank">endpoint doc</a></p></span></dd></dl></div>
+    </li><li name="stellar.sdk.model.op.PathPaymentStrictSendOperation" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="PathPaymentStrictSendOperationextendsPayOperationwithProductwithSerializable"></a><a id="PathPaymentStrictSendOperation:PathPaymentStrictSendOperation"></a>
+      <span class="permalink">
+      <a href="../../../../stellar/sdk/model/op/PathPaymentStrictSendOperation.html" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a title="Represents a payment from one account to another through a path." href="PathPaymentStrictSendOperation.html"><span class="name">PathPaymentStrictSendOperation</span></a><span class="params">(<span name="sendAmount">sendAmount: <a href="../Amount.html" class="extype" name="stellar.sdk.model.Amount">Amount</a></span>, <span name="destinationAccount">destinationAccount: <a href="../../PublicKeyOps.html" class="extype" name="stellar.sdk.PublicKeyOps">PublicKeyOps</a></span>, <span name="destinationMin">destinationMin: <a href="../Amount.html" class="extype" name="stellar.sdk.model.Amount">Amount</a></span>, <span name="path">path: <span class="extype" name="scala.Seq">Seq</span>[<a href="../Asset.html" class="extype" name="stellar.sdk.model.Asset">Asset</a>] = <span class="symbol">Nil</span></span>, <span name="sourceAccount">sourceAccount: <span class="extype" name="scala.Option">Option</span>[<a href="../../PublicKeyOps.html" class="extype" name="stellar.sdk.PublicKeyOps">PublicKeyOps</a>] = <span class="symbol">None</span></span>)</span><span class="result"> extends <a href="PayOperation.html" class="extype" name="stellar.sdk.model.op.PayOperation">PayOperation</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      
+      <p class="shortcomment cmt">Represents a payment from one account to another through a path.</p><div class="fullcomment"><div class="comment cmt"><p>Represents a payment from one account to another through a path. This type of payment starts as one type of asset
+and ends as another type of asset. There can be other assets that are traded into and out of along the path.
+Suitable orders must exist on the relevant order books for this operation to be successful.
+This operation specifies a precise amount to be sent, and a minimum amount that can be received.
+If you need to specify the amount received, use PathPaymentStrictReceiveOperation instead.
+</p></div><dl class="paramcmts block"><dt class="param">sendAmount</dt><dd class="cmt"><p>the amount to be spent to effect the payment</p></dd><dt class="param">destinationAccount</dt><dd class="cmt"><p>the payment recipient</p></dd><dt class="param">destinationMin</dt><dd class="cmt"><p>the minimum amount that should be received</p></dd><dt class="param">path</dt><dd class="cmt"><p>the intermediate assets to traverse (may be empty)</p></dd><dt class="param">sourceAccount</dt><dd class="cmt"><p>the account effecting this operation, if different from the owning account of the transaction</p></dd></dl><dl class="attributes block"> <dt>See also</dt><dd><span class="cmt"><p><a href="https://www.stellar.org/developers/learn/concepts/list-of-operations.html#path-payment-strict-send" target="_blank">endpoint doc</a></p></span></dd></dl></div>
     </li><li name="stellar.sdk.model.op.PayOperation" visbl="pub" class="indented0 " data-isabs="true" fullComment="no" group="Ungrouped">
       <a id="PayOperationextendsOperation"></a><a id="PayOperation:PayOperation"></a>
       <span class="permalink">
@@ -823,6 +833,26 @@ fiat asset payment.
       
       <p class="shortcomment cmt">Creates or updates a Data Entry (name/value pair) for an account.</p><div class="fullcomment"><div class="comment cmt"><p>Creates or updates a Data Entry (name/value pair) for an account.
 </p></div><dl class="paramcmts block"><dt class="param">sourceAccount</dt><dd class="cmt"><p>the account effecting this operation, if different from the owning account of the transaction</p></dd></dl><dl class="attributes block"> <dt>See also</dt><dd><span class="cmt"><p><a href="https://www.stellar.org/developers/horizon/reference/resources/operation.html#manage-data" target="_blank">endpoint doc</a></p></span></dd></dl></div>
+    </li><li name="stellar.sdk.model.op.InflationOperation" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="InflationOperationextendsOperationwithProductwithSerializable"></a><a id="InflationOperation:InflationOperation"></a>
+      <span class="permalink">
+      <a href="../../../../stellar/sdk/model/op/InflationOperation.html" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a title="Requests that the network runs the inflation process." href="InflationOperation.html"><span class="name deprecated" title="Deprecated: (Since version Core v12) Inflation is no longer supported in Stellar">InflationOperation</span></a><span class="params">(<span name="sourceAccount">sourceAccount: <span class="extype" name="scala.Option">Option</span>[<a href="../../PublicKeyOps.html" class="extype" name="stellar.sdk.PublicKeyOps">PublicKeyOps</a>] = <span class="symbol">None</span></span>)</span><span class="result"> extends <a href="Operation.html" class="extype" name="stellar.sdk.model.op.Operation">Operation</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      
+      <p class="shortcomment cmt">Requests that the network runs the inflation process.</p><div class="fullcomment"><div class="comment cmt"><p>Requests that the network runs the inflation process.
+</p></div><dl class="paramcmts block"><dt class="param">sourceAccount</dt><dd class="cmt"><p>the account effecting this operation, if different from the owning account of the transaction</p></dd></dl><dl class="attributes block"> <dt>Annotations</dt><dd>
+                <span class="name">@deprecated</span>
+              
+        </dd><dt>Deprecated</dt><dd class="cmt"><p><i>(Since version Core v12)</i> Inflation is no longer supported in Stellar</p></dd><dt>See also</dt><dd><span class="cmt"><p><a href="https://www.stellar.org/developers/horizon/reference/resources/operation.html#inflation" target="_blank">endpoint doc</a></p></span></dd></dl></div>
     </li></ol>
             </div>
 
@@ -1071,10 +1101,10 @@ fiat asset payment.
       </span>
       
       
-    </li><li name="stellar.sdk.model.op.PathPaymentOperation" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="PathPaymentOperation"></a><a id="PathPaymentOperation:PathPaymentOperation"></a>
+    </li><li name="stellar.sdk.model.op.PathPaymentStrictReceiveOperation" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="PathPaymentStrictReceiveOperation"></a><a id="PathPaymentStrictReceiveOperation:PathPaymentStrictReceiveOperation"></a>
       <span class="permalink">
-      <a href="../../../../stellar/sdk/model/op/PathPaymentOperation$.html" title="Permalink">
+      <a href="../../../../stellar/sdk/model/op/PathPaymentStrictReceiveOperation$.html" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -1083,7 +1113,23 @@ fiat asset payment.
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a title="" href="PathPaymentOperation$.html"><span class="name">PathPaymentOperation</span></a><span class="result"> extends <a href="../xdr/Decode.html" class="extype" name="stellar.sdk.model.xdr.Decode">Decode</a> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a title="" href="PathPaymentStrictReceiveOperation$.html"><span class="name">PathPaymentStrictReceiveOperation</span></a><span class="result"> extends <a href="../xdr/Decode.html" class="extype" name="stellar.sdk.model.xdr.Decode">Decode</a> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      
+      
+    </li><li name="stellar.sdk.model.op.PathPaymentStrictSendOperation" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="PathPaymentStrictSendOperation"></a><a id="PathPaymentStrictSendOperation:PathPaymentStrictSendOperation"></a>
+      <span class="permalink">
+      <a href="../../../../stellar/sdk/model/op/PathPaymentStrictSendOperation$.html" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a title="" href="PathPaymentStrictSendOperation$.html"><span class="name">PathPaymentStrictSendOperation</span></a><span class="result"> extends <a href="../xdr/Decode.html" class="extype" name="stellar.sdk.model.xdr.Decode">Decode</a> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       
       
