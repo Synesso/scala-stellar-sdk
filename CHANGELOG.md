@@ -2,7 +2,7 @@
 
 As this project is pre 1.0, breaking changes may happen for minor version bumps. A breaking change will get clearly notified in this log.
 
-## 0.10.0
+## 0.10.1
 
 - [#156](https://github.com/Synesso/scala-stellar-sdk/issues/156) Adds support for Core v12 and Horizon v0.22.1
 
