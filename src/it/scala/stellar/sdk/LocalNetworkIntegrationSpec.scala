@@ -96,7 +96,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
 
   // Transaction hashes. These will changed when setup operations change.
   private val txnHash2 = "e13447898b27dbf278d4411022e2e6d0aae78ef70670c7af7834a1f2a6d191d8"
-  private val txnHash3 = "e2ea50797b96c3f7ad0a186a2e55cc3d417e69fbb6b9da0341e2f95c7e554d86"
+  private val txnHash3 = "2ee32cbbe5f2dceca2934d4f1fa8e41c6661e5270b952fd6a7170ecb314ca0c8"
 
   private def setupFixtures: Future[(Account, Account)] = {
     val futureAccountA = network.account(accnA).map(_.toAccount)
@@ -142,6 +142,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
           CreateSellOfferOperation(IssuedAmount(800000000, chinchillaA), NativeAsset, Price(80, 4), Some(accnA)),
           CreateSellOfferOperation(IssuedAmount(10000000, chinchillaA), chinchillaMaster, Price(1, 1), Some(accnA)),
           PathPaymentStrictReceiveOperation(IssuedAmount(1, chinchillaMaster), accnB, IssuedAmount(1, chinchillaA), Nil),
+          PathPaymentStrictSendOperation(IssuedAmount(100, chinchillaMaster), accnB, IssuedAmount(1, chinchillaA), Nil),
           BumpSequenceOperation(masterAccount.sequenceNumber + 20),
           SetOptionsOperation(signer = Some(Signer(SHA256Hash(ByteArrays.sha256(dachshundB.encode)), 3)), sourceAccount = Some(accnD))
         )
@@ -188,7 +189,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
           id mustEqual accnA
           balances must containTheSameElementsAs(Seq(
             Balance(lumens(1000.000495), buyingLiabilities = 16000000000L),
-            Balance(IssuedAmount(1, Asset.apply("Chinchilla", masterAccountKey)), limit = Some(100000000), 9999999)
+            Balance(IssuedAmount(101, Asset.apply("Chinchilla", masterAccountKey)), limit = Some(100000000), 9999899)
           ))
           data must beEmpty
       }.awaitFor(30 seconds)
@@ -253,8 +254,8 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
       eventualResps must containTheSameElementsAs(Seq(
         AssetResponse(aardvarkA, 0, 0, authRequired = true, authRevocable = true),
         AssetResponse(beaverA, 0, 0, authRequired = true, authRevocable = true),
-        AssetResponse(chinchillaA, 1, 1, authRequired = true, authRevocable = true),
-        AssetResponse(chinchillaMaster, 1, 1, authRequired = false, authRevocable = false),
+        AssetResponse(chinchillaA, 101, 1, authRequired = true, authRevocable = true),
+        AssetResponse(chinchillaMaster, 101, 1, authRequired = false, authRevocable = false),
         AssetResponse(dachshundB, 0, 0, authRequired = false, authRevocable = false)
       )).awaitFor(10 seconds)
     }
@@ -282,7 +283,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
   "effect endpoint" should {
     "parse all effects" >> {
       val effects = network.effects()
-      effects.map(_.size) must beEqualTo(237).awaitFor(10 seconds)
+      effects.map(_.size) must beEqualTo(241).awaitFor(10 seconds)
     }
 
     "filter effects by account" >> {
@@ -373,7 +374,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
 
   "operation endpoint" should {
     "list all operations" >> {
-      network.operations().map(_.size) must beEqualTo(130).awaitFor(10.seconds)
+      network.operations().map(_.size) must beEqualTo(131).awaitFor(10.seconds)
     }
 
     "list operations by account" >> {
@@ -457,9 +458,12 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
         ledgerId <- network.ledgers().map(_.filter(_.operationCount > 0).filter(_.operationCount != 100).last.sequence)
         operation <- network.paymentsByLedger(ledgerId)
       } yield operation) must beLike[Seq[Transacted[PayOperation]]] {
-        case Seq(op) =>
-          op.operation must beEquivalentTo(PathPaymentStrictReceiveOperation(
+        case Seq(op1, op2) =>
+          op1.operation must beEquivalentTo(PathPaymentStrictReceiveOperation(
             IssuedAmount(1, chinchillaMaster), accnB, IssuedAmount(1, chinchillaA), Nil
+          ))
+          op2.operation must beEquivalentTo(PathPaymentStrictSendOperation(
+            IssuedAmount(100, chinchillaMaster), accnB, IssuedAmount(1, chinchillaA), Nil
           ))
       }.awaitFor(10.seconds)
     }
@@ -467,9 +471,12 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
     "filter payments by transaction" >> {
       network.paymentsByTransaction(txnHash3) must
         beLike[Seq[Transacted[PayOperation]]] {
-          case Seq(op) =>
-            op.operation must beEquivalentTo(PathPaymentStrictReceiveOperation(
+          case Seq(op1, op2) =>
+            op1.operation must beEquivalentTo(PathPaymentStrictReceiveOperation(
               IssuedAmount(1, chinchillaMaster), accnB, IssuedAmount(1, chinchillaA), Nil
+            ))
+            op2.operation must beEquivalentTo(PathPaymentStrictSendOperation(
+              IssuedAmount(100, chinchillaMaster), accnB, IssuedAmount(1, chinchillaA), Nil
             ))
         }.awaitFor(10.seconds)
     }
@@ -481,12 +488,18 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
         base = chinchillaA,
         counter = chinchillaMaster
       ) must beLike[Seq[Trade]] {
-        case Seq(trade) =>
-          trade.baseAccount must beEquivalentTo(accnA)
-          trade.baseAmount must beEquivalentTo(IssuedAmount(1, chinchillaA))
-          trade.counterAccount must beEquivalentTo(masterAccountKey.asPublicKey)
-          trade.counterAmount must beEquivalentTo(IssuedAmount(1, chinchillaMaster))
-          trade.baseIsSeller must beTrue
+        case Seq(trade1, trade2) =>
+          trade1.baseAccount must beEquivalentTo(accnA)
+          trade1.baseAmount must beEquivalentTo(IssuedAmount(1, chinchillaA))
+          trade1.counterAccount must beEquivalentTo(masterAccountKey.asPublicKey)
+          trade1.counterAmount must beEquivalentTo(IssuedAmount(1, chinchillaMaster))
+          trade1.baseIsSeller must beTrue
+
+          trade2.baseAccount must beEquivalentTo(accnA)
+          trade2.baseAmount must beEquivalentTo(IssuedAmount(100, chinchillaA))
+          trade2.counterAccount must beEquivalentTo(masterAccountKey.asPublicKey)
+          trade2.counterAmount must beEquivalentTo(IssuedAmount(100, chinchillaMaster))
+          trade2.baseIsSeller must beTrue
       }.awaitFor(10.seconds)
     }
   }
@@ -527,10 +540,10 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
       network.tradeAggregations(start, end, FifteenMinutes, 0, chinchillaA, chinchillaMaster) must beLike[Seq[TradeAggregation]] {
         case Seq(ta) =>
           ta.instant.isBefore(Instant.now()) must beTrue
-          ta.tradeCount mustEqual 1
+          ta.tradeCount mustEqual 2
           ta.average mustEqual 1
-          ta.baseVolume mustEqual 1e-7
-          ta.counterVolume mustEqual 1e-7
+          ta.baseVolume mustEqual 1.01e-5
+          ta.counterVolume mustEqual 1.01e-5
           ta.open mustEqual Price(1, 1)
           ta.high mustEqual Price(1, 1)
           ta.low mustEqual Price(1, 1)
