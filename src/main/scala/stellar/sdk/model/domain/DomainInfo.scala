@@ -5,7 +5,7 @@ import akka.http.scaladsl.model.ContentTypes._
 import akka.http.scaladsl.model.Uri
 import akka.http.scaladsl.unmarshalling.{FromEntityUnmarshaller, Unmarshaller}
 import stellar.sdk.inet.WebClient
-import stellar.sdk.{DefaultActorSystem, FederationServer, KeyPair, PublicKey}
+import stellar.sdk.{DefaultActorSystem, FederationServer, PublicKey}
 import toml.Value
 import toml.Value.{Arr, Str, Tbl}
 
@@ -43,7 +43,7 @@ object DomainInfo extends TomlParsers {
 
   def from(doc: String): DomainInfo = {
     toml.Toml.parse(doc) match {
-      case Left(msg) => throw DomainInfoParseException(msg)
+      case Left((address, msg)) => throw DomainInfoParseException(msg, address)
       case Right(tbl) =>
 
         def parseTomlValue[T](key: String, parser: PartialFunction[Value, T]) =
@@ -93,6 +93,14 @@ object DomainInfo extends TomlParsers {
 
 /**
   * The document could not be parsed into a DomainInfo instance.
+  *
   * @param msg the reason the parsing failed.
   */
-case class DomainInfoParseException(msg: String) extends Exception(msg)
+case class DomainInfoParseException(msg: String, address: List[String] = Nil) extends Exception(
+  s"$msg${
+    address match {
+      case Nil => ""
+      case _ => address.mkString(" at ", "/", ".")
+    }
+  }"
+)
