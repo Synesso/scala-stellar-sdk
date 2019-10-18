@@ -4,13 +4,15 @@ import java.security.{MessageDigest, SignatureException}
 import java.util.Arrays
 
 import cats.data.State
+import io.github.novacrypto.bip39.MnemonicGenerator
 import net.i2p.crypto.eddsa._
 import net.i2p.crypto.eddsa.spec._
 import stellar.sdk.model.domain.DomainInfo
-import stellar.sdk.model.{AccountId, Seed, StrKey}
 import stellar.sdk.model.xdr.{Decode, Encodable, Encode}
-import stellar.sdk.util.ByteArrays
+import stellar.sdk.model.{AccountId, Seed, StrKey}
+import stellar.sdk.util.{ByteArrays, WordList}
 
+import scala.collection.mutable
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success, Try}
 
@@ -33,6 +35,21 @@ case class KeyPair(pk: EdDSAPublicKey, sk: EdDSAPrivateKey) extends PublicKeyOps
     sig.update(data)
 
     Signature(sig.sign, hint)
+  }
+
+  /**
+    * Returns the BIP-39 mnemonic phrase for this instance.
+    * @param wordlist the list of words to build the phrase from. Choose from English, French,
+    *                 Japanese, Spanish or provide your own.
+    */
+  def mnemonic(wordlist: WordList): List[String] = {
+    val words = mutable.Buffer.empty[String]
+    val internalList = new io.github.novacrypto.bip39.WordList() {
+      override def getWord(index: Int): String = wordlist.word(index)
+      override def getSpace: Char = ' ' // Needed for the novocrypto builder, but later filtered out.
+    }
+    new MnemonicGenerator(internalList).createMnemonic(sk.getSeed, word => words.append(word.toString))
+    words.filterNot(_.isBlank).toList
   }
 
   override def toString: String = {

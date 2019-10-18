@@ -72,6 +72,7 @@ lazy val root = (project in file("."))
     Defaults.itSettings,
     target in Compile in doc := target.value / "paradox" / "site" / "main" / "api",
     publishLocalConfiguration := publishLocalConfiguration.value.withOverwrite(true),
+    resolvers += Resolver.jcenterRepo,
     libraryDependencies ++= List(
       "commons-codec" % "commons-codec" % "1.13",
       "net.i2p.crypto" % "eddsa" % "0.3.0",
@@ -85,6 +86,7 @@ lazy val root = (project in file("."))
       "org.typelevel" %% "cats-core" % "2.0.0",
       "tech.sparse" %%  "toml-scala" % "0.2.2",
       "com.softwaremill.retry" %% "retry" % "0.3.3",
+      "io.github.novacrypto" % "BIP39" % "2019.01.27",
       "org.specs2" %% "specs2-core" % "4.8.0" % "test,it",
       "org.specs2" %% "specs2-mock" % "4.8.0" % "test",
       "org.specs2" %% "specs2-scalacheck" % "4.8.0" % "test"
