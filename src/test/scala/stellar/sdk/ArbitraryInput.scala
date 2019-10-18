@@ -15,7 +15,7 @@ import stellar.sdk.model.op._
 import stellar.sdk.model.response._
 import stellar.sdk.model.result.TransactionResult._
 import stellar.sdk.model.result.{PathPaymentResult, _}
-import stellar.sdk.util.ByteArrays
+import stellar.sdk.util.{ByteArrays, EnglishWords, FrenchWords, JapaneseWords, SpanishWords, WordList}
 import stellar.sdk.util.ByteArrays.trimmedByteArray
 
 import scala.util.Random
@@ -153,6 +153,9 @@ trait ArbitraryInput extends ScalaCheck {
   implicit def arbPaymentPath: Arbitrary[PaymentPath] = Arbitrary(genPaymentPath)
 
   implicit def arbTradeAggregation: Arbitrary[TradeAggregation] = Arbitrary(genTradeAggregation)
+
+  implicit def arbWordList: Arbitrary[WordList] = Arbitrary(
+    Gen.oneOf(EnglishWords, FrenchWords, JapaneseWords, SpanishWords))
 
   def genListOfNM[T](low: Int, high: Int, gen: Gen[T]) = for {
     size <- Gen.choose(low, high)

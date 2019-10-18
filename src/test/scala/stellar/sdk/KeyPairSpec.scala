@@ -5,7 +5,7 @@ import org.specs2.concurrent.ExecutionEnv
 import org.specs2.mutable.Specification
 import org.specs2.specification.AfterAll
 import stellar.sdk.StubServer.ReplyWithText
-import stellar.sdk.util.ByteArrays
+import stellar.sdk.util.{ByteArrays, EnglishWords, WordList}
 
 import scala.concurrent.{Await, Future}
 import scala.concurrent.duration._
@@ -67,6 +67,13 @@ class KeyPairSpec(implicit ee: ExecutionEnv) extends Specification with Arbitrar
     "not be constructed from an invalid secret seed" >> {
       val nickCave = ""
       KeyPair.fromSecretSeed(nickCave) must throwAn[InvalidSecretSeed]
+    }
+
+    "have a mnemonic" >> prop { (kp: KeyPair, wordList: WordList) =>
+      val phrase = kp.mnemonic(wordList)
+      println(phrase)
+      phrase must haveSize(24)
+      phrase must contain(not(beEmpty[String])).forall
     }
   }
 
