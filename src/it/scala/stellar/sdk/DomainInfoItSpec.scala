@@ -14,6 +14,23 @@ class DomainInfoItSpec(implicit ee: ExecutionEnv) extends Specification {
       // #domain_info_example
       DomainInfo.forDomain("stellar.org") must beSome(
         DomainInfo(
+          accounts = List(
+            KeyPair.fromAccountId("GB6NVEN5HSUBKMYCE5ZOWSK5K23TBWRUQLZY3KNMXUZ3AQ2ESC4MY4AQ"),
+            KeyPair.fromAccountId("GCEZYB47RSSSR6RMHQDTBWL4L6RY5CY2SPJU3QHP3YPB6ALPVRLPN7OQ"),
+            KeyPair.fromAccountId("GB6D7BSIOPC7FTRLVMVRFPBQRFXWWDU3XXFU5YFSOPN4PQALNMQC7ANB"),
+            KeyPair.fromAccountId("GCVLWV5B3L3YE6DSCCMHLCK7QIB365NYOLQLW3ZKHI5XINNMRLJ6YHVX"),
+            KeyPair.fromAccountId("GCVJDBALC2RQFLD2HYGQGWNFZBCOD2CPOTN3LE7FWRZ44H2WRAVZLFCU"),
+            KeyPair.fromAccountId("GAMGGUQKKJ637ILVDOSCT5X7HYSZDUPGXSUW67B2UKMG2HEN5TPWN3LQ"),
+            KeyPair.fromAccountId("GDUY7J7A33TQWOSOQGDO776GGLM3UQERL4J3SPT56F6YS4ID7MLDERI4"),
+            KeyPair.fromAccountId("GCPWKVQNLDPD4RNP5CAXME4BEDTKSSYRR4MMEL4KG65NEGCOGNJW7QI2"),
+            KeyPair.fromAccountId("GDKIJJIKXLOM2NRMPNQZUUYK24ZPVFC6426GZAEP3KUK6KEJLACCWNMX"),
+            KeyPair.fromAccountId("GAX3BRBNB5WTJ2GNEFFH7A4CZKT2FORYABDDBZR5FIIT3P7FLS2EFOZZ"),
+            KeyPair.fromAccountId("GBEVKAYIPWC5AQT6D4N7FC3XGKRRBMPCAMTO3QZWMHHACLHTMAHAM2TP"),
+            KeyPair.fromAccountId("GCKJZ2YVECFGLUDJ5T7NZMJPPWERBNYHCXT2MZPXKELFHUSYQR5TVHJQ"),
+            KeyPair.fromAccountId("GBA6XT7YBQOERXT656T74LYUVJ6MEIOC5EUETGAQNHQHEPUFPKCW5GYM"),
+            KeyPair.fromAccountId("GD2D6JG6D3V52ZMPIYSVHYFKVNIMXGYVLYJQ3HYHG5YDPGJ3DCRGPLTP"),
+            KeyPair.fromAccountId("GA2VRL65L3ZFEDDJ357RGI3MAOKPJZ2Z3IJTPSC24I4KDTNFSVEQURRA")
+          ),
           issuerDocumentation = Some(IssuerDocumentation(
             name = Some("Stellar Development Foundation"),
             url = Some(HttpUrl.parse("https://www.stellar.org")),

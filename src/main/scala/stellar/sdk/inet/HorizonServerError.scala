@@ -1,7 +1,7 @@
 package stellar.sdk.inet
 
 import okhttp3.HttpUrl
-import org.json4s.{Formats, JObject}
+import org.json4s.{Formats, JObject, JValue}
 
 import scala.concurrent.duration.Duration
 
@@ -9,7 +9,7 @@ case class HorizonServerError(uri: HttpUrl, body: JObject)(implicit val formats:
   s"Server error when communicating with Horizon. $uri -> ${(body \ "detail").extract[String]}"
 )
 
-case class HorizonEntityNotFound(uri: HttpUrl, body: JObject)(implicit val formats: Formats) extends Exception(
+case class HorizonEntityNotFound(uri: HttpUrl, body: JValue)(implicit val formats: Formats) extends Exception(
   s"Requested entity was not found in Horizon. $uri -> ${(body \ "detail").extract[String]}"
 )
 

@@ -54,11 +54,13 @@ class OkHorizon(base: HttpUrl) extends HorizonAccess with LazyLogging {
     Future(client.newCall(request).execute())
       .map(_.body().string())
       .map(JsonMethods.parse(_))
-      .map { case doc: JObject =>
-        Try(doc.extract[T]) match {
-          case Success(t) => t
-          case Failure(_) => throw HorizonEntityNotFound(url, doc)
-        }
+      .map {
+        case doc: JObject =>
+          Try(doc.extract[T]) match {
+            case Success(t) => t
+            case Failure(_) => throw HorizonEntityNotFound(url, doc)
+          }
+        case js => throw HorizonEntityNotFound(url, js)
       }
   }
 

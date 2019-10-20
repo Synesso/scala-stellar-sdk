@@ -2,6 +2,20 @@
 
 As this project is pre 1.0, breaking changes may happen for minor version bumps. A breaking change will get clearly notified in this log.
 
+## Next version (0.11.0)
+
+- Adds support for Mnemonic phrases in English, French, Japanese and Spanish
+  - Can derive hierarchical deterministic addresses
+  - Shortcuts for deriving addresses in the Stellar tree-space (as KeyPairs)
+- Migrated the underlying HTTP mechanism from AkkaHttp to OkHttp to simplify operations & dependencies. 
+
+### Breaking changes
+
+- As the Akka dependency has been removed, the Horizon `Source` endpoints are no longer available.
+    The intention is to publish an Akka specific module and re-introduce these endpoints.
+    If you are currently building to the Source endpoints, please vote on
+    [this issue](https://github.com/Synesso/scala-stellar-sdk/issues/182) in order to expedite the migration.
+
 ## 0.10.1
 
 - [#156](https://github.com/Synesso/scala-stellar-sdk/issues/156) Adds support for Core v12 and Horizon v0.22.1
