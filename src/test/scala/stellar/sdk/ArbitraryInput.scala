@@ -5,7 +5,7 @@ import java.time.temporal.ChronoField
 import java.time.{Instant, ZoneId, ZonedDateTime}
 import java.util.Locale
 
-import akka.http.scaladsl.model.Uri
+import okhttp3.HttpUrl
 import org.apache.commons.codec.binary.Base64
 import org.scalacheck.{Arbitrary, Gen}
 import org.specs2.ScalaCheck
@@ -810,11 +810,11 @@ trait ArbitraryInput extends ScalaCheck {
   } yield PaymentPath(source, destination, path)
 
   // Not at all exhaustive.
-  def genUri: Gen[Uri] = for {
+  def genUri: Gen[HttpUrl] = for {
     scheme <- Gen.oneOf("http", "https", "file", "ftp")
     subDomain <- Gen.option(Gen.identifier)
     domain <- Gen.identifier
     tld <- Gen.oneOf("com", "net", "io", "org")
     paths <- Gen.listOf(Gen.identifier).map(_.mkString("/"))
-  } yield Uri(s"$scheme://${subDomain.getOrElse("") + "."}$domain.$tld./$paths")
+  } yield HttpUrl.parse(s"$scheme://${subDomain.getOrElse("") + "."}$domain.$tld./$paths")
 }

@@ -1,6 +1,6 @@
 package stellar.sdk.model.domain
 
-import akka.http.scaladsl.model.Uri
+import okhttp3.HttpUrl
 import stellar.sdk.PublicKey
 import toml.Value
 import toml.Value.Tbl
@@ -17,7 +17,7 @@ case class Validator(alias: Option[String] = None,
                      displayName: Option[String] = None,
                      publicKey: Option[PublicKey] = None,
                      host: Option[String] = None,
-                     history: Option[Uri] = None)
+                     history: Option[HttpUrl] = None)
 
 object Validator extends TomlParsers {
 
@@ -30,7 +30,7 @@ object Validator extends TomlParsers {
       displayName = parseTomlValue("DISPLAY_NAME", string),
       publicKey = parseTomlValue("PUBLIC_KEY", publicKey),
       host = parseTomlValue("HOST", string),
-      history = parseTomlValue("HISTORY", uri)
+      history = parseTomlValue("HISTORY", url)
     )
   }
 }

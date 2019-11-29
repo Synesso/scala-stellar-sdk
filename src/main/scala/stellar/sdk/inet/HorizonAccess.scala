@@ -1,44 +1,20 @@
 package stellar.sdk.inet
 
-import java.net.URI
-import java.util.concurrent.TimeUnit
-
-import akka.NotUsed
-import akka.actor.ActorSystem
-import akka.http.scaladsl.Http
-import akka.http.scaladsl.model.HttpMethods.{GET, POST}
-import akka.http.scaladsl.model.MediaTypes.`application/json`
-import akka.http.scaladsl.model.StatusCodes.NotFound
-import akka.http.scaladsl.model.Uri.Query
-import akka.http.scaladsl.model._
-import akka.http.scaladsl.model.headers._
-import akka.http.scaladsl.model.sse.ServerSentEvent
-import akka.http.scaladsl.unmarshalling.Unmarshal
-import akka.stream.ActorMaterializer
-import akka.stream.scaladsl.Source
-import com.typesafe.scalalogging.LazyLogging
-import de.heikoseeberger.akkahttpjson4s.Json4sSupport
-import org.json4s.native.{JsonMethods, Serialization}
-import org.json4s.{CustomSerializer, DefaultFormats, Formats, JObject, NoTypeHints}
+import org.json4s.CustomSerializer
 import stellar.sdk.model._
-import stellar.sdk.model.op.TransactedOperationDeserializer
 import stellar.sdk.model.response._
-import stellar.sdk.model.result.TransactionHistoryDeserializer
-import stellar.sdk.{BuildInfo, DefaultActorSystem}
 
-import scala.concurrent.duration._
-import scala.concurrent.{Await, ExecutionContext, Future}
+import scala.concurrent.{ExecutionContext, Future}
 import scala.reflect.ClassTag
-import scala.util.{Failure, Success, Try}
 
 
 trait HorizonAccess {
-  val `application/hal+json` = MediaType.applicationWithFixedCharset("hal+json", HttpCharsets.`UTF-8`)
-  val `application/problem+json` = MediaType.applicationWithFixedCharset("problem+json", HttpCharsets.`UTF-8`)
+//  val `application/hal+json` = MediaType.applicationWithFixedCharset("hal+json", HttpCharsets.`UTF-8`)
+//  val `application/problem+json` = MediaType.applicationWithFixedCharset("problem+json", HttpCharsets.`UTF-8`)
 
-  final object HalJsonSupport extends Json4sSupport {
-    override def unmarshallerContentTypes = List(`application/json`, `application/hal+json`, `application/problem+json`)
-  }
+//  final object HalJsonSupport extends Json4sSupport {
+//    override def unmarshallerContentTypes = List(`application/json`, `application/hal+json`, `application/problem+json`)
+//  }
 
   def post(txn: SignedTransaction)(implicit ec: ExecutionContext): Future[TransactionPostResponse]
 
@@ -51,11 +27,14 @@ trait HorizonAccess {
   def getSeq[T: ClassTag](path: String, de: CustomSerializer[T], params: Map[String, String] = Map.empty)
                             (implicit ec: ExecutionContext, m: Manifest[T]): Future[Seq[T]]
 
-  def getSource[T: ClassTag](path: String, de: CustomSerializer[T], cursor: HorizonCursor, params: Map[String, String] = Map.empty)
-                            (implicit ec: ExecutionContext, m: Manifest[T]): Source[T, NotUsed]
-
+//  def getSource[T: ClassTag](path: String, de: CustomSerializer[T], cursor: HorizonCursor, params: Map[String, String] = Map.empty)
+//                            (implicit ec: ExecutionContext, m: Manifest[T]): Source[T, NotUsed]
+//
 }
 
+case class RestException(message: String, t: Throwable = None.orNull) extends Exception(message, t)
+
+/*
 class Horizon(call: HttpRequest => Future[HttpResponse])
              (implicit system: ActorSystem = DefaultActorSystem.system)
   extends HorizonAccess with LazyLogging {
@@ -85,7 +64,7 @@ class Horizon(call: HttpRequest => Future[HttpResponse])
 
   override def get[T: ClassTag](path: String, params: Map[String, String] = Map.empty)
                                (implicit ec: ExecutionContext, m: Manifest[T]): Future[T] = {
-    val requestUri = Uri(s"$path").withQuery(Query(params))
+    val requestUri = Uri(path).withQuery(Query(params))
     logger.debug(s"Getting {}", requestUri)
 
     val request = HttpRequest(GET, requestUri).addHeader(clientNameHeader).addHeader(clientVersionHeader)
@@ -218,7 +197,9 @@ class Horizon(call: HttpRequest => Future[HttpResponse])
     }.map[T](JsonMethods.parse(_).extract[T])
   }
 }
+*/
 
+/*
 object Horizon {
 
   def apply(uri: Uri)(implicit system: ActorSystem): HorizonAccess =
@@ -237,6 +218,7 @@ object Horizon {
   def apply(call: HttpRequest => Future[HttpResponse])(implicit system: ActorSystem): HorizonAccess =
     new Horizon(call)
 }
+*/
 
 /*
 // TODO - Re-enable in separate PR with test coverage and documentation.

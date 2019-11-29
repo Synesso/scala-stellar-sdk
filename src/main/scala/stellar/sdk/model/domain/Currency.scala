@@ -1,8 +1,8 @@
 package stellar.sdk.model.domain
 
-import akka.http.scaladsl.model.Uri
+import okhttp3.HttpUrl
+import stellar.sdk.model.domain.Currency.{Collateral, Status}
 import stellar.sdk.model.{Asset, NonNativeAsset}
-import stellar.sdk.model.domain.Currency.{Collateral, Status, string}
 import toml.Value
 import toml.Value.Tbl
 
@@ -38,7 +38,7 @@ case class Currency(asset: Option[NonNativeAsset] = None,
                     status: Option[Status] = None,
                     displayDecimals: Int = 7,
                     conditions: Option[String] = None,
-                    image: Option[Uri] = None,
+                    image: Option[HttpUrl] = None,
                     fixedQuantity: Option[Int] = None,
                     maxQuantity: Option[Int] = None,
                     isUnlimited: Option[Boolean] = None,
@@ -48,7 +48,7 @@ case class Currency(asset: Option[NonNativeAsset] = None,
                     redemptionInstructions: Option[String] = None,
                     collateral: List[Collateral] = Nil,
                     isRegulated: Boolean = false,
-                    approvalServer: Option[Uri] = None,
+                    approvalServer: Option[HttpUrl] = None,
                     approvalCriteria: Option[String] = None,
                    )
 
@@ -100,7 +100,7 @@ object Currency extends TomlParsers {
       status = parseTomlValue("status", string).map(Status.parse),
       displayDecimals = parseTomlValue("display_decimals", int).getOrElse(7),
       conditions = parseTomlValue("conditions", string),
-      image = parseTomlValue("image", uri),
+      image = parseTomlValue("image", url),
       fixedQuantity = parseTomlValue("fixed_number", int),
       maxQuantity = parseTomlValue("max_number", int),
       isUnlimited = parseTomlValue("is_unlimited", bool),
@@ -110,7 +110,7 @@ object Currency extends TomlParsers {
       redemptionInstructions = parseTomlValue("redemption_instructions", string),
       collateral = collateral.getOrElse(List.empty),
       isRegulated = parseTomlValue("regulated", bool).getOrElse(false),
-      approvalServer = parseTomlValue("approval_server", uri),
+      approvalServer = parseTomlValue("approval_server", url),
       approvalCriteria = parseTomlValue("approval_criteria", string),
     )
   }

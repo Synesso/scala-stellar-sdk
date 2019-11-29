@@ -1,7 +1,5 @@
 package stellar.sdk
 
-import akka.actor.ActorSystem
-import akka.stream.ActorMaterializer
 import org.specs2.concurrent.ExecutionEnv
 import org.specs2.mock.Mockito
 import org.specs2.mutable.Specification
@@ -9,10 +7,6 @@ import org.specs2.mutable.Specification
 import scala.concurrent.duration._
 
 class NetworkSpec(implicit ee: ExecutionEnv) extends Specification with ArbitraryInput with Mockito {
-
-  implicit val system = ActorSystem("network-spec")
-  implicit val materializer = ActorMaterializer()
-  import system.dispatcher
 
   "test network" should {
     "identify itself" >> {
