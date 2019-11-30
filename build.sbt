@@ -87,9 +87,9 @@ lazy val root = (project in file("."))
       "tech.sparse" %%  "toml-scala" % "0.2.2",
       "com.softwaremill.retry" %% "retry" % "0.3.3",
       "io.github.novacrypto" % "BIP39" % "2019.01.27",
-      "org.specs2" %% "specs2-core" % "4.8.1" % "test,it",
-      "org.specs2" %% "specs2-mock" % "4.8.1" % "test",
-      "org.specs2" %% "specs2-scalacheck" % "4.8.1" % "test"
+      "org.specs2" %% "specs2-core" % "4.7.1" % "test,it",
+      "org.specs2" %% "specs2-mock" % "4.7.1" % "test",
+      "org.specs2" %% "specs2-scalacheck" % "4.7.1" % "test"
     )
   )
 
