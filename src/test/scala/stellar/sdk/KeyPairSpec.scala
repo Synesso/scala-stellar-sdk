@@ -67,7 +67,6 @@ class KeyPairSpec(implicit ee: ExecutionEnv) extends Specification with Arbitrar
 
     "have a mnemonic" >> prop { (kp: KeyPair, wordList: WordList) =>
       val phrase = kp.mnemonic(wordList)
-      println(phrase)
       phrase must haveSize(24)
       phrase must contain(not(beEmpty[String])).forall
     }

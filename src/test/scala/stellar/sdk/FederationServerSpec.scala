@@ -14,6 +14,7 @@ import stellar.sdk.model.response.FederationResponse
 import scala.annotation.tailrec
 import scala.concurrent.duration._
 import scala.concurrent.{Await, Future}
+import scala.collection.JavaConverters._
 
 class FederationServerSpec(implicit ec: ExecutionEnv) extends Specification with ArbitraryInput {
 
@@ -132,16 +133,18 @@ class FederationServerSpec(implicit ec: ExecutionEnv) extends Specification with
 
   private def beRequestLike(path: String, headers: Map[String, String]) = {
     beLike[RecordedRequest] { case request =>
-      request.getPath mustEqual path
+      val requestUrl = request.getRequestUrl
+      requestUrl.pathSegments.asScala must containTheSameElementsAs(
+        path.split("/").filterNot(_.isEmpty))
       forall(headers) { case (k, v) =>
-        request.getHeaders.get(k) mustEqual v
+        requestUrl.queryParameter(k) mustEqual v
       }
     }
   }
 
   private def reqResp(json: Option[String], method: FederationServer => Future[Option[FederationResponse]])
   : (Option[FederationResponse], RecordedRequest) = {
-    val server = new MockWebServer
+    val server = new MockWebServer()
     exec(server, json, method) -> server.takeRequest()
   }
 

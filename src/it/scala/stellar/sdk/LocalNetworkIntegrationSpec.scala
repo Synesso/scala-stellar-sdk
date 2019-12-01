@@ -202,11 +202,14 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
     }
 
     "fetch nothing for an account that has been merged" >> {
-      network.account(accnC) must throwA[Exception].like { case HorizonEntityNotFound(uri, body) =>
+      network.account(accnC) must throwAn[Exception].like { case HorizonEntityNotFound(uri, body) =>
         body mustEqual ("type" -> "https://stellar.org/horizon-errors/not_found") ~
           ("title" -> "Resource Missing") ~
           ("status" -> 404) ~
           ("detail" -> "The resource at the url requested was not found.  This usually occurs for one of two reasons:  The url requested is not valid, or no data in our database could be found with the parameters provided.")
+
+      case x => x.printStackTrace()
+        ko
       }.awaitFor(30 seconds)
     }
 

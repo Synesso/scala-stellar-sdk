@@ -34,7 +34,7 @@ class PageSpec extends Specification {
         """.stripMargin
 
       implicit val formats = DefaultFormats + RawPageDeserializer + HelloDeserializer
-      JsonMethods.parse(doc).extract[RawPage].parse[String] mustEqual Page(Seq("world"),
+      JsonMethods.parse(doc).extract[RawPage].parse[String](HttpUrl.parse("http://localhost/")) mustEqual Page(List("world"),
         nextLink = Some(HttpUrl.parse("https://horizon-testnet.stellar.org/hello?cursor=2045052972961793-0&limit=10&order=asc"))
       )
     }

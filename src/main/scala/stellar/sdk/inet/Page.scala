@@ -8,11 +8,11 @@ import stellar.sdk.model.response.ResponseParser
 /**
   * A page of results
   */
-case class Page[T](xs: Seq[T], nextLink: Option[HttpUrl])
+case class Page[T](xs: List[T], nextLink: Option[HttpUrl])
 
-case class RawPage(inner: Seq[JValue], nextLink: Option[String]) {
-  def parse[T](implicit formats: Formats, m: Manifest[T]): Page[T] =
-    Page(inner.map(_.extract[T]), nextLink.map(HttpUrl.parse))
+case class RawPage(inner: List[JValue], nextLink: Option[String]) {
+  def parse[T](sourceLink: HttpUrl)(implicit formats: Formats, m: Manifest[T]): Page[T] =
+    Page(inner.map(_.extract[T]), nextLink.map(HttpUrl.parse).filter(_ != sourceLink))
 }
 
 object RawPageDeserializer extends ResponseParser[RawPage]({ o: JObject =>

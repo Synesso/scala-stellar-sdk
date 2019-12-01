@@ -5,7 +5,7 @@ import java.net.HttpURLConnection.HTTP_NOT_FOUND
 import com.typesafe.scalalogging.LazyLogging
 import okhttp3._
 import org.json4s.native.{JsonMethods, Serialization}
-import org.json4s.{CustomSerializer, DefaultFormats, Formats, NoTypeHints}
+import org.json4s.{CustomSerializer, DefaultFormats, Formats, JObject, NoTypeHints}
 import stellar.sdk.BuildInfo
 import stellar.sdk.model.op.TransactedOperationDeserializer
 import stellar.sdk.model.response.{TransactionPostResponse, _}
@@ -14,6 +14,7 @@ import stellar.sdk.model.{HorizonCursor, HorizonOrder, SignedTransaction, _}
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.reflect.ClassTag
+import scala.util.{Failure, Success, Try}
 
 class OkHorizon(base: HttpUrl) extends HorizonAccess with LazyLogging {
 
@@ -45,7 +46,7 @@ class OkHorizon(base: HttpUrl) extends HorizonAccess with LazyLogging {
   override def get[T: ClassTag](path: String, params: Map[String, String])
                                (implicit ec: ExecutionContext, m: Manifest[T]): Future[T] = {
 
-    val url = params.foldLeft(base.newBuilder().addPathSegments(path)){
+    val url = params.foldLeft(base.newBuilder().addPathSegments(path)) {
       case (url, (k, v)) => url.addQueryParameter(k, v)
     }.build()
     logger.debug(s"Getting {}", url)
@@ -53,7 +54,12 @@ class OkHorizon(base: HttpUrl) extends HorizonAccess with LazyLogging {
     Future(client.newCall(request).execute())
       .map(_.body().string())
       .map(JsonMethods.parse(_))
-      .map(_.extract[T])
+      .map { case doc: JObject =>
+        Try(doc.extract[T]) match {
+          case Success(t) => t
+          case Failure(_) => throw HorizonEntityNotFound(url, doc)
+        }
+      }
   }
 
   override def getStream[T: ClassTag](path: String, de: CustomSerializer[T], cursor: HorizonCursor,
@@ -82,10 +88,22 @@ class OkHorizon(base: HttpUrl) extends HorizonAccess with LazyLogging {
     val requestUrl = fullParams.foldLeft(base.newBuilder().addPathSegments(path)) {
       case (url, (k, v)) => url.addQueryParameter(k, v)
     }.build()
-    val page = getPage[T](requestUrl)
-    val thisPageContents: Stream[T] = page.xs.toStream
-    def nextPageContents: Stream[T] = page.nextLink.map(getPage[T](_).xs.toStream).getOrElse(Stream.empty[T])
-    thisPageContents #::: nextPageContents
+
+    def streamFromPage(buffer: List[T], nextLink: Option[HttpUrl]): Stream[T] = {
+      buffer match {
+        case h :: t =>
+          Stream.cons(h, streamFromPage(t, nextLink))
+        case _ =>
+          nextLink
+            .map { link =>
+              val page = getPage[T](link)
+              streamFromPage(page.xs, page.nextLink)
+            }
+            .getOrElse(Stream.empty[T])
+      }
+    }
+
+    streamFromPage(Nil, Some(requestUrl))
   }
 
   private def getPage[T: ClassTag](url: HttpUrl)
@@ -97,7 +115,7 @@ class OkHorizon(base: HttpUrl) extends HorizonAccess with LazyLogging {
       case _ =>
         JsonMethods.parse(response.body().string())
           .extract[RawPage]
-          .parse[T]
+          .parse[T](url)
     }
 
   }
