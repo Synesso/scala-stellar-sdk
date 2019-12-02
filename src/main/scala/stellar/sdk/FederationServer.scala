@@ -10,6 +10,7 @@ import stellar.sdk.inet.RestException
 import stellar.sdk.model.response.{FederationResponse, FederationResponseDeserialiser}
 
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.{Failure, Success, Try}
 
 case class FederationServer(base: HttpUrl) extends LazyLogging {
 
@@ -38,12 +39,16 @@ case class FederationServer(base: HttpUrl) extends LazyLogging {
       .map { response =>
         response.code() match {
           case HTTP_NOT_FOUND => None
+          case e if e >= 500 => throw RestException(response.body().string())
           case _ =>
-            Some(response.body().string())
+            Try(response.body().string())
               .map(JsonMethods.parse(_))
               .map(_.extract[FederationResponse])
               .map(fillIn)
-              .map(validate)
+              .map(validate) match {
+              case Success(fr) => Some(fr)
+              case Failure(t) => throw RestException("Could not parse document as FederationResponse.", t)
+            }
         }
       }
 

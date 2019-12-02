@@ -12,9 +12,10 @@ import stellar.sdk.model._
 import stellar.sdk.model.response.FederationResponse
 
 import scala.annotation.tailrec
+import scala.collection.JavaConverters._
 import scala.concurrent.duration._
 import scala.concurrent.{Await, Future}
-import scala.collection.JavaConverters._
+import scala.util.Try
 
 class FederationServerSpec(implicit ec: ExecutionEnv) extends Specification with ArbitraryInput {
 
@@ -67,9 +68,10 @@ class FederationServerSpec(implicit ec: ExecutionEnv) extends Specification with
 
     "return response by name via redirect" >> {
       val fr = sample
-      val (resp, req) = reqRespRedirect(None, _.byName(fr.address))
+      val params = Map("type" -> "name", "q" -> fr.address)
+      val (resp, req) = reqRespRedirect(Some(toJson(fr)), _.byName(fr.address), params)
       resp must beSome(fr)
-      req must beRequestLike("/fed.json", Map("type" -> "name", "q" -> fr.address))
+      req must beRequestLike("/fed2.json", params)
     }
 
     "handle server error when fetching response by name" >> {
@@ -110,9 +112,10 @@ class FederationServerSpec(implicit ec: ExecutionEnv) extends Specification with
 
     "return response by account via redirect" >> {
       val fr = sample
-      val (resp, req) = reqRespRedirect(None, _.byAccount(fr.account))
+      val params = Map("type" -> "id", "q" -> fr.account.accountId)
+      val (resp, req) = reqRespRedirect(Some(toJson(fr)), _.byAccount(fr.account), params)
       resp must beSome(fr)
-      req must beRequestLike("/fed.json", Map("type" -> "id", "q" -> fr.account.accountId))
+      req must beRequestLike("/fed2.json", params)
     }
 
     "handle server error when fetching response by account" >> {
@@ -149,11 +152,15 @@ class FederationServerSpec(implicit ec: ExecutionEnv) extends Specification with
   }
 
   private def reqRespRedirect(json: Option[String],
-                              method: FederationServer => Future[Option[FederationResponse]])
+                              method: FederationServer => Future[Option[FederationResponse]],
+                              params: Map[String, String])
   : (Option[FederationResponse], RecordedRequest) = {
 
     val server = new MockWebServer
-    server.enqueue(new MockResponse().setResponseCode(301).setHeader("Location", "fed2.json"))
+    val location = params.foldLeft(server.url("/fed2.json").newBuilder()) { case (url, (k, v)) =>
+      url.addQueryParameter(k, v)
+    }.build()
+    server.enqueue(new MockResponse().setResponseCode(301).setHeader("Location", location.toString))
     exec(server, json, method) -> {
       server.takeRequest(); // dropped redirect
       server.takeRequest()  // actual
@@ -171,8 +178,11 @@ class FederationServerSpec(implicit ec: ExecutionEnv) extends Specification with
                    json: Option[String],
                    method: FederationServer => Future[Option[FederationResponse]])
   : Option[FederationResponse] = {
-    json.foreach(s => server.enqueue(new MockResponse().setBody(s)))
-    server.start()
+    json match {
+      case Some(s) => server.enqueue(new MockResponse().setBody(s))
+      case None => server.enqueue(new MockResponse().setResponseCode(404))
+    }
+    Try(server.start()) // It can be started by side-effect. e.g. during `server.url(...)`
     val federationServer = FederationServer(server.url("/fed.json"))
     val result = Await.result(method(federationServer), 3.seconds)
     server.shutdown()
