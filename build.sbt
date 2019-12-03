@@ -35,7 +35,7 @@ lazy val commonSettings = Seq(
   pgpPassphrase := sys.env.get("PGP_PASS").map(_.toArray)
 )
 
-lazy val root = (project in file("."))
+lazy val core = project
   .enablePlugins(GitVersioning)
   .enablePlugins(SitePlugin).settings(
     siteSourceDirectory := target.value / "paradox" / "site" / "main"
