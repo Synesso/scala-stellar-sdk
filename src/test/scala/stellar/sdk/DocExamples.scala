@@ -423,9 +423,6 @@ class DocExamples() {
                                          (implicit ec: ExecutionContext, m: Manifest[T]): Future[Stream[T]] =
         ???
 
-//      override def getSource[T: ClassTag](path: String, de: CustomSerializer[T], cursor: HorizonCursor, params: Map[String, String])
-//                                         (implicit ec: ExecutionContext, m: Manifest[T]): Source[T, NotUsed] = Source.empty[T]
-
       override def getSeq[T: ClassTag](path: String, de: CustomSerializer[T], params: Map[String, String])
                                       (implicit ec: ExecutionContext, m: Manifest[T]): Future[Seq[T]] =
         Future.successful(Seq.empty[T])

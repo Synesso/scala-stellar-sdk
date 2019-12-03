@@ -207,9 +207,6 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
           ("title" -> "Resource Missing") ~
           ("status" -> 404) ~
           ("detail" -> "The resource at the url requested was not found.  This usually occurs for one of two reasons:  The url requested is not valid, or no data in our database could be found with the parameters provided.")
-
-      case x => x.printStackTrace()
-        ko
       }.awaitFor(30 seconds)
     }
 
@@ -559,21 +556,6 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
       }).awaitFor(10 seconds)
     }
   }
-
-//  implicit val system = ActorSystem("local-network-integration-spec")
-//  implicit val materializer = ActorMaterializer()
-
-/*
-  "transaction source" should {
-    "provide all future transactions" >> {
-      val source = network.transactionSource()
-      val results: Future[Seq[TransactionHistory]] = source.take(1).runWith(Sink.seq[TransactionHistory])
-      results.isCompleted must beFalse
-      transact(PaymentOperation(accnA, NativeAmount(100), Some(accnA)))
-      results.map(_.size) must beEqualTo(1).awaitFor(1 minute)
-    }
-  }
-*/
 
   "payment path endpoint" should {
     "return valid payment paths" >> {
