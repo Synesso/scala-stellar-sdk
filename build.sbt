@@ -39,8 +39,9 @@ lazy val root = (project in file("."))
   .aggregate(core, akka)
 
 lazy val akka = project
-  .enablePlugins(GitVersioning)
+  .dependsOn(core)
   .settings(commonSettings)
+  .enablePlugins(GitVersioning)
 
 lazy val core = project
   .enablePlugins(GitVersioning)
