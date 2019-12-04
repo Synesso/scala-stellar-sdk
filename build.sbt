@@ -35,6 +35,13 @@ lazy val commonSettings = Seq(
   pgpPassphrase := sys.env.get("PGP_PASS").map(_.toArray)
 )
 
+lazy val root = (project in file("."))
+  .aggregate(core, akka)
+
+lazy val akka = project
+  .enablePlugins(GitVersioning)
+  .settings(commonSettings)
+
 lazy val core = project
   .enablePlugins(GitVersioning)
   .enablePlugins(SitePlugin).settings(
@@ -57,13 +64,13 @@ lazy val core = project
     )
   )
   .enablePlugins(ParadoxMaterialThemePlugin).settings(
-  paradoxMaterialTheme in Compile ~= {
-    _
-      .withRepository(url("https://github.com/synesso/scala-stellar-sdk").toURI)
-      .withSocial(uri("https://github.com/synesso"), uri("https://keybase.io/jem"))
-      .withoutSearch()
-  }
-).configs(IntegrationTest)
+    paradoxMaterialTheme in Compile ~= {
+      _
+        .withRepository(url("https://github.com/synesso/scala-stellar-sdk").toURI)
+        .withSocial(uri("https://github.com/synesso"), uri("https://keybase.io/jem"))
+        .withoutSearch()
+    }
+  ).configs(IntegrationTest)
   .settings(
     commonSettings,
     compile := ((compile in Compile) dependsOn (paradox in Compile)).value,
