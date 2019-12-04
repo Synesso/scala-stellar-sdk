@@ -3,10 +3,6 @@ package stellar.sdk
 import java.time.Instant
 import java.time.temporal.ChronoUnit.DAYS
 
-import akka.NotUsed
-import akka.actor.ActorSystem
-import akka.stream.ActorMaterializer
-import akka.stream.scaladsl.Source
 import org.apache.commons.codec.binary.Hex
 import org.json4s.CustomSerializer
 import stellar.sdk.inet.HorizonAccess
@@ -25,9 +21,9 @@ class DocExamples() {
   // $COVERAGE-OFF$
 
   // #sources_implicit_setup
-  implicit val system = ActorSystem("stellar-sources")
-  implicit val materializer = ActorMaterializer()
-  import system.dispatcher
+//  implicit val system = ActorSystem("stellar-sources")
+//  implicit val materializer = ActorMaterializer()
+  import scala.concurrent.ExecutionContext.Implicits.global
   // #sources_implicit_setup
 
   def `query documentation`() = {
@@ -98,10 +94,10 @@ class DocExamples() {
 
       // #effect_source_examples
       // a source of all new effects
-      val effectsSource: Source[EffectResponse, NotUsed] = TestNetwork.effectsSource()
+//      val effectsSource: Source[EffectResponse, NotUsed] = TestNetwork.effectsSource()
 
       // a source of all new effects for a given account
-      val effectsForAccountSource = TestNetwork.effectsByAccountSource(publicKey)
+//      val effectsForAccountSource = TestNetwork.effectsByAccountSource(publicKey)
       // #effect_source_examples
     }
 
@@ -144,7 +140,7 @@ class DocExamples() {
 
       // #ledger_source_examples
       // a source of all new ledgers
-      val ledgersSource: Source[LedgerResponse, NotUsed] = TestNetwork.ledgersSource()
+//      val ledgersSource: Source[LedgerResponse, NotUsed] = TestNetwork.ledgersSource()
       // #ledger_source_examples
     }
 
@@ -167,8 +163,8 @@ class DocExamples() {
       // #offer_query_examples
 
       // #offer_source_examples
-      val offersByAccountSource: Source[OfferResponse, NotUsed] =
-        TestNetwork.offersByAccountSource(publicKey)
+//      val offersByAccountSource: Source[OfferResponse, NotUsed] =
+//        TestNetwork.offersByAccountSource(publicKey)
       // #offer_source_examples
     }
 
@@ -195,10 +191,10 @@ class DocExamples() {
 
       // #operation_source_examples
       // a source of all new operations
-      val operationsSource: Source[Transacted[Operation], NotUsed] = TestNetwork.operationsSource()
+//      val operationsSource: Source[Transacted[Operation], NotUsed] = TestNetwork.operationsSource()
 
       // a source of all new operations involving a specified account
-      val operationsByAccountSource = TestNetwork.operationsByAccountSource(publicKey)
+//      val operationsByAccountSource = TestNetwork.operationsByAccountSource(publicKey)
       // #operation_source_examples
     }
 
@@ -220,11 +216,11 @@ class DocExamples() {
       // #orderbook_query_examples
 
       // #orderbook_source_examples
-      val beerForHugsBigOrderBookSource: Source[OrderBook, NotUsed] =
-        TestNetwork.orderBookSource(
-          selling = Asset("FabulousBeer", publicKey),
-          buying = Asset("HUG", publicKey),
-        )
+//      val beerForHugsBigOrderBookSource: Source[OrderBook, NotUsed] =
+//        TestNetwork.orderBookSource(
+//          selling = Asset("FabulousBeer", publicKey),
+//          buying = Asset("HUG", publicKey),
+//        )
       // #orderbook_source_examples
     }
 
@@ -245,10 +241,10 @@ class DocExamples() {
 
       // #payment_source_examples
       // a source of all new payment operations
-      val paymentsSource: Source[Transacted[PayOperation], NotUsed] = TestNetwork.paymentsSource()
+//      val paymentsSource: Source[Transacted[PayOperation], NotUsed] = TestNetwork.paymentsSource()
 
       // a source of all new payment operations involving a specified account
-      val paymentsByAccountSource = TestNetwork.paymentsByAccountSource(publicKey)
+//      val paymentsByAccountSource = TestNetwork.paymentsByAccountSource(publicKey)
       // #payment_source_examples
     }
 
@@ -304,15 +300,15 @@ class DocExamples() {
 
       // #transaction_source_examples
       // print each new transaction's hash
-      TestNetwork.transactionSource().runForeach(txn => println(txn.hash))
+//      TestNetwork.transactionSource().runForeach(txn => println(txn.hash))
 
       // a source of transactions for a given account
-      val accnTxnSource: Source[TransactionHistory, NotUsed] =
-        TestNetwork.transactionsByAccountSource(publicKey)
+//      val accnTxnSource: Source[TransactionHistory, NotUsed] =
+//        TestNetwork.transactionsByAccountSource(publicKey)
 
       // a source of transactions for ledger #3,
       // started from the beginning of time to ensure we get everything
-      val ledgerTxnSource = TestNetwork.transactionsByLedgerSource(1, Record(0))
+//      val ledgerTxnSource = TestNetwork.transactionsByLedgerSource(1, Record(0))
       // #transaction_source_examples
     }
   }
@@ -426,9 +422,6 @@ class DocExamples() {
       override def getStream[T: ClassTag](path: String, de: CustomSerializer[T], cursor: HorizonCursor, order: HorizonOrder, params: Map[String, String] = Map.empty)
                                          (implicit ec: ExecutionContext, m: Manifest[T]): Future[Stream[T]] =
         ???
-
-      override def getSource[T: ClassTag](path: String, de: CustomSerializer[T], cursor: HorizonCursor, params: Map[String, String])
-                                         (implicit ec: ExecutionContext, m: Manifest[T]): Source[T, NotUsed] = Source.empty[T]
 
       override def getSeq[T: ClassTag](path: String, de: CustomSerializer[T], params: Map[String, String])
                                       (implicit ec: ExecutionContext, m: Manifest[T]): Future[Seq[T]] =

@@ -1,15 +1,15 @@
 package stellar.sdk.model.domain
 
-import akka.actor.ActorSystem
-import akka.http.scaladsl.model.ContentTypes._
-import akka.http.scaladsl.model.Uri
-import akka.http.scaladsl.unmarshalling.{FromEntityUnmarshaller, Unmarshaller}
-import stellar.sdk.inet.WebClient
-import stellar.sdk.{DefaultActorSystem, FederationServer, PublicKey}
+import java.net.HttpURLConnection.HTTP_NOT_FOUND
+
+import okhttp3.{Headers, HttpUrl, OkHttpClient, Request}
+import stellar.sdk.inet.RestException
+import stellar.sdk.{BuildInfo, FederationServer, PublicKey}
 import toml.Value
 import toml.Value.{Arr, Str, Tbl}
 
-import scala.concurrent.{ExecutionContextExecutor, Future}
+import scala.concurrent.{ExecutionContext, Future}
+import scala.util.{Failure, Try}
 
 /**
   * Data provided by a domain's `stellar.toml`.
@@ -17,12 +17,12 @@ import scala.concurrent.{ExecutionContextExecutor, Future}
   * @see https://www.stellar.org/developers/guides/concepts/stellar-toml.html
   */
 case class DomainInfo(federationServer: Option[FederationServer] = None,
-                      authServer: Option[Uri] = None,
-                      transferServer: Option[Uri] = None,
-                      kycServer: Option[Uri] = None,
-                      webAuthEndpoint: Option[Uri] = None,
+                      authServer: Option[HttpUrl] = None,
+                      transferServer: Option[HttpUrl] = None,
+                      kycServer: Option[HttpUrl] = None,
+                      webAuthEndpoint: Option[HttpUrl] = None,
                       signerKey: Option[PublicKey] = None,
-                      horizonEndpoint: Option[Uri] = None,
+                      horizonEndpoint: Option[HttpUrl] = None,
                       uriRequestSigningKey: Option[PublicKey] = None,
                       version: Option[String] = None,
                       accounts: List[PublicKey] = List.empty[PublicKey],
@@ -34,12 +34,10 @@ case class DomainInfo(federationServer: Option[FederationServer] = None,
 
 object DomainInfo extends TomlParsers {
 
-  implicit private val unmarshaller: FromEntityUnmarshaller[DomainInfo] =
-    Unmarshaller.byteStringUnmarshaller
-      .forContentTypes(`text/plain(UTF-8)`, `application/octet-stream`)
-      .mapWithCharset {
-        case (data, charset) => data.decodeString(charset.nioCharset.name)
-      }.map(from)
+  private val client = new OkHttpClient()
+  private val headers = Headers.of(
+    "X-Client-Name", BuildInfo.name,
+    "X-Client-Version", BuildInfo.version)
 
   def from(doc: String): DomainInfo = {
     toml.Toml.parse(doc) match {
@@ -51,12 +49,12 @@ object DomainInfo extends TomlParsers {
 
         DomainInfo(
           federationServer = parseTomlValue("FEDERATION_SERVER", { case Str(s) => FederationServer(s) }),
-          authServer = parseTomlValue("AUTH_SERVER", uri),
-          transferServer = parseTomlValue("TRANSFER_SERVER", uri),
-          kycServer = parseTomlValue("KYC_SERVER", uri),
-          webAuthEndpoint = parseTomlValue("WEB_AUTH_ENDPOINT", uri),
+          authServer = parseTomlValue("AUTH_SERVER", url),
+          transferServer = parseTomlValue("TRANSFER_SERVER", url),
+          kycServer = parseTomlValue("KYC_SERVER", url),
+          webAuthEndpoint = parseTomlValue("WEB_AUTH_ENDPOINT", url),
           signerKey = parseTomlValue("SIGNER_KEY", publicKey),
-          horizonEndpoint = parseTomlValue("HORIZON_URL", uri),
+          horizonEndpoint = parseTomlValue("HORIZON_URL", url),
           uriRequestSigningKey = parseTomlValue("URI_REQUEST_SIGNING_KEY", publicKey),
           version = parseTomlValue("VERSION", string),
           accounts = parseTomlValue("ACCOUNTS", { case Arr(xs) => xs.map(publicKey) })
@@ -80,14 +78,23 @@ object DomainInfo extends TomlParsers {
   /**
     * Returns domain info for the given domain's base URI string.
     */
-  def forDomain(uri: String)
-               (implicit sys: ActorSystem = DefaultActorSystem.system): Future[Option[DomainInfo]] = {
+  def forDomain(uri: String)(implicit ec: ExecutionContext): Future[Option[DomainInfo]] = {
+    val url = HttpUrl.parse(if (uri.startsWith("http")) uri else s"https://$uri")
+        .newBuilder()
+        .addPathSegment(".well-known")
+        .addPathSegment("stellar.toml")
+        .build()
 
-    implicit val ec: ExecutionContextExecutor = sys.dispatcher
-
-    lazy val client = new WebClient(Uri(if (uri.startsWith("http")) uri else s"https://$uri"))
-
-    client.get[DomainInfo](Uri.Path("/.well-known/stellar.toml"))
+    Future(client.newCall(new Request.Builder().url(url).headers(headers).build()).execute())
+      .map { response =>
+        response.code() match {
+          case HTTP_NOT_FOUND => None
+          case _ => Try(DomainInfo.from(response.body().string())) match {
+            case Failure(t) => throw RestException("Error parsing domain info.", t)
+            case s => s.toOption
+          }
+        }
+      }
   }
 }
 

@@ -1,60 +1,55 @@
 package stellar.sdk
 
-import akka.http.scaladsl.model.Uri
-import akka.http.scaladsl.model.Uri.Path
+import okhttp3.HttpUrl
+import okhttp3.mockwebserver.{MockResponse, MockWebServer}
 import org.scalacheck.Arbitrary
 import org.specs2.concurrent.ExecutionEnv
 import org.specs2.mutable.Specification
-import org.specs2.specification.AfterAll
-import stellar.sdk.StubServer.ReplyWithText
+import org.specs2.scalacheck.Parameters
 import stellar.sdk.inet.RestException
-import stellar.sdk.model.domain.{Currency, DomainInfo, DomainInfoGenerators, DomainInfoParseException, PointOfContact, Validator}
+import stellar.sdk.model.domain._
 
-import scala.concurrent.Future
+import scala.concurrent.{Await, Future}
 import scala.concurrent.duration._
 
-class DomainInfoSpec(implicit ee: ExecutionEnv) extends Specification with AfterAll with DomainInfoGenerators {
+class DomainInfoSpec(implicit ee: ExecutionEnv) extends Specification with DomainInfoGenerators {
 
   sequential
-
-  val server = new StubServer()
-
-  override def afterAll(): Unit = server.stop()
 
   "domain info TOML lookup" should {
     "find federation server" >> {
       roundTripDomainInfo("""FEDERATION_SERVER="https://xyz.com/fedsrv"""")
-        .map(_.federationServer) must beSome(FederationServer(Uri("https://xyz.com"), Path("/fedsrv")))
+        .map(_.federationServer) must beSome(FederationServer(HttpUrl.parse("https://xyz.com/fedsrv")))
         .awaitFor(5.seconds)
     }
 
     "find auth server" >> {
       roundTripDomainInfo("""AUTH_SERVER="https://xyz123.com/authsrv"""")
-        .map(_.authServer) must beSome(Uri("https://xyz123.com/authsrv"))
+        .map(_.authServer) must beSome(HttpUrl.parse("https://xyz123.com/authsrv"))
         .awaitFor(5.seconds)
     }
 
     "find transfer server" >> {
       roundTripDomainInfo("""TRANSFER_SERVER="https://abc123.com/tfrsrv"""")
-        .map(_.transferServer) must beSome(Uri("https://abc123.com/tfrsrv"))
+        .map(_.transferServer) must beSome(HttpUrl.parse("https://abc123.com/tfrsrv"))
         .awaitFor(5.seconds)
     }
 
     "find kyc server" >> {
       roundTripDomainInfo("""KYC_SERVER="https://kyc.org/a/b/"""")
-        .map(_.kycServer) must beSome(Uri("https://kyc.org/a/b/"))
+        .map(_.kycServer) must beSome(HttpUrl.parse("https://kyc.org/a/b/"))
         .awaitFor(5.seconds)
     }
 
     "find web auth endpoint" >> {
       roundTripDomainInfo("""WEB_AUTH_ENDPOINT="https://charlottes.web/"""")
-        .map(_.webAuthEndpoint) must beSome(Uri("https://charlottes.web/"))
+        .map(_.webAuthEndpoint) must beSome(HttpUrl.parse("https://charlottes.web/"))
         .awaitFor(5.seconds)
     }
 
     "find public horizon url" >> {
       roundTripDomainInfo("""HORIZON_URL="https://event.horizon/"""")
-        .map(_.horizonEndpoint) must beSome(Uri("https://event.horizon/"))
+        .map(_.horizonEndpoint) must beSome(HttpUrl.parse("https://event.horizon/"))
         .awaitFor(5.seconds)
     }
 
@@ -143,13 +138,13 @@ class DomainInfoSpec(implicit ee: ExecutionEnv) extends Specification with After
     "find url" >> {
       roundTripDomainInfo(doc("ORG_URL", """"https://puppies.com/"""")).map(
         _.issuerDocumentation.flatMap(_.url)) must
-        beSome(Uri("https://puppies.com/")).awaitFor(5.seconds)
+        beSome(HttpUrl.parse("https://puppies.com/")).awaitFor(5.seconds)
     }
 
     "find logo" >> {
       roundTripDomainInfo(doc("ORG_LOGO", """"https://puppies.com/le_puppy.png"""")).map(
         _.issuerDocumentation.flatMap(_.logo)) must
-        beSome(Uri("https://puppies.com/le_puppy.png")).awaitFor(5.seconds)
+        beSome(HttpUrl.parse("https://puppies.com/le_puppy.png")).awaitFor(5.seconds)
     }
 
     "find description" >> {
@@ -166,7 +161,7 @@ class DomainInfoSpec(implicit ee: ExecutionEnv) extends Specification with After
     "find physical address attestation" >> {
       roundTripDomainInfo(doc("ORG_PHYSICAL_ADDRESS_ATTESTATION", """"https://puppies.com/address.pdf"""")).map(
         _.issuerDocumentation.flatMap(_.physicalAddressAttestation)) must
-        beSome(Uri("https://puppies.com/address.pdf")).awaitFor(5.seconds)
+        beSome(HttpUrl.parse("https://puppies.com/address.pdf")).awaitFor(5.seconds)
     }
 
     "find phone number" >> {
@@ -177,7 +172,7 @@ class DomainInfoSpec(implicit ee: ExecutionEnv) extends Specification with After
     "find phone number attestation" >> {
       roundTripDomainInfo(doc("ORG_PHONE_NUMBER_ATTESTATION", """"https://puppies.com/phone.pdf"""")).map(
         _.issuerDocumentation.flatMap(_.phoneNumberAttestation)) must
-        beSome(Uri("https://puppies.com/phone.pdf")).awaitFor(5.seconds)
+        beSome(HttpUrl.parse("https://puppies.com/phone.pdf")).awaitFor(5.seconds)
     }
 
     "find keybase account name" >> {
@@ -275,7 +270,7 @@ class DomainInfoSpec(implicit ee: ExecutionEnv) extends Specification with After
     "find the currency" >> prop { ccys: List[Currency] =>
       val toml = ccys.map(doc).mkString("\n")
       DomainInfo.from(toml).currencies mustEqual ccys
-    }
+    }.setParameters(Parameters(minTestsOk = 5))
   }
 
   "validators parsing" should {
@@ -297,8 +292,12 @@ class DomainInfoSpec(implicit ee: ExecutionEnv) extends Specification with After
   }
 
   private def roundTripDomainInfo(content: String): Future[DomainInfo] = {
-    server.expectGet(".well-known/stellar.toml", Map.empty, ReplyWithText(content))
-    DomainInfo.forDomain("http://localhost:8002").map(_.get)
+    val server = new MockWebServer
+    server.enqueue(new MockResponse().setBody(content))
+    server.start()
+    val eventualInfo = DomainInfo.forDomain(server.url("").toString).map(_.get)
+    eventualInfo.onComplete(_ => server.shutdown())
+    eventualInfo
   }
 
   "parsing toml" should {

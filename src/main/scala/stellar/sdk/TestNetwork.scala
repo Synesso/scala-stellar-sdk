@@ -1,15 +1,15 @@
 package stellar.sdk
 
-import java.net.URI
-
-import stellar.sdk.inet.Horizon
+import okhttp3.HttpUrl
+import stellar.sdk.inet.{HorizonAccess, OkHorizon}
 
 /**
   * The public Stellar test network.
   */
 case object TestNetwork extends Network with FriendBot {
   override val passphrase = "Test SDF Network ; September 2015"
-  val horizon = Horizon(URI.create("https://horizon-testnet.stellar.org"))
+  override val horizon: HorizonAccess = new OkHorizon(
+    HttpUrl.parse("https://horizon-testnet.stellar.org"))
 }
 
 

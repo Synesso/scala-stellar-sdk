@@ -1,17 +1,16 @@
 package stellar.sdk
 
-import java.net.URI
-
-import stellar.sdk.inet.{Horizon, HorizonAccess}
+import okhttp3.HttpUrl
+import stellar.sdk.inet.{HorizonAccess, OkHorizon}
 
 /**
   * A network that represents the stand-alone docker image for Horizon & core.
   *
   * @see [[https://github.com/stellar/docker-stellar-core-horizon]]
   */
-case class StandaloneNetwork(uri: URI) extends Network with FriendBot {
+case class StandaloneNetwork(base: HttpUrl) extends Network with FriendBot {
   override val passphrase: String = "Standalone Network ; February 2017"
-  override val horizon: HorizonAccess = Horizon(uri)
+  override val horizon: HorizonAccess = new OkHorizon(base)
 }
 
 
@@ -20,4 +19,4 @@ case class StandaloneNetwork(uri: URI) extends Network with FriendBot {
   *
   * @see [[https://github.com/stellar/docker-stellar-core-horizon]]
   */
-object LocalStandaloneNetwork extends StandaloneNetwork(URI.create(s"http://localhost:8000"))
+object LocalStandaloneNetwork extends StandaloneNetwork(HttpUrl.parse("http://localhost:8000"))

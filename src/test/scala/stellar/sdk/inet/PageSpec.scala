@@ -1,5 +1,6 @@
 package stellar.sdk.inet
 
+import okhttp3.HttpUrl
 import org.json4s.DefaultFormats
 import org.json4s.JsonAST.JObject
 import org.json4s.native.JsonMethods
@@ -33,8 +34,8 @@ class PageSpec extends Specification {
         """.stripMargin
 
       implicit val formats = DefaultFormats + RawPageDeserializer + HelloDeserializer
-      JsonMethods.parse(doc).extract[RawPage].parse[String] mustEqual Page(Seq("world"),
-        nextLink = Some("https://horizon-testnet.stellar.org/hello?cursor=2045052972961793-0&limit=10&order=asc")
+      JsonMethods.parse(doc).extract[RawPage].parse[String](HttpUrl.parse("http://localhost/")) mustEqual Page(List("world"),
+        nextLink = Some(HttpUrl.parse("https://horizon-testnet.stellar.org/hello?cursor=2045052972961793-0&limit=10&order=asc"))
       )
     }
   }

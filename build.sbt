@@ -76,10 +76,7 @@ lazy val root = (project in file("."))
     libraryDependencies ++= List(
       "commons-codec" % "commons-codec" % "1.13",
       "net.i2p.crypto" % "eddsa" % "0.3.0",
-      "com.typesafe.akka" %% "akka-http" % "10.1.10",
-      "com.typesafe.akka" %% "akka-stream" % "2.6.0",
-      "com.lightbend.akka" %% "akka-stream-alpakka-sse" % "1.1.2",
-      "de.heikoseeberger" %% "akka-http-json4s" % "1.29.1",
+      "com.squareup.okhttp3" % "okhttp" % "4.2.2",
       "org.json4s" %% "json4s-native" % "3.6.7",
       "com.typesafe.scala-logging" %% "scala-logging" % "3.9.2",
       "ch.qos.logback" % "logback-classic" % "1.2.3",
@@ -87,6 +84,7 @@ lazy val root = (project in file("."))
       "tech.sparse" %%  "toml-scala" % "0.2.2",
       "com.softwaremill.retry" %% "retry" % "0.3.3",
       "io.github.novacrypto" % "BIP39" % "2019.01.27",
+      "com.squareup.okhttp3" % "mockwebserver" % "4.2.1" % "test",
       "org.specs2" %% "specs2-core" % "4.7.1" % "test,it",
       "org.specs2" %% "specs2-mock" % "4.7.1" % "test",
       "org.specs2" %% "specs2-scalacheck" % "4.7.1" % "test"

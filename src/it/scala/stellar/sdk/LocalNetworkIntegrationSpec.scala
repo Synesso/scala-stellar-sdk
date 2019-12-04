@@ -1,13 +1,10 @@
 package stellar.sdk
 
 import java.io.EOFException
-import java.net.URI
 import java.time.{Instant, Period}
 
-import akka.actor.ActorSystem
-import akka.stream.ActorMaterializer
-import akka.stream.scaladsl.Sink
 import com.typesafe.scalalogging.LazyLogging
+import okhttp3.HttpUrl
 import org.json4s.JsonDSL._
 import org.specs2.concurrent.ExecutionEnv
 import org.specs2.mutable.Specification
@@ -30,7 +27,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
 
   Seq("src/it/bin/stellar_standalone.sh", "true").!
 
-  private implicit val network = StandaloneNetwork(URI.create(s"http://localhost:8000"))
+  private implicit val network = StandaloneNetwork(HttpUrl.parse(s"http://localhost:8000"))
   val masterAccountKey = network.masterAccount
   var masterAccount = Await.result(network.account(masterAccountKey).map(_.toAccount), 10.seconds)
 
@@ -205,7 +202,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
     }
 
     "fetch nothing for an account that has been merged" >> {
-      network.account(accnC) must throwA[Exception].like { case HorizonEntityNotFound(uri, body) =>
+      network.account(accnC) must throwAn[Exception].like { case HorizonEntityNotFound(uri, body) =>
         body mustEqual ("type" -> "https://stellar.org/horizon-errors/not_found") ~
           ("title" -> "Resource Missing") ~
           ("status" -> 404) ~
@@ -557,19 +554,6 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
       network.feeStats() must beLike[FeeStatsResponse]({ case fsr =>
           fsr.minAcceptedFee mustEqual NativeAmount(100)
       }).awaitFor(10 seconds)
-    }
-  }
-
-  implicit val system = ActorSystem("local-network-integration-spec")
-  implicit val materializer = ActorMaterializer()
-
-  "transaction source" should {
-    "provide all future transactions" >> {
-      val source = network.transactionSource()
-      val results: Future[Seq[TransactionHistory]] = source.take(1).runWith(Sink.seq[TransactionHistory])
-      results.isCompleted must beFalse
-      transact(PaymentOperation(accnA, NativeAmount(100), Some(accnA)))
-      results.map(_.size) must beEqualTo(1).awaitFor(1 minute)
     }
   }
 
