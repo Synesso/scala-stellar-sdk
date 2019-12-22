@@ -82,8 +82,6 @@ lazy val root = (project in file("."))
       "de.heikoseeberger" %% "akka-http-json4s" % "1.29.1",
       "io.github.novacrypto" % "BIP39" % "2019.01.27",
       "org.json4s" %% "json4s-native" % "3.6.7",
-      "com.typesafe.scala-logging" %% "scala-logging" % "3.9.2",
-      "ch.qos.logback" % "logback-classic" % "1.2.3",
       "org.typelevel" %% "cats-core" % "2.1.0",
       "tech.sparse" %%  "toml-scala" % "0.2.2",
 
