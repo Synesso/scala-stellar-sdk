@@ -9,13 +9,14 @@ import okhttp3.HttpUrl
 import org.apache.commons.codec.binary.Base64
 import org.scalacheck.{Arbitrary, Gen}
 import org.specs2.ScalaCheck
+import stellar.sdk.key.{EnglishWords, FrenchWords, JapaneseWords, SpanishWords, WordList}
 import stellar.sdk.model._
 import stellar.sdk.model.ledger.OfferEntry
 import stellar.sdk.model.op._
 import stellar.sdk.model.response._
 import stellar.sdk.model.result.TransactionResult._
 import stellar.sdk.model.result.{PathPaymentResult, _}
-import stellar.sdk.util.{ByteArrays, EnglishWords, FrenchWords, JapaneseWords, SpanishWords, WordList}
+import stellar.sdk.util.ByteArrays
 import stellar.sdk.util.ByteArrays.trimmedByteArray
 
 import scala.util.Random
@@ -157,7 +158,7 @@ trait ArbitraryInput extends ScalaCheck {
   implicit def arbWordList: Arbitrary[WordList] = Arbitrary(
     Gen.oneOf(EnglishWords, FrenchWords, JapaneseWords, SpanishWords))
 
-  def genListOfNM[T](low: Int, high: Int, gen: Gen[T]) = for {
+  def genListOfNM[T](low: Int, high: Int, gen: Gen[T]): Gen[List[T]] = for {
     size <- Gen.choose(low, high)
     xs <- Gen.listOfN(size, gen)
   } yield xs

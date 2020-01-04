@@ -675,12 +675,11 @@ object AccountMergeOperation {
 }
 
 /**
-  * Requests that the network runs the inflation process.
+  * Requests that the network runs the inflation process. As of Stellar Core v12, this operation does nothing.
   *
   * @param sourceAccount the account effecting this operation, if different from the owning account of the transaction
   * @see [[https://www.stellar.org/developers/horizon/reference/resources/operation.html#inflation endpoint doc]]
   */
-@deprecated(message = "Inflation is no longer supported in Stellar", since = "Core v12")
 case class InflationOperation(sourceAccount: Option[PublicKeyOps] = None) extends Operation {
   override def encode: Stream[Byte] = super.encode ++ Encode.int(9)
 }

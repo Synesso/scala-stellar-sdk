@@ -2,11 +2,21 @@ package stellar.sdk.util
 
 import java.security.MessageDigest
 
+import okio.ByteString
 import org.apache.commons.codec.binary.Base64
 
 import scala.annotation.tailrec
+import scala.language.implicitConversions
 
 object ByteArrays {
+
+  object Implicits {
+    implicit def byteArrayToByteString(arr: Array[Byte]): ByteString =
+      new ByteString(arr)
+
+    implicit def byteStringToByteArray(byteString: ByteString): Array[Byte] =
+      byteString.toByteArray
+  }
 
   def paddedByteArray(bs: Array[Byte], length: Int): Array[Byte] = {
     val padded = Array.ofDim[Byte](math.max(length, bs.length))

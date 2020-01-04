@@ -4,15 +4,15 @@ import java.security.{MessageDigest, SignatureException}
 import java.util.Arrays
 
 import cats.data.State
-import io.github.novacrypto.bip39.MnemonicGenerator
 import net.i2p.crypto.eddsa._
 import net.i2p.crypto.eddsa.spec._
+import okio.ByteString
+import stellar.sdk.key.{EnglishWords, Mnemonic, WordList}
 import stellar.sdk.model.domain.DomainInfo
 import stellar.sdk.model.xdr.{Decode, Encodable, Encode}
 import stellar.sdk.model.{AccountId, Seed, StrKey}
-import stellar.sdk.util.{ByteArrays, WordList}
+import stellar.sdk.util.ByteArrays
 
-import scala.collection.mutable
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success, Try}
 
@@ -35,21 +35,6 @@ case class KeyPair(pk: EdDSAPublicKey, sk: EdDSAPrivateKey) extends PublicKeyOps
     sig.update(data)
 
     Signature(sig.sign, hint)
-  }
-
-  /**
-    * Returns the BIP-39 mnemonic phrase for this instance.
-    * @param wordlist the list of words to build the phrase from. Choose from English, French,
-    *                 Japanese, Spanish or provide your own.
-    */
-  def mnemonic(wordlist: WordList): List[String] = {
-    val words = mutable.Buffer.empty[String]
-    val internalList = new io.github.novacrypto.bip39.WordList() {
-      override def getWord(index: Int): String = wordlist.word(index)
-      override def getSpace: Char = ' ' // Needed for the novocrypto builder, but later filtered out.
-    }
-    new MnemonicGenerator(internalList).createMnemonic(sk.getSeed, word => words.append(word.toString))
-    words.filterNot(_.isBlank).toList
   }
 
   override def toString: String = {
@@ -98,8 +83,7 @@ sealed trait PublicKeyOps extends Encodable {
   /**
     * This key pair or verifying key without the private key.
     */
-  def asPublicKey = PublicKey(pk)
-
+  def asPublicKey: PublicKey = PublicKey(pk)
 
   /**
     * A four-byte code that provides a hint to the identity of this public key
@@ -149,20 +133,63 @@ object KeyPair extends Decode {
     * @param seed The 32 byte secret seed.
     * @return { @link KeyPair}
     */
+  def fromSecretSeed(seed: ByteString): KeyPair = fromSecretSeed(seed.toByteArray)
+
+  /**
+    * Creates a new Stellar keypair from a raw 32 byte secret seed.
+    *
+    * @param seed The 32 byte secret seed.
+    * @return { @link KeyPair}
+    */
   def fromSecretSeed(seed: Array[Byte]): KeyPair = {
-    val privKeySpec = new EdDSAPrivateKeySpec(seed.toArray, ed25519)
+    val privKeySpec = new EdDSAPrivateKeySpec(seed, ed25519)
     val publicKeySpec = new EdDSAPublicKeySpec(privKeySpec.getA.toByteArray, ed25519)
     KeyPair(new EdDSAPublicKey(publicKeySpec), new EdDSAPrivateKey(privKeySpec))
   }
 
   /**
-    * Creates a new Stellar keypair from a passphrase
+    * Creates a new Stellar keypair from a passphrase.
     *
     * @param passphrase the secret passphrase.
     * @return ( @link KeyPair }
     */
   def fromPassphrase(passphrase: String): KeyPair =
     fromSecretSeed(ByteArrays.sha256(passphrase.getBytes("UTF-8")))
+
+  /**
+    * Creates a new Stellar keypair from a BIP-39 mnemonic phrase.
+    *
+    * @param phrase the mnemonic phrase.
+    * @param passphrase used when encoding the mnemonic. Defaults to empty String.
+    * @param index of the deterministic wallet address. Defaults to zero.
+    * @param wordList the list of words to decode with. Defaults to English.
+    * @return ( @link KeyPair }
+    */
+  def fromMnemonicPhrase(phrase: String,
+                   passphrase: ByteString = new ByteString(Array.empty[Byte]),
+                   wordList: WordList = EnglishWords,
+                   index: Int = 0): KeyPair = {
+
+    Mnemonic(phrase.split(wordList.separator).toList, wordList)
+      .asHDNode(passphrase)
+      .deriveChild(44, 148, index)
+      .asKeyPair
+  }
+
+  /**
+    * Creates a new Stellar keypair from a BIP-39 mnemonic phrase.
+    *
+    * @param mnemonic the mnemonic phrase.
+    * @param passphrase used when encoding the mnemonic. Defaults to empty String.
+    * @param index of the deterministic wallet address. Defaults to zero.
+    * @param wordList the list of words to decode with. Defaults to English.
+    * @return ( @link KeyPair }
+    */
+  def fromMnemonic(mnemonic: Mnemonic,
+                   passphrase: ByteString = new ByteString(Array.empty[Byte]),
+                   wordList: WordList = EnglishWords,
+                   index: Int = 0): KeyPair =
+    fromMnemonicPhrase(mnemonic.phraseString, passphrase, wordList, index)
 
   /**
     * Creates a new Stellar verifying key from a 32 byte address.

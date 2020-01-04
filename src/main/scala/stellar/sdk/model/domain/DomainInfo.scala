@@ -34,7 +34,10 @@ case class DomainInfo(federationServer: Option[FederationServer] = None,
 
 object DomainInfo extends TomlParsers {
 
-  private val client = new OkHttpClient()
+  private val client = new OkHttpClient.Builder()
+    .followRedirects(true)
+    .followSslRedirects(true)
+    .build()
   private val headers = Headers.of(
     "X-Client-Name", BuildInfo.name,
     "X-Client-Version", BuildInfo.version)

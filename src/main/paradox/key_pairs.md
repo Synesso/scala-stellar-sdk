@@ -72,3 +72,32 @@ network, this method returns a `Future[PublicKey]` and may fail.
 
 That's all you need to know about `KeyPair`s. Continue reading to learn about how to inspect Stellar networks via 
 @ref:[Queries](queries.md).
+
+### From a cryptographic seed phrase
+
+Keys can be restored from a mnemonic phrase and, optionally, a password.
+
+@@snip [KeyPairSpec.scala](../../test/scala/stellar/sdk/KeyPairSpec.scala) { #keypair-from-mnemonic }
+
+Mnemonic phrases are available in English, French, Japanese and Spanish - with Chinese, Czech, Korean and Italian 
+to be supported soon.
+
+@@snip [KeyPairSpec.scala](../../test/scala/stellar/sdk/KeyPairSpec.scala) { #keypair-from-mnemonic-japanese }
+
+You can construct a new random mnemonic phrase with any supported language and 128-256 bits of entropy.
+
+@@snip [MnemonicSpec.scala](../../test/scala/stellar/sdk/key/MnemonicSpec.scala) { #mnemonic-random-spanish }
+
+(If you wish to use your own source of entropy, rather than rely on the JVM, you can do that via 
+the method `Mnemonic.fromEntropy`.)
+
+#### More on mnemonics
+
+Mnemonic phrases derive cryptographic seeds which are the the root of a vast tree of deterministic
+addresses. If you wish to do more than map a phrase to a `KeyPair`, then you should access the `HDNode`
+of the `Mnemonic`. From any node, you can derive the child nodes to any depth.
+
+@@snip [MnemonicSpec.scala](../../test/scala/stellar/sdk/key/MnemonicSpec.scala) { #mnemonic-french-node-depth }
+
+Note that the subtree of nodes `44/148/0` are dedicated to Stellar keys and can be accessed by the 
+`KeyPair` deriving methods on both `KeyPair` and `Mnemonic`.
