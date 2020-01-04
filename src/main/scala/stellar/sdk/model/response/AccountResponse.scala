@@ -21,7 +21,7 @@ case class AccountResponse(id: PublicKey,
 
   def toAccount: Account = Account(id, lastSequence + 1)
 
-  def decodedData: Map[String, String] = data.mapValues(new String(_, UTF_8))
+  def decodedData: Map[String, String] = data.map { case (k, v) => k -> new String(v, UTF_8) }
 }
 
 object AccountRespDeserializer extends ResponseParser[AccountResponse]({ o: JObject =>
@@ -67,7 +67,7 @@ object AccountRespDeserializer extends ResponseParser[AccountResponse]({ o: JObj
     case _ => throw new RuntimeException(s"Expected js object at 'signers'")
   }
   val JObject(dataFields) = o \ "data"
-  val data = dataFields.toMap.mapValues(_.extract[String]).mapValues(ByteArrays.base64)
+  val data = dataFields.map{ case (k, v) => k -> ByteArrays.base64(v.extract[String]) }.toMap
 
   AccountResponse(id, seq, subEntryCount, Thresholds(lowThreshold, mediumThreshold, highThreshold),
     authRequired, authRevocable, balances, signers, data)

@@ -29,9 +29,9 @@ case class Mnemonic(phrase: List[String], wordList: WordList = EnglishWords) {
     val entropyBits = bitString.take(numEntropyBits)
     val entropyHex = parseBitString(entropyBits)
 
-    val entropyBytes = new ByteString(entropyHex.array)
+    val entropyBytes = new ByteString(entropyHex.toArray[Byte])
 
-    val checksumProvided = new ByteString(parseBitString(checksumBits).array)
+    val checksumProvided = new ByteString(parseBitString(checksumBits).toArray)
     val checksumDerived = deriveChecksum(entropyBytes)
 
     assert(checksumDerived == checksumProvided,
@@ -80,7 +80,7 @@ case class Mnemonic(phrase: List[String], wordList: WordList = EnglishWords) {
     val reducedChecksumBits = reducedBytesToChecksum.map(toBitString).mkString
     val checksumBitString = reducedChecksumBits.take(checksumLengthBits)
 
-    new ByteString(parseBitString(checksumBitString).array)
+    new ByteString(parseBitString(checksumBitString).toArray)
   }
 
   private def toBitString(b: Byte): String = toBitString(b.toInt & 0xff, 8)

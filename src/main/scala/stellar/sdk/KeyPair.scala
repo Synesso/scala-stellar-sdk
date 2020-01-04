@@ -253,7 +253,7 @@ object KeyPair extends Decode {
   def decode: State[Seq[Byte], PublicKey] = for {
     _ <- int
     bs <- bytes(32)
-  } yield KeyPair.fromPublicKey(bs.toArray)
+  } yield KeyPair.fromPublicKey(bs.toArray[Byte])
 
   def decodeXDR(base64: String): PublicKey = decode.run(ByteArrays.base64(base64)).value._2
 
