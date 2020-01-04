@@ -28,11 +28,6 @@ lazy val commonSettings = Seq(
   coverageFailOnMinimum := true,
   coverageExcludedPackages := "\\*DocExamples.scala",
   licenses += ("Apache-2.0", url("https://opensource.org/licenses/Apache-2.0")),
-  bintrayRepository := "mvn",
-  bintrayPackageLabels := Seq("scala", "stellar"),
-  pgpPublicRing := baseDirectory.value / "project" / ".gnupg" / "pubring.gpg",
-  pgpSecretRing := baseDirectory.value / "project" / ".gnupg" / "secring.gpg",
-  pgpPassphrase := sys.env.get("PGP_PASS").map(_.toArray)
 )
 
 lazy val root = (project in file("."))
