@@ -73,7 +73,7 @@ lazy val root = (project in file("."))
       "com.softwaremill.retry" %% "retry" % "0.3.3",
       "com.squareup.okhttp3" % "okhttp" % "4.3.0",
       "com.typesafe.scala-logging" %% "scala-logging" % "3.9.2",
-      "com.squareup.okio" % "okio" % "2.4.1",
+      "com.squareup.okio" % "okio" % "2.4.3",
       "commons-codec" % "commons-codec" % "1.14",
       "io.github.novacrypto" % "BIP39" % "2019.01.27",
       "net.i2p.crypto" % "eddsa" % "0.3.0",
