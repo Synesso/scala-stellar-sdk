@@ -42,7 +42,7 @@ trait Network extends LazyLogging {
     * @see [[https://www.stellar.org/developers/horizon/reference/endpoints/accounts-single.html endpoint doc]]
     */
   def account(pubKey: PublicKeyOps)(implicit ec: ExecutionContext): Future[AccountResponse] =
-    horizon.get[AccountResponse](s"/accounts/${pubKey.accountId}")
+    horizon.get[AccountResponse](s"accounts/${pubKey.accountId}")
 
   /**
     * Fetch value for single data field associated with an account.
@@ -52,7 +52,7 @@ trait Network extends LazyLogging {
     */
   def accountData(pubKey: PublicKeyOps, dataKey: String)(implicit ec: ExecutionContext): Future[Array[Byte]] = {
     val encodedKey = URLEncoder.encode(dataKey, "UTF-8")
-    horizon.get[DataValueResponse](s"/accounts/${pubKey.accountId}/data/$encodedKey")
+    horizon.get[DataValueResponse](s"accounts/${pubKey.accountId}/data/$encodedKey")
       .map(_.v).map(base64)
   }
 
@@ -68,7 +68,7 @@ trait Network extends LazyLogging {
              cursor: HorizonCursor = Record(0), order: HorizonOrder = Asc)(implicit ec: ExecutionContext):
             Future[Stream[AssetResponse]] = {
     val params = Seq(code.map("asset_code" -> _), issuer.map("asset_issuer" -> _.accountId)).flatten.toMap
-    horizon.getStream[AssetResponse](s"/assets", AssetRespDeserializer, cursor, order, params)
+    horizon.getStream[AssetResponse](s"assets", AssetRespDeserializer, cursor, order, params)
   }
 
   /**
@@ -78,7 +78,7 @@ trait Network extends LazyLogging {
     * @see [[https://www.stellar.org/developers/horizon/reference/endpoints/effects-all.html endpoint doc]]
     */
   def effects(cursor: HorizonCursor = Record(0), order: HorizonOrder = Asc)(implicit ec: ExecutionContext): Future[Stream[EffectResponse]] =
-    horizon.getStream[EffectResponse]("/effects", EffectResponseDeserializer, cursor, order)
+    horizon.getStream[EffectResponse]("effects", EffectResponseDeserializer, cursor, order)
 
   /**
     * Fetch a stream of effects for a given account.
@@ -89,7 +89,7 @@ trait Network extends LazyLogging {
     */
   def effectsByAccount(account: PublicKeyOps, cursor: HorizonCursor = Record(0), order: HorizonOrder = Asc)(implicit ec: ExecutionContext):
                       Future[Stream[EffectResponse]] =
-    horizon.getStream[EffectResponse](s"/accounts/${account.accountId}/effects", EffectResponseDeserializer, cursor, order)
+    horizon.getStream[EffectResponse](s"accounts/${account.accountId}/effects", EffectResponseDeserializer, cursor, order)
 
   /**
     * Fetch a stream of effects for a given ledger.
@@ -99,7 +99,7 @@ trait Network extends LazyLogging {
     */
   def effectsByLedger(ledgerId: Long, cursor: HorizonCursor = Record(0), order: HorizonOrder = Asc)(implicit ec: ExecutionContext):
                      Future[Stream[EffectResponse]] =
-    horizon.getStream[EffectResponse](s"/ledgers/$ledgerId/effects", EffectResponseDeserializer, cursor, order)
+    horizon.getStream[EffectResponse](s"ledgers/$ledgerId/effects", EffectResponseDeserializer, cursor, order)
 
   /**
     * Fetch a stream of effects for a given transaction hash.
@@ -109,7 +109,7 @@ trait Network extends LazyLogging {
     */
   def effectsByTransaction(txnHash: String, cursor: HorizonCursor = Record(0), order: HorizonOrder = Asc)(implicit ec: ExecutionContext):
                           Future[Stream[EffectResponse]] =
-    horizon.getStream[EffectResponse](s"/transactions/$txnHash/effects", EffectResponseDeserializer, cursor, order)
+    horizon.getStream[EffectResponse](s"transactions/$txnHash/effects", EffectResponseDeserializer, cursor, order)
 
 
   /** Fetch a stream of effects for a given operation.
@@ -119,7 +119,7 @@ trait Network extends LazyLogging {
     */
   def effectsByOperation(operationId: Long, cursor: HorizonCursor = Record(0), order: HorizonOrder = Asc)(implicit ec: ExecutionContext):
                      Future[Stream[EffectResponse]] =
-    horizon.getStream[EffectResponse](s"/operations/$operationId/effects", EffectResponseDeserializer, cursor, order)
+    horizon.getStream[EffectResponse](s"operations/$operationId/effects", EffectResponseDeserializer, cursor, order)
 
   /**
     * Fetch a stream of details about ledgers.
@@ -128,14 +128,14 @@ trait Network extends LazyLogging {
     * @see [[https://www.stellar.org/developers/horizon/reference/endpoints/ledgers-all.html endpoint doc]]
     */
   def ledgers(cursor: HorizonCursor = Record(0), order: HorizonOrder = Asc)(implicit ec: ExecutionContext): Future[Stream[LedgerResponse]] =
-    horizon.getStream[LedgerResponse]("/ledgers", LedgerRespDeserializer, cursor, order)
+    horizon.getStream[LedgerResponse]("ledgers", LedgerRespDeserializer, cursor, order)
 
   /**
     * Fetch details of a ledger by its id
     * @see [[https://www.stellar.org/developers/horizon/reference/endpoints/ledgers-single.html endpoint doc]]
     */
   def ledger(ledgerId: Long)(implicit ex: ExecutionContext): Future[LedgerResponse] =
-    horizon.get[LedgerResponse](s"/ledgers/$ledgerId")
+    horizon.get[LedgerResponse](s"ledgers/$ledgerId")
 
   /**
     * Fetch a stream of offers for an account.
@@ -146,14 +146,14 @@ trait Network extends LazyLogging {
     */
   def offersByAccount(account: PublicKeyOps, cursor: HorizonCursor = Record(0), order: HorizonOrder = Asc)(implicit ex: ExecutionContext):
                      Future[Stream[OfferResponse]] =
-    horizon.getStream[OfferResponse](s"/accounts/${account.accountId}/offers", OfferRespDeserializer, cursor, order)
+    horizon.getStream[OfferResponse](s"accounts/${account.accountId}/offers", OfferRespDeserializer, cursor, order)
 
   /**
     * Fetch operation details by its id
     * @see [[https://www.stellar.org/developers/horizon/reference/endpoints/operations-single.html endpoint doc]]
     */
   def operation(operationId: Long)(implicit ex: ExecutionContext): Future[Transacted[Operation]] =
-    horizon.get[Transacted[Operation]](s"/operations/$operationId")
+    horizon.get[Transacted[Operation]](s"operations/$operationId")
 
   /**
     * Fetch a stream of operations.
@@ -162,7 +162,7 @@ trait Network extends LazyLogging {
     * @see [[https://www.stellar.org/developers/horizon/reference/endpoints/operations-all.html endpoint doc]]
     */
   def operations(cursor: HorizonCursor = Record(0), order: HorizonOrder = Asc)(implicit ex: ExecutionContext): Future[Stream[Transacted[Operation]]] =
-    horizon.getStream[Transacted[Operation]](s"/operations", TransactedOperationDeserializer, cursor, order)
+    horizon.getStream[Transacted[Operation]](s"operations", TransactedOperationDeserializer, cursor, order)
 
   /**
     * Fetch a stream of operations, filtered by account.
@@ -173,7 +173,7 @@ trait Network extends LazyLogging {
     */
   def operationsByAccount(pubKey: PublicKeyOps, cursor: HorizonCursor = Record(0), order: HorizonOrder = Asc)(implicit ex: ExecutionContext):
                           Future[Stream[Transacted[Operation]]] =
-    horizon.getStream[Transacted[Operation]](s"/accounts/${pubKey.accountId}/operations", TransactedOperationDeserializer, cursor, order)
+    horizon.getStream[Transacted[Operation]](s"accounts/${pubKey.accountId}/operations", TransactedOperationDeserializer, cursor, order)
 
   /**
     * Fetch a stream of operations, filtered by ledger id.
@@ -183,7 +183,7 @@ trait Network extends LazyLogging {
     */
   def operationsByLedger(ledgerId: Long, cursor: HorizonCursor = Record(0), order: HorizonOrder = Asc)(implicit ex: ExecutionContext):
                         Future[Stream[Transacted[Operation]]] =
-    horizon.getStream[Transacted[Operation]](s"/ledgers/$ledgerId/operations", TransactedOperationDeserializer, cursor, order)
+    horizon.getStream[Transacted[Operation]](s"ledgers/$ledgerId/operations", TransactedOperationDeserializer, cursor, order)
 
   /**
     * Fetch a stream of operations, filtered by transaction hash.
@@ -193,7 +193,7 @@ trait Network extends LazyLogging {
     */
   def operationsByTransaction(txnHash: String, cursor: HorizonCursor = Record(0), order: HorizonOrder = Asc)(implicit ex: ExecutionContext):
                              Future[Stream[Transacted[Operation]]] =
-    horizon.getStream[Transacted[Operation]](s"/transactions/$txnHash/operations", TransactedOperationDeserializer, cursor, order)
+    horizon.getStream[Transacted[Operation]](s"transactions/$txnHash/operations", TransactedOperationDeserializer, cursor, order)
 
   /**
     * Fetch details of the current orderbook for the given asset pairs.
@@ -204,7 +204,7 @@ trait Network extends LazyLogging {
     */
   def orderBook(selling: Asset, buying: Asset, limit: Int = 20)(implicit ex: ExecutionContext): Future[OrderBook] = {
     val params = assetParams("selling", selling) ++ assetParams("buying", buying).updated("limit", limit.toString)
-    horizon.get[OrderBook]("/order_book", params)
+    horizon.get[OrderBook]("order_book", params)
   }
 
   /**
@@ -215,7 +215,7 @@ trait Network extends LazyLogging {
     */
   def payments(cursor: HorizonCursor = Record(0), order: HorizonOrder = Asc)(implicit ex: ExecutionContext):
               Future[Stream[Transacted[PayOperation]]] =
-    horizon.getStream[Transacted[Operation]]("/payments", TransactedOperationDeserializer, cursor, order)
+    horizon.getStream[Transacted[Operation]]("payments", TransactedOperationDeserializer, cursor, order)
       .map(_.map(_.asInstanceOf[Transacted[PayOperation]]))
 
   /**
@@ -227,7 +227,7 @@ trait Network extends LazyLogging {
     */
   def paymentsByAccount(pubKey: PublicKeyOps, cursor: HorizonCursor = Record(0), order: HorizonOrder = Asc)
                        (implicit ex: ExecutionContext): Future[Stream[Transacted[PayOperation]]] =
-    horizon.getStream[Transacted[Operation]](s"/accounts/${pubKey.accountId}/payments", TransactedOperationDeserializer, cursor, order)
+    horizon.getStream[Transacted[Operation]](s"accounts/${pubKey.accountId}/payments", TransactedOperationDeserializer, cursor, order)
       .map(_.map(_.asInstanceOf[Transacted[PayOperation]]))
 
   /**
@@ -238,7 +238,7 @@ trait Network extends LazyLogging {
     */
   def paymentsByLedger(ledgerId: Long, cursor: HorizonCursor = Record(0), order: HorizonOrder = Asc)(implicit ex: ExecutionContext):
                       Future[Stream[Transacted[PayOperation]]] =
-    horizon.getStream[Transacted[Operation]](s"/ledgers/$ledgerId/payments", TransactedOperationDeserializer, cursor, order)
+    horizon.getStream[Transacted[Operation]](s"ledgers/$ledgerId/payments", TransactedOperationDeserializer, cursor, order)
       .map(_.map(_.asInstanceOf[Transacted[PayOperation]]))
 
   /**
@@ -249,7 +249,7 @@ trait Network extends LazyLogging {
     */
   def paymentsByTransaction(txnHash: String, cursor: HorizonCursor = Record(0), order: HorizonOrder = Asc)(implicit ex: ExecutionContext):
                            Future[Stream[Transacted[PayOperation]]] =
-    horizon.getStream[Transacted[Operation]](s"/transactions/$txnHash/payments", TransactedOperationDeserializer, cursor, order)
+    horizon.getStream[Transacted[Operation]](s"transactions/$txnHash/payments", TransactedOperationDeserializer, cursor, order)
       .map(_.map(_.asInstanceOf[Transacted[PayOperation]]))
 
   /**
@@ -259,7 +259,7 @@ trait Network extends LazyLogging {
     * @see [[https://www.stellar.org/developers/horizon/reference/endpoints/trades.html endpoint doc]]
     */
   def trades(cursor: HorizonCursor = Record(0), order: HorizonOrder = Asc)(implicit ex: ExecutionContext): Future[Stream[Trade]] =
-    horizon.getStream[Trade]("/trades", TradeDeserializer, cursor, order)
+    horizon.getStream[Trade]("trades", TradeDeserializer, cursor, order)
 
   /**
     * Fetch a stream of trades filtered by orderbook
@@ -270,7 +270,7 @@ trait Network extends LazyLogging {
   def tradesByOrderBook(base: Asset, counter: Asset, cursor: HorizonCursor = Record(0), order: HorizonOrder = Asc)(implicit ex: ExecutionContext):
                        Future[Stream[Trade]] = {
     val params = assetParams("base", base) ++ assetParams("counter", counter)
-    horizon.getStream[Trade]("/trades", TradeDeserializer, cursor, order, params)
+    horizon.getStream[Trade]("trades", TradeDeserializer, cursor, order, params)
   }
 
   /**
@@ -282,7 +282,7 @@ trait Network extends LazyLogging {
   def tradesByOfferId(offerId: Long, cursor: HorizonCursor = Record(0), order: HorizonOrder = Asc)(implicit ex: ExecutionContext):
                      Future[Stream[Trade]] = {
     val params = Map("offerid" -> s"$offerId")
-    horizon.getStream[Trade]("/trades", TradeDeserializer, cursor, order, params)
+    horizon.getStream[Trade]("trades", TradeDeserializer, cursor, order, params)
   }
 
   /**
@@ -307,7 +307,7 @@ trait Network extends LazyLogging {
       "resolution" -> resolution.duration.toMillis,
       "offset" -> TimeUnit.HOURS.toMillis(offsetHours)
     ).mapValues(_.toString)
-    horizon.getStream[TradeAggregation]("/trade_aggregations", TradeAggregationDeserializer, cursor, order, params)
+    horizon.getStream[TradeAggregation]("trade_aggregations", TradeAggregationDeserializer, cursor, order, params)
   }
 
   /**
@@ -316,7 +316,7 @@ trait Network extends LazyLogging {
     * @see [[https://www.stellar.org/developers/horizon/reference/endpoints/transactions-single.html endpoint doc]]
     */
   def transaction(transactionId: String)(implicit ex: ExecutionContext): Future[TransactionHistory] = {
-    horizon.get[TransactionHistory](s"/transactions/$transactionId")
+    horizon.get[TransactionHistory](s"transactions/$transactionId")
   }
 
   /**
@@ -326,7 +326,7 @@ trait Network extends LazyLogging {
     * @see [[https://www.stellar.org/developers/horizon/reference/endpoints/transactions-all.html endpoint doc]]
     */
   def transactions(cursor: HorizonCursor = Record(0), order: HorizonOrder = Asc)(implicit ex: ExecutionContext): Future[Stream[TransactionHistory]] = {
-    horizon.getStream[TransactionHistory]("/transactions", TransactionHistoryDeserializer, cursor, order)
+    horizon.getStream[TransactionHistory]("transactions", TransactionHistoryDeserializer, cursor, order)
   }
 
   /**
@@ -338,7 +338,7 @@ trait Network extends LazyLogging {
     */
   def transactionsByAccount(pubKey: PublicKeyOps, cursor: HorizonCursor = Record(0), order: HorizonOrder = Asc)(implicit ex: ExecutionContext):
                            Future[Stream[TransactionHistory]] = {
-    horizon.getStream[TransactionHistory](s"/accounts/${pubKey.accountId}/transactions", TransactionHistoryDeserializer, cursor, order)
+    horizon.getStream[TransactionHistory](s"accounts/${pubKey.accountId}/transactions", TransactionHistoryDeserializer, cursor, order)
   }
 
   /**
@@ -349,7 +349,7 @@ trait Network extends LazyLogging {
     */
   def transactionsByLedger(sequenceId: Long, cursor: HorizonCursor = Record(0), order: HorizonOrder = Asc)(implicit ex: ExecutionContext):
                           Future[Stream[TransactionHistory]] = {
-    horizon.getStream[TransactionHistory](s"/ledgers/$sequenceId/transactions", TransactionHistoryDeserializer, cursor, order)
+    horizon.getStream[TransactionHistory](s"ledgers/$sequenceId/transactions", TransactionHistoryDeserializer, cursor, order)
   }
 
   /**
@@ -357,7 +357,7 @@ trait Network extends LazyLogging {
     * @see [[https://www.stellar.org/developers/horizon/reference/endpoints/fee-stats.html endpoint doc]]
     */
   def feeStats()(implicit ex: ExecutionContext): Future[FeeStatsResponse] =
-    horizon.get[FeeStatsResponse]("/fee_stats")
+    horizon.get[FeeStatsResponse]("fee_stats")
 
   /**
     * Fetch a stream of payment paths that realise a payment of the requested destination amount, from the specified
@@ -372,7 +372,7 @@ trait Network extends LazyLogging {
       "source_account" -> from.accountId,
       "destination_account" -> to.accountId
     ) ++ amountParams("destination", amount)
-    horizon.getSeq[PaymentPath]("/paths", PaymentPathDeserializer, queryParams)
+    horizon.getSeq[PaymentPath]("paths", PaymentPathDeserializer, queryParams)
   }
 
   private def amountParams(prefix: String, amount: Amount): Map[String, String] = {
@@ -401,6 +401,6 @@ trait Network extends LazyLogging {
 trait FriendBot {
   val horizon: HorizonAccess
   def fund(pk: PublicKeyOps)(implicit ec: ExecutionContext): Future[TransactionPostResponse] =
-    horizon.get[TransactionPostResponse]("/friendbot", Map("addr" -> pk.accountId))
+    horizon.get[TransactionPostResponse]("friendbot", Map("addr" -> pk.accountId))
 }
 
