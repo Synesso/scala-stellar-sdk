@@ -109,8 +109,10 @@ object Mnemonic {
       override def getWord(index: Int): String = wordList.wordAt(index)
       override def getSpace: Char = wordList.separator.head
     }
-    new MnemonicGenerator(internalList).createMnemonic(entropy, word => words.append(word.toString))
-    Mnemonic(words.filterNot(_.isBlank).toList, wordList)
+    new MnemonicGenerator(internalList).createMnemonic(entropy, { word =>
+      if (word != wordList.separator) words.append(word.toString)
+    })
+    Mnemonic(words.toList, wordList)
   }
 
   /**
