@@ -71,7 +71,7 @@ lazy val root = (project in file("."))
     libraryDependencies ++= List(
       "ch.qos.logback" % "logback-classic" % "1.2.3",
       "com.softwaremill.retry" %% "retry" % "0.3.3",
-      "com.squareup.okhttp3" % "okhttp" % "4.3.0",
+      "com.squareup.okhttp3" % "okhttp" % "4.3.1",
       "com.typesafe.scala-logging" %% "scala-logging" % "3.9.2",
       "com.squareup.okio" % "okio" % "2.4.3",
       "commons-codec" % "commons-codec" % "1.14",
