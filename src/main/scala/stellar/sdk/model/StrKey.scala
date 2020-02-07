@@ -13,8 +13,8 @@ import stellar.sdk.util.ByteArrays
 sealed trait StrKey {
   val kind: Byte
   val hash: Seq[Byte]
-  def checksum: Seq[Byte] = ByteArrays.checksum((kind +: hash).toArray)
-  def encodeToChars: Seq[Char] = codec.encode((kind +: hash ++: checksum).toArray).map(_.toChar)
+  def checksum: Seq[Byte] = ByteArrays.checksum((kind +: hash).toArray).toIndexedSeq
+  def encodeToChars: Seq[Char] = codec.encode((kind +: hash ++: checksum).toArray).map(_.toChar).toIndexedSeq
 }
 
 /**
@@ -48,14 +48,14 @@ object StrKey extends Decode {
 
   def decode: State[Seq[Byte], SignerStrKey] = for {
     discriminant <- int
-    bs <- bytes(32).map(_.toArray)
+    bs <- bytes(32).map(_.toArray.toIndexedSeq)
   } yield discriminant match {
     case 0 => AccountId(bs)
     case 1 => PreAuthTx(bs)
     case 2 => SHA256Hash(bs)
   }
 
-  def decodeFromString(key: String): StrKey = decodeFromChars(key.toCharArray)
+  def decodeFromString(key: String): StrKey = decodeFromChars(key.toIndexedSeq)
   def decodeFromChars(key: Seq[Char]): StrKey = {
     assert(key.forall(_ <= 127), s"Illegal characters in provided StrKey")
 
@@ -70,10 +70,10 @@ object StrKey extends Decode {
       f"Checksum does not match. Provided: 0x$sumA%04X0x$sumB%04X. Actual: 0x$checkA%04X0x$checkB%04X")
 
     key.head match {
-      case 'G' => AccountId(data)
-      case 'S' => Seed(data)
-      case 'T' => PreAuthTx(data)
-      case 'X' => SHA256Hash(data)
+      case 'G' => AccountId(data.toIndexedSeq)
+      case 'S' => Seed(data.toIndexedSeq)
+      case 'T' => PreAuthTx(data.toIndexedSeq)
+      case 'X' => SHA256Hash(data.toIndexedSeq)
     }
   }
 }

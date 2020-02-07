@@ -24,19 +24,23 @@ object Encode {
 
   def instant(i: Instant): LazyList[Byte] = long(i.getEpochSecond)
 
+  def bytes(len: Int, bs: Array[Byte]): LazyList[Byte] = bytes(len, bs.toIndexedSeq)
   def bytes(len: Int, bs: Seq[Byte]): LazyList[Byte] = {
     require(bs.length == len)
     bs.to(LazyList)
   }
 
+  def bytes(bs: Array[Byte]): LazyList[Byte] = bytes(bs.toIndexedSeq)
   def bytes(bs: Seq[Byte]): LazyList[Byte] = int(bs.length) ++ bs
 
-  def padded(bs: Seq[Byte], multipleOf: Int = 4): LazyList[Byte] = {
+  def padded(bs: Array[Byte]): LazyList[Byte] = padded(bs.toIndexedSeq)
+  def padded(bs: Seq[Byte]): LazyList[Byte] = {
+    val multipleOf: Int = 4
     val filler = Array.fill[Byte]((multipleOf - (bs.length % multipleOf)) % multipleOf)(0)
     bytes(bs) ++ filler
   }
 
-  def string(s: String): LazyList[Byte] = padded(s.getBytes(UTF_8).toIndexedSeq)
+  def string(s: String): LazyList[Byte] = padded(s.getBytes(UTF_8))
 
   def opt(o: Option[Encodable], ifPresent: Int = 1, ifAbsent: Int = 0): LazyList[Byte] =
     o.map(t => int(ifPresent) ++ t.encode).getOrElse(int(ifAbsent))
@@ -50,7 +54,7 @@ object Encode {
 
   def optString(o: Option[String]): LazyList[Byte] = optT(o, string)
 
-  def optBytes(o: Option[Seq[Byte]]): LazyList[Byte] = optT(o, bytes)
+  def optBytes(o: Option[Seq[Byte]]): LazyList[Byte] = optT(o, bytes(_: Seq[Byte]))
 
   def arr(xs: Seq[Encodable]): LazyList[Byte] = int(xs.size) ++ xs.flatMap(_.encode)
 

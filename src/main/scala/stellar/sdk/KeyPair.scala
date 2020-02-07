@@ -90,7 +90,7 @@ sealed trait PublicKeyOps extends Encodable {
     */
   def hint: Array[Byte] = pk.getAbyte.drop(pk.getAbyte.length - 4)
 
-  def encode: LazyList[Byte] = Encode.int(0) ++ Encode.bytes(32, pk.getAbyte.toIndexedSeq)
+  def encode: LazyList[Byte] = Encode.int(0) ++ Encode.bytes(32, pk.getAbyte)
 }
 
 //noinspection ReferenceMustBePrefixed
@@ -208,7 +208,7 @@ object KeyPair extends Decode {
     * @param accountId The strkey encoded Stellar account ID.
     * @return { @link PublicKey}
     */
-  def fromAccountId(accountId: String): PublicKey = Try(fromPublicKey(StrKey.decodeFromChars(accountId.toCharArray).hash)) match {
+  def fromAccountId(accountId: String): PublicKey = Try(fromPublicKey(StrKey.decodeFromChars(accountId.toCharArray.toIndexedSeq).hash)) match {
     case Success(pk) => pk
     case Failure(t) => throw InvalidAccountId(accountId, t)
   }
@@ -256,7 +256,7 @@ object KeyPair extends Decode {
     bs <- bytes(32)
   } yield KeyPair.fromPublicKey(bs.toArray[Byte])
 
-  def decodeXDR(base64: String): PublicKey = decode.run(ByteArrays.base64(base64)).value._2
+  def decodeXDR(base64: String): PublicKey = decode.run(ByteArrays.base64(base64).toIndexedSeq).value._2
 
 }
 

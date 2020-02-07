@@ -37,8 +37,8 @@ case class Transaction(source: Account,
     SignedTransaction(this, signatures)
   }
 
-  def hash: Seq[Byte] = ByteArrays.sha256(
-    (network.networkId ++ Encode.int(EnvelopeTypeTx) ++ encode).toIndexedSeq)
+  def hash: Seq[Byte] = ByteArrays.sha256(network.networkId ++ Encode.int(EnvelopeTypeTx) ++ encode)
+    .toIndexedSeq
 
   /**
     * The base64 encoding of the XDR form of this unsigned transaction.

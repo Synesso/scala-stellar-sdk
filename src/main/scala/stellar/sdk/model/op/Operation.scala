@@ -641,8 +641,8 @@ case class AllowTrustOperation(trustor: PublicKeyOps,
     super.encode ++
       Encode.int(7) ++
       trustor.encode ++
-      (if (assetCode.length <= 4) Encode.int(1) ++ Encode.bytes(4, paddedByteArray(assetCode, 4).toIndexedSeq)
-      else Encode.int(2) ++ Encode.bytes(12, paddedByteArray(assetCode, 12).toIndexedSeq)) ++
+      (if (assetCode.length <= 4) Encode.int(1) ++ Encode.bytes(4, paddedByteArray(assetCode, 4))
+      else Encode.int(2) ++ Encode.bytes(12, paddedByteArray(assetCode, 12))) ++
       Encode.bool(authorize)
 
 }

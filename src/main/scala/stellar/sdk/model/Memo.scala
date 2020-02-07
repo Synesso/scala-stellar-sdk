@@ -17,8 +17,8 @@ object Memo extends Decode {
     State.pure(NoMemo),
     string.map(MemoText),
     long.map(MemoId),
-    bytes.map(_.toArray).map(MemoHash(_)),
-    bytes.map(_.toArray).map(MemoReturnHash(_))
+    bytes.map(_.toIndexedSeq).map(MemoHash(_)),
+    bytes.map(_.toIndexedSeq).map(MemoReturnHash(_))
   )
 }
 
@@ -45,7 +45,7 @@ case class MemoId(id: Long) extends Memo {
 sealed trait MemoWithHash extends Memo {
   val Length = 32
   val bs: Seq[Byte]
-  val bytes = paddedByteArray(bs.toArray, Length)
+  val bytes: Array[Byte] = paddedByteArray(bs.toArray, Length)
 
   def hex: String = bytesToHex(bytes)
 

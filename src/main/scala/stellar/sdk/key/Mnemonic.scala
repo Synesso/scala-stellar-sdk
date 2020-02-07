@@ -88,9 +88,9 @@ case class Mnemonic(phrase: List[String], wordList: WordList = EnglishWords) {
   private def toBitString(i: Int, size: Int): String =
     String.format("%1$" + size + "s", Integer.toBinaryString(i)).replace(' ', '0')
 
-  private def parseBitString(bitString: String): mutable.WrappedArray[Byte] = {
+  private def parseBitString(bitString: String): mutable.ArraySeq[Byte] = {
     val resizedBitString = "0" * math.max(0, 8 - bitString.length) + bitString
-    resizedBitString.sliding(8, 8)
+    resizedBitString.toSeq.sliding(8, 8).map(_.unwrap)
       .map(Integer.parseInt(_, 2).toByte)
       .toArray
   }

@@ -302,11 +302,11 @@ trait Network extends LazyLogging {
                        (implicit ex: ExecutionContext): Future[LazyList[TradeAggregation]] = {
 
     val params = assetParams("base", base) ++ assetParams("counter", counter) ++ Map(
-      "start_time" -> start.toEpochMilli,
-      "end_time" -> end.toEpochMilli,
-      "resolution" -> resolution.duration.toMillis,
-      "offset" -> TimeUnit.HOURS.toMillis(offsetHours)
-    ).mapValues(_.toString)
+      "start_time" -> start.toEpochMilli.toString,
+      "end_time" -> end.toEpochMilli.toString,
+      "resolution" -> resolution.duration.toMillis.toString,
+      "offset" -> TimeUnit.HOURS.toMillis(offsetHours).toString
+    )
     horizon.getStream[TradeAggregation]("trade_aggregations", TradeAggregationDeserializer, cursor, order, params)
   }
 

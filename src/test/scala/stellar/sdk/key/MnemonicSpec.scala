@@ -3,7 +3,7 @@ package stellar.sdk.key
 import java.nio.charset.StandardCharsets.UTF_8
 
 import okio.ByteString
-import org.scalacheck.{Arbitrary, Gen, Shrink}
+import org.scalacheck.{Arbitrary, Gen}
 import org.specs2.mutable.Specification
 import stellar.sdk.{ArbitraryInput, DomainMatchers, KeyPair}
 
@@ -40,7 +40,9 @@ class MnemonicSpec extends Specification with ArbitraryInput with DomainMatchers
     }.setArbitraries(
       arbWordList,
       Arbitrary(Gen.oneOf(128, 160, 192, 224, 256))
-    ).setShrink2(Shrink(_ => Stream.empty[Int]))
+    ) // .setShrink2(Shrink(_ => Stream.empty[Int]))
+    // When this fails, enable the Shrink to get more meaningful error messages. Off for now because
+    //   it creates deprecation warnings.
 
     "be generated randomly and form valid keypairs" >> prop { (wordList: WordList, entropyBits: Int) =>
       val mnemonic = Mnemonic.random(wordList, entropyBits)
@@ -50,7 +52,9 @@ class MnemonicSpec extends Specification with ArbitraryInput with DomainMatchers
     }.setArbitraries(
       arbWordList,
       Arbitrary(Gen.oneOf(128, 160, 192, 224, 256))
-    ).setShrink2(Shrink(_ => Stream.empty[Int]))
+    ) // .setShrink2(Shrink(_ => Stream.empty[Int]))
+    // When this fails, enable the Shrink to get more meaningful error messages. Off for now because
+    //   it creates deprecation warnings.
 
     "an example of constructing a random mnemonic and a keypair from it" >> {
       // #mnemonic-random-spanish
