@@ -26,7 +26,7 @@ class MemoSpec extends Specification with ArbitraryInput with DomainMatchers {
 
   "a memo hash" should {
     "not be constructable with > 32 bytes" >> {
-      MemoHash((1 to 33).map(_.toByte).toArray) must throwAn[AssertionError]
+      MemoHash((1 to 33).map(_.toByte).toArray[Byte]) must throwAn[AssertionError]
     }
 
     "pad the input bytes" >> prop { bs: Array[Byte] =>
@@ -56,7 +56,7 @@ class MemoSpec extends Specification with ArbitraryInput with DomainMatchers {
 
   "a memo return hash" should {
     "not be constructable with > 32 bytes" >> {
-      MemoReturnHash((1 to 33).map(_.toByte).toArray) must throwAn[AssertionError]
+      MemoReturnHash((1 to 33).map(_.toByte).toArray[Byte]) must throwAn[AssertionError]
     }
 
     "pad the input bytes" >> prop { bs: Array[Byte] =>
