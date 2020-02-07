@@ -114,8 +114,8 @@ class TransactionSpec extends Specification with ArbitraryInput with DomainMatch
             ), MemoText("Hi Zy, heres an angpao!"), Unbounded, NativeAmount(100)
           )
 
-          signatures.map(_.hint).map(bytesToHex(_)) mustEqual Seq("615F9BF7")
-          signatures.map(_.data).map(bytesToHex(_)) mustEqual Seq("7C7D2D5CB412C0E8CC0C6776CC" +
+          signatures.map(_.hint.toIndexedSeq).map(bytesToHex(_)) mustEqual Seq("615F9BF7")
+          signatures.map(_.data.toIndexedSeq).map(bytesToHex(_)) mustEqual Seq("7C7D2D5CB412C0E8CC0C6776CC" +
             "BE0FA1366D699300C9A784BA05A9FD857E84403178C2F415B5E99425391FB0587E4F48A9F3DB642903163880C909BC7F0B0B04")
           bytesToHex(txn.hash) mustEqual "7D91CFC50E907A677F769E6DB82BDB958D148D810955C597AA7A4B24AE97475B"
 

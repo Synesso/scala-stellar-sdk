@@ -16,7 +16,7 @@ trait HorizonAccess {
                       (implicit ec: ExecutionContext, m: Manifest[T]): Future[T]
 
   def getStream[T: ClassTag](path: String, de: CustomSerializer[T], cursor: HorizonCursor, order: HorizonOrder, params: Map[String, String] = Map.empty)
-                            (implicit ec: ExecutionContext, m: Manifest[T]): Future[Stream[T]]
+                            (implicit ec: ExecutionContext, m: Manifest[T]): Future[LazyList[T]]
 
   def getSeq[T: ClassTag](path: String, de: CustomSerializer[T], params: Map[String, String] = Map.empty)
                             (implicit ec: ExecutionContext, m: Manifest[T]): Future[Seq[T]]

@@ -60,7 +60,7 @@ sealed trait PublicKeyOps extends Encodable {
   /**
     * @return the human readable account ID
     */
-  def accountId: String = AccountId(pk.getAbyte).encodeToChars.mkString
+  def accountId: String = AccountId(pk.getAbyte.toIndexedSeq).encodeToChars.mkString
 
   def publicKey: Array[Byte] = pk.getAbyte
 
@@ -90,7 +90,7 @@ sealed trait PublicKeyOps extends Encodable {
     */
   def hint: Array[Byte] = pk.getAbyte.drop(pk.getAbyte.length - 4)
 
-  def encode: Stream[Byte] = Encode.int(0) ++ Encode.bytes(32, pk.getAbyte)
+  def encode: LazyList[Byte] = Encode.int(0) ++ Encode.bytes(32, pk.getAbyte.toIndexedSeq)
 }
 
 //noinspection ReferenceMustBePrefixed
@@ -117,7 +117,7 @@ object KeyPair extends Decode {
   def fromSecretSeed(seed: String): KeyPair = {
     val charSeed = seed.toCharArray
     Try {
-      val decoded = StrKey.decodeFromChars(charSeed)
+      val decoded = StrKey.decodeFromChars(charSeed.toIndexedSeq)
       val kp = fromSecretSeed(decoded.hash.toArray)
       Arrays.fill(charSeed, ' ')
       kp
@@ -197,6 +197,7 @@ object KeyPair extends Decode {
     * @param publicKey The 32 byte public key.
     * @return { @link PublicKey }
     */
+  def fromPublicKey(publicKey: Array[Byte]): PublicKey = fromPublicKey(publicKey.toIndexedSeq)
   def fromPublicKey(publicKey: Seq[Byte]): PublicKey = {
     PublicKey(new EdDSAPublicKey(new EdDSAPublicKeySpec(publicKey.toArray, ed25519)))
   }
@@ -260,7 +261,7 @@ object KeyPair extends Decode {
 }
 
 case class Signature(data: Array[Byte], hint: Array[Byte]) extends Encodable {
-  def encode: Stream[Byte] = Encode.bytes(4, hint) ++ Encode.bytes(data)
+  def encode: LazyList[Byte] = Encode.bytes(4, hint) ++ Encode.bytes(data)
 }
 
 object Signature extends Decode {

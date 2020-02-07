@@ -37,14 +37,15 @@ case class Transaction(source: Account,
     SignedTransaction(this, signatures)
   }
 
-  def hash: Seq[Byte] = ByteArrays.sha256(network.networkId ++ Encode.int(EnvelopeTypeTx) ++ encode)
+  def hash: Seq[Byte] = ByteArrays.sha256(
+    (network.networkId ++ Encode.int(EnvelopeTypeTx) ++ encode).toIndexedSeq)
 
   /**
     * The base64 encoding of the XDR form of this unsigned transaction.
     */
   def encodeXDR: String = base64(encode)
 
-  def encode: Stream[Byte] = {
+  def encode: LazyList[Byte] = {
     source.publicKey.encode ++
       int(maxFee.units.toInt) ++
       long(source.sequenceNumber) ++
@@ -61,7 +62,7 @@ object Transaction extends Decode {
     * Decodes an unsigned transaction from base64-encoded XDR.
     */
   def decodeXDR(base64: String)(implicit network: Network): Transaction =
-    decode.run(ByteArrays.base64(base64)).value._2
+    decode.run(ByteArrays.base64(base64).toIndexedSeq).value._2
 
   def decode(implicit network: Network): State[Seq[Byte], Transaction] = for {
       publicKey <- KeyPair.decode
@@ -97,7 +98,7 @@ case class SignedTransaction(transaction: Transaction, signatures: Seq[Signature
     */
   def encodeXDR: String = base64(encode)
 
-  def encode: Stream[Byte] = transaction.encode ++ Encode.arr(signatures)
+  def encode: LazyList[Byte] = transaction.encode ++ Encode.arr(signatures)
 }
 
 object SignedTransaction extends Decode {
@@ -106,7 +107,7 @@ object SignedTransaction extends Decode {
     * Decodes a signed transaction (aka envelope) from base64-encoded XDR.
     */
   def decodeXDR(base64: String)(implicit network: Network) =
-    decode.run(ByteArrays.base64(base64)).value._2
+    decode.run(ByteArrays.base64(base64).toIndexedSeq).value._2
 
   def decode(implicit network: Network): State[Seq[Byte], SignedTransaction] = for {
     txn <- Transaction.decode

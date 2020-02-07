@@ -25,7 +25,7 @@ sealed trait SignerStrKey extends StrKey with Encodable
 
 case class AccountId(hash: Seq[Byte]) extends SignerStrKey {
   val kind: Byte = (6 << 3).toByte // G
-  def encode: Stream[Byte] = Encode.int(0) ++ Encode.bytes(32, hash)
+  def encode: LazyList[Byte] = Encode.int(0) ++ Encode.bytes(32, hash)
 }
 
 case class Seed(hash: Seq[Byte]) extends StrKey {
@@ -34,12 +34,12 @@ case class Seed(hash: Seq[Byte]) extends StrKey {
 
 case class PreAuthTx(hash: Seq[Byte]) extends SignerStrKey {
   val kind: Byte = (19 << 3).toByte // T
-  def encode: Stream[Byte] = Encode.int(1) ++ Encode.bytes(32, hash)
+  def encode: LazyList[Byte] = Encode.int(1) ++ Encode.bytes(32, hash)
 }
 
 case class SHA256Hash(hash: Seq[Byte]) extends SignerStrKey {
   val kind: Byte = (23 << 3).toByte // X
-  def encode: Stream[Byte] = Encode.int(2) ++ Encode.bytes(32, hash)
+  def encode: LazyList[Byte] = Encode.int(2) ++ Encode.bytes(32, hash)
 }
 
 object StrKey extends Decode {

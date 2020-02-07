@@ -18,7 +18,7 @@ object InflationResult extends Decode {
   * Inflation operation was successful.
   */
 case class InflationSuccess(payouts: Seq[InflationPayout]) extends InflationResult(0) {
-  override def encode: Stream[Byte] = super.encode ++ Encode.arr(payouts)
+  override def encode: LazyList[Byte] = super.encode ++ Encode.arr(payouts)
 }
 
 /**
@@ -28,7 +28,7 @@ case object InflationNotDue extends InflationResult(-1)
 
 
 case class InflationPayout(recipient: PublicKey, amount: NativeAmount) extends Encodable {
-  def encode: Stream[Byte] = recipient.encode ++ Encode.long(amount.units)
+  def encode: LazyList[Byte] = recipient.encode ++ Encode.long(amount.units)
 }
 
 object InflationPayout extends Decode {

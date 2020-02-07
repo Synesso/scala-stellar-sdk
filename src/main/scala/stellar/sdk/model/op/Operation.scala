@@ -18,7 +18,7 @@ import stellar.sdk.util.ByteArrays.{base64, paddedByteArray}
   */
 sealed trait Operation extends Encodable {
   val sourceAccount: Option[PublicKeyOps]
-  override def encode: Stream[Byte] = Encode.opt(sourceAccount)
+  override def encode: LazyList[Byte] = Encode.opt(sourceAccount)
 }
 
 object Operation extends Decode {
@@ -54,7 +54,7 @@ object Operation extends Decode {
       }
     }
 
-  def decodeXDR(base64: String): Operation = decode.run(ByteArrays.base64(base64)).value._2
+  def decodeXDR(base64: String): Operation = decode.run(ByteArrays.base64(base64).toIndexedSeq).value._2
 }
 
 object OperationDeserializer extends ResponseParser[Operation]({ o: JObject =>
@@ -181,7 +181,7 @@ object OperationDeserializer extends ResponseParser[Operation]({ o: JObject =>
       val value = (o \ "value").extract[String]
       value match {
         case "" => DeleteDataOperation(name, sourceAccount)
-        case _ => WriteDataOperation(name, base64(value), sourceAccount)
+        case _ => WriteDataOperation(name, base64(value).toIndexedSeq, sourceAccount)
       }
     case "bump_sequence" =>
       BumpSequenceOperation((o \ "bump_to").extract[String].toLong, sourceAccount)
@@ -207,7 +207,7 @@ case class CreateAccountOperation(destinationAccount: PublicKeyOps,
                                   startingBalance: NativeAmount = Amount.lumens(1),
                                   sourceAccount: Option[PublicKeyOps] = None) extends PayOperation {
 
-  override def encode: Stream[Byte] =
+  override def encode: LazyList[Byte] =
     super.encode ++
       Encode.int(0) ++
       destinationAccount.encode ++
@@ -235,7 +235,7 @@ case class PaymentOperation(destinationAccount: PublicKeyOps,
                             amount: Amount,
                             sourceAccount: Option[PublicKeyOps] = None) extends PayOperation {
 
-  override def encode: Stream[Byte] =
+  override def encode: LazyList[Byte] =
     super.encode ++
       Encode.int(1) ++
       destinationAccount.encode ++
@@ -272,7 +272,7 @@ case class PathPaymentStrictReceiveOperation(sendMax: Amount,
                                              path: Seq[Asset] = Nil,
                                              sourceAccount: Option[PublicKeyOps] = None) extends PayOperation {
 
-  override def encode: Stream[Byte] =
+  override def encode: LazyList[Byte] =
     super.encode ++
       Encode.int(2) ++
       sendMax.encode ++
@@ -312,7 +312,7 @@ case class PathPaymentStrictSendOperation(sendAmount: Amount,
                                           path: Seq[Asset] = Nil,
                                           sourceAccount: Option[PublicKeyOps] = None) extends PayOperation {
 
-  override def encode: Stream[Byte] =
+  override def encode: LazyList[Byte] =
     super.encode ++
       Encode.int(13) ++
       sendAmount.encode ++
@@ -342,7 +342,7 @@ sealed trait ManageSellOfferOperation extends Operation {
 case class CreateSellOfferOperation(selling: Amount, buying: Asset, price: Price,
                                     sourceAccount: Option[PublicKeyOps] = None) extends ManageSellOfferOperation {
 
-  override def encode: Stream[Byte] =
+  override def encode: LazyList[Byte] =
     super.encode ++
       Encode.int(3) ++
       selling.asset.encode ++
@@ -366,7 +366,7 @@ case class DeleteSellOfferOperation(override val offerId: Long,
                                     selling: Asset, buying: Asset, price: Price,
                                     sourceAccount: Option[PublicKeyOps] = None) extends ManageSellOfferOperation {
 
-  override def encode: Stream[Byte] =
+  override def encode: LazyList[Byte] =
     super.encode ++
       Encode.int(3) ++
       selling.encode ++
@@ -390,7 +390,7 @@ case class UpdateSellOfferOperation(override val offerId: Long,
                                     selling: Amount, buying: Asset, price: Price,
                                     sourceAccount: Option[PublicKeyOps] = None) extends ManageSellOfferOperation {
 
-  override def encode: Stream[Byte] =
+  override def encode: LazyList[Byte] =
     super.encode ++
       Encode.int(3) ++
       selling.asset.encode ++
@@ -424,7 +424,7 @@ sealed trait ManageBuyOfferOperation extends Operation {
 case class CreateBuyOfferOperation(selling: Asset, buying: Amount, price: Price,
                                    sourceAccount: Option[PublicKeyOps] = None) extends ManageBuyOfferOperation {
 
-  override def encode: Stream[Byte] =
+  override def encode: LazyList[Byte] =
     super.encode ++
       Encode.int(12) ++
       selling.encode ++
@@ -448,7 +448,7 @@ case class DeleteBuyOfferOperation(override val offerId: Long,
                                    selling: Asset, buying: Asset, price: Price,
                                    sourceAccount: Option[PublicKeyOps] = None) extends ManageBuyOfferOperation {
 
-  override def encode: Stream[Byte] =
+  override def encode: LazyList[Byte] =
     super.encode ++
       Encode.int(12) ++
       selling.encode ++
@@ -472,7 +472,7 @@ case class UpdateBuyOfferOperation(override val offerId: Long,
                                    selling: Asset, buying: Amount, price: Price,
                                    sourceAccount: Option[PublicKeyOps] = None) extends ManageBuyOfferOperation {
 
-  override def encode: Stream[Byte] =
+  override def encode: LazyList[Byte] =
     super.encode ++
       Encode.int(12) ++
       selling.encode ++
@@ -509,7 +509,7 @@ object ManageBuyOfferOperation extends Decode {
 case class CreatePassiveSellOfferOperation(selling: Amount, buying: Asset, price: Price,
                                            sourceAccount: Option[PublicKeyOps] = None) extends Operation {
 
-  override def encode: Stream[Byte] =
+  override def encode: LazyList[Byte] =
     super.encode ++
       Encode.int(4) ++
       selling.asset.encode ++
@@ -553,7 +553,7 @@ case class SetOptionsOperation(inflationDestination: Option[PublicKeyOps] = None
                                signer: Option[Signer] = None,
                                sourceAccount: Option[PublicKeyOps] = None) extends Operation {
 
-  override def encode: Stream[Byte] =
+  override def encode: LazyList[Byte] =
     super.encode ++
       Encode.int(5) ++
       Encode.opt(inflationDestination) ++
@@ -622,7 +622,7 @@ object IssuerFlags extends Decode {
   * @see [[https://www.stellar.org/developers/horizon/reference/resources/operation.html#change-trust endpoint doc]]
   */
 case class ChangeTrustOperation(limit: IssuedAmount, sourceAccount: Option[PublicKeyOps] = None) extends Operation {
-  override def encode: Stream[Byte] = super.encode ++ Encode.int(6) ++ limit.encode
+  override def encode: LazyList[Byte] = super.encode ++ Encode.int(6) ++ limit.encode
 }
 
 object ChangeTrustOperation {
@@ -637,12 +637,12 @@ case class AllowTrustOperation(trustor: PublicKeyOps,
                                authorize: Boolean,
                                sourceAccount: Option[PublicKeyOps] = None) extends Operation {
 
-  override def encode: Stream[Byte] =
+  override def encode: LazyList[Byte] =
     super.encode ++
       Encode.int(7) ++
       trustor.encode ++
-      (if (assetCode.length <= 4) Encode.int(1) ++ Encode.bytes(4, paddedByteArray(assetCode, 4))
-      else Encode.int(2) ++ Encode.bytes(12, paddedByteArray(assetCode, 12))) ++
+      (if (assetCode.length <= 4) Encode.int(1) ++ Encode.bytes(4, paddedByteArray(assetCode, 4).toIndexedSeq)
+      else Encode.int(2) ++ Encode.bytes(12, paddedByteArray(assetCode, 12).toIndexedSeq)) ++
       Encode.bool(authorize)
 
 }
@@ -667,7 +667,7 @@ object AllowTrustOperation extends Decode {
   * @see [[https://www.stellar.org/developers/horizon/reference/resources/operation.html#account-merge endpoint doc]]
   */
 case class AccountMergeOperation(destination: PublicKeyOps, sourceAccount: Option[PublicKeyOps] = None) extends PayOperation {
-  override def encode: Stream[Byte] = super.encode ++ Encode.int(8) ++ destination.encode
+  override def encode: LazyList[Byte] = super.encode ++ Encode.int(8) ++ destination.encode
 }
 
 object AccountMergeOperation {
@@ -681,7 +681,7 @@ object AccountMergeOperation {
   * @see [[https://www.stellar.org/developers/horizon/reference/resources/operation.html#inflation endpoint doc]]
   */
 case class InflationOperation(sourceAccount: Option[PublicKeyOps] = None) extends Operation {
-  override def encode: Stream[Byte] = super.encode ++ Encode.int(9)
+  override def encode: LazyList[Byte] = super.encode ++ Encode.int(9)
 }
 
 sealed trait ManageDataOperation extends Operation {
@@ -695,7 +695,7 @@ sealed trait ManageDataOperation extends Operation {
   * @see [[https://www.stellar.org/developers/horizon/reference/resources/operation.html#manage-data endpoint doc]]
   */
 case class DeleteDataOperation(name: String, sourceAccount: Option[PublicKeyOps] = None) extends ManageDataOperation {
-  override def encode: Stream[Byte] = super.encode ++ Encode.int(10) ++ Encode.string(name) ++ Encode.bool(false)
+  override def encode: LazyList[Byte] = super.encode ++ Encode.int(10) ++ Encode.string(name) ++ Encode.bool(false)
 }
 
 /**
@@ -709,7 +709,7 @@ case class WriteDataOperation(name: String, value: Seq[Byte], sourceAccount: Opt
   require(name.getBytes(UTF_8).length <= 64, s"name cannot be greater than 64 bytes, was ${name.length}")
   require(value.length <= 64 && value.nonEmpty, s"value must be non-empty and cannot be greater than 64 bytes, was ${value.length}")
 
-  override def encode: Stream[Byte] =
+  override def encode: LazyList[Byte] =
     super.encode ++
       Encode.int(10) ++
       Encode.string(name) ++
@@ -719,10 +719,10 @@ case class WriteDataOperation(name: String, value: Seq[Byte], sourceAccount: Opt
 
 object WriteDataOperation {
   def apply(name: String, value: String): WriteDataOperation =
-    WriteDataOperation(name, value.getBytes(UTF_8))
+    WriteDataOperation(name, value.getBytes(UTF_8).toIndexedSeq)
 
   def apply(name: String, value: String, sourceAccount: Option[PublicKeyOps]): WriteDataOperation =
-    WriteDataOperation(name, value.getBytes(UTF_8), sourceAccount)
+    WriteDataOperation(name, value.getBytes(UTF_8).toIndexedSeq, sourceAccount)
 }
 
 
@@ -731,7 +731,7 @@ object ManageDataOperation extends Decode {
     name <- string
     value <- opt(padded())
   } yield value match {
-    case Some(v) => WriteDataOperation(name, v.toArray)
+    case Some(v) => WriteDataOperation(name, v)
     case None => DeleteDataOperation(name)
   }
 }
@@ -747,7 +747,7 @@ object ManageDataOperation extends Decode {
 case class BumpSequenceOperation(bumpTo: Long,
                                  sourceAccount: Option[PublicKeyOps] = None) extends Operation {
 
-  override def encode: Stream[Byte] = super.encode ++ Encode.int(11) ++ Encode.long(bumpTo)
+  override def encode: LazyList[Byte] = super.encode ++ Encode.int(11) ++ Encode.long(bumpTo)
 }
 
 object BumpSequenceOperation extends Decode {

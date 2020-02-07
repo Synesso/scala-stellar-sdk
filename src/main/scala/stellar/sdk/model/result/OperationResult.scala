@@ -7,7 +7,7 @@ import stellar.sdk.model.xdr.{Decode, Encodable, Encode}
   * The result of an operation previously submitted to the network.
   */
 abstract class OperationResult(opCode: Int) extends Encodable {
-  def encode: Stream[Byte] = Encode.int(opCode)
+  def encode: LazyList[Byte] = Encode.int(opCode)
 }
 
 /**
@@ -15,7 +15,7 @@ abstract class OperationResult(opCode: Int) extends Encodable {
   */
 abstract class ProcessedOperationResult(opCode: Int) extends OperationResult(opCode) {
   val opResultCode: Int
-  override def encode: Stream[Byte] =
+  override def encode: LazyList[Byte] =
     Encode.int(0) ++ // operation was attempted
       super.encode ++ // the operation code (positive only)
       Encode.int(opResultCode) // the operation result code

@@ -162,7 +162,7 @@ class AccountResponseSpec extends Specification with ArbitraryInput with DomainM
             )
           ))
           r.signers must haveSize(1)
-          r.signers.head must beEquivalentTo(Signer(AccountId(KeyPair.fromAccountId("GBU6GMZZ2KTQ33CHNVPAWWEJ22ZHLYGBGO3LIBKNANXUMNEOFROZKO62").publicKey), 1))
+          r.signers.head must beEquivalentTo(Signer(AccountId(KeyPair.fromAccountId("GBU6GMZZ2KTQ33CHNVPAWWEJ22ZHLYGBGO3LIBKNANXUMNEOFROZKO62").publicKey.toIndexedSeq), 1))
       }
     }
 

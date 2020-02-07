@@ -9,7 +9,7 @@ import stellar.sdk.{KeyPair, PublicKeyOps}
 sealed trait LedgerEntryData extends Encodable
 
 case class LedgerEntry(lastModifiedLedgerSeq: Int, data: LedgerEntryData, private val dataDisc: Int) extends Encodable {
-  override def encode: Stream[Byte] = Encode.int(lastModifiedLedgerSeq) ++ Encode.int(dataDisc) ++ data.encode
+  override def encode: LazyList[Byte] = Encode.int(lastModifiedLedgerSeq) ++ Encode.int(dataDisc) ++ data.encode
 }
 
 object LedgerEntry extends Decode {
@@ -68,7 +68,7 @@ case class AccountEntry(account: PublicKeyOps, balance: Long, seqNum: Long, numS
                         homeDomain: Option[String], thresholds: LedgerThresholds, signers: Seq[Signer],
                         liabilities: Option[Liabilities]) extends LedgerEntryData {
 
-  override def encode: Stream[Byte] =
+  override def encode: LazyList[Byte] =
     account.encode ++
     Encode.long(balance) ++
     Encode.long(seqNum) ++
@@ -134,7 +134,7 @@ case class TrustLineEntry(account: PublicKeyOps, asset: NonNativeAsset, balance:
                           issuerAuthorized: Boolean, liabilities: Option[Liabilities])
   extends LedgerEntryData {
 
-  override def encode: Stream[Byte] =
+  override def encode: LazyList[Byte] =
     account.encode ++
     asset.encode ++
     Encode.long(balance) ++
@@ -187,7 +187,7 @@ object TrustLineEntry extends Decode {
 case class OfferEntry(account: PublicKeyOps, offerId: Long, selling: Amount, buying: Asset, price: Price)
   extends LedgerEntryData {
 
-  override def encode: Stream[Byte] =
+  override def encode: LazyList[Byte] =
     account.encode ++
     Encode.long(offerId) ++
     selling.asset.encode ++
@@ -231,7 +231,7 @@ object OfferEntry extends Decode {
 case class DataEntry(account: PublicKeyOps, name: String, value: Seq[Byte])
   extends LedgerEntryData {
 
-  override def encode: Stream[Byte] =
+  override def encode: LazyList[Byte] =
     account.encode ++
     Encode.string(name) ++
     Encode.padded(value) ++

@@ -10,7 +10,7 @@ import scala.concurrent.duration.Duration
 case class TimeBounds(start: Instant, end: Instant) extends Encodable {
   require(start.isBefore(end))
 
-  def encode: Stream[Byte] = {
+  def encode: LazyList[Byte] = {
     import stellar.sdk.model.xdr.Encode._
 
     instant(start) ++ instant(end)

@@ -12,9 +12,9 @@ import stellar.sdk.model._
 import stellar.sdk.model.response.FederationResponse
 
 import scala.annotation.tailrec
-import scala.collection.JavaConverters._
 import scala.concurrent.duration._
 import scala.concurrent.{Await, Future}
+import scala.jdk.CollectionConverters._
 import scala.util.Try
 
 class FederationServerSpec(implicit ec: ExecutionEnv) extends Specification with ArbitraryInput {
@@ -138,7 +138,7 @@ class FederationServerSpec(implicit ec: ExecutionEnv) extends Specification with
     beLike[RecordedRequest] { case request =>
       val requestUrl = request.getRequestUrl
       requestUrl.pathSegments.asScala must containTheSameElementsAs(
-        path.split("/").filterNot(_.isEmpty))
+        path.split("/").toIndexedSeq.filterNot(_.isEmpty))
       forall(headers) { case (k, v) =>
         requestUrl.queryParameter(k) mustEqual v
       }

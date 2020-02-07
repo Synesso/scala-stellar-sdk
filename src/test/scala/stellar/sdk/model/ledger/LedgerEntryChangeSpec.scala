@@ -9,7 +9,7 @@ class LedgerEntryChangeSpec extends Specification with LedgerEntryGenerators wit
 
   "a ledger entry change" should {
     "serde to/from XDR" >> prop { change: LedgerEntryChange =>
-      val triedChange = Try(LedgerEntryChange.decode.run(change.encode.toArray[Byte]).value._2)
+      val triedChange = Try(LedgerEntryChange.decode.run(change.encode).value._2)
       triedChange match {
         case Failure(_) => logger.error(s"Failed to decode $change")
         case _ =>

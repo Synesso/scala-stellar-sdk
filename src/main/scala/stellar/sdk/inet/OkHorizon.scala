@@ -66,7 +66,7 @@ class OkHorizon(base: HttpUrl) extends HorizonAccess with LazyLogging {
 
   override def getStream[T: ClassTag](path: String, de: CustomSerializer[T], cursor: HorizonCursor,
                                       order: HorizonOrder, params: Map[String, String])
-                                     (implicit ec: ExecutionContext, m: Manifest[T]): Future[Stream[T]] = {
+                                     (implicit ec: ExecutionContext, m: Manifest[T]): Future[LazyList[T]] = {
 
     Future(getStreamInternal(path, de, Some(cursor), Some(order), params))
   }
@@ -79,7 +79,7 @@ class OkHorizon(base: HttpUrl) extends HorizonAccess with LazyLogging {
   private def getStreamInternal[T: ClassTag](path: String, de: CustomSerializer[T],
                                              cursor: Option[HorizonCursor], order: Option[HorizonOrder],
                                              params: Map[String, String])
-                                            (implicit m: Manifest[T]): Stream[T] = {
+                                            (implicit m: Manifest[T]): LazyList[T] = {
     implicit val formats: Formats = DefaultFormats + RawPageDeserializer + de
 
     val fullParams: Map[String, String] = params ++ Seq(
@@ -91,17 +91,17 @@ class OkHorizon(base: HttpUrl) extends HorizonAccess with LazyLogging {
       case (url, (k, v)) => url.addQueryParameter(k, v)
     }.build()
 
-    def streamFromPage(buffer: List[T], nextLink: Option[HttpUrl]): Stream[T] = {
+    def streamFromPage(buffer: List[T], nextLink: Option[HttpUrl]): LazyList[T] = {
       buffer match {
         case h :: t =>
-          Stream.cons(h, streamFromPage(t, nextLink))
+          LazyList.cons(h, streamFromPage(t, nextLink))
         case _ =>
           nextLink
             .map { link =>
               val page = getPage[T](link)
               streamFromPage(page.xs, page.nextLink)
             }
-            .getOrElse(Stream.empty[T])
+            .getOrElse(LazyList.empty[T])
       }
     }
 

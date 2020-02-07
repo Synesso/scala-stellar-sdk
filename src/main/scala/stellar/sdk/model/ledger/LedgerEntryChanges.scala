@@ -8,19 +8,19 @@ import stellar.sdk.util.ByteArrays
 sealed trait LedgerEntryChange extends Encodable
 
 case class LedgerEntryCreate(entry: LedgerEntry) extends LedgerEntryChange {
-  override def encode: Stream[Byte] = Encode.int(0) ++ entry.encode ++ Encode.int(0)
+  override def encode: LazyList[Byte] = Encode.int(0) ++ entry.encode ++ Encode.int(0)
 }
 
 case class LedgerEntryUpdate(entry: LedgerEntry) extends LedgerEntryChange {
-  override def encode: Stream[Byte] = Encode.int(1) ++ entry.encode ++ Encode.int(0)
+  override def encode: LazyList[Byte] = Encode.int(1) ++ entry.encode ++ Encode.int(0)
 }
 
 case class LedgerEntryDelete(entry: LedgerKey) extends LedgerEntryChange {
-  override def encode: Stream[Byte] = Encode.int(2) ++ entry.encode
+  override def encode: LazyList[Byte] = Encode.int(2) ++ entry.encode
 }
 
 case class LedgerEntryState(entry: LedgerEntry) extends LedgerEntryChange {
-  override def encode: Stream[Byte] = Encode.int(3) ++ entry.encode ++ Encode.int(0)
+  override def encode: LazyList[Byte] = Encode.int(3) ++ entry.encode ++ Encode.int(0)
 }
 
 object LedgerEntryChange extends Decode {
@@ -36,6 +36,6 @@ object LedgerEntryChange extends Decode {
 object LedgerEntryChanges {
 
   def decodeXDR(base64: String): Seq[LedgerEntryChange] =
-    arr(LedgerEntryChange.decode).run(ByteArrays.base64(base64)).value._2
+    arr(LedgerEntryChange.decode).run(ByteArrays.base64(base64).toIndexedSeq).value._2
 
 }

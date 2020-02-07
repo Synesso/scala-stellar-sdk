@@ -19,7 +19,7 @@ case class TransactionSuccess(feeCharged: NativeAmount, operationResults: Seq[Op
 
   def sequenceUpdated: Boolean = true
 
-  def encode: Stream[Byte] =
+  def encode: LazyList[Byte] =
     Encode.long(feeCharged.units) ++
       Encode.int(0) ++
       Encode.arr(operationResults) ++
@@ -37,7 +37,7 @@ sealed trait TransactionNotSuccessful extends TransactionResult {
   * The transaction failed when processing the operations.
   */
 case class TransactionFailure(feeCharged: NativeAmount, operationResults: Seq[OperationResult]) extends TransactionNotSuccessful {
-  def encode: Stream[Byte] =
+  def encode: LazyList[Byte] =
     Encode.long(feeCharged.units) ++
       Encode.int(-1) ++
       Encode.arr(operationResults) ++
@@ -50,7 +50,7 @@ case class TransactionFailure(feeCharged: NativeAmount, operationResults: Seq[Op
 case class TransactionNotAttempted(reason: Code, feeCharged: NativeAmount) extends TransactionNotSuccessful {
   val resultCode: Int = reason.id
 
-  def encode: Stream[Byte] =
+  def encode: LazyList[Byte] =
       Encode.long(feeCharged.units) ++
       Encode.int(reason.id) ++
       Encode.int(0)
@@ -59,7 +59,7 @@ case class TransactionNotAttempted(reason: Code, feeCharged: NativeAmount) exten
 
 object TransactionResult extends Decode {
 
-  def decodeXDR(base64: String) = decode.run(ByteArrays.base64(base64)).value._2
+  def decodeXDR(base64: String): TransactionResult = decode.run(ByteArrays.base64(base64).toIndexedSeq).value._2
 
   def decode: State[Seq[Byte], TransactionResult] = for {
     feeCharged <- long.map(NativeAmount)

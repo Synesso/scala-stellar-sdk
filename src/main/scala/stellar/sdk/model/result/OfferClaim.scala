@@ -6,7 +6,7 @@ import stellar.sdk.model.xdr.{Decode, Encodable, Encode}
 import stellar.sdk.{KeyPair, PublicKey}
 
 case class OfferClaim(seller: PublicKey, offerId: Long, sold: Amount, bought: Amount) extends Encodable {
-  def encode: Stream[Byte] = seller.encode ++ Encode.long(offerId) ++ sold.encode ++ bought.encode
+  def encode: LazyList[Byte] = seller.encode ++ Encode.long(offerId) ++ sold.encode ++ bought.encode
 }
 
 object OfferClaim extends Decode {

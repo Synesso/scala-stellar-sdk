@@ -5,7 +5,7 @@ import stellar.sdk.model.xdr.{Decode, Encodable}
 import stellar.sdk.model.xdr.Encode._
 
 case class Liabilities(buying: Long, selling: Long) extends Encodable {
-  override def encode: Stream[Byte] = long(buying) ++ long(selling) ++ int(0)
+  override def encode: LazyList[Byte] = long(buying) ++ long(selling) ++ int(0)
 }
 
 object Liabilities extends Decode {
