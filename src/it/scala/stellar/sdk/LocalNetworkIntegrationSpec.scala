@@ -141,7 +141,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
           PathPaymentStrictReceiveOperation(IssuedAmount(1, chinchillaMaster), accnB, IssuedAmount(1, chinchillaA), Nil),
           PathPaymentStrictSendOperation(IssuedAmount(100, chinchillaMaster), accnB, IssuedAmount(1, chinchillaA), Nil),
           BumpSequenceOperation(masterAccount.sequenceNumber + 20),
-          SetOptionsOperation(signer = Some(Signer(SHA256Hash(ByteArrays.sha256(dachshundB.encode)), 3)), sourceAccount = Some(accnD))
+          SetOptionsOperation(signer = Some(Signer(SHA256Hash(ByteArrays.sha256(dachshundB.encode).toIndexedSeq), 3)), sourceAccount = Some(accnD))
         )
 
         // example of creating and submitting a payment transaction
@@ -221,7 +221,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
     }
 
     "fetch nothing if no account exists" >> {
-      val kp = KeyPair.fromSecretSeed(ByteArrays.sha256("何物".getBytes("UTF-8")))
+      val kp = KeyPair.fromSecretSeed(ByteArrays.sha256("何物".getBytes("UTF-8").toIndexedSeq))
       network.account(kp) must throwA[Exception].like { case HorizonEntityNotFound(uri, body) =>
         body mustEqual ("type" -> "https://stellar.org/horizon-errors/not_found") ~
           ("title" -> "Resource Missing") ~
@@ -573,7 +573,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
 
   "page deserialisation" should {
     "return an empty page when the underlying resource does not exist" >> {
-      network.horizon.getStream("/does_not_exist", TradeDeserializer, Now, Asc) must beEmpty[Stream[Trade]]
+      network.horizon.getStream("/does_not_exist", TradeDeserializer, Now, Asc) must beEmpty[LazyList[Trade]]
           .awaitFor(10.seconds)
     }
   }

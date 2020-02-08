@@ -5,7 +5,7 @@ import scoverage.ScoverageKeys.coverageMinimum
 lazy val commonSettings = Seq(
   name := "scala-stellar-sdk",
   organization := "io.github.synesso",
-  scalaVersion := "2.12.9",
+  scalaVersion := "2.13.1",
   homepage := Some(url("https://github.com/synesso/scala-stellar-sdk")),
   startYear := Some(2018),
   description := "Perform Stellar (distributed payments platform) operations from your Scala application. " +
@@ -13,7 +13,7 @@ lazy val commonSettings = Seq(
   developers := List(
     Developer("jem", "Jem Mawson", "jem.mawson@gmail.com", url = url("https://keybase.io/jem"))
   ),
-  crossScalaVersions := Seq("2.12.9"),
+  crossScalaVersions := Seq("2.12.10", "2.13.1"),
   scalacOptions ++= Seq(
     "-Yrangepos",
     "-unchecked",
@@ -28,6 +28,8 @@ lazy val commonSettings = Seq(
   coverageFailOnMinimum := true,
   coverageExcludedPackages := "\\*DocExamples.scala",
   licenses += ("Apache-2.0", url("https://opensource.org/licenses/Apache-2.0")),
+//  scalafixDependencies in ThisBuild += "org.scala-lang.modules" %% "scala-collection-migrations" % "2.1.3",
+//  addCompilerPlugin(scalafixSemanticdb)
 )
 
 lazy val root = (project in file("."))
@@ -78,6 +80,7 @@ lazy val root = (project in file("."))
       "io.github.novacrypto" % "BIP39" % "2019.01.27",
       "net.i2p.crypto" % "eddsa" % "0.3.0",
       "org.json4s" %% "json4s-native" % "3.6.7",
+      "org.scala-lang.modules" %% "scala-collection-compat" % "2.1.3",
       "org.typelevel" %% "cats-core" % "2.1.0",
       "tech.sparse" %%  "toml-scala" % "0.2.2",
 

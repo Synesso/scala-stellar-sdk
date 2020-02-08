@@ -75,7 +75,7 @@ trait Decode extends LazyLogging {
   // For debugging XDR only.
   def log[T](t: T): State[Seq[Byte], Unit] = State[Seq[Byte], Unit] { bs =>
     logger.debug("{}\n", t)
-    bs -> Unit
+    bs -> ()
   }
   // $COVERAGE-ON$
 

@@ -38,7 +38,7 @@ object ManageOfferResult extends Decode {
   * @param entry the offer entry that was newly created or updated.
   */
 case class ManageOfferSuccess(claims: Seq[OfferClaim], entry: Option[OfferEntry]) extends ManageOfferResult(0) {
-  override def encode: Stream[Byte] = super.encode ++ Encode.arr(claims) ++ Encode.opt(entry, ifPresent = 0, ifAbsent = 2)
+  override def encode: LazyList[Byte] = super.encode ++ Encode.arr(claims) ++ Encode.opt(entry, ifPresent = 0, ifAbsent = 2)
 }
 
 /**

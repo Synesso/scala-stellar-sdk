@@ -68,7 +68,7 @@ trait LedgerEntryGenerators extends ArbitraryInput {
   val genDataEntry: Gen[DataEntry] = for {
     account <- genPublicKey
     name <- Gen.identifier
-    value <- Gen.identifier.map(_.getBytes("UTF-8"))
+    value <- Gen.identifier.map(_.getBytes("UTF-8").toIndexedSeq)
   } yield DataEntry(account, name, value)
 
   val genLedgerEntryData: Gen[(LedgerEntryData, Int)] = for {

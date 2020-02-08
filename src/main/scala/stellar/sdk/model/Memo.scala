@@ -9,7 +9,7 @@ import stellar.sdk.model.xdr.{Decode, Encode}
 import scala.util.Try
 
 sealed trait Memo {
-  def encode: Stream[Byte]
+  def encode: LazyList[Byte]
 }
 
 object Memo extends Decode {
@@ -17,13 +17,13 @@ object Memo extends Decode {
     State.pure(NoMemo),
     string.map(MemoText),
     long.map(MemoId),
-    bytes.map(_.toArray).map(MemoHash(_)),
-    bytes.map(_.toArray).map(MemoReturnHash(_))
+    bytes.map(_.toIndexedSeq).map(MemoHash(_)),
+    bytes.map(_.toIndexedSeq).map(MemoReturnHash(_))
   )
 }
 
 case object NoMemo extends Memo {
-  override def encode: Stream[Byte] = Encode.int(0)
+  override def encode: LazyList[Byte] = Encode.int(0)
 }
 
 case class MemoText(text: String) extends Memo {
@@ -31,11 +31,11 @@ case class MemoText(text: String) extends Memo {
   val bytes = text.getBytes(UTF_8)
   assert(bytes.length <= Length, s"Text exceeded limit (${bytes.length}/$Length bytes)")
 
-  override def encode: Stream[Byte] = Encode.int(1) ++ Encode.string(text)
+  override def encode: LazyList[Byte] = Encode.int(1) ++ Encode.string(text)
 }
 
 case class MemoId(id: Long) extends Memo {
-  override def encode: Stream[Byte] = Encode.int(2) ++ Encode.long(id)
+  override def encode: LazyList[Byte] = Encode.int(2) ++ Encode.long(id)
 
   def unsignedId: BigInt = BigInt(java.lang.Long.toUnsignedString(id))
 
@@ -45,7 +45,7 @@ case class MemoId(id: Long) extends Memo {
 sealed trait MemoWithHash extends Memo {
   val Length = 32
   val bs: Seq[Byte]
-  val bytes = paddedByteArray(bs.toArray, Length)
+  val bytes: Array[Byte] = paddedByteArray(bs.toArray, Length)
 
   def hex: String = bytesToHex(bytes)
 
@@ -55,7 +55,7 @@ sealed trait MemoWithHash extends Memo {
 case class MemoHash(bs: Seq[Byte]) extends MemoWithHash {
   assert(bs.length <= Length, s"Hash exceeded limit (${bytes.length}/$Length bytes)")
 
-  override def encode: Stream[Byte] = Encode.int(3) ++ Encode.bytes(bs)
+  override def encode: LazyList[Byte] = Encode.int(3) ++ Encode.bytes(bs)
 }
 
 object MemoHash {
@@ -65,7 +65,7 @@ object MemoHash {
 case class MemoReturnHash(bs: Seq[Byte]) extends MemoWithHash {
   assert(bs.length <= Length, s"Hash exceeded limit (${bytes.length}/$Length bytes)")
 
-  override def encode: Stream[Byte] = Encode.int(4) ++ Encode.bytes(bs)
+  override def encode: LazyList[Byte] = Encode.int(4) ++ Encode.bytes(bs)
 }
 
 object MemoReturnHash {

@@ -27,7 +27,7 @@ class ByteArraysSpec extends Specification with ArbitraryInput {
 
   "trimming a byte array" should {
     "remove trailing zeros" >> {
-      trimmedByteArray(Array()) must beEmpty
+      trimmedByteArray(LazyList()) must beEmpty
       trimmedByteArray("hello".getBytes("UTF-8")) mustEqual "hello".getBytes("UTF-8").toSeq
       trimmedByteArray("hello\u0000\u0000".getBytes("UTF-8")) mustEqual "hello".getBytes("UTF-8").toSeq
       trimmedByteArray("hello\u0000there".getBytes("UTF-8")) mustEqual "hello\u0000there".getBytes("UTF-8").toSeq

@@ -6,7 +6,7 @@ import stellar.sdk.model.xdr.{Decode, Encodable, Encode}
 import stellar.sdk.util.ByteArrays
 
 case class Signer(key: SignerStrKey, weight: Int) extends Encodable {
-  def encode: Stream[Byte] = key.encode ++ Encode.int(weight)
+  def encode: LazyList[Byte] = key.encode ++ Encode.int(weight)
 }
 
 object Signer extends Decode {

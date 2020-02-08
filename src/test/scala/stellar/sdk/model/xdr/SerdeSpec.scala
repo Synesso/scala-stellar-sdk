@@ -118,7 +118,7 @@ class SerdeSpec extends Specification with ScalaCheck with Decode {
   } yield CompositeThing(b, s, bs, ct)
 
   case class CompositeThing(b: Boolean, s: String, bs: Option[Seq[Byte]], next: Option[CompositeThing]) extends Encodable {
-    override def encode: Stream[Byte] = Encode.optBytes(bs) ++ Encode.bool(b) ++ Encode.opt(next) ++ Encode.string(s)
+    override def encode: LazyList[Byte] = Encode.optBytes(bs) ++ Encode.bool(b) ++ Encode.opt(next) ++ Encode.string(s)
   }
 
   object CompositeThing extends Decode {

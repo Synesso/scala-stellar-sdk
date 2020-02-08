@@ -50,8 +50,8 @@ object TransactionHistoryDeserializer extends ResponseParser[TransactionHistory]
         case "none" => NoMemo
         case "id" => MemoId(BigInt((o \ "memo").extract[String]).toLong)
         case "text" => MemoText((o \ "memo").extractOpt[String].getOrElse(""))
-        case "hash" => MemoHash(base64((o \ "memo").extract[String]))
-        case "return" => MemoReturnHash(base64((o \ "memo").extract[String]))
+        case "hash" => MemoHash(base64((o \ "memo").extract[String]).toIndexedSeq)
+        case "return" => MemoReturnHash(base64((o \ "memo").extract[String]).toIndexedSeq)
       },
       signatures = (o \ "signatures").extract[Seq[String]],
       envelopeXDR = (o \ "envelope_xdr").extract[String],

@@ -22,7 +22,7 @@ object AccountMergeResult extends Decode {
   * AccountMerge operation was successful.
   */
 case class AccountMergeSuccess(sourceBalance: NativeAmount) extends AccountMergeResult(0) {
-  override def encode: Stream[Byte] = super.encode ++ Encode.long(sourceBalance.units)
+  override def encode: LazyList[Byte] = super.encode ++ Encode.long(sourceBalance.units)
 }
 
 /**

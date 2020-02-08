@@ -11,6 +11,8 @@ As this project is pre 1.0, breaking changes may happen for minor version bumps.
 
 ### Breaking changes
 
+- This release is targeting Scala 2.13 only. If you require backwards compatibility support for Scala 2.12
+    please vote on [this issue](https://github.com/Synesso/scala-stellar-sdk/issues/90)
 - As the Akka dependency has been removed, the Horizon `Source` endpoints are no longer available.
     The intention is to publish an Akka specific module and re-introduce these endpoints.
     If you are currently building to the Source endpoints, please vote on

@@ -18,7 +18,7 @@ object LedgerKey extends Decode {
 }
 
 case class AccountKey(account: PublicKeyOps) extends LedgerKey {
-  override def encode: Stream[Byte] = Encode.int(0) ++ account.encode
+  override def encode: LazyList[Byte] = Encode.int(0) ++ account.encode
 }
 
 object AccountKey extends Decode {
@@ -26,7 +26,7 @@ object AccountKey extends Decode {
 }
 
 case class TrustLineKey(account: PublicKeyOps, asset: NonNativeAsset) extends LedgerKey {
-  override def encode: Stream[Byte] = Encode.int(1) ++ account.encode ++ asset.encode
+  override def encode: LazyList[Byte] = Encode.int(1) ++ account.encode ++ asset.encode
 }
 
 object TrustLineKey extends Decode {
@@ -37,7 +37,7 @@ object TrustLineKey extends Decode {
 }
 
 case class OfferKey(account: PublicKeyOps, offerId: Long) extends LedgerKey {
-  override def encode: Stream[Byte] = Encode.int(2) ++ account.encode ++ Encode.long(offerId)
+  override def encode: LazyList[Byte] = Encode.int(2) ++ account.encode ++ Encode.long(offerId)
 }
 
 object OfferKey extends Decode {
@@ -48,7 +48,7 @@ object OfferKey extends Decode {
 }
 
 case class DataKey(account: PublicKeyOps, name: String) extends LedgerKey {
-  override def encode: Stream[Byte] = Encode.int(3) ++ account.encode ++ Encode.string(name)
+  override def encode: LazyList[Byte] = Encode.int(3) ++ account.encode ++ Encode.string(name)
 }
 
 object DataKey extends Decode {

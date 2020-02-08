@@ -49,21 +49,21 @@ class DocExamples() {
     def `be present for assets`() = {
       // #asset_query_examples
       // stream of all assets from all issuers
-      val allAssets: Future[Stream[AssetResponse]] = TestNetwork.assets()
+      val allAssets: Future[LazyList[AssetResponse]] = TestNetwork.assets()
 
       // stream of the last 20 assets created
       val last20Assets =
         TestNetwork.assets(cursor = Now, order = Desc).map(_.take(20))
 
       // stream of assets with the code HUG
-      val hugAssets: Future[Stream[AssetResponse]] = TestNetwork.assets(code = Some("HUG"))
+      val hugAssets: Future[LazyList[AssetResponse]] = TestNetwork.assets(code = Some("HUG"))
 
       // stream of assets from the specified issuer
-      val issuerAssets: Future[Stream[AssetResponse]] =
+      val issuerAssets: Future[LazyList[AssetResponse]] =
         TestNetwork.assets(issuer = Some(publicKey))
 
-      // Stream (of max length 1) of HUG assets from the issuer
-      val issuersHugAsset: Future[Stream[AssetResponse]] =
+      // LazyList (of max length 1) of HUG assets from the issuer
+      val issuersHugAsset: Future[LazyList[AssetResponse]] =
         TestNetwork.assets(code = Some("HUG"), issuer = Some(publicKey))
       // #asset_query_examples
     }
@@ -71,7 +71,7 @@ class DocExamples() {
     def `be present for effects`() = {
       // #effect_query_examples
       // stream of all effects
-      val allEffects: Future[Stream[EffectResponse]] = TestNetwork.effects()
+      val allEffects: Future[LazyList[EffectResponse]] = TestNetwork.effects()
 
       // stream of the last 20 effects
       val last20Effects =
@@ -81,11 +81,11 @@ class DocExamples() {
       val effectsForAccount = TestNetwork.effectsByAccount(publicKey)
 
       // stream of effects related to a specific transaction hash
-      val effectsForTxn: Future[Stream[EffectResponse]] =
+      val effectsForTxn: Future[LazyList[EffectResponse]] =
         TestNetwork.effectsByTransaction("f00cafe...")
 
       // stream of effects related to a specific operation id
-      val effectsForOperationId: Future[Stream[EffectResponse]] =
+      val effectsForOperationId: Future[LazyList[EffectResponse]] =
         TestNetwork.effectsByOperation(123L)
 
       // stream of effects for a specific ledger
@@ -131,7 +131,7 @@ class DocExamples() {
       val ledger: Future[LedgerResponse] = TestNetwork.ledger(1234)
 
       // stream of all ledgers
-      val ledgers: Future[Stream[LedgerResponse]] = TestNetwork.ledgers()
+      val ledgers: Future[LazyList[LedgerResponse]] = TestNetwork.ledgers()
 
       // stream of the last 20 ledgers
       val last20Ledgers =
@@ -154,7 +154,7 @@ class DocExamples() {
     def `be present for offers`() = {
       // #offer_query_examples
       // all offers for a specified account
-      val offersByAccount: Future[Stream[OfferResponse]] =
+      val offersByAccount: Future[LazyList[OfferResponse]] =
         TestNetwork.offersByAccount(publicKey)
 
       // most recent offers from a specified account
@@ -174,18 +174,18 @@ class DocExamples() {
       val operation: Future[Transacted[Operation]] = TestNetwork.operation(1234)
 
       // stream of all operations
-      val operations: Future[Stream[Transacted[Operation]]] = TestNetwork.operations()
+      val operations: Future[LazyList[Transacted[Operation]]] = TestNetwork.operations()
 
       // stream of operations from a specified account
-      val opsForAccount: Future[Stream[Transacted[Operation]]] =
+      val opsForAccount: Future[LazyList[Transacted[Operation]]] =
         TestNetwork.operationsByAccount(publicKey)
 
       // stream of operations from a specified ledger
-      val opsForLedger: Future[Stream[Transacted[Operation]]] =
+      val opsForLedger: Future[LazyList[Transacted[Operation]]] =
         TestNetwork.operationsByLedger(1234)
 
       // stream of operations from a transaction specified by its hash
-      val opsForTxn: Future[Stream[Transacted[Operation]]] =
+      val opsForTxn: Future[LazyList[Transacted[Operation]]] =
         TestNetwork.operationsByTransaction("f00cafe...")
       // #operation_query_examples
 
@@ -227,7 +227,7 @@ class DocExamples() {
     def `be present for payments`() = {
       // #payment_query_examples
       // stream of all payment operations
-      val payments: Future[Stream[Transacted[PayOperation]]] = TestNetwork.payments()
+      val payments: Future[LazyList[Transacted[PayOperation]]] = TestNetwork.payments()
 
       // stream of payment operations involving a specified account
       val accountPayments = TestNetwork.paymentsByAccount(publicKey)
@@ -251,16 +251,16 @@ class DocExamples() {
     def `be present for trades`() = {
       // #trade_query_examples
       // stream of all trades
-      val trades: Future[Stream[Trade]] = TestNetwork.trades()
+      val trades: Future[LazyList[Trade]] = TestNetwork.trades()
 
       // stream of trades belonging to a specified orderbook
-      val orderBookTrades: Future[Stream[Trade]] = TestNetwork.tradesByOrderBook(
+      val orderBookTrades: Future[LazyList[Trade]] = TestNetwork.tradesByOrderBook(
         base = NativeAsset,
         counter = Asset("HUG", publicKey)
       )
 
       // stream of trades that are created as a result of the specified offer
-      val offerBookTrades: Future[Stream[Trade]] = TestNetwork.tradesByOfferId(1234)
+      val offerBookTrades: Future[LazyList[Trade]] = TestNetwork.tradesByOfferId(1234)
       // #trade_query_examples
     }
 
@@ -269,7 +269,7 @@ class DocExamples() {
       // stream of all trades
       val start = Instant.now().minus(5, DAYS)
       val end = Instant.now()
-      val tradeAggregations: Future[Stream[TradeAggregation]] =
+      val tradeAggregations: Future[LazyList[TradeAggregation]] =
         TestNetwork.tradeAggregations(start, end,
           resolution = TradeAggregation.FiveMinutes,
           offsetHours = 0,
@@ -288,7 +288,7 @@ class DocExamples() {
         TestNetwork.transaction(transactionIdString)
 
       // stream of all transactions
-      val transactions: Future[Stream[TransactionHistory]] =
+      val transactions: Future[LazyList[TransactionHistory]] =
         TestNetwork.transactions()
 
       // stream of transactions affecting the specified account
@@ -322,7 +322,7 @@ class DocExamples() {
 
       // or an Array[Char]
       KeyPair.fromSecretSeed(
-        "SDHXK2UNHTXVW2MZSOVOPYUKVXD3PEVKMNQZZGPODQMR67YTKWMOC732".toCharArray)
+        "SDHXK2UNHTXVW2MZSOVOPYUKVXD3PEVKMNQZZGPODQMR67YTKWMOC732".toCharArray.toIndexedSeq)
 
       // or a raw 32 byte seed
       KeyPair.fromSecretSeed(
@@ -420,7 +420,7 @@ class DocExamples() {
         } else ???
 
       override def getStream[T: ClassTag](path: String, de: CustomSerializer[T], cursor: HorizonCursor, order: HorizonOrder, params: Map[String, String] = Map.empty)
-                                         (implicit ec: ExecutionContext, m: Manifest[T]): Future[Stream[T]] =
+                                         (implicit ec: ExecutionContext, m: Manifest[T]): Future[LazyList[T]] =
         ???
 
       override def getSeq[T: ClassTag](path: String, de: CustomSerializer[T], params: Map[String, String])

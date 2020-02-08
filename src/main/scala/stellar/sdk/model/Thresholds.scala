@@ -24,7 +24,7 @@ case class Thresholds(low: Int, med: Int, high: Int)
   * @param high The weight required for a valid transaction including the Account Merge and Set Options operations.
   */
 case class LedgerThresholds(master: Int, low: Int, med: Int, high: Int) extends Encodable {
-  override def encode: Stream[Byte] = bytes(4, Array[Byte](master.toByte, low.toByte, med.toByte, high.toByte))
+  override def encode: LazyList[Byte] = bytes(4, Array[Byte](master.toByte, low.toByte, med.toByte, high.toByte))
 }
 
 object LedgerThresholds extends Decode {

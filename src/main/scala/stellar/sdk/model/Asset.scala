@@ -24,7 +24,7 @@ object Asset extends Decode {
 
 case object NativeAsset extends Asset {
   val code: String = "XLM"
-  override def encode: Stream[Byte] = Encode.int(0)
+  override def encode: LazyList[Byte] = Encode.int(0)
 }
 
 sealed trait NonNativeAsset extends Asset {
@@ -46,7 +46,7 @@ case class IssuedAsset4 private(code: String, issuer: PublicKeyOps) extends NonN
 
   override val typeString = "credit_alphanum4"
 
-  def encode: Stream[Byte] = {
+  def encode: LazyList[Byte] = {
     val codeBytes = paddedByteArray(code, 4)
     Encode.int(1) ++ Encode.bytes(4, codeBytes) ++ issuer.encode
   }
@@ -73,7 +73,7 @@ case class IssuedAsset12 private (code: String, issuer: PublicKeyOps) extends No
 
   override val typeString = "credit_alphanum12"
 
-  def encode: Stream[Byte] = {
+  def encode: LazyList[Byte] = {
     val codeBytes = paddedByteArray(code, 12)
     Encode.int(2) ++ Encode.bytes(12, codeBytes) ++ issuer.encode
   }

@@ -14,7 +14,7 @@ sealed trait Amount extends Encodable {
 
   def toDisplayUnits: String = "%.7f".formatLocal(Locale.ROOT, BigDecimal(units) / Amount.toIntegralFactor)
 
-  def encode: Stream[Byte] = asset.encode ++ Encode.long(units)
+  def encode: LazyList[Byte] = asset.encode ++ Encode.long(units)
 }
 
 case class NativeAmount(units: Long) extends Amount {

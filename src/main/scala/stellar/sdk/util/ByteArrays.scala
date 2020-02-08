@@ -28,21 +28,25 @@ object ByteArrays {
 
   def paddedByteArrayToString(bs: Array[Byte]): String = new String(bs, "US-ASCII").split("\u0000")(0)
 
-  def trimmedByteArray(bs: Array[Byte]): Seq[Byte] = bs.reverse.dropWhile(_ == 0).reverse
+  def trimmedByteArray(bs: Array[Byte]): Seq[Byte] = trimmedByteArray(bs.toIndexedSeq)
+  def trimmedByteArray(bs: Seq[Byte]): Seq[Byte] = bs.reverse.dropWhile(_ == 0).reverse
 
+  def sha256(bs: Array[Byte]): Array[Byte] = sha256(bs.toIndexedSeq)
   def sha256(bs: Seq[Byte]): Array[Byte] = {
     val md = MessageDigest.getInstance("SHA-256")
     md.update(bs.toArray)
     md.digest
   }
 
-  def base64(bs: Seq[Byte]): String = Base64.encodeBase64String(bs.toArray)
+  def base64(bs: Seq[Byte]): String = base64(bs.toArray)
+  def base64(bs: Array[Byte]): String = Base64.encodeBase64String(bs)
 
   def base64(s: String): Array[Byte] = Base64.decodeBase64(s)
 
+  def bytesToHex(bs: Array[Byte]): String = bytesToHex(bs.toIndexedSeq)
   def bytesToHex(bs: Seq[Byte]): String = bs.map("%02X".format(_)).mkString
 
-  def hexToBytes(hex: String): Array[Byte] = hex.sliding(2, 2).toArray.map(Integer.parseInt(_, 16).toByte)
+  def hexToBytes(hex: String): Seq[Byte] = hex.toSeq.sliding(2, 2).map(_.unwrap).map(Integer.parseInt(_, 16).toByte).toIndexedSeq
 
   def checksum(bytes: Array[Byte]): Array[Byte] = {
     // This code calculates CRC16-XModem checksum
@@ -66,7 +70,7 @@ object ByteArrays {
       }
     }
 
-    val crc = loop(bytes, 0x0000)
+    val crc = loop(bytes.toIndexedSeq, 0x0000)
     Array(crc.toByte, (crc >>> 8).toByte)
   }
 

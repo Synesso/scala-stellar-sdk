@@ -29,9 +29,9 @@ case class Mnemonic(phrase: List[String], wordList: WordList = EnglishWords) {
     val entropyBits = bitString.take(numEntropyBits)
     val entropyHex = parseBitString(entropyBits)
 
-    val entropyBytes = new ByteString(entropyHex.array)
+    val entropyBytes = new ByteString(entropyHex.toArray[Byte])
 
-    val checksumProvided = new ByteString(parseBitString(checksumBits).array)
+    val checksumProvided = new ByteString(parseBitString(checksumBits).toArray)
     val checksumDerived = deriveChecksum(entropyBytes)
 
     assert(checksumDerived == checksumProvided,
@@ -80,7 +80,7 @@ case class Mnemonic(phrase: List[String], wordList: WordList = EnglishWords) {
     val reducedChecksumBits = reducedBytesToChecksum.map(toBitString).mkString
     val checksumBitString = reducedChecksumBits.take(checksumLengthBits)
 
-    new ByteString(parseBitString(checksumBitString).array)
+    new ByteString(parseBitString(checksumBitString).toArray)
   }
 
   private def toBitString(b: Byte): String = toBitString(b.toInt & 0xff, 8)
@@ -88,9 +88,9 @@ case class Mnemonic(phrase: List[String], wordList: WordList = EnglishWords) {
   private def toBitString(i: Int, size: Int): String =
     String.format("%1$" + size + "s", Integer.toBinaryString(i)).replace(' ', '0')
 
-  private def parseBitString(bitString: String): mutable.WrappedArray[Byte] = {
+  private def parseBitString(bitString: String): mutable.ArraySeq[Byte] = {
     val resizedBitString = "0" * math.max(0, 8 - bitString.length) + bitString
-    resizedBitString.sliding(8, 8)
+    resizedBitString.toSeq.sliding(8, 8).map(_.unwrap)
       .map(Integer.parseInt(_, 2).toByte)
       .toArray
   }
@@ -109,8 +109,9 @@ object Mnemonic {
       override def getWord(index: Int): String = wordList.wordAt(index)
       override def getSpace: Char = wordList.separator.head
     }
-    new MnemonicGenerator(internalList).createMnemonic(entropy, { word =>
-      if (word != wordList.separator) words.append(word.toString)
+    new MnemonicGenerator(internalList).createMnemonic(entropy, new MnemonicGenerator.Target {
+      override def append(word: CharSequence): Unit =
+        if (word != wordList.separator) words.append(word.toString)
     })
     Mnemonic(words.toList, wordList)
   }

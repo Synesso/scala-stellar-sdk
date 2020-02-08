@@ -9,7 +9,7 @@ class TransactionLedgerEntriesSpec extends Specification with LedgerEntryGenerat
 
   "a ledger entry" should {
     "serde to/from XDR" >> prop { entries: TransactionLedgerEntries =>
-      val triedEntries = Try(TransactionLedgerEntries.decode.run(entries.encode.toArray).value._2)
+      val triedEntries = Try(TransactionLedgerEntries.decode.run(entries.encode).value._2)
       triedEntries match {
         case Failure(_) => logger.error(s"Failed to decode $entries")
         case _ =>
