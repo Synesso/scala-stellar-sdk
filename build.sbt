@@ -28,6 +28,8 @@ lazy val commonSettings = Seq(
   coverageFailOnMinimum := true,
   coverageExcludedPackages := "\\*DocExamples.scala",
   licenses += ("Apache-2.0", url("https://opensource.org/licenses/Apache-2.0")),
+//  scalafixDependencies in ThisBuild += "org.scala-lang.modules" %% "scala-collection-migrations" % "2.1.3",
+//  addCompilerPlugin(scalafixSemanticdb)
 )
 
 lazy val root = (project in file("."))
