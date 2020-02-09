@@ -168,6 +168,13 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
 
   val (accountA, accountB) = Await.result(setupFixtures, 5 minutes /* for travis */)
 
+  // This goes first because the stats change as time passes.
+  "fee stats" should {
+    "be parsed" >> {
+      for (feeStats <- network.feeStats()) yield feeStats.lastLedger must beCloseTo(7L, 3)
+    }
+  }
+
   "before fixtures exist" >> {
     "streamed results should be empty" >> {
       day0Assets must beLike[Seq[AssetResponse]] { case xs => xs must beEmpty } .awaitFor(10.seconds)

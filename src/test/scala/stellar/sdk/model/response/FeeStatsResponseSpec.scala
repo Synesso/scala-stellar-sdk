@@ -53,7 +53,11 @@ class FeeStatsResponseSpec extends Specification with ArbitraryInput {
            |}
          """.stripMargin
 
-      parse(json).extract[FeeStatsResponse] mustEqual r
+      val actual = parse(json).extract[FeeStatsResponse]
+      actual mustEqual r
+      actual.acceptedFeePercentiles mustEqual actual.chargedFees.percentiles
+      actual.minAcceptedFee mustEqual actual.chargedFees.min
+      actual.modeAcceptedFee mustEqual actual.chargedFees.mode
     }
   }
 
