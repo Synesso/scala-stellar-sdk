@@ -782,11 +782,17 @@ trait ArbitraryInput extends ScalaCheck {
     lastLedger <- Gen.posNum[Long]
     lastLedgerBaseFee <- genNativeAmount
     ledgerCapacityUsage <- Gen.choose(0.0, 1.0)
-    minAcceptedFee <- genNativeAmount
-    modeAcceptedFee <- genNativeAmount
+    maxFees <- genFeeStats
+    chargedFees <- genFeeStats
+  } yield FeeStatsResponse(lastLedger, lastLedgerBaseFee, ledgerCapacityUsage, maxFees, chargedFees)
+
+  def genFeeStats: Gen[FeeStats] = for {
+    min <- genNativeAmount
+    mode <- genNativeAmount
+    max <- genNativeAmount
     percentiles <- Gen.listOfN(11, genNativeAmount).map(_.sortBy(_.units))
-    acceptedFeePercentiles = Seq(10, 20, 30, 40, 50, 60, 70 ,80, 90, 95, 99).zip(percentiles).toMap
-  } yield FeeStatsResponse(lastLedger, lastLedgerBaseFee, ledgerCapacityUsage, minAcceptedFee, modeAcceptedFee, acceptedFeePercentiles)
+    percentilesMap = Seq(10, 20, 30, 40, 50, 60, 70 ,80, 90, 95, 99).zip(percentiles).toMap
+  } yield FeeStats(min, mode, max, percentilesMap)
 
   def genNetworkInfo: Gen[NetworkInfo] = for {
     horizonVersion <- Gen.identifier

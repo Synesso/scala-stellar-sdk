@@ -1,6 +1,6 @@
 #!/bin/bash
 
-CONTAINER=synesso/stellar:v0.24.1
+CONTAINER=stellar/quickstart:latest
 PROTOCOL_VERSION=12
 
 function container_started {
@@ -26,7 +26,10 @@ fi
 
 docker stop stellar
 sleep 1
-docker run --rm -d -e LOG_LEVEL="debug" -p "8000:8000" -p "11626:11626" $db_port \
+docker run --rm -d \
+    -e LOG_LEVEL="debug" \
+    -e ENABLE_ASSET_STATS="true" \
+    -p "8000:8000" -p "11626:11626" $db_port \
     --name stellar $CONTAINER --standalone
 while ! container_started; do
   sleep 1
