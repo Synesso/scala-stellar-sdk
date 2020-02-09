@@ -16,7 +16,8 @@ As this project is pre 1.0, breaking changes may happen for minor version bumps.
     please vote on [this issue](https://github.com/Synesso/scala-stellar-sdk/issues/90)
 - This release provides [support for Horizon v1.0.0 beta](https://github.com/Synesso/scala-stellar-sdk/issues/211):
     - `FeeStatsResponse` fields ending in `_accepted_fee` have been deprecated and will be removed. `fee_charged` and `max_fee` fields have been added in their place.
-    - 
+    - `TransactionLedgerEntries` constructor has been modified to provide strong type support for additional fields added in v2 of this datatype.
+        Access to the fields is simplified by new public values, `txnLevelChangesBefore` and `txnLevelChangesAfter`.
 - As the Akka dependency has been removed, the Horizon `Source` endpoints are no longer available.
     The intention is to publish an Akka specific module and re-introduce these endpoints.
     If you are currently building to the Source endpoints, please vote on
