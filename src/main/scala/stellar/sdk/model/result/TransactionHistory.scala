@@ -27,7 +27,7 @@ case class TransactionHistory(hash: String, ledgerId: Long, createdAt: ZonedDate
   def ledgerEntries: TransactionLedgerEntries = TransactionLedgerEntries.decodeXDR(resultMetaXDR)
   def feeLedgerEntries: Seq[LedgerEntryChange] = LedgerEntryChanges.decodeXDR(feeMetaXDR)
 
-  @deprecated("v0.7.2", "Replaced by `feeCharged`")
+  @deprecated("Replaced by `feeCharged`", "v0.7.2")
   val feePaid: NativeAmount = feeCharged
 
 }
