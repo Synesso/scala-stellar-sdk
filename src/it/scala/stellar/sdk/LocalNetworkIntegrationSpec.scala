@@ -552,7 +552,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
   "fee stats endpoint" should {
     "return the stats for the last ledger" >> {
       network.feeStats() must beLike[FeeStatsResponse]({ case fsr =>
-          fsr.minAcceptedFee mustEqual NativeAmount(100)
+          fsr.chargedFees.min mustEqual NativeAmount(100)
       }).awaitFor(10 seconds)
     }
   }
