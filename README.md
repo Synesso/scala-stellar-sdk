@@ -37,8 +37,8 @@ Here's the code necessary to fetch an account's sequence number and submit a pay
 implicit val network = TestNetwork
 for {
   sourceAccount <- network.account(payerKeyPair)
-  response <- model.Transaction(sourceAccount)
-    .add(PaymentOperation(payeePublicKey, lumens(5000)))
+  response <- model.Transaction(sourceAccount, timeBounds = TimeBounds.Unbounded, maxFee = lumens(100))
+    .add(PaymentOperation(payeePublicKey, Amount.lumens(5000)))
     .sign(payerKeyPair)
     .submit()
 } yield response
