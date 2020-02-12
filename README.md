@@ -4,7 +4,7 @@
 [![Coverage](https://img.shields.io/codecov/c/gh/Synesso/scala-stellar-sdk.svg)](https://codecov.io/gh/Synesso/scala-stellar-sdk)
 [![Chat](https://img.shields.io/gitter/room/scala-stellar-sdk/community.svg)](https://gitter.im/scala-stellar-sdk/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Issues](https://img.shields.io/github/issues/Synesso/scala-stellar-sdk.svg)](https://github.com/Synesso/scala-stellar-sdk/issues)
-![Supports Stellar Horizon v1.0.0-beta](https://img.shields.io/badge/Horizon-v1.0.0-beta-blue.svg)
+![Supports Stellar Horizon v1.0.0-beta](https://img.shields.io/badge/Horizon-v1.0.0-blue.svg)
 ![Supports Stellar Core v12](https://img.shields.io/badge/Core-v12-blue.svg)
 [![Scala Steward badge](https://img.shields.io/badge/Scala_Steward-helping-brightgreen.svg?style=flat&logo=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAQCAMAAAARSr4IAAAAVFBMVEUAAACHjojlOy5NWlrKzcYRKjGFjIbp293YycuLa3pYY2LSqql4f3pCUFTgSjNodYRmcXUsPD/NTTbjRS+2jomhgnzNc223cGvZS0HaSD0XLjbaSjElhIr+AAAAAXRSTlMAQObYZgAAAHlJREFUCNdNyosOwyAIhWHAQS1Vt7a77/3fcxxdmv0xwmckutAR1nkm4ggbyEcg/wWmlGLDAA3oL50xi6fk5ffZ3E2E3QfZDCcCN2YtbEWZt+Drc6u6rlqv7Uk0LdKqqr5rk2UCRXOk0vmQKGfc94nOJyQjouF9H/wCc9gECEYfONoAAAAASUVORK5CYII=)](https://scala-steward.org)
 
@@ -14,10 +14,11 @@ You can do what you like with this software, as long as you include the required
 
 ## Getting Started
 
-Add the JitPack resolver and the [latest dependency](https://jitpack.io/#Synesso/scala-stellar-sdk) to your build tool. Here's how it might look in `build.sbt`
+Add the JitPack & jcenter resolvers and the [latest dependency](https://jitpack.io/#Synesso/scala-stellar-sdk) to your build tool. Here's how it might look in `build.sbt`
 
 ```scala
 resolvers += "jitpack" at "https://jitpack.io"
+resolvers += Resolver.jcenterRepo
 libraryDependencies += "com.github.synesso" %% "scala-stellar-sdk" % "0.11.0"
 ```
 
