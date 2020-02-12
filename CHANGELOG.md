@@ -2,9 +2,12 @@
 
 As this project is pre 1.0, breaking changes may happen for minor version bumps. A breaking change will get clearly notified in this log.
 
-## Next version (0.11.0)
+## Next version
 
-- Supports Horizon v1.0.0
+
+## 0.11.0
+
+- Supports Horizon v1.0.0-beta
 - Adds support for Mnemonic phrases in English, French, Japanese and Spanish
   - Can derive hierarchical deterministic addresses
   - Shortcuts for deriving addresses in the Stellar tree-space (as KeyPairs)
