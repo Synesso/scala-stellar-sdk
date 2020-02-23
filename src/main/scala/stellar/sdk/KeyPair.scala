@@ -251,7 +251,7 @@ object KeyPair extends Decode {
     KeyPair(pair.getPublic.asInstanceOf[EdDSAPublicKey], pair.getPrivate.asInstanceOf[EdDSAPrivateKey])
   }
 
-  def decode: State[Seq[Byte], PublicKey] = for {
+  val decode: State[Seq[Byte], PublicKey] = for {
     _ <- int
     bs <- bytes(32)
   } yield KeyPair.fromPublicKey(bs.toArray[Byte])
