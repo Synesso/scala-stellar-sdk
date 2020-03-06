@@ -84,10 +84,10 @@ lazy val root = (project in file("."))
       "org.typelevel" %% "cats-core" % "2.1.0",
       "tech.sparse" %%  "toml-scala" % "0.2.2",
 
-      "com.squareup.okhttp3" % "mockwebserver" % "4.4.0" % "test",
-      "org.specs2" %% "specs2-core" % "4.8.3" % "test,it",
-      "org.specs2" %% "specs2-mock" % "4.8.3" % "test",
-      "org.specs2" %% "specs2-scalacheck" % "4.8.3" % "test"
+      "com.squareup.okhttp3" % "mockwebserver" % "4.3.1" % "test",
+      "org.specs2" %% "specs2-core" % "4.9.2" % "test,it",
+      "org.specs2" %% "specs2-mock" % "4.9.2" % "test",
+      "org.specs2" %% "specs2-scalacheck" % "4.9.2" % "test"
     )
   )
 

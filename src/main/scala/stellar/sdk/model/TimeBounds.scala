@@ -8,7 +8,8 @@ import stellar.sdk.model.xdr.{Decode, Encodable}
 import scala.concurrent.duration.Duration
 
 case class TimeBounds(start: Instant, end: Instant) extends Encodable {
-  require(start.isBefore(end))
+  require(start.isBefore(end) || (start == end && start.getEpochSecond == 0),
+    s"Range start is not before the end [start=$start][end=$end]")
 
   def encode: LazyList[Byte] = {
     import stellar.sdk.model.xdr.Encode._
@@ -23,7 +24,7 @@ object TimeBounds extends Decode {
     end <- instant
   } yield TimeBounds(start, end)
 
-  val Unbounded = TimeBounds(Instant.MIN, Instant.MAX)
+  val Unbounded = TimeBounds(Instant.ofEpochSecond(0), Instant.ofEpochSecond(0))
 
   def timeout(duration: Duration) = {
     val now = Instant.now()

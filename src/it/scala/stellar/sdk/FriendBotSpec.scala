@@ -30,6 +30,7 @@ class FriendBotSpec(implicit ee: ExecutionEnv) extends Specification {
           timeBounds = TimeBounds.Unbounded
         ).add(AccountMergeOperation(friendbot.publicKey)).sign(kp).submit()
       } yield response
+      Await.result(giveItBack, 1 minute)
 
       r.isSuccess must beTrue
     }
