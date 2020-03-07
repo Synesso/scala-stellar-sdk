@@ -25,9 +25,9 @@ class OkHorizon(base: HttpUrl) extends HorizonAccess with LazyLogging {
     OrderBookDeserializer + TransactionPostResponseDeserializer + TransactionHistoryDeserializer +
     FeeStatsRespDeserializer + NetworkInfoDeserializer
 
-  private val client = new OkHttpClient.Builder().addInterceptor(
-    new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BASIC)
-  ).build()
+  private val client = new OkHttpClient.Builder()
+    // .addInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BASIC))
+    .build()
   private val headers = Headers.of(
     "X-Client-Name", BuildInfo.name,
     "X-Client-Version", BuildInfo.version)
