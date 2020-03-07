@@ -25,7 +25,7 @@ import scala.sys.process._
 class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specification with DomainMatchersIT with LazyLogging {
   sequential
 
-//  Seq("src/it/bin/stellar_standalone.sh", "true").!
+  Seq("src/it/bin/stellar_standalone.sh", "true").!
 
   private implicit val network = StandaloneNetwork(HttpUrl.parse(s"http://localhost:8000"))
   val masterAccountKey = network.masterAccount

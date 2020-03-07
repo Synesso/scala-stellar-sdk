@@ -112,7 +112,7 @@ object OperationDeserializer extends ResponseParser[Operation]({ o: JObject =>
       val path: List[Asset] = pathJs.map(a => asset(obj = a))
       PathPaymentStrictSendOperation(amount(assetPrefix = "source_"), account("to"), amount(label = "destination_min"), path, sourceAccount)
     case "manage_offer" | "manage_sell_offer" =>
-      (o \ "offer_id").extract[Long] match {
+      (o \ "offer_id").extract[String].toLong match {
         case 0L => CreateSellOfferOperation(
           selling = amount(assetPrefix = "selling_"),
           buying = asset("buying_"),
@@ -129,7 +129,7 @@ object OperationDeserializer extends ResponseParser[Operation]({ o: JObject =>
           }
       }
     case "manage_buy_offer" =>
-      (o \ "offer_id").extract[Long] match {
+      (o \ "offer_id").extract[String].toLong match {
         case 0L => CreateBuyOfferOperation(
           buying = amount(assetPrefix = "buying_"),
           selling = asset("selling_"),

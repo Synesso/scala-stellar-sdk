@@ -72,7 +72,7 @@ class PageSpec extends Specification {
         nextLink = Some(HttpUrl.parse("https://horizon-testnet.stellar.org/hello?cursor=2045052972961793-0&limit=10&order=asc"))
       )
     }
-  } 
+  }
 
   object HelloDeserializer extends ResponseParser[String]({ o: JObject =>
     implicit val formats = DefaultFormats

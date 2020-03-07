@@ -18,8 +18,8 @@ object TradeAggregationDeserializer extends ResponseParser[TradeAggregation]({ o
   def price(p: JValue): Price = Price((p \ "N").extract[Int], (p \ "D").extract[Int])
 
   TradeAggregation(
-    instant = Instant.ofEpochMilli((o \ "timestamp").extract[Long]),
-    tradeCount = (o \ "trade_count").extract[Int],
+    instant = Instant.ofEpochMilli((o \ "timestamp").extract[String].toLong),
+    tradeCount = (o \ "trade_count").extract[String].toInt,
     baseVolume = (o \ "base_volume").extract[String].toDouble,
     counterVolume = (o \ "counter_volume").extract[String].toDouble,
     average = (o \ "avg").extract[String].toDouble,
