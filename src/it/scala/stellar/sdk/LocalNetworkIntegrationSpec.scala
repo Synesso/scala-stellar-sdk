@@ -25,7 +25,7 @@ import scala.sys.process._
 class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specification with DomainMatchersIT with LazyLogging {
   sequential
 
-  Seq("src/it/bin/stellar_standalone.sh", "true").!
+//  Seq("src/it/bin/stellar_standalone.sh", "true").!
 
   private implicit val network = StandaloneNetwork(HttpUrl.parse(s"http://localhost:8000"))
   val masterAccountKey = network.masterAccount
@@ -171,7 +171,11 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
   // This goes first because the stats change as time passes.
   "fee stats" should {
     "be parsed" >> {
-      for (feeStats <- network.feeStats()) yield feeStats.lastLedger must beCloseTo(7L, 3)
+      for (feeStats <- network.feeStats()) yield {
+        // Changed to a large value because standalone docker needs to wait 5 mins at this time.
+        val fiveMinutesPlusFixtureTimeInLedgers = 67L
+        feeStats.lastLedger must beCloseTo(fiveMinutesPlusFixtureTimeInLedgers, 6)
+      }
     }
   }
 
