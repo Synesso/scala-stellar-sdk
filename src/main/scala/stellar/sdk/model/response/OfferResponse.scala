@@ -17,7 +17,7 @@ case class OfferResponse(id: Long, seller: PublicKeyOps, selling: Amount, buying
 
 object OfferRespDeserializer extends ResponseParser[OfferResponse]({ o: JObject =>
   implicit val formats = DefaultFormats
-  val id = (o \ "id").extract[Long]
+  val id = (o \ "id").extract[String].toLong
 
   def account(accountKey: String = "account") = KeyPair.fromAccountId((o \ accountKey).extract[String])
 

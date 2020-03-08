@@ -1,9 +1,10 @@
 package stellar.sdk.inet
 
-import java.net.HttpURLConnection.HTTP_NOT_FOUND
+import java.net.HttpURLConnection.{HTTP_BAD_REQUEST, HTTP_NOT_FOUND}
 
 import com.typesafe.scalalogging.LazyLogging
 import okhttp3._
+import okhttp3.logging.HttpLoggingInterceptor
 import org.json4s.native.{JsonMethods, Serialization}
 import org.json4s.{CustomSerializer, DefaultFormats, Formats, JObject, NoTypeHints}
 import stellar.sdk.BuildInfo
@@ -24,7 +25,9 @@ class OkHorizon(base: HttpUrl) extends HorizonAccess with LazyLogging {
     OrderBookDeserializer + TransactionPostResponseDeserializer + TransactionHistoryDeserializer +
     FeeStatsRespDeserializer + NetworkInfoDeserializer
 
-  private val client = new OkHttpClient()
+  private val client = new OkHttpClient.Builder()
+    // .addInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BASIC))
+    .build()
   private val headers = Headers.of(
     "X-Client-Name", BuildInfo.name,
     "X-Client-Version", BuildInfo.version)
@@ -68,11 +71,13 @@ class OkHorizon(base: HttpUrl) extends HorizonAccess with LazyLogging {
                                       order: HorizonOrder, params: Map[String, String])
                                      (implicit ec: ExecutionContext, m: Manifest[T]): Future[LazyList[T]] = {
 
-    Future(getStreamInternal(path, de, Some(cursor), Some(order), params))
+    // TODO (jem) - Cursor is temporarily removed because Horizon 1.0.0 cannot parse it.
+//    Future(getStreamInternal(path, de, Some(cursor), Some(order), params))
+    Future(getStreamInternal(path, de, None, Some(order), params))
   }
 
   override def getSeq[T: ClassTag](path: String, de: CustomSerializer[T], params: Map[String, String])
-                                  (implicit ec: ExecutionContext, m: Manifest[T]): Future[Seq[T]] = {
+                                  (implicit ec: ExecutionContext, m: Manifest[T]): Future[LazyList[T]] = {
     Future(getStreamInternal(path, de, None, None, params))
   }
 
@@ -112,13 +117,7 @@ class OkHorizon(base: HttpUrl) extends HorizonAccess with LazyLogging {
                                   (implicit m: Manifest[T], formats: Formats): Page[T] = {
 
     val response = client.newCall(new Request.Builder().url(url).build()).execute()
-    response.code() match {
-      case HTTP_NOT_FOUND => Page(List.empty[T], None)
-      case _ =>
-        JsonMethods.parse(response.body().string())
-          .extract[RawPage]
-          .parse[T](url)
-    }
+    PageParser.parse(url, response.code(), response.body().string())
 
   }
 }

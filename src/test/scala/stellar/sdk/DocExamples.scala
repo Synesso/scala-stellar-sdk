@@ -424,8 +424,8 @@ class DocExamples() {
         ???
 
       override def getSeq[T: ClassTag](path: String, de: CustomSerializer[T], params: Map[String, String])
-                                      (implicit ec: ExecutionContext, m: Manifest[T]): Future[Seq[T]] =
-        Future.successful(Seq.empty[T])
+                                      (implicit ec: ExecutionContext, m: Manifest[T]): Future[LazyList[T]] =
+        Future.successful(LazyList.empty[T])
     }
   }
 

@@ -53,6 +53,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
 
   private def transact(ops: Operation*): Unit = {
     val batchSize = 100
+
     def forReal(batch: Seq[Operation], remaining: Seq[Operation]): Unit = {
       batch match {
         case Nil =>
@@ -71,6 +72,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
               logger.debug(s"Approved. Hash is ${a.hash}")
               a.ledgerEntries // can decode
               a.result // can decode
+              a.result.operationResults.foreach(println)
               ok
             case r: TransactionRejected =>
               logger.info(r.detail)
@@ -81,6 +83,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
           forReal(remaining.take(batchSize), remaining.drop(batchSize))
       }
     }
+
     forReal(ops.take(batchSize), ops.drop(batchSize))
   }
 
@@ -171,18 +174,22 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
   // This goes first because the stats change as time passes.
   "fee stats" should {
     "be parsed" >> {
-      for (feeStats <- network.feeStats()) yield feeStats.lastLedger must beCloseTo(7L, 3)
+      for (feeStats <- network.feeStats()) yield {
+        // Changed to a large value because standalone docker needs to wait 5 mins at this time.
+        val fiveMinutesPlusFixtureTimeInLedgers = 67L
+        feeStats.lastLedger must beCloseTo(fiveMinutesPlusFixtureTimeInLedgers, 6)
+      }
     }
   }
 
   "before fixtures exist" >> {
     "streamed results should be empty" >> {
-      day0Assets must beLike[Seq[AssetResponse]] { case xs => xs must beEmpty } .awaitFor(10.seconds)
-      day0Effects must beLike[Seq[EffectResponse]] { case xs => xs must beEmpty } .awaitFor(10.seconds)
-      day0Operations must beLike[Seq[Transacted[Operation]]] { case xs => xs must beEmpty } .awaitFor(10.seconds)
-      day0Payments must beLike[Seq[Transacted[PayOperation]]] { case xs => xs must beEmpty } .awaitFor(10.seconds)
-      day0Trades must beLike[Seq[Trade]] { case xs => xs must beEmpty } .awaitFor(10.seconds)
-      day0Transactions must beLike[Seq[TransactionHistory]] { case xs => xs must beEmpty } .awaitFor(10.seconds)
+      day0Assets must beLike[Seq[AssetResponse]] { case xs => xs must beEmpty }.awaitFor(10.seconds)
+      day0Effects must beLike[Seq[EffectResponse]] { case xs => xs must beEmpty }.awaitFor(10.seconds)
+      day0Operations must beLike[Seq[Transacted[Operation]]] { case xs => xs must beEmpty }.awaitFor(10.seconds)
+      day0Payments must beLike[Seq[Transacted[PayOperation]]] { case xs => xs must beEmpty }.awaitFor(10.seconds)
+      day0Trades must beLike[Seq[Trade]] { case xs => xs must beEmpty }.awaitFor(10.seconds)
+      day0Transactions must beLike[Seq[TransactionHistory]] { case xs => xs must beEmpty }.awaitFor(10.seconds)
     }
   }
 
@@ -256,11 +263,12 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
     "list all assets" >> {
       val eventualResps = network.assets().map(_.toSeq)
       eventualResps must containTheSameElementsAs(Seq(
-        AssetResponse(aardvarkA, 0, 0, authRequired = true, authRevocable = true),
-        AssetResponse(beaverA, 0, 0, authRequired = true, authRevocable = true),
+        // TODO (jem) - Changed because of https://github.com/stellar/go/issues/2369
+        // AssetResponse(aardvarkA, 0, 0, authRequired = true, authRevocable = true),
+        // AssetResponse(beaverA, 0, 0, authRequired = true, authRevocable = true),
         AssetResponse(chinchillaA, 101, 1, authRequired = true, authRevocable = true),
         AssetResponse(chinchillaMaster, 101, 1, authRequired = false, authRevocable = false),
-        AssetResponse(dachshundB, 0, 0, authRequired = false, authRevocable = false)
+        // AssetResponse(dachshundB, 0, 0, authRequired = false, authRevocable = false)
       )).awaitFor(10 seconds)
     }
 
@@ -272,7 +280,9 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
 
     "filter assets by issuer" >> {
       val byIssuer = network.assets(issuer = Some(accnA)).map(_.take(10).toList)
-      byIssuer.map(_.size) must beEqualTo(3).awaitFor(10 seconds)
+      // TODO (jem) - Changed because of https://github.com/stellar/go/issues/2369
+      // byIssuer.map(_.size) must beEqualTo(3).awaitFor(10 seconds)
+      byIssuer.map(_.size) must beEqualTo(1).awaitFor(10 seconds)
       byIssuer.map(_.map(_.asset.issuer.accountId).distinct) must beEqualTo(Seq(accnA.accountId)).awaitFor(10 seconds)
     }
 
@@ -442,7 +452,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
         case OrderBook(NativeAsset, buying, bids, asks) =>
           buying must beEquivalentTo(chinchillaA)
           bids mustEqual Seq(Order(Price(4, 80), 800000000))
-          asks mustEqual Seq(Order(Price(1,5),50000000))
+          asks mustEqual Seq(Order(Price(1, 5), 50000000))
       }.awaitFor(10.seconds)
     }
   }
@@ -559,7 +569,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
   "fee stats endpoint" should {
     "return the stats for the last ledger" >> {
       network.feeStats() must beLike[FeeStatsResponse]({ case fsr =>
-          fsr.chargedFees.min mustEqual NativeAmount(100)
+        fsr.chargedFees.min mustEqual NativeAmount(100)
       }).awaitFor(10 seconds)
     }
   }
@@ -569,7 +579,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
       network.paths(masterAccountKey, accnD, Amount(1, chinchillaA)) must
         beEqualTo(Seq(
           PaymentPath(lumens(20), Amount(10000000, chinchillaA), List())
-      )).awaitFor(1 minute)
+        )).awaitFor(1 minute)
     }
 
     "return nothing when there's no path" >> {
@@ -581,7 +591,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
   "page deserialisation" should {
     "return an empty page when the underlying resource does not exist" >> {
       network.horizon.getStream("/does_not_exist", TradeDeserializer, Now, Asc) must beEmpty[LazyList[Trade]]
-          .awaitFor(10.seconds)
+        .awaitFor(10.seconds)
     }
   }
 

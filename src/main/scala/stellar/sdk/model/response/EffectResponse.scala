@@ -116,7 +116,7 @@ object EffectResponseDeserializer extends ResponseParser[EffectResponse]({ o: JO
     case "trustline_removed" => EffectTrustLineRemoved(id, account(), asset().asInstanceOf[NonNativeAsset])
     case "trustline_authorized" => EffectTrustLineAuthorized(id, account("trustor"), asset(issuerKey = "account").asInstanceOf[NonNativeAsset])
     case "trustline_deauthorized" => EffectTrustLineDeauthorized(id, account("trustor"), asset(issuerKey = "account").asInstanceOf[NonNativeAsset])
-    case "trade" => EffectTrade(id, (o \ "offer_id").extract[Long], account(), amount("bought_"), account("seller"), amount("sold_"))
+    case "trade" => EffectTrade(id, (o \ "offer_id").extract[String].toLong, account(), amount("bought_"), account("seller"), amount("sold_"))
     case t => throw new RuntimeException(s"Unrecognised effect type '$t': ${compact(render(o))}")
   }
 })
