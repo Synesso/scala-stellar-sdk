@@ -13,7 +13,8 @@ lazy val root = project
         "organization" -> organization.value,
         "version" -> version.value,
         "scalaBinaryVersion" -> scalaBinaryVersion.value,
-        "scaladoc.stellar.base_url" -> "https://synesso.github.io/scala-stellar-sdk/api"
+        "scaladoc.stellar.base_url" -> "latest/api/"
+//        "scaladoc.stellar.base_url" -> "https://synesso.github.io/scala-stellar-sdk/api"
       )
     )
   .enablePlugins(ParadoxMaterialThemePlugin).settings(
@@ -21,13 +22,22 @@ lazy val root = project
       _
         .withRepository(url("https://github.com/synesso/scala-stellar-sdk").toURI)
         .withSocial(uri("https://github.com/synesso"), uri("https://keybase.io/jem"))
-        .withoutSearch()
     }
   )
+  .enablePlugins(SiteScaladocPlugin)
+  .enablePlugins(ParadoxSitePlugin)
   .configs(IntegrationTest)
   .settings(
     name := "scala-stellar-sdk",
     organization := "io.github.synesso",
+    homepage := Some(url("https://github.com/synesso/scala-stellar-sdk")),
+    startYear := Some(2018),
+    description := "Perform Stellar (distributed payments platform) operations from your Scala application. " +
+      "Build and submit transactions, query the state of the network and stream updates.",
+    developers := List(
+      Developer("jem", "Jem Mawson", "jem.mawson@gmail.com", url = url("https://keybase.io/jem"))
+    ),
+    crossScalaVersions := Seq("2.12.10", "2.13.1"),
     Defaults.itSettings,
     resolvers += Resolver.jcenterRepo,
     libraryDependencies ++= List(
