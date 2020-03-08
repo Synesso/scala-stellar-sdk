@@ -7,7 +7,7 @@ offers to trade or account creation are made to the network's ledger.
 
 Every transaction must originate from an existing account on the network and correctly specify the next
 [sequence number](https://www.stellar.org/developers/guides/concepts/accounts.html#sequence-number).
-Creating a new `Transaction` instance requires these two values, wrapped in an @scaladoc[Account](stellar.sdk.Account).
+Creating a new `Transaction` instance requires these two values, wrapped in an @scaladoc[Account](stellar.sdk.model.Account).
 
 Additionally, a `Network` must be implicit in scope. The choice of network will affect how the transaction is serialised.
 

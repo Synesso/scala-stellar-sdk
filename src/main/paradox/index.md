@@ -47,7 +47,7 @@ For more detailed coverage, continue by reading about @ref:[KeyPairs](key_pairs.
 
 ## API
 
-Please enjoy the [scaladoc](api/stellar/sdk) for this release.
+Please enjoy the [scaladoc](latest/api/stellar/sdk) for this release.
 
 
 > ### Deprecation warning
@@ -64,8 +64,7 @@ breaking changes.
 Contributions are warmly welcomed. Please feel free to contribute by reporting [issues](https://github.com/Synesso/scala-stellar-sdk/issues)
 you find, or by suggesting changes to the code. Or feel free to add your own features/issues to that list.
 
-Let's chat about any of this on the [Stellar KeyBase channel](https://keybase.io/team/stellar.public) #dev channel. My username
-is [@jem](https://keybase.io/jem).
+You can [contact me on KeyBase](https://keybase.io/jem/chat).
 
 
 @@@ index
