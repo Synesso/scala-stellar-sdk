@@ -1,74 +1,25 @@
-import sbt.Keys.organization
-import scoverage.ScoverageKeys.coverageMinimum
+ThisBuild / scalaVersion := "2.13.1"
 
-// format: off
-lazy val commonSettings = Seq(
-  name := "scala-stellar-sdk",
-  organization := "io.github.synesso",
-  scalaVersion := "2.13.1",
-  homepage := Some(url("https://github.com/synesso/scala-stellar-sdk")),
-  startYear := Some(2018),
-  description := "Perform Stellar (distributed payments platform) operations from your Scala application. " +
-    "Build and submit transactions, query the state of the network and stream updates.",
-  developers := List(
-    Developer("jem", "Jem Mawson", "jem.mawson@gmail.com", url = url("https://keybase.io/jem"))
-  ),
-  crossScalaVersions := Seq("2.12.10", "2.13.1"),
-  scalacOptions ++= Seq(
-    "-Yrangepos",
-    "-unchecked",
-    "-deprecation",
-    "-feature",
-    "-language:postfixOps",
-    "-encoding",
-    "UTF-8",
-    "-target:jvm-1.8"),
-  fork := true,
-  coverageMinimum := 95,
-  coverageFailOnMinimum := true,
-  coverageExcludedPackages := "\\*DocExamples.scala",
-  licenses += ("Apache-2.0", url("https://opensource.org/licenses/Apache-2.0")),
-//  scalafixDependencies in ThisBuild += "org.scala-lang.modules" %% "scala-collection-migrations" % "2.1.3",
-//  addCompilerPlugin(scalafixSemanticdb)
-)
-
-lazy val root = (project in file("."))
-  .enablePlugins(GitVersioning)
-  .enablePlugins(SitePlugin).settings(
-    siteSourceDirectory := target.value / "paradox" / "site" / "main"
-  )
-  .enablePlugins(GhpagesPlugin).settings(
-    git.remoteRepo := "git@github.com:synesso/scala-stellar-sdk.git"
-  )
+lazy val root = project
+  .in(file("."))
   .enablePlugins(BuildInfoPlugin).settings(
     buildInfoKeys := Seq[BuildInfoKey](name, version, scalaVersion, sbtVersion),
     buildInfoPackage := "stellar.sdk"
   )
   .enablePlugins(ParadoxPlugin).settings(
-    paradoxProperties ++= Map(
-      "name" -> name.value,
-      "organization" -> organization.value,
-      "version" -> version.value,
-      "scalaBinaryVersion" -> scalaBinaryVersion.value,
-      "scaladoc.stellar.base_url" -> "https://synesso.github.io/scala-stellar-sdk/api"
+      paradoxProperties ++= Map(
+        "name" -> name.value,
+        "organization" -> organization.value,
+        "version" -> version.value,
+        "scalaBinaryVersion" -> scalaBinaryVersion.value,
+        "scaladoc.stellar.base_url" -> "https://synesso.github.io/scala-stellar-sdk/api"
+      )
     )
-  )
-  .enablePlugins(ParadoxMaterialThemePlugin).settings(
-  paradoxMaterialTheme in Compile ~= {
-    _
-      .withRepository(url("https://github.com/synesso/scala-stellar-sdk").toURI)
-      .withSocial(uri("https://github.com/synesso"), uri("https://keybase.io/jem"))
-      .withoutSearch()
-  }
-).configs(IntegrationTest)
+  .configs(IntegrationTest)
   .settings(
-    commonSettings,
-    compile := ((compile in Compile) dependsOn (paradox in Compile)).value,
-    test := ((test in Test) dependsOn dependencyUpdates).value,
-    dependencyUpdatesFailBuild := false,
+    name := "scala-stellar-sdk",
+    organization := "io.github.synesso",
     Defaults.itSettings,
-    target in Compile in doc := target.value / "paradox" / "site" / "main" / "api",
-    publishLocalConfiguration := publishLocalConfiguration.value.withOverwrite(true),
     resolvers += Resolver.jcenterRepo,
     libraryDependencies ++= List(
       "ch.qos.logback" % "logback-classic" % "1.2.3",
@@ -89,6 +40,8 @@ lazy val root = (project in file("."))
       "org.specs2" %% "specs2-core" % "4.9.2" % "test,it",
       "org.specs2" %% "specs2-mock" % "4.9.2" % "test",
       "org.specs2" %% "specs2-scalacheck" % "4.9.2" % "test"
-    )
+    ),
+    coverageMinimum := 95,
+    coverageFailOnMinimum := true,
+    coverageExcludedPackages := "\\*DocExamples.scala",
   )
-
