@@ -73,8 +73,8 @@ lazy val root = (project in file("."))
     libraryDependencies ++= List(
       "ch.qos.logback" % "logback-classic" % "1.2.3",
       "com.softwaremill.retry" %% "retry" % "0.3.3",
-      "com.squareup.okhttp3" % "okhttp" % "4.3.1",
-      "com.squareup.okhttp3" % "logging-interceptor" % "4.3.1",
+      "com.squareup.okhttp3" % "okhttp" % "4.4.0",
+      "com.squareup.okhttp3" % "logging-interceptor" % "4.4.0",
       "com.typesafe.scala-logging" %% "scala-logging" % "3.9.2",
       "com.squareup.okio" % "okio" % "2.4.3",
       "commons-codec" % "commons-codec" % "1.14",
@@ -85,7 +85,7 @@ lazy val root = (project in file("."))
       "org.typelevel" %% "cats-core" % "2.1.0",
       "tech.sparse" %%  "toml-scala" % "0.2.2",
 
-      "com.squareup.okhttp3" % "mockwebserver" % "4.3.1" % "test",
+      "com.squareup.okhttp3" % "mockwebserver" % "4.4.0" % "test",
       "org.specs2" %% "specs2-core" % "4.9.2" % "test,it",
       "org.specs2" %% "specs2-mock" % "4.9.2" % "test",
       "org.specs2" %% "specs2-scalacheck" % "4.9.2" % "test"
