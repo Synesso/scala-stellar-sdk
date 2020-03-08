@@ -1,5 +1,7 @@
 package stellar.sdk.key
 
+import scala.io.Source
+
 trait WordList {
   def indexOf(word: String): Option[Int]
   def wordAt(i: Int): String
@@ -7,8 +9,8 @@ trait WordList {
   def separator: String
 }
 
-abstract class ArrayBackedWordList extends WordList {
-  val words: Array[String]
+class ArrayBackedWordList(source: => Source, val separator: String = " ") extends WordList {
+  lazy val words: Array[String] = source.getLines().toArray
 
   // TODO (jem) - WordList spec that ensures index can be found with normalized variants.
   override def indexOf(word: String): Option[Int] = Some(words.indexOf(word)).filter(_ >= 0)
@@ -17,6 +19,4 @@ abstract class ArrayBackedWordList extends WordList {
     require(i >= 0 && i < words.length, s"Word index $i is out of range.")
     words(i)
   }
-
-  override def separator: String = " "
 }
