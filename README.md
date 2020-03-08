@@ -1,8 +1,8 @@
 # [Stellar SDK for Scala](https://synesso.github.io/scala-stellar-sdk/)
 
+![Scala CI](https://github.com/Synesso/scala-stellar-sdk/workflows/Scala%20CI/badge.svg?branch=master)
 [![Travis](https://travis-ci.org/Synesso/scala-stellar-sdk.svg?branch=master)](https://travis-ci.org/Synesso/scala-stellar-sdk)
 [![Coverage](https://img.shields.io/codecov/c/gh/Synesso/scala-stellar-sdk.svg)](https://codecov.io/gh/Synesso/scala-stellar-sdk)
-[![Chat](https://img.shields.io/gitter/room/scala-stellar-sdk/community.svg)](https://gitter.im/scala-stellar-sdk/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Issues](https://img.shields.io/github/issues/Synesso/scala-stellar-sdk.svg)](https://github.com/Synesso/scala-stellar-sdk/issues)
 ![Supports Stellar Horizon v1.0.0-beta](https://img.shields.io/badge/Horizon-v1.0.0-blue.svg)
 ![Supports Stellar Core v12](https://img.shields.io/badge/Core-v12-blue.svg)
