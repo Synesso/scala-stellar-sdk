@@ -2,6 +2,7 @@ ThisBuild / scalaVersion := "2.13.1"
 
 lazy val root = project
   .in(file("."))
+  .enablePlugins(GitVersioning)
   .enablePlugins(BuildInfoPlugin).settings(
     buildInfoKeys := Seq[BuildInfoKey](name, version, scalaVersion, sbtVersion),
     buildInfoPackage := "stellar.sdk"
@@ -15,6 +16,14 @@ lazy val root = project
         "scaladoc.stellar.base_url" -> "https://synesso.github.io/scala-stellar-sdk/api"
       )
     )
+  .enablePlugins(ParadoxMaterialThemePlugin).settings(
+    paradoxMaterialTheme in Compile ~= {
+      _
+        .withRepository(url("https://github.com/synesso/scala-stellar-sdk").toURI)
+        .withSocial(uri("https://github.com/synesso"), uri("https://keybase.io/jem"))
+        .withoutSearch()
+    }
+  )
   .configs(IntegrationTest)
   .settings(
     name := "scala-stellar-sdk",
