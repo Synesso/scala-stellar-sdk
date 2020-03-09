@@ -56,7 +56,7 @@ lazy val root = project
       "net.i2p.crypto" % "eddsa" % "0.3.0",
       "org.json4s" %% "json4s-native" % "3.6.7",
       "org.scala-lang.modules" %% "scala-collection-compat" % "2.1.4",
-      "org.typelevel" %% "cats-core" % "2.1.0",
+      "org.typelevel" %% "cats-core" % "2.1.1",
       "tech.sparse" %%  "toml-scala" % "0.2.2",
 
       "com.squareup.okhttp3" % "mockwebserver" % "4.3.1" % "test",
