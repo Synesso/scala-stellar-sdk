@@ -20,3 +20,13 @@ class ArrayBackedWordList(source: => Source, val separator: String = " ") extend
     words(i)
   }
 }
+
+object ChineseSimplifiedWords extends ArrayBackedWordList(Source.fromResource("wordlists/chinese_simplified.txt"))
+object ChineseTraditionalWords extends ArrayBackedWordList(Source.fromResource("wordlists/chinese_traditional.txt"))
+object CzechWords extends ArrayBackedWordList(Source.fromResource("wordlists/czech.txt"))
+object EnglishWords extends ArrayBackedWordList(Source.fromResource("wordlists/english.txt"))
+object FrenchWords extends ArrayBackedWordList(Source.fromResource("wordlists/french.txt"))
+object ItalianWords extends ArrayBackedWordList(Source.fromResource("wordlists/italian.txt"))
+object JapaneseWords extends ArrayBackedWordList(Source.fromResource("wordlists/japanese.txt"), "\u3000")
+object KoreanWords extends ArrayBackedWordList(Source.fromResource("wordlists/korean.txt"))
+object SpanishWords extends ArrayBackedWordList(Source.fromResource("wordlists/spanish.txt"))

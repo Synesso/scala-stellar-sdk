@@ -79,8 +79,9 @@ Keys can be restored from a mnemonic phrase and, optionally, a password.
 
 @@snip [KeyPairSpec.scala](../../test/scala/stellar/sdk/KeyPairSpec.scala) { #keypair-from-mnemonic }
 
-Mnemonic phrases are available in English, French, Japanese and Spanish - with Chinese, Czech, Korean and Italian 
-to be supported soon.
+Mnemonic phrases are available in Chinese (simplified & traditional), Czech, English, French, 
+Italian, Japanese, Korean and Spanish. Additional languages can be implemented in clients as needed. 
+See @scaladoc[ArrayBackedWordList](stellar.sdk.key.ArrayBackedWordList) 
 
 @@snip [KeyPairSpec.scala](../../test/scala/stellar/sdk/KeyPairSpec.scala) { #keypair-from-mnemonic-japanese }
 

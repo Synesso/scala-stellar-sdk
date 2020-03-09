@@ -8,11 +8,17 @@ import scala.concurrent.duration.Duration
 import scala.util.Try
 
 case class HorizonServerError(uri: HttpUrl, body: JObject)(implicit val formats: Formats) extends Exception(
-  s"Server error when communicating with Horizon. $uri -> ${(body \ "detail").extract[String]}"
+  s"Server error when communicating with Horizon. $uri -> ${
+    implicit val formats: Formats = DefaultFormats
+    Try((body \ "detail").extract[String]).getOrElse(JsonMethods.compact(JsonMethods.render(body)))
+  }"
 )
 
 case class HorizonEntityNotFound(uri: HttpUrl, body: JValue)(implicit val formats: Formats) extends Exception(
-  s"Requested entity was not found in Horizon. $uri -> ${(body \ "detail").extract[String]}"
+  s"Requested entity was not found in Horizon. $uri -> ${
+    implicit val formats: Formats = DefaultFormats
+    Try((body \ "detail").extract[String]).getOrElse(JsonMethods.compact(JsonMethods.render(body)))
+  }"
 )
 
 case class HorizonRateLimitExceeded(uri: HttpUrl, retryAfter: Duration)(implicit val formats: Formats) extends Exception(

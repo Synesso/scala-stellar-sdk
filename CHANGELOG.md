@@ -4,6 +4,8 @@ As this project is pre 1.0, breaking changes may happen for minor version bumps.
 
 ## Next version
 
+- Adds support for Mnemonic phrases in Chinese Simplified, Chinese Traditional, Czech, Italian & Korean 
+
 ## 0.11.1
 
 - Horizon cursors are not working as documented, so this release disables support for cursors on queries.
