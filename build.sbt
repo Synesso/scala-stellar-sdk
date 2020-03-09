@@ -1,5 +1,8 @@
 ThisBuild / scalaVersion := "2.13.1"
 
+val specs2 = "4.9.2"
+val okhttp = "4.4.1"
+
 lazy val root = project
   .in(file("."))
   .enablePlugins(GitVersioning)
@@ -47,8 +50,8 @@ lazy val root = project
     libraryDependencies ++= List(
       "ch.qos.logback" % "logback-classic" % "1.2.3",
       "com.softwaremill.retry" %% "retry" % "0.3.3",
-      "com.squareup.okhttp3" % "okhttp" % "4.3.1",
-      "com.squareup.okhttp3" % "logging-interceptor" % "4.3.1",
+      "com.squareup.okhttp3" % "okhttp" % okhttp,
+      "com.squareup.okhttp3" % "logging-interceptor" % okhttp,
       "com.typesafe.scala-logging" %% "scala-logging" % "3.9.2",
       "com.squareup.okio" % "okio" % "2.4.3",
       "commons-codec" % "commons-codec" % "1.14",
@@ -59,10 +62,10 @@ lazy val root = project
       "org.typelevel" %% "cats-core" % "2.1.0",
       "tech.sparse" %%  "toml-scala" % "0.2.2",
 
-      "com.squareup.okhttp3" % "mockwebserver" % "4.3.1" % "test",
-      "org.specs2" %% "specs2-core" % "4.9.2" % "test,it",
-      "org.specs2" %% "specs2-mock" % "4.9.2" % "test",
-      "org.specs2" %% "specs2-scalacheck" % "4.9.2" % "test"
+      "com.squareup.okhttp3" % "mockwebserver" % okhttp % "test",
+      "org.specs2" %% "specs2-core" % specs2 % "test,it",
+      "org.specs2" %% "specs2-mock" % specs2 % "test",
+      "org.specs2" %% "specs2-scalacheck" % specs2 % "test"
     ),
     coverageMinimum := 95,
     coverageFailOnMinimum := true,
