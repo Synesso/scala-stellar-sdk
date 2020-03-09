@@ -103,8 +103,6 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
     val futureAccountB = network.account(accnB).map(_.toAccount)
     futureAccountA.flatMap(a => futureAccountB.map(b => (a, b))).recoverWith {
       case _ => // account details not found, assume fixture setup is required then try again
-        // docker container running inside travis has trouble processing non-trivial transactions within timeout.
-        // so, group the operations into smaller transactions.
         transact(
           CreateAccountOperation(accnA, lumens(1000)),
           CreateAccountOperation(accnB, lumens(1000)),
@@ -169,7 +167,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
     }
   }
 
-  val (accountA, accountB) = Await.result(setupFixtures, 5 minutes /* for travis */)
+  val (accountA, accountB) = Await.result(setupFixtures, 5.minutes /* for slow ci servers */)
 
   // This goes first because the stats change as time passes.
   "fee stats" should {
