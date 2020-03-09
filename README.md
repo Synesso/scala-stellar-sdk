@@ -18,7 +18,6 @@ Add the JitPack & jcenter resolvers and the [latest dependency](https://jitpack.
 
 ```scala
 resolvers += "jitpack" at "https://jitpack.io"
-resolvers += Resolver.jcenterRepo
 libraryDependencies += "com.github.synesso" %% "scala-stellar-sdk" % "0.11.1"
 ```
 

@@ -43,7 +43,7 @@ lazy val root = project
     ),
     crossScalaVersions := Seq("2.12.10", "2.13.1"),
     Defaults.itSettings,
-    resolvers += Resolver.jcenterRepo,
+    resolvers += "jitpack" at "https://jitpack.io",
     libraryDependencies ++= List(
       "ch.qos.logback" % "logback-classic" % "1.2.3",
       "com.softwaremill.retry" %% "retry" % "0.3.3",
@@ -52,7 +52,7 @@ lazy val root = project
       "com.typesafe.scala-logging" %% "scala-logging" % "3.9.2",
       "com.squareup.okio" % "okio" % "2.4.3",
       "commons-codec" % "commons-codec" % "1.14",
-      "io.github.novacrypto" % "BIP39" % "2019.01.27",
+      "io.github.novacrypto" % "BIP39" % "0.1.8",
       "net.i2p.crypto" % "eddsa" % "0.3.0",
       "org.json4s" %% "json4s-native" % "3.6.7",
       "org.scala-lang.modules" %% "scala-collection-compat" % "2.1.4",
