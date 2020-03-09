@@ -17,9 +17,8 @@ To generate a test coverage report:
 ## Deployment Checklist
 
 1. Update & push CHANGELOG.md & README.md (version number). If necessary, update any code examples in the README.md for API changes.
-2. Create pending release in github
-3. Tag will have been created. Wait for successful build on travis.org
-4. Update `gh-pages` branch, to reintroduce files that the paradox plugin erroneously deletes. (Git log will show a recent file that can be cherry-picked).
-5. Sync to maven central from bintray.com
-6. Check [documentation](https://synesso.github.io/scala-stellar-sdk/) has correct tag and no missing icons.
-7. Check that the artifact can be fetched from maven central.
+2. Create pending release in github.
+3. `git pull` locally and on the tagged commit `sbt ghpagesPushSite`
+4. Check [documentation](https://synesso.github.io/scala-stellar-sdk/) has correct tag and no missing icons. Check links (todo: automate)
+5. Check that the artifact can be fetched from jitpack (todo: script this step)
+6. Update `stellar-sdk-source-testing` project with newest version (todo: always use latest?)
