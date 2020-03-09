@@ -4,6 +4,10 @@ As this project is pre 1.0, breaking changes may happen for minor version bumps.
 
 ## Next version
 
+## 0.11.1
+
+- Horizon cursors are not working as documented, so this release disables support for cursors on queries.
+  The SDK API has not changed, but any provided cursors will be ignored until a future release.  
 
 ## 0.11.0
 
