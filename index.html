@@ -155,7 +155,7 @@ synesso/scala-stellar-sdk
 <ul style="display: none">
 <li class="md-nav__item md-version" id="project.version">
 <label class="md-nav__link" for="__version">
-<i class="md-icon" title="Version">label_outline</i> 0.11.1*
+<i class="md-icon" title="Version">label_outline</i> 0.11.1
 </label>
 </li>
 </ul>
@@ -190,21 +190,21 @@ synesso/scala-stellar-sdk
 <h2><a href="#quick-start" name="quick-start" class="anchor"><span class="anchor-link"></span></a>Quick-start</h2>
 <p>Add the jitpack resolver.</p>
 <p><code>resolvers += &quot;jitpack&quot; at &quot;https://jitpack.io&quot;</code></p>
-<p>Then, add the SDK via your dependency management tool.</p><dl class="dependency"><dt>sbt</dt><dd><pre class="prettyprint"><code class="language-scala">libraryDependencies += "io.github.synesso" %% "scala-stellar-sdk" % "0.11.1-SNAPSHOT"</code></pre></dd><dt>Maven</dt><dd><pre class="prettyprint"><code class="language-xml">&lt;dependency&gt;
+<p>Then, add the SDK via your dependency management tool.</p><dl class="dependency"><dt>sbt</dt><dd><pre class="prettyprint"><code class="language-scala">libraryDependencies += "io.github.synesso" %% "scala-stellar-sdk" % "0.11.1"</code></pre></dd><dt>Maven</dt><dd><pre class="prettyprint"><code class="language-xml">&lt;dependency&gt;
   &lt;groupId&gt;io.github.synesso&lt;/groupId&gt;
   &lt;artifactId&gt;scala-stellar-sdk_2.13&lt;/artifactId&gt;
-  &lt;version&gt;0.11.1-SNAPSHOT&lt;/version&gt;
+  &lt;version&gt;0.11.1&lt;/version&gt;
 &lt;/dependency&gt;</code></pre></dd><dt>Gradle</dt><dd><pre class="prettyprint"><code class="language-gradle">dependencies {
-  compile group: 'io.github.synesso', name: 'scala-stellar-sdk_2.13', version: '0.11.1-SNAPSHOT'
+  compile group: 'io.github.synesso', name: 'scala-stellar-sdk_2.13', version: '0.11.1'
 }</code></pre></dd></dl>
 <p>Creating an account on the public test network.</p>
-<pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/synesso/scala-stellar-sdk/tree/master/src/it/scala/stellar/sdk/FriendBotSpec.scala#L17-L18" target="_blank" title="Go to snippet source"></a><code class="language-scala">val kp = KeyPair.random
+<pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/synesso/scala-stellar-sdk/tree/v0.11.1/src/it/scala/stellar/sdk/FriendBotSpec.scala#L17-L18" target="_blank" title="Go to snippet source"></a><code class="language-scala">val kp = KeyPair.random
 val response = TestNetwork.fund(kp)</code></pre>
 <p>Fetching the details of an account.</p>
-<pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/synesso/scala-stellar-sdk/tree/master/src/it/scala/stellar/sdk/LocalNetworkIntegrationSpec.scala#L230-L231" target="_blank" title="Go to snippet source"></a><code class="language-scala">val account: Future[Account] = network.account(kp).map(_.toAccount)
+<pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/synesso/scala-stellar-sdk/tree/v0.11.1/src/it/scala/stellar/sdk/LocalNetworkIntegrationSpec.scala#L230-L231" target="_blank" title="Go to snippet source"></a><code class="language-scala">val account: Future[Account] = network.account(kp).map(_.toAccount)
 val nextSeqNo: Future[Long] = account.map(_.sequenceNumber)</code></pre>
 <p>Submitting a payment.</p>
-<pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/synesso/scala-stellar-sdk/tree/master/src/it/scala/stellar/sdk/LocalNetworkIntegrationSpec.scala#L154-L160" target="_blank" title="Go to snippet source"></a><code class="language-scala">for {
+<pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/synesso/scala-stellar-sdk/tree/v0.11.1/src/it/scala/stellar/sdk/LocalNetworkIntegrationSpec.scala#L154-L160" target="_blank" title="Go to snippet source"></a><code class="language-scala">for {
   sourceAccount &lt;- network.account(payerKeyPair)
   response &lt;- model.Transaction(sourceAccount, timeBounds = Unbounded, maxFee = NativeAmount(100))
     .add(PaymentOperation(payeePublicKey, lumens(5000)))
@@ -224,13 +224,13 @@ val nextSeqNo: Future[Long] = account.map(_.sequenceNumber)</code></pre>
 <p>You can <a href="https://keybase.io/jem/chat">contact me on KeyBase</a>.</p>
 </div>
 <div>
-<a href="https://github.com/synesso/scala-stellar-sdk/tree/master/src/main/paradox/index.md" title="Edit this page" class="md-source-file md-edit">
+<a href="https://github.com/synesso/scala-stellar-sdk/tree/v0.11.1/src/main/paradox/index.md" title="Edit this page" class="md-source-file md-edit">
 Edit this page
 </a>
 </div>
 <div class="print-only">
 <span class="md-source-file md-version">
-0.11.1*
+0.11.1
 </span>
 </div>
 </article>
