@@ -1,6 +1,6 @@
 # [Stellar SDK for Scala](https://synesso.github.io/scala-stellar-sdk/)
 
-![Scala CI](https://github.com/Synesso/scala-stellar-sdk/workflows/Scala%20CI/badge.svg?branch=master)
+![Build](https://github.com/Synesso/scala-stellar-sdk/workflows/Build/badge.svg?branch=master)
 [![Coverage](https://img.shields.io/codecov/c/gh/Synesso/scala-stellar-sdk.svg)](https://codecov.io/gh/Synesso/scala-stellar-sdk)
 [![Issues](https://img.shields.io/github/issues/Synesso/scala-stellar-sdk.svg)](https://github.com/Synesso/scala-stellar-sdk/issues)
 ![Supports Stellar Horizon v1.0.0-beta](https://img.shields.io/badge/Horizon-v1.0.0-blue.svg)
