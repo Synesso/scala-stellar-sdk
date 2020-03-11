@@ -7,7 +7,7 @@ offers to trade or account creation are made to the network's ledger.
 
 Every transaction must originate from an existing account on the network and correctly specify the next
 [sequence number](https://www.stellar.org/developers/guides/concepts/accounts.html#sequence-number).
-Creating a new `Transaction` instance requires these two values, wrapped in an @scaladoc[Account](stellar.sdk.model.Account).
+Creating a new `Transaction` instance requires these two values, wrapped in an @apidoc[Account].
 
 Additionally, a `Network` must be implicit in scope. The choice of network will affect how the transaction is serialised.
 
@@ -26,7 +26,7 @@ As this example shows, transactions require additional data before they can be s
 
 ### Operations
 
-Without any @scaladoc[Operation](stellar.sdk.model.op.Operation)s, a transaction is not very useful. There can be as few as
+Without any @apidoc[Operation]s, a transaction is not very useful. There can be as few as
 one and as many and one hundred operations added to each Transaction. These can be provided when constructing the
 Transaction.
 
@@ -38,25 +38,25 @@ Or they can be added afterwards.
 
 The available operations are:
 
-* @scaladoc[AccountMerge](stellar.sdk.model.op.AccountMergeOperation)
-* @scaladoc[AllowTrust](stellar.sdk.model.op.AllowTrustOperation)
-* @scaladoc[BumpSequence](stellar.sdk.model.op.BumpSequenceOperation)
-* @scaladoc[ChangeTrust](stellar.sdk.model.op.ChangeTrustOperation)
-* @scaladoc[CreateAccount](stellar.sdk.model.op.CreateAccountOperation)
-* @scaladoc[CreateBuyOffer](stellar.sdk.model.op.CreateBuyOfferOperation)
-* @scaladoc[CreateSellOffer](stellar.sdk.model.op.CreateSellOfferOperation)
-* @scaladoc[CreatePassiveSellOffer](stellar.sdk.model.op.CreatePassiveSellOfferOperation)
-* @scaladoc[DeleteData](stellar.sdk.model.op.DeleteDataOperation)
-* @scaladoc[DeleteBuyOffer](stellar.sdk.model.op.DeleteBuyOfferOperation)
-* @scaladoc[DeleteSellOffer](stellar.sdk.model.op.DeleteSellOfferOperation)
-* @scaladoc[Inflation](stellar.sdk.model.op.InflationOperation)
-* @scaladoc[PathPaymentStrictReceive](stellar.sdk.model.op.PathPaymentStrictReceiveOperation)
-* @scaladoc[PathPaymentStrictSend](stellar.sdk.model.op.PathPaymentStrictSendOperation)
-* @scaladoc[Payment](stellar.sdk.model.op.PaymentOperation)
-* @scaladoc[SetOptions](stellar.sdk.model.op.SetOptionsOperation)
-* @scaladoc[UpdateBuyOffer](stellar.sdk.model.op.UpdateBuyOfferOperation)
-* @scaladoc[UpdateSellOffer](stellar.sdk.model.op.UpdateSellOfferOperation)
-* @scaladoc[WriteData](stellar.sdk.model.op.WriteDataOperation)
+* @apidoc[AccountMergeOperation]
+* @apidoc[AllowTrustOperation]
+* @apidoc[BumpSequenceOperation]
+* @apidoc[ChangeTrustOperation]
+* @apidoc[CreateAccountOperation]
+* @apidoc[CreateBuyOfferOperation]
+* @apidoc[CreateSellOfferOperation]
+* @apidoc[CreatePassiveSellOfferOperation]
+* @apidoc[DeleteDataOperation]
+* @apidoc[DeleteBuyOfferOperation]
+* @apidoc[DeleteSellOfferOperation]
+* @apidoc[InflationOperation]
+* @apidoc[PathPaymentStrictReceiveOperation]
+* @apidoc[PathPaymentStrictSendOperation]
+* @apidoc[PaymentOperation]
+* @apidoc[SetOptionsOperation]
+* @apidoc[UpdateBuyOfferOperation]
+* @apidoc[UpdateSellOfferOperation]
+* @apidoc[WriteDataOperation]
 
 Operations need not originate from the same account as the transaction. In this way a single transaction can be issued that
 affects multiple accounts. This enables techniques such as the
@@ -66,9 +66,9 @@ constructor parameter `sourceAccount: Option[PublicKey]` where the source accoun
 ### TimeBounds
 
 As of v0.9.0, the valid date range for a transaction must be specified. The network will reject any transaction submitted
-outside of the range defined. To help define `TimeBound`s, the constant @scaladoc[Unbounded](stellar.sdk.model.TimeBounds.Unbounded)
-represents all time. Additionally, @scaladoc[TimeBounds.timeout](stellar.sdk.model.TimeBounds.timeout)  will specify a
-`TimeBound` from the current time until some given timeout duration.
+outside of the range defined. To help define `TimeBound`s, the object @apidoc[TimeBounds$] contains the constant 
+`Unbounded` (representing all time) and the method `timeout`, which will return a
+`TimeBound` from the current time until some given timeout duration in the future.
 
 ### Maximum Fee
 
@@ -102,7 +102,7 @@ Once a transaction is signed (and therefore is of type `SignedTransaction`) it c
 
 @@snip [DocExamples.scala](../../test/scala/stellar/sdk/DocExamples.scala) { #transaction_submit_example }
 
-The eventual resulting @scaladoc[TransactionPostResp](stellar.sdk.resp.TransactionPostResp) contains metadata about the
+The eventual resulting @apidoc[TransactionPostResponse] contains metadata about the
 processed transaction, including the full results encoded as [XDR](https://www.stellar.org/developers/guides/concepts/xdr.html).
 Additionally, the XDR can be decoded on the fly by calling the relevant convenience methods.
 
@@ -125,7 +125,7 @@ and need to be decoded via a similar method on `SignedTransaction`.
 
 All transaction post and history responses include an XDR payload that describes the effects that the transaction had
 on the ledger. The field `resultMetaXDR` is the base64-encoded XDR payload. The method `ledgerEntries` will decode the
-payload into an instance of @scaladoc[TransactionLedgerEntries](stellar.sdk.model.ledger.TransactionLedgerEntries).
+payload into an instance of @apidoc[TransactionLedgerEntries].
 
 Similarly, the ledger effect of the fees is made available via the `feeMetaXDR` field and the `feeLedgerEntries` method.
 
