@@ -21,9 +21,9 @@ The knowledge of a key pair does not imply that the account exists on any Stella
 
 There are actually two kinds of `KeyPair` objects in the SDK.
 
-* @scaladoc[KeyPair](stellar.sdk.KeyPair) represents the public and secret components, and can be used for operations 
+* @apidoc[KeyPair] represents the public and secret components, and can be used for operations 
     that require proof of the secret portion, such as transaction signing.
-* @scaladoc[PublicKey](stellar.sdk.PublicKey) represents only the public component. This is used to refer to accounts 
+* @apidoc[PublicKey] represents only the public component. This is used to refer to accounts 
     other than your own, such as the counterparty of a payment.
     
 As the account id can be derived from the secret seed, there is no object which models the secret seed without the 
@@ -81,7 +81,7 @@ Keys can be restored from a mnemonic phrase and, optionally, a password.
 
 Mnemonic phrases are available in Chinese (simplified & traditional), Czech, English, French, 
 Italian, Japanese, Korean and Spanish. Additional languages can be implemented in clients as needed. 
-See @scaladoc[ArrayBackedWordList](stellar.sdk.key.ArrayBackedWordList) 
+See @apidoc[ArrayBackedWordList] 
 
 @@snip [KeyPairSpec.scala](../../test/scala/stellar/sdk/KeyPairSpec.scala) { #keypair-from-mnemonic-japanese }
 
