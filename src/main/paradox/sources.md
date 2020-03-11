@@ -22,7 +22,7 @@ Like queries, sources fall into several categories.
 
 ### Effects
 
-@apidoc[EffectResp]s are the changes that have been effected on the network as a result of
+@apidoc[EffectResponse]s are the changes that have been effected on the network as a result of
 operations successfully processed.
 
 @@snip [DocExamples.scala](../../test/scala/stellar/sdk/DocExamples.scala) { #effect_source_examples }
@@ -30,7 +30,7 @@ operations successfully processed.
 
 ### Ledgers
 
-@apidoc[LedgerResp]s represent the state of the network at any time. They are created
+@apidoc[LedgerResponse]s represent the state of the network at any time. They are created
 sequentially as the state of the network changes.
 
 @@snip [DocExamples.scala](../../test/scala/stellar/sdk/DocExamples.scala) { #ledger_source_examples }
@@ -38,7 +38,7 @@ sequentially as the state of the network changes.
 
 ### Offers
 
-@apidoc[OfferResp]s can be issued by accounts to buy or sell assets. Sources for offers
+@apidoc[OfferResponse]s can be issued by accounts to buy or sell assets. Sources for offers
 is available only by account.
 
 @@snip [DocExamples.scala](../../test/scala/stellar/sdk/DocExamples.scala) { #offer_source_examples }

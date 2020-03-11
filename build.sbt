@@ -11,15 +11,15 @@ lazy val root = project
   buildInfoPackage := "stellar.sdk"
 )
   .enablePlugins(ParadoxPlugin).settings(
-  paradoxProperties ++= Map(
-    "name" -> name.value,
-    "organization" -> organization.value,
-    "version" -> version.value,
-    "scalaBinaryVersion" -> scalaBinaryVersion.value,
-    "scaladoc.stellar.base_url" -> "latest/api/"
-    //        "scaladoc.stellar.base_url" -> "https://synesso.github.io/scala-stellar-sdk/api"
+    paradoxProperties ++= Map(
+      "name" -> name.value,
+      "organization" -> organization.value,
+      "version" -> version.value,
+      "scalaBinaryVersion" -> scalaBinaryVersion.value,
+      "scaladoc.stellar.base_url" -> "latest/api/"
+    ),
+    apidocRootPackage := "stellar.sdk"
   )
-)
   .enablePlugins(ParadoxMaterialThemePlugin).settings(
   paradoxMaterialTheme in Compile ~= {
     _

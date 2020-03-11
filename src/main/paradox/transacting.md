@@ -66,9 +66,9 @@ constructor parameter `sourceAccount: Option[PublicKey]` where the source accoun
 ### TimeBounds
 
 As of v0.9.0, the valid date range for a transaction must be specified. The network will reject any transaction submitted
-outside of the range defined. To help define `TimeBound`s, the constant @apidoc[Unbounded]
-represents all time. Additionally, @apidoc[TimeBounds.timeout]  will specify a
-`TimeBound` from the current time until some given timeout duration.
+outside of the range defined. To help define `TimeBound`s, the object @apidoc[TimeBounds$] contains the constant 
+`Unbounded` (representing all time) and the method `timeout`, which will return a
+`TimeBound` from the current time until some given timeout duration in the future.
 
 ### Maximum Fee
 
@@ -102,7 +102,7 @@ Once a transaction is signed (and therefore is of type `SignedTransaction`) it c
 
 @@snip [DocExamples.scala](../../test/scala/stellar/sdk/DocExamples.scala) { #transaction_submit_example }
 
-The eventual resulting @apidoc[TransactionPostResp] contains metadata about the
+The eventual resulting @apidoc[TransactionPostResponse] contains metadata about the
 processed transaction, including the full results encoded as [XDR](https://www.stellar.org/developers/guides/concepts/xdr.html).
 Additionally, the XDR can be decoded on the fly by calling the relevant convenience methods.
 

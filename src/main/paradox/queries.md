@@ -14,16 +14,16 @@ Queries fall into several categories.
 
 ### Accounts
 
-@apidoc[AccountResp]s are the entities through which users can interact with the network.
-They are represented by a key pair. Account details can be found given an account's @apidoc[KeyPair](stellar.sdk.KeyPair)
-or @apidoc[PublicKey](stellar.sdk.PublicKey).
+@apidoc[AccountResponse]s are the entities through which users can interact with the network.
+They are represented by a key pair. Account details can be found given an account's @apidoc[KeyPair]
+or @apidoc[PublicKey].
 
 @@snip [DocExamples.scala](../../test/scala/stellar/sdk/DocExamples.scala) { #account_query_examples }
 
 
 ### Assets
 
-@apidoc[AssetResp]s are the items that are traded on the network. They can be searched for by
+@apidoc[AssetResponse]s are the items that are traded on the network. They can be searched for by
 their `code`, `issuer`, neither or both.
 
 By default the results will be in ascending order from the earliest record. This behaviour can be modified with the
@@ -34,7 +34,7 @@ By default the results will be in ascending order from the earliest record. This
 
 ### Effects
 
-@apidoc[EffectsResp]s are the changes that have been effected on the network as a result of
+@apidoc[EffectResponse]s are the changes that have been effected on the network as a result of
 operations successfully processed.
 
 By default the results will be in ascending order from the earliest record. This behaviour can be modified with the
@@ -54,7 +54,7 @@ This parameterless endpoint provides statistics about the fees paid during the l
 
 ### Ledgers
 
-@apidoc[LedgerResp]s represent the state of the network at any time. They are created
+@apidoc[LedgerResponse]s represent the state of the network at any time. They are created
 sequentially as the state of the network changes.
 
 It is possible to stream all ledgers or query for a specific ledger by its sequential id. Each returned value provides
@@ -77,7 +77,7 @@ and the earliest and latest ledger ids.
 
 ### Offers
 
-@apidoc[OfferResp]s can be issued by accounts to buy or sell assets. Querying for offers
+@apidoc[OfferResponse]s can be issued by accounts to buy or sell assets. Querying for offers
 is available only by account. Additional offers are found by searching the `OrderBook`.
 
 By default the results will be in ascending order from the earliest record. This behaviour can be modified with the
