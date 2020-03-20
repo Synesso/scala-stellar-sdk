@@ -53,7 +53,7 @@ lazy val root = project
       "com.squareup.okhttp3" % "okhttp" % okhttp,
       "com.squareup.okhttp3" % "logging-interceptor" % okhttp,
       "com.typesafe.scala-logging" %% "scala-logging" % "3.9.2",
-      "com.squareup.okio" % "okio" % "2.4.3",
+      "com.squareup.okio" % "okio" % "2.5.0",
       "commons-codec" % "commons-codec" % "1.14",
       "io.github.novacrypto" % "BIP39" % "2019.01.27",
       "net.i2p.crypto" % "eddsa" % "0.3.0",
