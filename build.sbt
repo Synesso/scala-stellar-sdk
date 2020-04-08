@@ -1,6 +1,6 @@
 ThisBuild / scalaVersion := "2.13.1"
 
-val specs2 = "4.9.2"
+val specs2 = "4.9.3"
 val okhttp = "4.5.0"
 
 lazy val root = project
