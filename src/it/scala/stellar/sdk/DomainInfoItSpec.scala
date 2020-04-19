@@ -14,6 +14,7 @@ class DomainInfoItSpec(implicit ee: ExecutionEnv) extends Specification {
       // #domain_info_example
       DomainInfo.forDomain("stellar.org") must beSome(
         DomainInfo(
+          version = Some("2.0.0"),
           accounts = List(
             KeyPair.fromAccountId("GB6NVEN5HSUBKMYCE5ZOWSK5K23TBWRUQLZY3KNMXUZ3AQ2ESC4MY4AQ"),
             KeyPair.fromAccountId("GATL3ETTZ3XDGFXX2ELPIKCZL7S5D2HY3VK4T7LRPD6DW5JOLAEZSZBA"),
