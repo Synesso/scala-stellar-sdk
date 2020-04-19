@@ -72,7 +72,6 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
               logger.debug(s"Approved. Hash is ${a.hash}")
               a.ledgerEntries // can decode
               a.result // can decode
-              a.result.operationResults.foreach(println)
               ok
             case r: TransactionRejected =>
               logger.info(r.detail)
