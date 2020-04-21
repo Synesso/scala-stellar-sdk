@@ -288,7 +288,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
   "effect endpoint" should {
     "parse all effects" >> {
       val effects = network.effects()
-      effects.map(_.size) must beEqualTo(241).awaitFor(10 seconds)
+      effects.map(_.size) must beEqualTo(240).awaitFor(10 seconds)
     }
 
     "filter effects by account" >> {
@@ -442,7 +442,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
       network.orderBook(NativeAsset, chinchillaA) must beLike[OrderBook] {
         case OrderBook(NativeAsset, buying, bids, asks) =>
           buying must beEquivalentTo(chinchillaA)
-          bids mustEqual Seq(Order(Price(4, 80), 800000000))
+          bids mustEqual Seq(Order(Price(1, 20), 800000000))
           asks mustEqual Seq(Order(Price(1, 5), 50000000))
       }.awaitFor(10.seconds)
     }
