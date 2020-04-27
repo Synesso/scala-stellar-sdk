@@ -1,5 +1,5 @@
 addSbtPlugin("com.eed3si9n" % "sbt-buildinfo" % "0.9.0")
-addSbtPlugin("com.lightbend.paradox" % "sbt-paradox" % "0.7.0")
+addSbtPlugin("com.lightbend.paradox" % "sbt-paradox" % "0.8.0")
 addSbtPlugin("com.lightbend.paradox" % "sbt-paradox-apidoc" % "0.9")
 addSbtPlugin("com.typesafe.sbt" % "sbt-ghpages" % "0.6.3")
 addSbtPlugin("com.typesafe.sbt" % "sbt-git" % "1.0.0")
