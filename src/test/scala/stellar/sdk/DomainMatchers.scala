@@ -76,7 +76,7 @@ trait DomainMatchers extends AnyMatchers with MustExpectations with SequenceMatc
     case op =>
       op.trustor.accountId mustEqual other.trustor.accountId
       op.assetCode mustEqual other.assetCode
-      op.authorize mustEqual other.authorize
+      op.trustLineFlags mustEqual other.trustLineFlags
   }
 
   def beEquivalentTo(other: ChangeTrustOperation): Matcher[ChangeTrustOperation] = beLike[ChangeTrustOperation] {

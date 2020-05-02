@@ -230,7 +230,7 @@ trait ArbitraryInput extends ScalaCheck {
   def genAllowTrustOperation: Gen[AllowTrustOperation] = for {
     trustor <- genPublicKey
     assetCode <- Gen.identifier.map(_.take(12))
-    authorise <- Gen.oneOf(true, false)
+    authorise <- Gen.choose(0, 3).map(TrustLineFlags.from)
     sourceAccount <- Gen.option(genPublicKey)
   } yield {
     AllowTrustOperation(trustor, assetCode, authorise, sourceAccount)

@@ -47,7 +47,7 @@ class AllowTrustOperationSpec extends Specification with ArbitraryInput with Dom
            |  "asset_issuer": "${op.operation.sourceAccount.get.accountId}"
            |  "trustor": "${op.operation.trustor.accountId}",
            |  "trustee": "${op.operation.sourceAccount.get.accountId}",
-           |  "authorize": ${op.operation.authorize}
+           |  "authorize": ${op.operation.trustLineFlags.map(_.i).sum}
            |}
          """.stripMargin
 

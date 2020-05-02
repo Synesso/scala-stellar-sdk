@@ -4,7 +4,15 @@ As this project is pre 1.0, breaking changes may happen for minor version bumps.
 
 ## Next version
 
-- Adds support for Mnemonic phrases in Chinese Simplified, Chinese Traditional, Czech, Italian & Korean 
+- Adds support for Mnemonic phrases in Chinese Simplified, Chinese Traditional, Czech, Italian & Korean
+- Adds support for Stellar Core Protocol #13
+  - `AllowTrustOperation` now has two difference kinds of authorization. See `TrustLineFlag`.
+  
+### Breaking changes
+
+- `AllowTrustOperation` fields have changed. `authorize: Boolean` has been replaced with 
+  `trustLineFlags: Set[TrustLineFlag]`. Whilst `authorize` has been added as a deprecated property
+  for backwards compatibility, this will still break if you rely on pattern matching.
 
 ## 0.11.1
 
