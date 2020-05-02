@@ -117,8 +117,8 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
           ChangeTrustOperation(IssuedAmount(100000000, chinchillaA), Some(accnB)),
           ChangeTrustOperation(IssuedAmount(100000000, chinchillaA), Some(accnD)),
           ChangeTrustOperation(IssuedAmount(100000000, chinchillaMaster), Some(accnA)),
-          AllowTrustOperation(accnB, "Aardvark", authorize = true, Some(accnA)),
-          AllowTrustOperation(accnB, "Chinchilla", authorize = true, Some(accnA)),
+          AllowTrustOperation(accnB, "Aardvark", trustLineFlags = Set(TrustLineAuthorized), Some(accnA)),
+          AllowTrustOperation(accnB, "Chinchilla", trustLineFlags = Set(TrustLineAuthorized), Some(accnA)),
           PaymentOperation(accnB, IssuedAmount(555, aardvarkA), Some(accnA))
         )
 
@@ -129,7 +129,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
           CreateSellOfferOperation(lumens(5), chinchillaA, Price(5, 100), Some(accnB)),
           CreateBuyOfferOperation(dachshundB, Amount(3, aardvarkA), Price(5, 3), Some(accnB)),
           CreatePassiveSellOfferOperation(IssuedAmount(10, beaverA), NativeAsset, Price(1, 3), Some(accnA)),
-          AllowTrustOperation(accnB, "Aardvark", authorize = false, Some(accnA))
+          AllowTrustOperation(accnB, "Aardvark", trustLineFlags = Set(), Some(accnA))
         )
 
         // force a transaction boundary between Create*Offer and Update/DeleteOffer

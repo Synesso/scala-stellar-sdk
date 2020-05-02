@@ -5,13 +5,16 @@ import java.nio.charset.StandardCharsets.UTF_8
 import cats.data.State
 import org.apache.commons.codec.binary.Base64
 import org.json4s.DefaultFormats
-import org.json4s.JsonAST.{JArray, JObject, JValue}
+import org.json4s.JsonAST.{JArray, JBool, JInt, JObject, JValue}
 import stellar.sdk._
 import stellar.sdk.model._
+import stellar.sdk.model.op.IssuerFlags.{all, int}
 import stellar.sdk.model.response.ResponseParser
 import stellar.sdk.model.xdr.{Decode, Encodable, Encode}
 import stellar.sdk.util.ByteArrays
 import stellar.sdk.util.ByteArrays.{base64, paddedByteArray}
+
+import scala.deprecated
 
 /**
   * An Operation represents a change to the ledger. It is the action, as opposed to the effects resulting from that action.
@@ -171,7 +174,15 @@ object OperationDeserializer extends ResponseParser[Operation]({ o: JObject =>
       ChangeTrustOperation(issuedAmount("limit"), sourceAccount)
     case "allow_trust" =>
       val asset: NonNativeAsset = nonNativeAsset
-      AllowTrustOperation(account("trustor"), asset.code, (o \ "authorize").extract[Boolean], sourceAccount)
+      val trustLineFlags: Set[TrustLineFlag] = (o \ "authorize") match {
+        case JInt(i) => TrustLineFlags.from(i.intValue) // protocol >= 13
+        case jv => if (jv.extract[Boolean]) Set(TrustLineAuthorized) else Set() // protocol <= 12
+      }
+      AllowTrustOperation(
+        account("trustor"),
+        asset.code,
+        trustLineFlags,
+        sourceAccount)
     case "account_merge" =>
       AccountMergeOperation(KeyPair.fromAccountId((o \ "into").extract[String]), sourceAccount)
     case "inflation" =>
@@ -584,6 +595,29 @@ object SetOptionsOperation extends Decode {
 
 }
 
+sealed trait TrustLineFlag {
+  val i: Int
+}
+
+case object TrustLineAuthorized extends TrustLineFlag {
+  val i = 0x1
+}
+
+case object TrustLineCanMaintainLiabilities extends TrustLineFlag {
+  val i = 0x2
+}
+
+object TrustLineFlags {
+  val all: Set[TrustLineFlag] = Set(TrustLineAuthorized, TrustLineCanMaintainLiabilities)
+
+  // TODO (jem) - This duplicates methods in IssuerFlags. Combine.
+  def apply(i: Int): Option[TrustLineFlag] = all.find(_.i == i)
+
+  def from(i: Int): Set[TrustLineFlag] = all.filter { f => (i & f.i) == f.i }
+
+  val decode: State[Seq[Byte], Set[TrustLineFlag]] = int.map(from)
+}
+
 sealed trait IssuerFlag {
   val i: Int
   val s: String
@@ -634,8 +668,11 @@ object ChangeTrustOperation {
   */
 case class AllowTrustOperation(trustor: PublicKeyOps,
                                assetCode: String,
-                               authorize: Boolean,
+                               trustLineFlags: Set[TrustLineFlag],
                                sourceAccount: Option[PublicKeyOps] = None) extends Operation {
+
+  @deprecated("This field has been removed in protocol 13. Use property `trustLineFlags` instead.")
+  val authorize: Boolean = trustLineFlags.contains(TrustLineAuthorized)
 
   override def encode: LazyList[Byte] =
     super.encode ++
@@ -643,8 +680,7 @@ case class AllowTrustOperation(trustor: PublicKeyOps,
       trustor.encode ++
       (if (assetCode.length <= 4) Encode.int(1) ++ Encode.bytes(4, paddedByteArray(assetCode, 4))
       else Encode.int(2) ++ Encode.bytes(12, paddedByteArray(assetCode, 12))) ++
-      Encode.bool(authorize)
-
+      Encode.int(trustLineFlags.map(_.i).sum)
 }
 
 object AllowTrustOperation extends Decode {
@@ -655,7 +691,7 @@ object AllowTrustOperation extends Decode {
       case 2 => 12
     }
     assetCode <- bytes(assetCodeLength).map(_.toArray).map(ByteArrays.paddedByteArrayToString)
-    authorize <- bool
+    authorize <- TrustLineFlags.decode
   } yield AllowTrustOperation(trustor, assetCode, authorize)
 }
 
