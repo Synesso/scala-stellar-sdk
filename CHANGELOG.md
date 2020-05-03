@@ -6,13 +6,20 @@ As this project is pre 1.0, breaking changes may happen for minor version bumps.
 
 - Adds support for Mnemonic phrases in Chinese Simplified, Chinese Traditional, Czech, Italian & Korean
 - Adds support for Stellar Core Protocol #13
-  - `AllowTrustOperation` now has two difference kinds of authorization. See `TrustLineFlag`.
+  - `AllowTrustOperation` now has two difference kinds of authorization in support of
+    [CAP-0018](https://github.com/stellar/stellar-protocol/blob/master/core/cap-0018.md).
+    See `TrustLineFlag`.
+  - `AccountId` signer key now has an optional sub account id in support of
+    [CAP-0027](https://github.com/stellar/stellar-protocol/blob/master/core/cap-0027.md)
   
 ### Breaking changes
 
 - `AllowTrustOperation` fields have changed. `authorize: Boolean` has been replaced with 
   `trustLineFlags: Set[TrustLineFlag]`. Whilst `authorize` has been added as a deprecated property
   for backwards compatibility, this will still break if you rely on pattern matching.
+- `AccountId` now contains an optional field `subAccountId`. If present, this denotes the unique
+  customer identifier on multiplexed accounts. (i.e. the field that exchanges routinely ask you
+  to provide in the memo field when depositing).
 
 ## 0.11.1
 
