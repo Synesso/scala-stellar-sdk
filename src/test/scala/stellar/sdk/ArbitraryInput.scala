@@ -396,11 +396,15 @@ trait ArbitraryInput extends ScalaCheck {
       highThreshold, homeDomain, signer, sourceAccount)
   }
 
-  def genAccountIdStrKey: Gen[AccountId] = genPublicKey.map(pk => AccountId(pk.publicKey.toIndexedSeq))
+  def genAccountIdStrKey: Gen[AccountId] = for {
+    pk <- genPublicKey
+    subAccountId <- Gen.option(Gen.posNum[Long])
+  } yield AccountId(pk.publicKey.toIndexedSeq, subAccountId)
+    //genPublicKey.map(pk => AccountId(pk.publicKey.toIndexedSeq))
   def genSeedStrKey: Gen[Seed] = genKeyPair.map(kp => Seed(kp.sk.getAbyte.toIndexedSeq))
   def genPreAuthTxStrKey: Gen[PreAuthTx] = Gen.containerOfN[Array, Byte](32, Arbitrary.arbByte.arbitrary)
     .map(bs => PreAuthTx(bs.toIndexedSeq))
-  def genHashStrKey: Gen[SHA256Hash] = Gen.identifier.map(_.getBytes("UTF-8")).map(ByteArrays.sha256(_))
+  def genHashStrKey: Gen[SHA256Hash] = Gen.identifier.map(_.getBytes("UTF-8")).map(ByteArrays.sha256)
     .map(bs => SHA256Hash(bs.toIndexedSeq))
 
   def genStrKey: Gen[StrKey] = Gen.oneOf(genAccountIdStrKey, genSeedStrKey, genPreAuthTxStrKey, genHashStrKey)

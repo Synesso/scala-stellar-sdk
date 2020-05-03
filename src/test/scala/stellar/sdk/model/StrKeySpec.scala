@@ -7,7 +7,8 @@ class StrKeySpec extends Specification with ArbitraryInput with DomainMatchers {
 
   "strkey" should {
     "encode and decode to same" >> prop { key: StrKey =>
-      StrKey.decodeFromString(key.encodeToChars.mkString) must beEquivalentTo(key)
+      val string = key.encodeToChars.mkString
+      StrKey.decodeFromString(string) must beEquivalentTo(key)
     }
 
     "fail to decode if any char is > 127" >> {
