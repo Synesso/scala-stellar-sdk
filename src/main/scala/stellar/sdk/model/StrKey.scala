@@ -35,6 +35,7 @@ case class AccountId(hash: Seq[Byte], subAccountId: Option[Long] = None) extends
     case None => Encode.int(0x000) ++ Encode.bytes(32, hash)
     case Some(id) => Encode.int(0x100) ++ Encode.long(id) ++ Encode.bytes(32, hash)
   }
+
   override def encodeToChars: Seq[Char] = subAccountId match {
     case None => super.encodeToChars
     case Some(id) => codec.encode((kind +: Encode.long(id) ++: hash ++: checksum).toArray).map(_.toChar).toIndexedSeq
@@ -44,6 +45,8 @@ case class AccountId(hash: Seq[Byte], subAccountId: Option[Long] = None) extends
     case None => ByteArrays.checksum((kind +: hash).toArray).toIndexedSeq
     case Some(id) => ByteArrays.checksum((kind +: Encode.long(id) ++: hash).toArray).toIndexedSeq
   }
+
+  val isMulitplexed: Boolean = subAccountId.isDefined
 }
 
 case class Seed(hash: Seq[Byte]) extends StrKey {

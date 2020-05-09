@@ -71,7 +71,7 @@ trait DomainMatchers extends AnyMatchers with MustExpectations with SequenceMatc
 
   def beEquivalentTo(other: AccountMergeOperation): Matcher[AccountMergeOperation] = beLike[AccountMergeOperation] {
     case op =>
-      op.destination.accountId mustEqual other.destination.accountId
+      op.destination mustEqual other.destination
   }
 
   def beEquivalentTo(other: AllowTrustOperation): Matcher[AllowTrustOperation] = beLike[AllowTrustOperation] {
@@ -197,7 +197,7 @@ trait DomainMatchers extends AnyMatchers with MustExpectations with SequenceMatc
 
   def beEquivalentTo(other: Account): Matcher[Account] = beLike {
     case acc =>
-      acc.publicKey must beEquivalentTo(other.publicKey)
+      acc.id must beEquivalentTo(other.id)
       acc.sequenceNumber mustEqual other.sequenceNumber
   }
 

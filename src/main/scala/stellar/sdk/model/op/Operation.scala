@@ -184,7 +184,7 @@ object OperationDeserializer extends ResponseParser[Operation]({ o: JObject =>
         trustLineFlags,
         sourceAccount)
     case "account_merge" =>
-      AccountMergeOperation(KeyPair.fromAccountId((o \ "into").extract[String]), sourceAccount)
+      AccountMergeOperation(AccountId(KeyPair.fromAccountId((o \ "into").extract[String]).publicKey), sourceAccount)
     case "inflation" =>
       InflationOperation(sourceAccount)
     case "manage_data" =>
@@ -702,12 +702,12 @@ object AllowTrustOperation extends Decode {
   * @param sourceAccount the account to be merged, if different from the owning account of the transaction
   * @see [[https://www.stellar.org/developers/horizon/reference/resources/operation.html#account-merge endpoint doc]]
   */
-case class AccountMergeOperation(destination: PublicKeyOps, sourceAccount: Option[PublicKeyOps] = None) extends PayOperation {
+case class AccountMergeOperation(destination: AccountId, sourceAccount: Option[PublicKeyOps] = None) extends PayOperation {
   override def encode: LazyList[Byte] = super.encode ++ Encode.int(8) ++ destination.encode
 }
 
 object AccountMergeOperation {
-  def decode: State[Seq[Byte], AccountMergeOperation] = KeyPair.decode.map(AccountMergeOperation(_))
+  def decode: State[Seq[Byte], AccountMergeOperation] = KeyPair.decode.map(_.publicKey).map(AccountId(_)).map(AccountMergeOperation(_))
 }
 
 /**

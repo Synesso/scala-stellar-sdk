@@ -5,6 +5,7 @@ import java.time.{Instant, Period}
 
 import com.typesafe.scalalogging.LazyLogging
 import okhttp3.HttpUrl
+import okio.ByteString
 import org.json4s.JsonDSL._
 import org.specs2.concurrent.ExecutionEnv
 import org.specs2.mutable.Specification
@@ -124,7 +125,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
 
         // force a transaction boundary between CreateAccount and AccountMerge
         transact(
-          AccountMergeOperation(accnB, Some(accnC)),
+          AccountMergeOperation(AccountId(accnB.publicKey), Some(accnC)),
           CreateSellOfferOperation(lumens(3), aardvarkA, Price(3, 100), Some(accnB)),
           CreateSellOfferOperation(lumens(5), chinchillaA, Price(5, 100), Some(accnB)),
           CreateBuyOfferOperation(dachshundB, Amount(3, aardvarkA), Price(5, 3), Some(accnB)),
@@ -227,7 +228,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
       val account: Future[Account] = network.account(kp).map(_.toAccount)
       val nextSeqNo: Future[Long] = account.map(_.sequenceNumber)
       // #account_details_example
-      account.map(_.publicKey) must beEqualTo(kp.asPublicKey).awaitFor(30.seconds)
+      account.map(_.id.hash) must beEqualTo(kp.publicKey.toSeq).awaitFor(30.seconds)
       nextSeqNo must beGreaterThanOrEqualTo(0L).awaitFor(30.seconds)
     }
 
@@ -332,7 +333,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
 
     "filter effects by operation" >> {
       (for {
-        operationId <- network.operations().map(_.find(_.operation == AccountMergeOperation(accnB, Some(accnC))).get.id)
+        operationId <- network.operations().map(_.find(_.operation == AccountMergeOperation(AccountId(accnB.publicKey), Some(accnC))).get.id)
         byOperation <- network.effectsByOperation(operationId).map(_.toSeq)
       } yield byOperation) must beLike[Seq[EffectResponse]] {
         case Seq(
@@ -409,7 +410,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
           case op =>
             op.operation must beLike[Operation] {
               case AccountMergeOperation(dest, source) =>
-                dest must beEquivalentTo(accnB)
+                new ByteString(dest.hash.toArray) mustEqual new ByteString(accnB.publicKey)
                 source.map(_.asPublicKey) must beSome(accnC.asPublicKey)
             }
         }.awaitFor(10.seconds)

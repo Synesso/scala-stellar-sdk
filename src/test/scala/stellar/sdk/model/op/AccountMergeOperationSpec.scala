@@ -6,7 +6,7 @@ import org.json4s.native.Serialization
 import org.scalacheck.Arbitrary
 import org.specs2.mutable.Specification
 import stellar.sdk.util.ByteArrays.base64
-import stellar.sdk.{ArbitraryInput, DomainMatchers}
+import stellar.sdk.{ArbitraryInput, DomainMatchers, KeyPair}
 
 class AccountMergeOperationSpec extends Specification with ArbitraryInput with DomainMatchers with JsonSnippets {
 
@@ -43,7 +43,7 @@ class AccountMergeOperationSpec extends Specification with ArbitraryInput with D
            |  "created_at": "${formatter.format(op.createdAt)}",
            |  "transaction_hash": "${op.txnHash}",
            |  "account": "${op.operation.sourceAccount.get.accountId}",
-           |  "into": "${op.operation.destination.accountId}",
+           |  "into": "${KeyPair.fromPublicKey(op.operation.destination.hash).accountId}",
            |}
          """.stripMargin
 

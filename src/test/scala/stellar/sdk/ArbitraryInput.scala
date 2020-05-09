@@ -169,8 +169,13 @@ trait ArbitraryInput extends ScalaCheck {
 
   def genPublicKey: Gen[PublicKey] = genKeyPair.map(kp => PublicKey(kp.pk))
 
+  def genAccountId: Gen[AccountId] = for {
+    key <- genPublicKey.map(_.publicKey)
+    subAccountId <- Gen.option(Gen.posNum[Long])
+  } yield AccountId(key, subAccountId)
+
   def genAccount: Gen[Account] = for {
-    kp <- genPublicKey
+    kp <- genAccountId
     seq <- Gen.posNum[Long]
   } yield {
     Account(kp, seq)
@@ -221,7 +226,7 @@ trait ArbitraryInput extends ScalaCheck {
     Gen.oneOf(AuthorizationRequiredFlag, AuthorizationRevocableFlag, AuthorizationImmutableFlag)
 
   def genAccountMergeOperation: Gen[AccountMergeOperation] = for {
-    destination <- genPublicKey
+    destination <- genPublicKey.map(_.publicKey).map(AccountId(_))
     sourceAccount <- Gen.option(genPublicKey)
   } yield {
     AccountMergeOperation(destination, sourceAccount)
