@@ -19,7 +19,7 @@ case class AccountResponse(id: PublicKey,
                            signers: List[Signer],
                            data: Map[String, Array[Byte]]) {
 
-  def toAccount: Account = Account(id, lastSequence + 1)
+  def toAccount: Account = Account(AccountId(id.publicKey), lastSequence + 1)
 
   def decodedData: Map[String, String] = data.map { case (k, v) => k -> new String(v, UTF_8) }
 }

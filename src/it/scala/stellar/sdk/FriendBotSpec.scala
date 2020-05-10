@@ -3,7 +3,7 @@ package stellar.sdk
 import org.specs2.concurrent.ExecutionEnv
 import org.specs2.mutable.Specification
 import stellar.sdk.model.op.AccountMergeOperation
-import stellar.sdk.model.{Account, NativeAmount, TimeBounds, Transaction}
+import stellar.sdk.model.{Account, AccountId, NativeAmount, TimeBounds, Transaction}
 
 import scala.concurrent.Await
 import scala.concurrent.duration._
@@ -28,7 +28,7 @@ class FriendBotSpec(implicit ee: ExecutionEnv) extends Specification {
         response <- Transaction(accn,
           maxFee = NativeAmount(100),
           timeBounds = TimeBounds.Unbounded
-        ).add(AccountMergeOperation(friendbot.publicKey)).sign(kp).submit()
+        ).add(AccountMergeOperation(friendbot.id)).sign(kp).submit()
       } yield response
       Await.result(giveItBack, 1 minute)
 
@@ -41,7 +41,7 @@ class FriendBotSpec(implicit ee: ExecutionEnv) extends Specification {
       val txn = {
         // #new_transaction_example
         implicit val network = TestNetwork
-        val account = Account(accn, sequence)
+        val account = Account(AccountId(accn.publicKey), sequence)
         Transaction(account, maxFee = NativeAmount(100), timeBounds = TimeBounds.Unbounded)
         // #new_transaction_example
       }

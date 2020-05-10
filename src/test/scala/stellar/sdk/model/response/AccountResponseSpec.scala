@@ -168,7 +168,7 @@ class AccountResponseSpec extends Specification with ArbitraryInput with DomainM
 
     "an account response" should {
       "be convertible to an account" >> prop { ar: AccountResponse =>
-        ar.toAccount mustEqual Account(ar.id, ar.lastSequence + 1)
+        ar.toAccount mustEqual Account(AccountId(ar.id.publicKey), ar.lastSequence + 1)
       }
     }
   }

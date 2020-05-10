@@ -45,9 +45,10 @@ class TransactionSpec extends Specification with ArbitraryInput with DomainMatch
       // specific example lifted from java sdk
       val source = KeyPair.fromSecretSeed("SCH27VUZZ6UAKB67BDNF6FA42YMBMQCBKXWGMFD5TZ6S5ZZCZFLRXKHS")
       val dest = KeyPair.fromAccountId("GDW6AUTBXTOC7FIKUO5BOO3OGLK4SF7ZPOBLMQHMZDI45J2Z6VXRB5NR")
+      val accountId = AccountId(source.publicKey)
       val seqNum = 2908908335136769L
 
-      val account = Account(source, seqNum)
+      val account = Account(accountId, seqNum)
       val txn = Transaction(
         source = account,
         operations = Seq(CreateAccountOperation(dest, NativeAmount(20000000000L))),
@@ -101,10 +102,10 @@ class TransactionSpec extends Specification with ArbitraryInput with DomainMatch
         "5v3AAAAQHx9LVy0EsDozAxndsy+D6E2bWmTAMmnhLoFqf2FfoRAMXjC9BW16ZQlOR+wWH5PSKnz22QpAxY4gMkJvH8LCwQ="
 
       SignedTransaction.decodeXDR(sample) must beLike {
-        case SignedTransaction(txn, signatures) =>
+        case SignedTransaction(txn, signatures, feeBump) =>
           txn mustEqual Transaction(
             Account(
-              KeyPair.fromAccountId("GAAQZS37ZXXX47SLZ7RXBNRQPFIKMRYZZXMQVFQK6GDG6GLBL6N7PBYD"),
+              AccountId(KeyPair.fromAccountId("GAAQZS37ZXXX47SLZ7RXBNRQPFIKMRYZZXMQVFQK6GDG6GLBL6N7PBYD").publicKey),
               33792794094993411L
             ), Seq(
               PaymentOperation(
@@ -118,7 +119,7 @@ class TransactionSpec extends Specification with ArbitraryInput with DomainMatch
           signatures.map(_.data.toIndexedSeq).map(bytesToHex(_)) mustEqual Seq("7C7D2D5CB412C0E8CC0C6776CC" +
             "BE0FA1366D699300C9A784BA05A9FD857E84403178C2F415B5E99425391FB0587E4F48A9F3DB642903163880C909BC7F0B0B04")
           bytesToHex(txn.hash) mustEqual "7D91CFC50E907A677F769E6DB82BDB958D148D810955C597AA7A4B24AE97475B"
-
+          feeBump must beEmpty
       }
     }
   }

@@ -9,7 +9,7 @@ class AccountSpec extends Specification with ArbitraryInput {
     "provide the successive version of itself" >> prop { account: Account =>
       val next = account.withIncSeq
       next.sequenceNumber mustEqual account.sequenceNumber + 1
-      next.publicKey mustEqual account.publicKey
+      next.id mustEqual account.id
     }
   }
 

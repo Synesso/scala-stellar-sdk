@@ -16,7 +16,8 @@ As this project is pre 1.0, breaking changes may happen for minor version bumps.
 
 - `AllowTrustOperation` fields have changed. `authorize: Boolean` has been replaced with 
   `trustLineFlags: Set[TrustLineFlag]`. Whilst `authorize` has been added as a deprecated property
-  for backwards compatibility, this will still break if you rely on pattern matching.
+  for backwards compatibility, this will still break if you rely on pattern matching or construct
+  new instances.
 - `AccountId` now contains an optional field `subAccountId`. If present, this denotes the unique
   customer identifier on multiplexed accounts. (i.e. the field that exchanges routinely ask you
   to provide in the memo field when depositing).
