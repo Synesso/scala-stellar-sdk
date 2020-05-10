@@ -5,6 +5,7 @@ import java.nio.ByteBuffer
 import cats.data.State
 import org.apache.commons.codec.binary.Base32
 import stellar.sdk.model.StrKey.codec
+import stellar.sdk.model.xdr.Encode.{bytes, int, long}
 import stellar.sdk.model.xdr.{Decode, Encodable, Encode}
 import stellar.sdk.util.ByteArrays
 
@@ -32,18 +33,18 @@ case class AccountId(hash: Seq[Byte], subAccountId: Option[Long] = None) extends
   }
 
   def encode: LazyList[Byte] = subAccountId match {
-    case None => Encode.int(0x000) ++ Encode.bytes(32, hash)
-    case Some(id) => Encode.int(0x100) ++ Encode.long(id) ++ Encode.bytes(32, hash)
+    case None => int(0x000) ++ bytes(32, hash)
+    case Some(id) => int(0x100) ++ long(id) ++ bytes(32, hash)
   }
 
   override def encodeToChars: Seq[Char] = subAccountId match {
     case None => super.encodeToChars
-    case Some(id) => codec.encode((kind +: Encode.long(id) ++: hash ++: checksum).toArray).map(_.toChar).toIndexedSeq
+    case Some(id) => codec.encode((kind +: long(id) ++: hash ++: checksum).toArray).map(_.toChar).toIndexedSeq
   }
 
   override def checksum: Seq[Byte] = subAccountId match {
     case None => ByteArrays.checksum((kind +: hash).toArray).toIndexedSeq
-    case Some(id) => ByteArrays.checksum((kind +: Encode.long(id) ++: hash).toArray).toIndexedSeq
+    case Some(id) => ByteArrays.checksum((kind +: long(id) ++: hash).toArray).toIndexedSeq
   }
 
   val isMulitplexed: Boolean = subAccountId.isDefined
@@ -55,12 +56,12 @@ case class Seed(hash: Seq[Byte]) extends StrKey {
 
 case class PreAuthTx(hash: Seq[Byte]) extends SignerStrKey {
   val kind: Byte = (19 << 3).toByte // T
-  def encode: LazyList[Byte] = Encode.int(0x001) ++ Encode.bytes(32, hash)
+  def encode: LazyList[Byte] = int(0x001) ++ bytes(32, hash)
 }
 
 case class SHA256Hash(hash: Seq[Byte]) extends SignerStrKey {
   val kind: Byte = (23 << 3).toByte // X
-  def encode: LazyList[Byte] = Encode.int(0x002) ++ Encode.bytes(32, hash)
+  def encode: LazyList[Byte] = int(0x002) ++ bytes(32, hash)
 }
 
 object StrKey extends Decode {
