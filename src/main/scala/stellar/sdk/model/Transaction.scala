@@ -84,7 +84,7 @@ object Transaction extends Decode {
     case 2 => decodeV1
   }
 
-  def decodeV0(implicit network: Network) = {
+  def decodeV0(implicit network: Network): State[Seq[Byte], Transaction] = {
     for {
       publicKeyBytes <- bytes(32)
       accountId = AccountId(publicKeyBytes.toArray[Byte])
@@ -97,7 +97,7 @@ object Transaction extends Decode {
     } yield Transaction(Account(accountId, seqNo), ops, memo, timeBounds, NativeAmount(fee))
   }
 
-  def decodeV1(implicit network: Network) = {
+  def decodeV1(implicit network: Network): State[Seq[Byte], Transaction] = {
     for {
       accountId <- StrKey.decode.map(_.asInstanceOf[AccountId])
       fee <- int
@@ -133,7 +133,17 @@ case class SignedTransaction(transaction: Transaction,
     */
   def encodeXDR: String = base64(encode)
 
-  def encode: LazyList[Byte] = transaction.encode ++ Encode.arr(signatures)
+  def encode: LazyList[Byte] = feeBump.map(encodeFeeBump)
+    .getOrElse(transaction.encode ++ arr(signatures))
+
+  private def encodeFeeBump(bump: FeeBump): LazyList[Byte] =
+    int(5) ++
+      bump.source.encode ++
+      int(bump.fee.units.toInt) ++
+      transaction.encodeV1 ++
+      arr(signatures) ++
+      int(0) ++
+      arr(bump.signatures)
 }
 
 object SignedTransaction extends Decode {
@@ -144,20 +154,29 @@ object SignedTransaction extends Decode {
   def decodeXDR(base64: String)(implicit network: Network): SignedTransaction =
     decode.run(ByteArrays.base64(base64).toIndexedSeq).value._2
 
-  // TODO - add a discriminator here for v0, v1 or fee bump
-  //  if the disc is 0, then it's an old-school txn which is actually starting with a 0 for TxnEnv -> Txn -> AccountId -> publicKey type
-
   def decode(implicit network: Network): State[Seq[Byte], SignedTransaction] = for {
     discriminator <- int
     txn <- discriminator match {
       // parse a legacy transaction, without the public key discriminator, into a standard transaction
-      case 0 => Transaction.decodeV0
+      case 0 => Transaction.decodeV0.map(Left(_))
 
       // parse a standard transaction, with MuxedAccount
-      case 2 => Transaction.decodeV1
+      case 2 => Transaction.decodeV1.map(Left(_))
 
-//      case 5 => ??? // parse a fee bump transaction
+      // parse a fee bump transaction
+      case 5 =>  for {
+        accountId <- StrKey.decode.map(_.asInstanceOf[AccountId])
+        fee <- int
+        _ <- int // 2
+        transaction <- Transaction.decodeV1
+        transactionSigs <- arr(Signature.decode)
+        _ <- int // 0
+        feeBump = Some(FeeBump(accountId, NativeAmount(fee), Nil))
+      } yield Right(SignedTransaction(transaction, transactionSigs, feeBump))
     }
-    sigs <- arr(Signature.decode)
-  } yield SignedTransaction(txn, sigs)
+    sigs <- arr(Signature.decode).map(_.toList)
+  } yield txn match {
+    case Left(t: Transaction) => SignedTransaction(t, sigs)
+    case Right(st: SignedTransaction) => st.copy(feeBump = st.feeBump.map(_.copy(signatures = sigs)))
+  }
 }

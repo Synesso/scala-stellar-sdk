@@ -2,4 +2,4 @@ package stellar.sdk.model
 
 import stellar.sdk.Signature
 
-case class FeeBump(source: Account, fee: NativeAmount, signatures: List[Signature])
+case class FeeBump(source: AccountId, fee: NativeAmount, signatures: List[Signature])

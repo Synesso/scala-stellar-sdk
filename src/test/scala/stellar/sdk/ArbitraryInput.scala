@@ -479,7 +479,8 @@ trait ArbitraryInput extends ScalaCheck {
   def genSignedTransaction: Gen[SignedTransaction] = for {
     txn <- genTransaction
     signer <- genKeyPair
-  } yield txn.sign(signer)
+    feeBump <- Gen.option(genFeeBump)
+  } yield txn.sign(signer).copy(feeBump = feeBump)
 
   def genThresholds: Gen[Thresholds] = for {
     low <- Gen.choose(0, 255)
@@ -488,6 +489,13 @@ trait ArbitraryInput extends ScalaCheck {
   } yield {
     Thresholds(low, med, high)
   }
+
+  def genFeeBump: Gen[FeeBump] = for {
+    source <- genAccountId
+    fee <- genNativeAmount
+    payload <- Gen.containerOf[Array, Byte](Gen.posNum[Byte])
+    signatures <- Gen.nonEmptyListOf(genKeyPair.map(_.sign(payload))).map(_.take(3))
+  } yield FeeBump(source, fee, signatures)
 
   def genHash: Gen[String] = Gen.containerOfN[Array, Char](32, Gen.alphaNumChar)
     .map(_.map(_.toByte)).map(Base64.encodeBase64String)
