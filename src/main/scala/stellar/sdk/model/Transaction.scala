@@ -99,7 +99,7 @@ object Transaction extends Decode {
 
   def decodeV1(implicit network: Network): State[Seq[Byte], Transaction] = {
     for {
-      accountId <- StrKey.decode.map(_.asInstanceOf[AccountId])
+      accountId <- AccountId.decode
       fee <- int
       seqNo <- long
       timeBounds <- opt(TimeBounds.decode).map(_.getOrElse(Unbounded))
@@ -165,7 +165,7 @@ object SignedTransaction extends Decode {
 
       // parse a fee bump transaction
       case 5 =>  for {
-        accountId <- StrKey.decode.map(_.asInstanceOf[AccountId])
+        accountId <- AccountId.decode
         fee <- int
         _ <- int // 2
         transaction <- Transaction.decodeV1

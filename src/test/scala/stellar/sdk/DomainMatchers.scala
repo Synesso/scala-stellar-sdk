@@ -88,7 +88,7 @@ trait DomainMatchers extends AnyMatchers with MustExpectations with SequenceMatc
 
   def beEquivalentTo(other: CreateAccountOperation): Matcher[CreateAccountOperation] = beLike[CreateAccountOperation] {
     case op =>
-      op.destinationAccount.accountId mustEqual other.destinationAccount.accountId
+      op.destinationAccount mustEqual other.destinationAccount
       op.startingBalance.units mustEqual other.startingBalance.units
   }
 
@@ -136,7 +136,7 @@ trait DomainMatchers extends AnyMatchers with MustExpectations with SequenceMatc
   def beEquivalentTo(other: PathPaymentStrictReceiveOperation): Matcher[PathPaymentStrictReceiveOperation] = beLike[PathPaymentStrictReceiveOperation] {
     case op =>
       op.sendMax must beEquivalentTo(other.sendMax)
-      op.destinationAccount.accountId mustEqual other.destinationAccount.accountId
+      op.destinationAccount mustEqual other.destinationAccount
       op.destinationAmount must beEquivalentTo(other.destinationAmount)
       forall(op.path.zip(other.path)) {
         case (expected: Asset, actual: Asset) => actual must beEquivalentTo(expected)
@@ -146,7 +146,7 @@ trait DomainMatchers extends AnyMatchers with MustExpectations with SequenceMatc
   def beEquivalentTo(other: PathPaymentStrictSendOperation): Matcher[PathPaymentStrictSendOperation] = beLike[PathPaymentStrictSendOperation] {
     case op =>
       op.destinationMin must beEquivalentTo(other.destinationMin)
-      op.destinationAccount.accountId mustEqual other.destinationAccount.accountId
+      op.destinationAccount mustEqual other.destinationAccount
       op.sendAmount must beEquivalentTo(other.sendAmount)
       forall(op.path.zip(other.path)) {
         case (expected: Asset, actual: Asset) => actual must beEquivalentTo(expected)
@@ -155,7 +155,7 @@ trait DomainMatchers extends AnyMatchers with MustExpectations with SequenceMatc
 
   def beEquivalentTo(other: PaymentOperation): Matcher[PaymentOperation] = beLike[PaymentOperation] {
     case op =>
-      op.destinationAccount.accountId mustEqual other.destinationAccount.accountId
+      op.destinationAccount mustEqual other.destinationAccount
       op.amount must beEquivalentTo(other.amount)
   }
 

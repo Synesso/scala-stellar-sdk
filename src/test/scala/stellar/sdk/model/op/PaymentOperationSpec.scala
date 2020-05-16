@@ -1,6 +1,6 @@
 package stellar.sdk.model.op
 
-import org.json4s.NoTypeHints
+import org.json4s.{Formats, NoTypeHints}
 import org.json4s.native.JsonMethods.parse
 import org.json4s.native.Serialization
 import org.scalacheck.Arbitrary
@@ -11,7 +11,7 @@ import stellar.sdk.{ArbitraryInput, DomainMatchers}
 class PaymentOperationSpec extends Specification with ArbitraryInput with DomainMatchers with JsonSnippets {
 
   implicit val arb: Arbitrary[Transacted[PaymentOperation]] = Arbitrary(genTransacted(genPaymentOperation))
-  implicit val formats = Serialization.formats(NoTypeHints) + TransactedOperationDeserializer
+  implicit val formats: Formats = Serialization.formats(NoTypeHints) + TransactedOperationDeserializer
 
   "payment operation" should {
     "serde via xdr string" >> prop { actual: PaymentOperation =>
@@ -44,12 +44,16 @@ class PaymentOperationSpec extends Specification with ArbitraryInput with Domain
            |  "transaction_hash": "${op.txnHash}",
            |  ${amountDocPortion(op.operation.amount)},
            |  "from": "${op.operation.sourceAccount.get.accountId}",
-           |  "to": "${op.operation.destinationAccount.accountId}",
+           |  "to": "${op.operation.destinationAccount.publicKey.accountId}",
            |}
          """.stripMargin
 
-      parse(doc).extract[Transacted[PaymentOperation]] mustEqual op
+      parse(doc).extract[Transacted[PaymentOperation]] mustEqual removeDestinationSubAccountId(op)
     }.setGen(genTransacted(genPaymentOperation.suchThat(_.sourceAccount.nonEmpty)))
   }
 
+  // Because sub accounts are not yet supported in Horizon JSON.
+  private def removeDestinationSubAccountId(op: Transacted[PaymentOperation]): Transacted[PaymentOperation] = {
+    op.copy(operation = op.operation.copy(destinationAccount = op.operation.destinationAccount.copy(subAccountId = None)))
+  }
 }

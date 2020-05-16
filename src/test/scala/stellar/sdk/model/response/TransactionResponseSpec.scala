@@ -27,7 +27,7 @@ class TransactionResponseSpec extends Specification with ArbitraryInput with Dom
             txn.source.sequenceNumber mustEqual 33188247383310337L
             txn.operations mustEqual Seq(
               CreateAccountOperation(
-                KeyPair.fromAccountId("GC4RWMHYBILISIO22U225RCPB3JPPOLC3D3CJEJVWA5MWNE3FGZRXTFA"),
+                KeyPair.fromAccountId("GC4RWMHYBILISIO22U225RCPB3JPPOLC3D3CJEJVWA5MWNE3FGZRXTFA").toAccountId,
                 NativeAmount(10000000)
               )
             )
