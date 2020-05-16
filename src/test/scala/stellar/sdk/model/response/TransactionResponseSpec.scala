@@ -14,7 +14,9 @@ import stellar.sdk.model._
 
 class TransactionResponseSpec extends Specification with ArbitraryInput with DomainMatchers {
 
-  val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'").withZone(ZoneId.of("UTC"))
+  val formatter: DateTimeFormatter = DateTimeFormatter
+    .ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")
+    .withZone(ZoneId.of("UTC"))
 
   "a transaction post response" should {
     "provide access to the signed transaction via XDR decoding" >> {
@@ -94,6 +96,7 @@ class TransactionResponseSpec extends Specification with ArbitraryInput with Dom
           ("source_account_sequence" -> h.sequence) ~
           ("max_fee" -> h.maxFee.units) ~
           ("fee_charged" -> h.feeCharged.units) ~
+          ("fee_account" -> h.account.accountId) ~
           ("operation_count" -> h.operationCount) ~
           ("signatures" -> h.signatures) ~
           ("memo_type" -> memoType) ~
