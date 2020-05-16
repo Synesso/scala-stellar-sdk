@@ -638,8 +638,15 @@ trait ArbitraryInput extends ScalaCheck {
     feeMetaXDR <- genHash
     validAfter <- Gen.option(genZonedDateTime)
     validBefore <- Gen.option(genZonedDateTime)
+    feeBumpHistory <- Gen.option(genFeeBumpHistory)
   } yield TransactionHistory(hash, ledger, createdAt, account, sequence, maxFee, feeCharged, operationCount,
-    memo, signatures, envelopeXDR, resultXDR, resultMetaXDR, feeMetaXDR, validAfter, validBefore)
+    memo, signatures, envelopeXDR, resultXDR, resultMetaXDR, feeMetaXDR, validAfter, validBefore, feeBumpHistory)
+
+  def genFeeBumpHistory: Gen[FeeBumpHistory] = for {
+    maxFee <- genNativeAmount
+    hash <- genHash
+    signatures <- Gen.nonEmptyListOf(genHash)
+  } yield FeeBumpHistory(maxFee, hash, signatures)
 
   def genHorizonCursor: Gen[HorizonCursor] = Gen.option(Gen.posNum[Long]).map(_.map(Record).getOrElse(Now))
 

@@ -3,12 +3,14 @@ package stellar.sdk.model.response
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
+import org.json4s.JsonAST
 import org.specs2.mutable.Specification
 import stellar.sdk.util.ByteArrays.{base64, bytesToHex}
 import stellar.sdk._
 import stellar.sdk.model.op.CreateAccountOperation
 import stellar.sdk.model.result._
 import org.json4s.JsonDSL._
+import org.json4s.native.{JsonMethods, Serialization}
 import stellar.sdk.model.TimeBounds.Unbounded
 import stellar.sdk.model._
 
@@ -81,24 +83,36 @@ class TransactionResponseSpec extends Specification with ArbitraryInput with Dom
 
   "a transaction history" should {
     "deserialise from JSON" >> prop { h: TransactionHistory =>
+
+      val feeBump: Option[JsonAST.JObject] = h.feeBump.map { bump =>
+        ("fee_bump_transaction" -> (
+          ("hash" -> bump.hash) ~
+            ("signatures" -> bump.signatures))) ~
+          ("inner_transaction" -> (
+            ("max_fee" -> h.maxFee.units) ~
+              ("hash" -> h.hash) ~
+              ("signatures" -> h.signatures)
+          ))
+      }
+
       val (memoType, memo) = h.memo match {
         case NoMemo => "none" -> None
-        case MemoId(id) => "id" -> Some(java.lang.Long.toUnsignedString(id))
-        case MemoText(t) => "text" -> Some(t)
-        case MemoHash(bs) => "hash" -> Some(base64(bs))
-        case MemoReturnHash(bs) => "return" -> Some(base64(bs))
+        case MemoId(id) => "id" -> Some("memo" -> java.lang.Long.toUnsignedString(id))
+        case MemoText(t) => "text" -> Some("memo" -> t)
+        case MemoHash(bs) => "hash" -> Some("memo" -> base64(bs))
+        case MemoReturnHash(bs) => "return" -> Some("memo" -> base64(bs))
       }
-      val json = memo.foldLeft(
-        ("hash" -> h.hash) ~
+      val json = feeBump.foldLeft(memo.foldLeft(
+        ("hash" -> h.feeBump.map(_.hash).getOrElse(h.hash)) ~
           ("ledger" -> h.ledgerId) ~
           ("created_at" -> formatter.format(h.createdAt)) ~
+          ("fee_account" -> h.account.accountId) ~
           ("source_account" -> h.account.accountId) ~
           ("source_account_sequence" -> h.sequence) ~
-          ("max_fee" -> h.maxFee.units) ~
+          ("max_fee" -> h.feeBump.map(_.maxFee).getOrElse(h.maxFee).units) ~
           ("fee_charged" -> h.feeCharged.units) ~
-          ("fee_account" -> h.account.accountId) ~
           ("operation_count" -> h.operationCount) ~
-          ("signatures" -> h.signatures) ~
+          ("signatures" -> h.feeBump.map(_.signatures).getOrElse(h.signatures)) ~
           ("memo_type" -> memoType) ~
           ("envelope_xdr" -> h.envelopeXDR) ~
           ("result_xdr" -> h.resultXDR) ~
@@ -107,8 +121,8 @@ class TransactionResponseSpec extends Specification with ArbitraryInput with Dom
           ("valid_after" -> h.validAfter.map(formatter.format)) ~
           ("valid_before" -> h.validBefore.map(formatter.format))
       ) {
-        case (js, memoText) => js ~ ("memo" -> memoText)
-      }
+        case (js, part) => js ~ part
+      }) { case (js, part) => js ~ part }
 
       implicit val fmt = org.json4s.DefaultFormats + TransactionHistoryDeserializer
       json.extract[TransactionHistory] must beEquivalentTo(h)
