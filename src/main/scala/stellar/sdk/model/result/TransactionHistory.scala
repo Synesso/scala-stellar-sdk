@@ -2,7 +2,7 @@ package stellar.sdk.model.result
 
 import java.time.ZonedDateTime
 
-import org.json4s.DefaultFormats
+import org.json4s.{DefaultFormats, Formats}
 import org.json4s.JsonAST.JObject
 import stellar.sdk.model._
 import stellar.sdk.model.ledger.TransactionLedgerEntries.arr
@@ -20,7 +20,7 @@ case class TransactionHistory(hash: String, ledgerId: Long, createdAt: ZonedDate
                               sequence: Long, maxFee: NativeAmount, feeCharged: NativeAmount, operationCount: Int,
                               memo: Memo, signatures: Seq[String], envelopeXDR: String, resultXDR: String,
                               resultMetaXDR: String, feeMetaXDR: String, validAfter: Option[ZonedDateTime],
-                              validBefore: Option[ZonedDateTime]) {
+                              validBefore: Option[ZonedDateTime], feeBump: Option[FeeBumpHistory]) {
 
   lazy val result: TransactionResult = TransactionResult.decodeXDR(resultXDR)
 
@@ -33,17 +33,28 @@ case class TransactionHistory(hash: String, ledgerId: Long, createdAt: ZonedDate
 }
 
 
-object TransactionHistoryDeserializer extends ResponseParser[TransactionHistory]({
+object TransactionHistoryDeserializer extends {
+} with ResponseParser[TransactionHistory]({
   o: JObject =>
-    implicit val formats = DefaultFormats
+    implicit val formats: Formats = DefaultFormats
+
+    val maxFee = NativeAmount((o \ "max_fee").extract[Int])
+    val signatures = (o \ "signatures").extract[List[String]]
+    val hash = (o \ "hash").extract[String]
+
+    val inner = for {
+      hash <- (o \ "inner_transaction" \ "hash").extractOpt[String]
+      maxFee <- (o \ "inner_transaction" \ "max_fee").extractOpt[Int].map(NativeAmount(_))
+      signatures <- (o \ "inner_transaction" \ "signatures").extractOpt[List[String]]
+    } yield (hash, maxFee, signatures)
 
     TransactionHistory(
-      hash = (o \ "hash").extract[String],
+      hash = inner.map(_._1).getOrElse(hash),
       ledgerId = (o \ "ledger").extract[Long],
       createdAt = ZonedDateTime.parse((o \ "created_at").extract[String]),
       account = KeyPair.fromAccountId((o \ "source_account").extract[String]),
       sequence = (o \ "source_account_sequence").extract[String].toLong,
-      maxFee = NativeAmount((o \ "max_fee").extract[Int]),
+      maxFee = inner.map(_._2).getOrElse(maxFee),
       feeCharged = NativeAmount((o \ "fee_charged").extract[Int]),
       operationCount = (o \ "operation_count").extract[Int],
       memo = (o \ "memo_type").extract[String] match {
@@ -53,13 +64,14 @@ object TransactionHistoryDeserializer extends ResponseParser[TransactionHistory]
         case "hash" => MemoHash(base64((o \ "memo").extract[String]).toIndexedSeq)
         case "return" => MemoReturnHash(base64((o \ "memo").extract[String]).toIndexedSeq)
       },
-      signatures = (o \ "signatures").extract[Seq[String]],
+      signatures = inner.map(_._3).getOrElse(signatures),
       envelopeXDR = (o \ "envelope_xdr").extract[String],
       resultXDR = (o \ "result_xdr").extract[String],
       resultMetaXDR = (o \ "result_meta_xdr").extract[String],
       feeMetaXDR = (o \ "fee_meta_xdr").extract[String],
       // TODO (jem) - Remove the Try wrappers when https://github.com/stellar/go/issues/1381 is fixed.
       validBefore = Try((o \ "valid_before").extractOpt[String].map(ZonedDateTime.parse)).getOrElse(None),
-      validAfter = Try((o \ "valid_after").extractOpt[String].map(ZonedDateTime.parse)).getOrElse(None)
+      validAfter = Try((o \ "valid_after").extractOpt[String].map(ZonedDateTime.parse)).getOrElse(None),
+      feeBump = inner.map { _ => FeeBumpHistory(maxFee, hash, signatures) }
     )
 })
