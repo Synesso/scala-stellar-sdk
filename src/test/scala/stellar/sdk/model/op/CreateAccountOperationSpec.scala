@@ -1,6 +1,6 @@
 package stellar.sdk.model.op
 
-import org.json4s.NoTypeHints
+import org.json4s.{Formats, NoTypeHints}
 import org.json4s.native.JsonMethods.parse
 import org.json4s.native.Serialization
 import org.scalacheck.Arbitrary
@@ -11,7 +11,7 @@ import stellar.sdk.{ArbitraryInput, DomainMatchers}
 class CreateAccountOperationSpec extends Specification with ArbitraryInput with DomainMatchers with JsonSnippets {
 
   implicit val arb: Arbitrary[Transacted[CreateAccountOperation]] = Arbitrary(genTransacted(genCreateAccountOperation))
-  implicit val formats = Serialization.formats(NoTypeHints) + TransactedOperationDeserializer + OperationDeserializer
+  implicit val formats: Formats = Serialization.formats(NoTypeHints) + TransactedOperationDeserializer + OperationDeserializer
 
   "create account operation" should {
     "serde via xdr string" >> prop { actual: CreateAccountOperation =>
@@ -44,12 +44,16 @@ class CreateAccountOperationSpec extends Specification with ArbitraryInput with 
            |  "transaction_hash": "${op.txnHash}",
            |  "starting_balance": "${amountString(op.operation.startingBalance)}",
            |  "funder": "${op.operation.sourceAccount.get.accountId}",
-           |  "account": "${op.operation.destinationAccount.accountId}"
+           |  "account": "${op.operation.destinationAccount.publicKey.accountId}"
            |}
          """.stripMargin
 
-      parse(doc).extract[Transacted[CreateAccountOperation]] mustEqual op
+      parse(doc).extract[Transacted[CreateAccountOperation]] mustEqual removeDestinationSubAccountId(op)
     }.setGen(genTransacted(genCreateAccountOperation.suchThat(_.sourceAccount.nonEmpty)))
   }
 
+  // Because sub accounts are not yet supported in Horizon JSON.
+  private def removeDestinationSubAccountId(op: Transacted[CreateAccountOperation]): Transacted[CreateAccountOperation] = {
+    op.copy(operation = op.operation.copy(destinationAccount = op.operation.destinationAccount.copy(subAccountId = None)))
+  }
 }

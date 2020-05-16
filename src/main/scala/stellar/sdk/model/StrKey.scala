@@ -4,9 +4,10 @@ import java.nio.ByteBuffer
 
 import cats.data.State
 import org.apache.commons.codec.binary.Base32
+import stellar.sdk.{KeyPair, PublicKey}
 import stellar.sdk.model.StrKey.codec
 import stellar.sdk.model.xdr.Encode.{bytes, int, long}
-import stellar.sdk.model.xdr.{Decode, Encodable, Encode}
+import stellar.sdk.model.xdr.{Decode, Encodable}
 import stellar.sdk.util.ByteArrays
 
 
@@ -48,6 +49,17 @@ case class AccountId(hash: Seq[Byte], subAccountId: Option[Long] = None) extends
   }
 
   val isMulitplexed: Boolean = subAccountId.isDefined
+  def publicKey: PublicKey = KeyPair.fromPublicKey(hash)
+}
+
+object AccountId extends Decode {
+  val decode: State[Seq[Byte], AccountId] = int.flatMap {
+    case 0x000 => bytes(32).map(bs => AccountId(bs.toIndexedSeq))
+    case 0x100 => for {
+      subAccountId <- long
+      bs <- bytes(32)
+    } yield AccountId(bs.toIndexedSeq, Some(subAccountId))
+  }
 }
 
 case class Seed(hash: Seq[Byte]) extends StrKey {

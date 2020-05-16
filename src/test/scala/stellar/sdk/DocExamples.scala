@@ -341,27 +341,26 @@ class DocExamples() {
       KeyPair.random
       // #keypair_randomly
     )
-    val accountId = AccountId(sourceKey.publicKey)
     val nextSequenceNumber = 1234
 
     def `show how to create a transaction with operations`() = {
       // #transaction_createwithops_example
-      val account = Account(accountId, nextSequenceNumber)
+      val account = Account(sourceKey.toAccountId, nextSequenceNumber)
       val txn = Transaction(account, Seq(
-        CreateAccountOperation(aliceKey),
-        CreateAccountOperation(bobKey),
-        PaymentOperation(charlieKey, Amount.lumens(42))
+        CreateAccountOperation(aliceKey.toAccountId),
+        CreateAccountOperation(bobKey.toAccountId),
+        PaymentOperation(charlieKey.toAccountId, Amount.lumens(42))
       ), timeBounds = Unbounded, maxFee = NativeAmount(100))
       // #transaction_createwithops_example
     }
 
     def `show how to add operations afterwards`() = {
-      val account = Account(accountId, nextSequenceNumber)
+      val account = Account(sourceKey.toAccountId, nextSequenceNumber)
       // #transaction_addops_example
       val txn = Transaction(account, timeBounds = Unbounded, maxFee = NativeAmount(100))
-        .add(PaymentOperation(aliceKey, Amount.lumens(100)))
-        .add(PaymentOperation(bobKey, Amount.lumens(77)))
-        .add(PaymentOperation(charlieKey, Amount.lumens(4.08)))
+        .add(PaymentOperation(aliceKey.toAccountId, Amount.lumens(100)))
+        .add(PaymentOperation(bobKey.toAccountId, Amount.lumens(77)))
+        .add(PaymentOperation(charlieKey.toAccountId, Amount.lumens(4.08)))
         .add(CreateSellOfferOperation(
           selling = Amount.lumens(100),
           buying = Asset("FRUITCAKE42", aliceKey),
@@ -371,17 +370,17 @@ class DocExamples() {
     }
 
     def `show signing`() = {
-      val account = Account(accountId, nextSequenceNumber)
-      val operation = PaymentOperation(aliceKey, Amount.lumens(100))
+      val account = Account(sourceKey.toAccountId, nextSequenceNumber)
+      val operation = PaymentOperation(aliceKey.toAccountId, Amount.lumens(100))
       // #transaction_signing_example
       val transaction = Transaction(account, timeBounds = Unbounded, maxFee = NativeAmount(100)).add(operation)
-      val signedTransaction: SignedTransaction = transaction.sign(sourceKey)
+      val signedTransaction: SignedTransaction = transaction.sign(sourceKey.publicKey)
       // #transaction_signing_example
     }
 
     def `show signing of a joint account`() = {
-      val jointAccount = Account(accountId, nextSequenceNumber)
-      val operation = PaymentOperation(aliceKey, Amount.lumens(100))
+      val jointAccount = Account(sourceKey.toAccountId, nextSequenceNumber)
+      val operation = PaymentOperation(aliceKey.toAccountId, Amount.lumens(100))
       // #joint_transaction_signing_example
       val transaction = Transaction(jointAccount, timeBounds = Unbounded, maxFee = NativeAmount(100)).add(operation)
       val signedTransaction: SignedTransaction = transaction.sign(aliceKey, bobKey)
@@ -389,8 +388,8 @@ class DocExamples() {
     }
 
     def `show submitting`() = {
-      val account = Account(accountId, nextSequenceNumber)
-      val operation = PaymentOperation(aliceKey, Amount.lumens(100))
+      val account = Account(sourceKey.toAccountId, nextSequenceNumber)
+      val operation = PaymentOperation(aliceKey.toAccountId, Amount.lumens(100))
       // #transaction_submit_example
       val transaction = Transaction(account, timeBounds = Unbounded, maxFee = NativeAmount(100)).add(operation).sign(sourceKey)
       val response: Future[TransactionPostResponse] = transaction.submit()
@@ -398,8 +397,8 @@ class DocExamples() {
     }
 
     def `show checking of response`() = {
-      val account = Account(accountId, nextSequenceNumber)
-      val operation = PaymentOperation(aliceKey, Amount.lumens(100))
+      val account = Account(sourceKey.toAccountId, nextSequenceNumber)
+      val operation = PaymentOperation(aliceKey.toAccountId, Amount.lumens(100))
       // #transaction_response_example
       Transaction(account, timeBounds = Unbounded, maxFee = NativeAmount(100)).add(operation).sign(sourceKey).submit().foreach {
         case ok: TransactionApproved => println(ok.feeCharged)

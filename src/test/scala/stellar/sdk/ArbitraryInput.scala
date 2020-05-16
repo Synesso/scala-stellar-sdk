@@ -249,7 +249,7 @@ trait ArbitraryInput extends ScalaCheck {
   }
 
   def genCreateAccountOperation: Gen[CreateAccountOperation] = for {
-    destination <- genPublicKey
+    destination <- genAccountId
     startingBalance <- genNativeAmount
     sourceAccount <- Gen.option(genPublicKey)
   } yield {
@@ -356,7 +356,7 @@ trait ArbitraryInput extends ScalaCheck {
 
   def genPathPaymentStrictReceiveOperation: Gen[PathPaymentStrictReceiveOperation] = for {
     sendMax <- genAmount
-    destAccount <- genPublicKey
+    destAccount <- genAccountId
     destAmount <- genAmount
     path <- Gen.listOf(genAsset)
     sourceAccount <- Gen.option(genPublicKey)
@@ -366,7 +366,7 @@ trait ArbitraryInput extends ScalaCheck {
 
   def genPathPaymentStrictSendOperation: Gen[PathPaymentStrictSendOperation] = for {
     sendAmount <- genAmount
-    destAccount <- genPublicKey
+    destAccount <- genAccountId
     destinationMin <- genAmount
     path <- Gen.listOf(genAsset)
     sourceAccount <- Gen.option(genPublicKey)
@@ -375,7 +375,7 @@ trait ArbitraryInput extends ScalaCheck {
   }
 
   def genPaymentOperation: Gen[PaymentOperation] = for {
-    destAccount <- genPublicKey
+    destAccount <- genAccountId
     amount <- genAmount
     sourceAccount <- Gen.option(genPublicKey)
   } yield {

@@ -63,9 +63,11 @@ object Operation extends Decode {
 object OperationDeserializer extends ResponseParser[Operation]({ o: JObject =>
   implicit val formats = DefaultFormats
 
-  def account(accountKey: String = "account") = KeyPair.fromAccountId((o \ accountKey).extract[String])
+  def publicKey(accountKey: String = "account") = KeyPair.fromAccountId((o \ accountKey).extract[String])
 
-  def sourceAccount: Option[PublicKey] = Some(account("source_account"))
+  def accountId(accountKey: String = "account") = AccountId(publicKey(accountKey).publicKey)
+
+  def sourceAccount: Option[PublicKey] = Some(publicKey("source_account"))
 
   def asset(prefix: String = "", obj: JValue = o) = {
     def assetCode = (obj \ s"${prefix}asset_code").extract[String]
@@ -104,16 +106,16 @@ object OperationDeserializer extends ResponseParser[Operation]({ o: JObject =>
   }
 
   (o \ "type").extract[String] match {
-    case "create_account" => CreateAccountOperation(account(), nativeAmount("starting_balance"), sourceAccount)
-    case "payment" => PaymentOperation(account("to"), amount(), sourceAccount)
+    case "create_account" => CreateAccountOperation(accountId(), nativeAmount("starting_balance"), sourceAccount)
+    case "payment" => PaymentOperation(accountId("to"), amount(), sourceAccount)
     case "path_payment" | "path_payment_strict_receive" =>
       val JArray(pathJs) = o \ "path"
       val path: List[Asset] = pathJs.map(a => asset(obj = a))
-      PathPaymentStrictReceiveOperation(amount("source_max", "source_"), account("to"), amount(), path, sourceAccount)
+      PathPaymentStrictReceiveOperation(amount("source_max", "source_"), accountId("to"), amount(), path, sourceAccount)
     case "path_payment_strict_send" =>
       val JArray(pathJs) = o \ "path"
       val path: List[Asset] = pathJs.map(a => asset(obj = a))
-      PathPaymentStrictSendOperation(amount(assetPrefix = "source_"), account("to"), amount(label = "destination_min"), path, sourceAccount)
+      PathPaymentStrictSendOperation(amount(assetPrefix = "source_"), accountId("to"), amount(label = "destination_min"), path, sourceAccount)
     case "manage_offer" | "manage_sell_offer" =>
       (o \ "offer_id").extract[String].toLong match {
         case 0L => CreateSellOfferOperation(
@@ -179,7 +181,7 @@ object OperationDeserializer extends ResponseParser[Operation]({ o: JObject =>
         case jv => if (jv.extract[Boolean]) Set(TrustLineAuthorized) else Set() // protocol <= 12
       }
       AllowTrustOperation(
-        account("trustor"),
+        publicKey("trustor"),
         asset.code,
         trustLineFlags,
         sourceAccount)
@@ -214,7 +216,7 @@ sealed trait PayOperation extends Operation
   * @param sourceAccount the account effecting this operation, if different from the owning account of the transaction
   * @see [[https://www.stellar.org/developers/horizon/reference/resources/operation.html#create-account endpoint doc]]
   */
-case class CreateAccountOperation(destinationAccount: PublicKeyOps,
+case class CreateAccountOperation(destinationAccount: AccountId,
                                   startingBalance: NativeAmount = Amount.lumens(1),
                                   sourceAccount: Option[PublicKeyOps] = None) extends PayOperation {
 
@@ -227,7 +229,7 @@ case class CreateAccountOperation(destinationAccount: PublicKeyOps,
 
 object CreateAccountOperation extends Decode {
   val decode: State[Seq[Byte], CreateAccountOperation] = for {
-    destination <- KeyPair.decode
+    destination <- AccountId.decode
     startingBalance <- long
   } yield CreateAccountOperation(destination, NativeAmount(startingBalance))
 }
@@ -242,7 +244,7 @@ object CreateAccountOperation extends Decode {
   * @param sourceAccount the account effecting this operation, if different from the owning account of the transaction
   * @see [[https://www.stellar.org/developers/horizon/reference/resources/operation.html#payment endpoint doc]]
   */
-case class PaymentOperation(destinationAccount: PublicKeyOps,
+case class PaymentOperation(destinationAccount: AccountId,
                             amount: Amount,
                             sourceAccount: Option[PublicKeyOps] = None) extends PayOperation {
 
@@ -257,7 +259,7 @@ case class PaymentOperation(destinationAccount: PublicKeyOps,
 object PaymentOperation {
 
   def decode: State[Seq[Byte], PaymentOperation] = for {
-    destination <- KeyPair.decode
+    destination <- AccountId.decode
     amount <- Amount.decode
   } yield PaymentOperation(destination, amount)
 
@@ -278,7 +280,7 @@ object PaymentOperation {
   * @see [[https://www.stellar.org/developers/horizon/reference/resources/operation.html#path-payment endpoint doc]]
   */
 case class PathPaymentStrictReceiveOperation(sendMax: Amount,
-                                             destinationAccount: PublicKeyOps,
+                                             destinationAccount: AccountId,
                                              destinationAmount: Amount,
                                              path: Seq[Asset] = Nil,
                                              sourceAccount: Option[PublicKeyOps] = None) extends PayOperation {
@@ -296,7 +298,7 @@ object PathPaymentStrictReceiveOperation extends Decode {
 
   def decode: State[Seq[Byte], PathPaymentStrictReceiveOperation] = for {
     sendMax <- Amount.decode
-    destAccount <- KeyPair.decode
+    destAccount <- AccountId.decode
     destAmount <- Amount.decode
     path <- arr(Asset.decode)
   } yield PathPaymentStrictReceiveOperation(sendMax, destAccount, destAmount, path)
@@ -318,7 +320,7 @@ object PathPaymentStrictReceiveOperation extends Decode {
   * @see [[https://www.stellar.org/developers/learn/concepts/list-of-operations.html#path-payment-strict-send endpoint doc]]
   */
 case class PathPaymentStrictSendOperation(sendAmount: Amount,
-                                          destinationAccount: PublicKeyOps,
+                                          destinationAccount: AccountId,
                                           destinationMin: Amount,
                                           path: Seq[Asset] = Nil,
                                           sourceAccount: Option[PublicKeyOps] = None) extends PayOperation {
@@ -336,7 +338,7 @@ object PathPaymentStrictSendOperation extends Decode {
 
   def decode: State[Seq[Byte], PathPaymentStrictSendOperation] = for {
     sendAmount <- Amount.decode
-    destAccount <- KeyPair.decode
+    destAccount <- AccountId.decode
     destMin <- Amount.decode
     path <- arr(Asset.decode)
   } yield PathPaymentStrictSendOperation(sendAmount, destAccount, destMin, path)
@@ -707,7 +709,7 @@ case class AccountMergeOperation(destination: AccountId, sourceAccount: Option[P
 }
 
 object AccountMergeOperation {
-  def decode: State[Seq[Byte], AccountMergeOperation] = KeyPair.decode.map(_.publicKey).map(AccountId(_)).map(AccountMergeOperation(_))
+  def decode: State[Seq[Byte], AccountMergeOperation] = AccountId.decode.map(AccountMergeOperation(_))
 }
 
 /**

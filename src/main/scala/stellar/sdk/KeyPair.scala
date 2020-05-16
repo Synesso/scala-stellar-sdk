@@ -17,7 +17,6 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success, Try}
 
 case class KeyPair(pk: EdDSAPublicKey, sk: EdDSAPrivateKey) extends PublicKeyOps {
-
   /**
     * Returns the human readable secret seed encoded in strkey.
     */
@@ -84,6 +83,8 @@ sealed trait PublicKeyOps extends Encodable {
     * This key pair or verifying key without the private key.
     */
   def asPublicKey: PublicKey = PublicKey(pk)
+
+  def toAccountId: AccountId = AccountId(publicKey)
 
   /**
     * A four-byte code that provides a hint to the identity of this public key

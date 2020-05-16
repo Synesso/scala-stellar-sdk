@@ -51,7 +51,7 @@ class TransactionSpec extends Specification with ArbitraryInput with DomainMatch
       val account = Account(accountId, seqNum)
       val txn = Transaction(
         source = account,
-        operations = Seq(CreateAccountOperation(dest, NativeAmount(20000000000L))),
+        operations = Seq(CreateAccountOperation(dest.toAccountId, NativeAmount(20000000000L))),
         timeBounds = Unbounded,
         maxFee = NativeAmount(100)
       ).sign(source)
@@ -109,7 +109,7 @@ class TransactionSpec extends Specification with ArbitraryInput with DomainMatch
               33792794094993411L
             ), Seq(
               PaymentOperation(
-                KeyPair.fromAccountId("GCXFGNIR72AV62Q4WIXFUT35CKL3WOMB7KL3OES4UW27CH2DC2BAHMZH"),
+                KeyPair.fromAccountId("GCXFGNIR72AV62Q4WIXFUT35CKL3WOMB7KL3OES4UW27CH2DC2BAHMZH").toAccountId,
                 NativeAmount(10000000)
               )
             ), MemoText("Hi Zy, heres an angpao!"), Unbounded, NativeAmount(100)

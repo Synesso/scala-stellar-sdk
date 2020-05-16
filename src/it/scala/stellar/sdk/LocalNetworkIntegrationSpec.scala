@@ -19,6 +19,7 @@ import stellar.sdk.model.response._
 import stellar.sdk.model.result.TransactionHistory
 import stellar.sdk.util.ByteArrays
 
+import scala.annotation.tailrec
 import scala.concurrent.duration._
 import scala.concurrent.{Await, Future}
 import scala.sys.process._
@@ -55,6 +56,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
   private def transact(ops: Operation*): Unit = {
     val batchSize = 100
 
+    @tailrec
     def forReal(batch: Seq[Operation], remaining: Seq[Operation]): Unit = {
       batch match {
         case Nil =>
@@ -104,10 +106,10 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
     futureAccountA.flatMap(a => futureAccountB.map(b => (a, b))).recoverWith {
       case _ => // account details not found, assume fixture setup is required then try again
         transact(
-          CreateAccountOperation(accnA, lumens(1000)),
-          CreateAccountOperation(accnB, lumens(1000)),
-          CreateAccountOperation(accnC, lumens(1000)),
-          CreateAccountOperation(accnD, lumens(1000)),
+          CreateAccountOperation(accnA.toAccountId, lumens(1000)),
+          CreateAccountOperation(accnB.toAccountId, lumens(1000)),
+          CreateAccountOperation(accnC.toAccountId, lumens(1000)),
+          CreateAccountOperation(accnD.toAccountId, lumens(1000)),
           WriteDataOperation("life_universe_everything", "42", Some(accnB)),
           WriteDataOperation("brain the size of a planet", "and they ask me to open a door", Some(accnB)),
           WriteDataOperation("fenton", "FENTON!", Some(accnC)),
@@ -120,7 +122,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
           ChangeTrustOperation(IssuedAmount(100000000, chinchillaMaster), Some(accnA)),
           AllowTrustOperation(accnB, "Aardvark", trustLineFlags = Set(TrustLineAuthorized), Some(accnA)),
           AllowTrustOperation(accnB, "Chinchilla", trustLineFlags = Set(TrustLineAuthorized), Some(accnA)),
-          PaymentOperation(accnB, IssuedAmount(555, aardvarkA), Some(accnA))
+          PaymentOperation(accnB.toAccountId, IssuedAmount(555, aardvarkA), Some(accnA))
         )
 
         // force a transaction boundary between CreateAccount and AccountMerge
@@ -139,8 +141,8 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
           DeleteSellOfferOperation(4, beaverA, NativeAsset, Price(1, 3), Some(accnA)),
           CreateSellOfferOperation(IssuedAmount(800000000, chinchillaA), NativeAsset, Price(80, 4), Some(accnA)),
           CreateSellOfferOperation(IssuedAmount(10000000, chinchillaA), chinchillaMaster, Price(1, 1), Some(accnA)),
-          PathPaymentStrictReceiveOperation(IssuedAmount(1, chinchillaMaster), accnB, IssuedAmount(1, chinchillaA), Nil),
-          PathPaymentStrictSendOperation(IssuedAmount(100, chinchillaMaster), accnB, IssuedAmount(1, chinchillaA), Nil),
+          PathPaymentStrictReceiveOperation(IssuedAmount(1, chinchillaMaster), accnB.toAccountId, IssuedAmount(1, chinchillaA), Nil),
+          PathPaymentStrictSendOperation(IssuedAmount(100, chinchillaMaster), accnB.toAccountId, IssuedAmount(1, chinchillaA), Nil),
           BumpSequenceOperation(masterAccount.sequenceNumber + 20),
           SetOptionsOperation(signer = Some(Signer(SHA256Hash(ByteArrays.sha256(dachshundB.encode).toIndexedSeq), 3)), sourceAccount = Some(accnD))
         )
@@ -152,7 +154,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
           for {
             sourceAccount <- network.account(payerKeyPair)
             response <- model.Transaction(sourceAccount, timeBounds = Unbounded, maxFee = NativeAmount(100))
-              .add(PaymentOperation(payeePublicKey, lumens(5000)))
+              .add(PaymentOperation(payeePublicKey.toAccountId, lumens(5000)))
               .sign(payerKeyPair)
               .submit()
           } yield response
@@ -161,7 +163,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
 
         // 100 payments
         masterAccount = masterAccount.copy(sequenceNumber = 24) // because of previous bump_sequence op
-        transact((1 to 100).map(i => PaymentOperation(accnA, NativeAmount(i))): _*)
+        transact((1 to 100).map(i => PaymentOperation(accnA.toAccountId, NativeAmount(i))): _*)
 
         setupFixtures
     }
@@ -398,7 +400,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
         case op =>
           op.operation must beLike[Operation] {
             case PaymentOperation(dest, amount, source) =>
-              dest must beEquivalentTo(accnA)
+              dest must beEquivalentTo(accnA.toAccountId)
               amount mustEqual NativeAmount(100)
               source must beSome[PublicKeyOps](masterAccountKey.asPublicKey)
           }
@@ -453,8 +455,8 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
     "filter payments by account" >> {
       network.paymentsByAccount(accnA) must beLike[Seq[Transacted[PayOperation]]] {
         case a +: b +: oneHundredPayments =>
-          a.operation must beEquivalentTo(CreateAccountOperation(accnA, lumens(1000), Some(masterAccountKey)))
-          b.operation must beEquivalentTo(PaymentOperation(accnB, IssuedAmount(555, aardvarkA), Some(accnA)))
+          a.operation must beEquivalentTo(CreateAccountOperation(accnA.toAccountId, lumens(1000), Some(masterAccountKey)))
+          b.operation must beEquivalentTo(PaymentOperation(accnB.toAccountId, IssuedAmount(555, aardvarkA), Some(accnA)))
           oneHundredPayments must haveSize(100)
       }.awaitFor(10.seconds)
     }
@@ -466,10 +468,10 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
       } yield operation) must beLike[Seq[Transacted[PayOperation]]] {
         case Seq(op1, op2) =>
           op1.operation must beEquivalentTo(PathPaymentStrictReceiveOperation(
-            IssuedAmount(1, chinchillaMaster), accnB, IssuedAmount(1, chinchillaA), Nil
+            IssuedAmount(1, chinchillaMaster), accnB.toAccountId, IssuedAmount(1, chinchillaA), Nil
           ))
           op2.operation must beEquivalentTo(PathPaymentStrictSendOperation(
-            IssuedAmount(100, chinchillaMaster), accnB, IssuedAmount(1, chinchillaA), Nil
+            IssuedAmount(100, chinchillaMaster), accnB.toAccountId, IssuedAmount(1, chinchillaA), Nil
           ))
       }.awaitFor(10.seconds)
     }
@@ -479,10 +481,10 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
         beLike[Seq[Transacted[PayOperation]]] {
           case Seq(op1, op2) =>
             op1.operation must beEquivalentTo(PathPaymentStrictReceiveOperation(
-              IssuedAmount(1, chinchillaMaster), accnB, IssuedAmount(1, chinchillaA), Nil
+              IssuedAmount(1, chinchillaMaster), accnB.toAccountId, IssuedAmount(1, chinchillaA), Nil
             ))
             op2.operation must beEquivalentTo(PathPaymentStrictSendOperation(
-              IssuedAmount(100, chinchillaMaster), accnB, IssuedAmount(1, chinchillaA), Nil
+              IssuedAmount(100, chinchillaMaster), accnB.toAccountId, IssuedAmount(1, chinchillaA), Nil
             ))
         }.awaitFor(10.seconds)
     }
@@ -593,7 +595,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
         account <- network.account(accnD)
         txn = Transaction(
           source = account,
-          operations = List(CreateAccountOperation(KeyPair.random, startingBalance = lumens(100))),
+          operations = List(CreateAccountOperation(KeyPair.random.toAccountId, startingBalance = lumens(100))),
           timeBounds = TimeBounds.Unbounded,
           maxFee = NativeAmount(100))
           .sign(dachshundB.encode)

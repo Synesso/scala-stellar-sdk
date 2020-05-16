@@ -1,6 +1,6 @@
 package stellar.sdk.model.op
 
-import org.json4s.NoTypeHints
+import org.json4s.{Formats, NoTypeHints}
 import org.json4s.native.JsonMethods.parse
 import org.json4s.native.Serialization
 import org.scalacheck.Arbitrary
@@ -11,7 +11,7 @@ import stellar.sdk.{ArbitraryInput, DomainMatchers}
 class PathPaymentStrictReceiveOperationSpec extends Specification with ArbitraryInput with DomainMatchers with JsonSnippets {
 
   implicit val arb: Arbitrary[Transacted[PathPaymentStrictReceiveOperation]] = Arbitrary(genTransacted(genPathPaymentStrictReceiveOperation))
-  implicit val formats = Serialization.formats(NoTypeHints) + TransactedOperationDeserializer
+  implicit val formats: Formats = Serialization.formats(NoTypeHints) + TransactedOperationDeserializer
 
   "path payment operation" should {
     "serde via xdr string" >> prop { actual: PathPaymentStrictReceiveOperation =>
@@ -45,13 +45,17 @@ class PathPaymentStrictReceiveOperationSpec extends Specification with Arbitrary
            |  ${amountDocPortion(op.operation.destinationAmount)}
            |  ${amountDocPortion(op.operation.sendMax, "source_max", "source_")}
            |  "from":"${op.operation.sourceAccount.get.accountId}",
-           |  "to":"${op.operation.destinationAccount.accountId}",
+           |  "to":"${op.operation.destinationAccount.publicKey.accountId}",
            |  "path":[${if (op.operation.path.isEmpty) "" else op.operation.path.map(asset(_)).mkString("{", "},{", "}")}]
            |}
          """.stripMargin
 
-      parse(doc).extract[Transacted[Operation]] mustEqual op
+      parse(doc).extract[Transacted[Operation]] mustEqual removeDestinationSubAccountId(op)
     }.setGen(genTransacted(genPathPaymentStrictReceiveOperation.suchThat(_.sourceAccount.nonEmpty)))
   }
 
+  // Because sub accounts are not yet supported in Horizon JSON.
+  private def removeDestinationSubAccountId(op: Transacted[PathPaymentStrictReceiveOperation]): Transacted[PathPaymentStrictReceiveOperation] = {
+    op.copy(operation = op.operation.copy(destinationAccount = op.operation.destinationAccount.copy(subAccountId = None)))
+  }
 }
