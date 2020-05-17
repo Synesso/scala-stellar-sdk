@@ -1,10 +1,7 @@
 package stellar.sdk.inet
 
-import java.net.HttpURLConnection.{HTTP_BAD_REQUEST, HTTP_NOT_FOUND}
-
 import com.typesafe.scalalogging.LazyLogging
 import okhttp3._
-import okhttp3.logging.HttpLoggingInterceptor
 import org.json4s.native.{JsonMethods, Serialization}
 import org.json4s.{CustomSerializer, DefaultFormats, Formats, JObject, NoTypeHints}
 import stellar.sdk.BuildInfo

@@ -200,7 +200,11 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
           id mustEqual accnA
           balances must containTheSameElementsAs(Seq(
             Balance(lumens(1000.000495), buyingLiabilities = 16000000000L),
-            Balance(IssuedAmount(101, Asset.apply("Chinchilla", masterAccountKey)), limit = Some(100000000), 9999899)
+            Balance(IssuedAmount(101, Asset.apply("Chinchilla", masterAccountKey)),
+              limit = Some(100000000),
+              buyingLiabilities = 9999899,
+              authorized = true,
+              authorizedToMaintainLiabilities = true)
           ))
           data must beEmpty
       }.awaitFor(30 seconds)

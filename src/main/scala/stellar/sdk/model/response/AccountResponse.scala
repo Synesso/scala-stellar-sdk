@@ -2,7 +2,7 @@ package stellar.sdk.model.response
 
 import java.nio.charset.StandardCharsets.UTF_8
 
-import org.json4s.DefaultFormats
+import org.json4s.{DefaultFormats, Formats}
 import org.json4s.JsonAST.{JArray, JObject}
 import stellar.sdk._
 import stellar.sdk.model.Amount.toBaseUnits
@@ -25,7 +25,7 @@ case class AccountResponse(id: PublicKey,
 }
 
 object AccountRespDeserializer extends ResponseParser[AccountResponse]({ o: JObject =>
-  implicit val formats = DefaultFormats
+  implicit val formats: Formats = DefaultFormats
   val id = KeyPair.fromAccountId((o \ "id").extract[String])
   val seq = (o \ "sequence").extract[String].toLong
   val subEntryCount = (o \ "subentry_count").extract[Int]
@@ -55,7 +55,11 @@ object AccountRespDeserializer extends ResponseParser[AccountResponse]({ o: JObj
       val limit = (balObj \ "limit").extractOpt[String].map(BigDecimal(_)).map(toBaseUnits).map(_.get)
       val buyingLiabilities = toBaseUnits(BigDecimal((balObj \ "buying_liabilities").extract[String])).get
       val sellingLiabilities = toBaseUnits(BigDecimal((balObj \ "selling_liabilities").extract[String])).get
-      Balance(amount, limit, buyingLiabilities, sellingLiabilities)
+      val authorised = (balObj \ "is_authorized").extractOpt[Boolean].getOrElse(false)
+      val authorisedToMaintainLiabilities = (balObj \ "is_authorized_to_maintain_liabilities")
+        .extractOpt[Boolean].getOrElse(false)
+
+      Balance(amount, limit, buyingLiabilities, sellingLiabilities, authorised, authorisedToMaintainLiabilities)
     case _ => throw new RuntimeException(s"Expected js object at 'balances'")
   }
   val JArray(jsSigners) = o \ "signers"

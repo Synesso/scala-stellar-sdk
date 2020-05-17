@@ -1,6 +1,6 @@
 package stellar.sdk.model.response
 
-import org.json4s.NoTypeHints
+import org.json4s.{Formats, NoTypeHints}
 import org.json4s.native.JsonMethods._
 import org.json4s.native.Serialization
 import org.specs2.mutable.Specification
@@ -10,7 +10,7 @@ import stellar.sdk.model._
 
 class AccountResponseSpec extends Specification with ArbitraryInput with DomainMatchers {
 
-  implicit val formats = Serialization.formats(NoTypeHints) + AccountRespDeserializer
+  implicit val formats: Formats = Serialization.formats(NoTypeHints) + AccountRespDeserializer
 
   "a sample account response document" should {
     "parse to an account response" >> {
@@ -71,7 +71,9 @@ class AccountResponseSpec extends Specification with ArbitraryInput with DomainM
           |      "selling_liabilities": "572.0000000",
           |      "asset_type": "credit_alphanum4",
           |      "asset_code": "JPY",
-          |      "asset_issuer": "GBVAOIACNSB7OVUXJYC5UE2D4YK2F7A24T7EE5YOMN4CE6GCHUTOUQXM"
+          |      "asset_issuer": "GBVAOIACNSB7OVUXJYC5UE2D4YK2F7A24T7EE5YOMN4CE6GCHUTOUQXM",
+          |      "is_authorized": true,
+          |      "is_authorized_to_maintain_liabilities": false
           |    },
           |    {
           |      "balance": "0.0000001",
@@ -89,7 +91,9 @@ class AccountResponseSpec extends Specification with ArbitraryInput with DomainM
           |      "selling_liabilities": "0.0000000",
           |      "asset_type": "credit_alphanum4",
           |      "asset_code": "BTC",
-          |      "asset_issuer": "GATEMHCCKCY67ZUCKTROYN24ZYT5GK4EQZ65JJLDHKHRUZI3EUEKMTCH"
+          |      "asset_issuer": "GATEMHCCKCY67ZUCKTROYN24ZYT5GK4EQZ65JJLDHKHRUZI3EUEKMTCH",
+          |      "is_authorized": false,
+          |      "is_authorized_to_maintain_liabilities": true
           |    },
           |    {
           |      "balance": "38615.8026333",
@@ -98,7 +102,9 @@ class AccountResponseSpec extends Specification with ArbitraryInput with DomainM
           |      "selling_liabilities": "0.0000000",
           |      "asset_type": "credit_alphanum4",
           |      "asset_code": "CNY",
-          |      "asset_issuer": "GAREELUB43IRHWEASCFBLKHURCGMHE5IF6XSE7EXDLACYHGRHM43RFOX"
+          |      "asset_issuer": "GAREELUB43IRHWEASCFBLKHURCGMHE5IF6XSE7EXDLACYHGRHM43RFOX",
+          |      "is_authorized": false,
+          |      "is_authorized_to_maintain_liabilities": false
           |    },
           |    {
           |      "balance": "16001.4653423",
@@ -107,7 +113,9 @@ class AccountResponseSpec extends Specification with ArbitraryInput with DomainM
           |      "selling_liabilities": "2.3000000",
           |      "asset_type": "credit_alphanum4",
           |      "asset_code": "EURT",
-          |      "asset_issuer": "GAP5LETOV6YIE62YAM56STDANPRDO7ZFDBGSNHJQIYGGKSMOZAHOOS2S"
+          |      "asset_issuer": "GAP5LETOV6YIE62YAM56STDANPRDO7ZFDBGSNHJQIYGGKSMOZAHOOS2S",
+          |      "is_authorized": true,
+          |      "is_authorized_to_maintain_liabilities": true
           |    },
           |    {
           |      "balance": "19309.4481807",
@@ -138,7 +146,9 @@ class AccountResponseSpec extends Specification with ArbitraryInput with DomainM
             Balance(
               amount = Amount(160014653423L, IssuedAsset4("EURT", KeyPair.fromAccountId("GAP5LETOV6YIE62YAM56STDANPRDO7ZFDBGSNHJQIYGGKSMOZAHOOS2S"))),
               limit = Some(1000000000000000000L),
-              sellingLiabilities = 23000000L
+              sellingLiabilities = 23000000L,
+              authorized = true,
+              authorizedToMaintainLiabilities = true
             ),
             Balance(
               amount = Amount(386158026333L, IssuedAsset4("CNY", KeyPair.fromAccountId("GAREELUB43IRHWEASCFBLKHURCGMHE5IF6XSE7EXDLACYHGRHM43RFOX"))),
@@ -147,7 +157,8 @@ class AccountResponseSpec extends Specification with ArbitraryInput with DomainM
             ),
             Balance(
               amount = Amount(28256257L, IssuedAsset4("BTC", KeyPair.fromAccountId("GATEMHCCKCY67ZUCKTROYN24ZYT5GK4EQZ65JJLDHKHRUZI3EUEKMTCH"))),
-              limit = Some(9223372036854775807L)
+              limit = Some(9223372036854775807L),
+              authorizedToMaintainLiabilities = true
             ),
             Balance(
               amount = Amount(1L, IssuedAsset4("BTC", KeyPair.fromAccountId("GDXTJEK4JZNSTNQAWA53RZNS2GIKTDRPEUWDXELFMKU52XNECNVDVXDI"))),
@@ -158,7 +169,8 @@ class AccountResponseSpec extends Specification with ArbitraryInput with DomainM
               amount = Amount(3332771622L, IssuedAsset4("JPY", KeyPair.fromAccountId("GBVAOIACNSB7OVUXJYC5UE2D4YK2F7A24T7EE5YOMN4CE6GCHUTOUQXM"))),
               limit = Some(1000000000000000000L),
               buyingLiabilities = 283,
-              sellingLiabilities = 5720000000L
+              sellingLiabilities = 5720000000L,
+              authorized = true
             )
           ))
           r.signers must haveSize(1)

@@ -528,7 +528,9 @@ trait ArbitraryInput extends ScalaCheck {
     limit <- Gen.choose(amount.units, Long.MaxValue).map(Some(_)).map(_.filterNot(_ => amount.asset == NativeAsset))
     buyingLiabilities <- Gen.choose(0, amount.units)
     sellingLiabilities <- Gen.choose(0, amount.units)
-  } yield Balance(amount, limit, buyingLiabilities = buyingLiabilities, sellingLiabilities)
+    authorized <- Gen.oneOf(true, false)
+    authorizedToMaintainLiabilities <- Gen.oneOf(true, false)
+  } yield Balance(amount, limit, buyingLiabilities = buyingLiabilities, sellingLiabilities, authorized, authorizedToMaintainLiabilities)
 
   def genLedgerResp: Gen[LedgerResponse] = for {
     id <- Gen.identifier
