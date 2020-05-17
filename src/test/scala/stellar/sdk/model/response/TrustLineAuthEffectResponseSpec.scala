@@ -1,6 +1,6 @@
 package stellar.sdk.model.response
 
-import org.json4s.NoTypeHints
+import org.json4s.{Formats, NoTypeHints}
 import org.json4s.native.JsonMethods._
 import org.json4s.native.Serialization
 import org.scalacheck.Gen
@@ -10,12 +10,19 @@ import stellar.sdk.model.NonNativeAsset
 
 class TrustLineAuthEffectResponseSpec extends Specification with ArbitraryInput {
 
-  implicit val formats = Serialization.formats(NoTypeHints) + EffectResponseDeserializer
+  implicit val formats: Formats = Serialization.formats(NoTypeHints) + EffectResponseDeserializer
 
   "an authorize trustline effect document" should {
     "parse to an authorize trustline effect" >> prop { (id: String, accn: KeyPair, asset: NonNativeAsset) =>
       val json = doc(id, "trustline_authorized", accn, asset, 0.0)
       parse(json).extract[EffectResponse] mustEqual EffectTrustLineAuthorized(id, accn.asPublicKey, asset)
+    }.setGen1(Gen.identifier)
+  }
+
+  "an authorize to maintain liabilities effect document" should {
+    "parse to an authorize to maintain liabilities effect" >> prop { (id: String, accn: KeyPair, asset: NonNativeAsset) =>
+      val json = doc(id, "trustline_authorized_to_maintain_liabilities", accn, asset, 0.0)
+      parse(json).extract[EffectResponse] mustEqual EffectTrustLineAuthorizedToMaintainLiabilities(id, accn.asPublicKey, asset)
     }.setGen1(Gen.identifier)
   }
 

@@ -47,11 +47,15 @@ class AllowTrustOperationSpec extends Specification with ArbitraryInput with Dom
            |  "asset_issuer": "${op.operation.sourceAccount.get.accountId}"
            |  "trustor": "${op.operation.trustor.accountId}",
            |  "trustee": "${op.operation.sourceAccount.get.accountId}",
-           |  "authorize": ${op.operation.trustLineFlags.map(_.i).sum}
+           |  "authorize": ${op.operation.trustLineFlags.contains(TrustLineAuthorized)}
+           |  "authorize_to_maintain_liabilities": ${op.operation.trustLineFlags.contains(TrustLineCanMaintainLiabilities)}
            |}
          """.stripMargin
 
-      parse(doc).extract[Transacted[AllowTrustOperation]] mustEqual op
+      val parsed = parse(doc).extract[Transacted[AllowTrustOperation]]
+      parsed mustEqual op
+      parsed.operation.authorize mustEqual op.operation.authorize
+      parsed.operation.authorizeToMaintainLiabilities mustEqual op.operation.authorizeToMaintainLiabilities
     }.setGen(genTransacted(genAllowTrustOperation.suchThat(_.sourceAccount.nonEmpty)))
   }
 

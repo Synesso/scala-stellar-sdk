@@ -52,6 +52,8 @@ case class EffectTrustLineRemoved(id: String, account: PublicKeyOps, asset: NonN
 
 case class EffectTrustLineAuthorized(id: String, trustor: PublicKeyOps, asset: NonNativeAsset) extends EffectResponse
 
+case class EffectTrustLineAuthorizedToMaintainLiabilities(id: String, trustor: PublicKeyOps, asset: NonNativeAsset) extends EffectResponse
+
 case class EffectTrustLineDeauthorized(id: String, trustor: PublicKeyOps, asset: NonNativeAsset) extends EffectResponse
 
 case class EffectTrade(id: String, offerId: Long, buyer: PublicKeyOps, bought: Amount, seller: PublicKeyOps, sold: Amount) extends EffectResponse
@@ -115,6 +117,7 @@ object EffectResponseDeserializer extends ResponseParser[EffectResponse]({ o: JO
     case "trustline_updated" => EffectTrustLineUpdated(id, account(), amount(key = "limit").asInstanceOf[IssuedAmount])
     case "trustline_removed" => EffectTrustLineRemoved(id, account(), asset().asInstanceOf[NonNativeAsset])
     case "trustline_authorized" => EffectTrustLineAuthorized(id, account("trustor"), asset(issuerKey = "account").asInstanceOf[NonNativeAsset])
+    case "trustline_authorized_to_maintain_liabilities" => EffectTrustLineAuthorizedToMaintainLiabilities(id, account("trustor"), asset(issuerKey = "account").asInstanceOf[NonNativeAsset])
     case "trustline_deauthorized" => EffectTrustLineDeauthorized(id, account("trustor"), asset(issuerKey = "account").asInstanceOf[NonNativeAsset])
     case "trade" => EffectTrade(id, (o \ "offer_id").extract[String].toLong, account(), amount("bought_"), account("seller"), amount("sold_"))
     case t => throw new RuntimeException(s"Unrecognised effect type '$t': ${compact(render(o))}")

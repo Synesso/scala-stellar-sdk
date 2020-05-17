@@ -176,10 +176,9 @@ object OperationDeserializer extends ResponseParser[Operation]({ o: JObject =>
       ChangeTrustOperation(issuedAmount("limit"), sourceAccount)
     case "allow_trust" =>
       val asset: NonNativeAsset = nonNativeAsset
-      val trustLineFlags: Set[TrustLineFlag] = (o \ "authorize") match {
-        case JInt(i) => TrustLineFlags.from(i.intValue) // protocol >= 13
-        case jv => if (jv.extract[Boolean]) Set(TrustLineAuthorized) else Set() // protocol <= 12
-      }
+      val authorise = if ((o \ "authorize").extractOpt[Boolean].getOrElse(false)) 0x1 else 0
+      val authoriseLiabilities = if ((o \ "authorize_to_maintain_liabilities").extractOpt[Boolean].getOrElse(false)) 0x2 else 0
+      val trustLineFlags: Set[TrustLineFlag] = TrustLineFlags.from(authorise + authoriseLiabilities) // protocol >= 13
       AllowTrustOperation(
         publicKey("trustor"),
         asset.code,
@@ -673,8 +672,9 @@ case class AllowTrustOperation(trustor: PublicKeyOps,
                                trustLineFlags: Set[TrustLineFlag],
                                sourceAccount: Option[PublicKeyOps] = None) extends Operation {
 
-  @deprecated("This field has been removed in protocol 13. Use property `trustLineFlags` instead.")
-  val authorize: Boolean = trustLineFlags.contains(TrustLineAuthorized)
+  def authorize: Boolean = trustLineFlags.contains(TrustLineAuthorized)
+
+  def authorizeToMaintainLiabilities: Boolean = trustLineFlags.contains(TrustLineCanMaintainLiabilities)
 
   override def encode: LazyList[Byte] =
     super.encode ++
