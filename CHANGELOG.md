@@ -4,8 +4,12 @@ As this project is pre 1.0, breaking changes may happen for minor version bumps.
 
 ## Next version
 
+## 0.12.0
+
 - Adds support for Mnemonic phrases in Chinese Simplified, Chinese Traditional, Czech, Italian & Korean
 - Adds support for Stellar Core Protocol #13
+  - Introduces `FeeBump` as an optional field on transactions. A `FeeBump` allows account owners to
+    resubmit existing transactions with an increased fee. 
   - `AllowTrustOperation` now has two difference kinds of authorization in support of
     [CAP-0018](https://github.com/stellar/stellar-protocol/blob/master/core/cap-0018.md).
     See `TrustLineFlag`.
