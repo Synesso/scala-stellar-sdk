@@ -38,7 +38,7 @@ object TransactionHistoryDeserializer extends {
   o: JObject =>
     implicit val formats: Formats = DefaultFormats
 
-    val maxFee = NativeAmount((o \ "max_fee").extract[Int])
+    val maxFee = NativeAmount((o \ "max_fee").extract[String].toInt)
     val signatures = (o \ "signatures").extract[List[String]]
     val hash = (o \ "hash").extract[String]
 
@@ -55,7 +55,7 @@ object TransactionHistoryDeserializer extends {
       account = KeyPair.fromAccountId((o \ "source_account").extract[String]),
       sequence = (o \ "source_account_sequence").extract[String].toLong,
       maxFee = inner.map(_._2).getOrElse(maxFee),
-      feeCharged = NativeAmount((o \ "fee_charged").extract[Int]),
+      feeCharged = NativeAmount((o \ "fee_charged").extract[String].toInt),
       operationCount = (o \ "operation_count").extract[Int],
       memo = (o \ "memo_type").extract[String] match {
         case "none" => NoMemo

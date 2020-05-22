@@ -4,6 +4,12 @@ As this project is pre 1.0, breaking changes may happen for minor version bumps.
 
 ## Next version
 
+## 0.12.1
+
+### Bugfix
+
+- Fixes an error with parsing of Horizon transaction history responses.
+
 ## 0.12.0
 
 - Adds support for Mnemonic phrases in Chinese Simplified, Chinese Traditional, Czech, Italian & Korean
