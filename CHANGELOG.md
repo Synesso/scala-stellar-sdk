@@ -4,6 +4,11 @@ As this project is pre 1.0, breaking changes may happen for minor version bumps.
 
 ## Next version
 
+## 0.12.2
+
+As requested by SDF, support for multiplexed account addressing has been removed. This feature has not yet
+passed community approval.
+
 ## 0.12.1
 
 ### Bugfix
