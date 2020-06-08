@@ -48,12 +48,7 @@ class CreateAccountOperationSpec extends Specification with ArbitraryInput with 
            |}
          """.stripMargin
 
-      parse(doc).extract[Transacted[CreateAccountOperation]] mustEqual removeDestinationSubAccountId(op)
+      parse(doc).extract[Transacted[CreateAccountOperation]] mustEqual op
     }.setGen(genTransacted(genCreateAccountOperation.suchThat(_.sourceAccount.nonEmpty)))
-  }
-
-  // Because sub accounts are not yet supported in Horizon JSON.
-  private def removeDestinationSubAccountId(op: Transacted[CreateAccountOperation]): Transacted[CreateAccountOperation] = {
-    op.copy(operation = op.operation.copy(destinationAccount = op.operation.destinationAccount.copy(subAccountId = None)))
   }
 }

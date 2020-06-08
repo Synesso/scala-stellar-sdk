@@ -56,11 +56,15 @@ trait ArbitraryInput extends ScalaCheck {
   implicit def arbDeleteDataOperation: Arbitrary[DeleteDataOperation] = Arbitrary(genDeleteDataOperation)
 
   implicit def arbCreateBuyOfferOperation: Arbitrary[CreateBuyOfferOperation] = Arbitrary(genCreateBuyOfferOperation)
+
   implicit def arbDeleteBuyOfferOperation: Arbitrary[DeleteBuyOfferOperation] = Arbitrary(genDeleteBuyOfferOperation)
+
   implicit def arbUpdateBuyOfferOperation: Arbitrary[UpdateBuyOfferOperation] = Arbitrary(genUpdateBuyOfferOperation)
 
   implicit def arbCreateSellOfferOperation: Arbitrary[CreateSellOfferOperation] = Arbitrary(genCreateSellOfferOperation)
+
   implicit def arbDeleteSellOfferOperation: Arbitrary[DeleteSellOfferOperation] = Arbitrary(genDeleteSellOfferOperation)
+
   implicit def arbUpdateSellOfferOperation: Arbitrary[UpdateSellOfferOperation] = Arbitrary(genUpdateSellOfferOperation)
 
   implicit def arbInflationOperation: Arbitrary[InflationOperation] = Arbitrary(genInflationOperation)
@@ -169,10 +173,7 @@ trait ArbitraryInput extends ScalaCheck {
 
   def genPublicKey: Gen[PublicKey] = genKeyPair.map(kp => PublicKey(kp.pk))
 
-  def genAccountId: Gen[AccountId] = for {
-    key <- genPublicKey.map(_.publicKey)
-    subAccountId <- Gen.option(Gen.posNum[Long])
-  } yield AccountId(key, subAccountId)
+  def genAccountId: Gen[AccountId] = genPublicKey.map(_.publicKey).map(AccountId(_))
 
   def genAccount: Gen[Account] = for {
     kp <- genAccountId
@@ -401,14 +402,14 @@ trait ArbitraryInput extends ScalaCheck {
       highThreshold, homeDomain, signer, sourceAccount)
   }
 
-  def genAccountIdStrKey: Gen[AccountId] = for {
-    pk <- genPublicKey
-    subAccountId <- Gen.option(Gen.posNum[Long])
-  } yield AccountId(pk.publicKey.toIndexedSeq, subAccountId)
-    //genPublicKey.map(pk => AccountId(pk.publicKey.toIndexedSeq))
+  def genAccountIdStrKey: Gen[AccountId] = genPublicKey.map(_.publicKey.toIndexedSeq).map(AccountId(_))
+
+  //genPublicKey.map(pk => AccountId(pk.publicKey.toIndexedSeq))
   def genSeedStrKey: Gen[Seed] = genKeyPair.map(kp => Seed(kp.sk.getAbyte.toIndexedSeq))
+
   def genPreAuthTxStrKey: Gen[PreAuthTx] = Gen.containerOfN[Array, Byte](32, Arbitrary.arbByte.arbitrary)
     .map(bs => PreAuthTx(bs.toIndexedSeq))
+
   def genHashStrKey: Gen[SHA256Hash] = Gen.identifier.map(_.getBytes("UTF-8")).map(ByteArrays.sha256)
     .map(bs => SHA256Hash(bs.toIndexedSeq))
 
@@ -747,7 +748,7 @@ trait ArbitraryInput extends ScalaCheck {
     claims <- Gen.listOf(genOfferClaim)
     destination <- genPublicKey
     amount <- genAmount
-  }  yield PathPaymentSuccess(claims, destination, amount)
+  } yield PathPaymentSuccess(claims, destination, amount)
 
   def genPaymentResult: Gen[PaymentResult] = Gen.oneOf(
     PaymentSuccess,
@@ -774,7 +775,7 @@ trait ArbitraryInput extends ScalaCheck {
     SetOptionsBadSigner,
     SetOptionsInvalidHomeDomain
   )
-  
+
   def genOfferClaim: Gen[OfferClaim] = for {
     seller <- genPublicKey
     offerId <- Gen.posNum[Long]
@@ -817,7 +818,7 @@ trait ArbitraryInput extends ScalaCheck {
     mode <- genNativeAmount
     max <- genNativeAmount
     percentiles <- Gen.listOfN(11, genNativeAmount).map(_.sortBy(_.units))
-    percentilesMap = Seq(10, 20, 30, 40, 50, 60, 70 ,80, 90, 95, 99).zip(percentiles).toMap
+    percentilesMap = Seq(10, 20, 30, 40, 50, 60, 70, 80, 90, 95, 99).zip(percentiles).toMap
   } yield FeeStats(min, mode, max, percentilesMap)
 
   def genNetworkInfo: Gen[NetworkInfo] = for {

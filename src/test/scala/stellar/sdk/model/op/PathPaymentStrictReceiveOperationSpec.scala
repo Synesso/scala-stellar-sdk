@@ -50,12 +50,7 @@ class PathPaymentStrictReceiveOperationSpec extends Specification with Arbitrary
            |}
          """.stripMargin
 
-      parse(doc).extract[Transacted[Operation]] mustEqual removeDestinationSubAccountId(op)
+      parse(doc).extract[Transacted[Operation]] mustEqual op
     }.setGen(genTransacted(genPathPaymentStrictReceiveOperation.suchThat(_.sourceAccount.nonEmpty)))
-  }
-
-  // Because sub accounts are not yet supported in Horizon JSON.
-  private def removeDestinationSubAccountId(op: Transacted[PathPaymentStrictReceiveOperation]): Transacted[PathPaymentStrictReceiveOperation] = {
-    op.copy(operation = op.operation.copy(destinationAccount = op.operation.destinationAccount.copy(subAccountId = None)))
   }
 }

@@ -50,7 +50,7 @@ case class Transaction(source: Account,
   def encode: LazyList[Byte] = if (source.id.isMulitplexed) encodeV1 else encodeV0
 
   def encodeV0: LazyList[Byte] = {
-    source.id.copy(subAccountId = None).encode ++
+    source.id.encode ++
       int(maxFee.units.toInt) ++
       long(source.sequenceNumber) ++
       opt(Some(timeBounds).filterNot(_ == Unbounded)) ++
