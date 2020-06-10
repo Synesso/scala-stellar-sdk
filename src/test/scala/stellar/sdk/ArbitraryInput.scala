@@ -23,7 +23,7 @@ import scala.util.Random
 
 trait ArbitraryInput extends ScalaCheck {
 
-  implicit val network: Network = TestNetwork
+  implicit val network: Network = PublicNetwork
 
   implicit def arbKeyPair: Arbitrary[KeyPair] = Arbitrary(genKeyPair)
 
