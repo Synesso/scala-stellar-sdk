@@ -5,7 +5,7 @@ import org.specs2.mutable.Specification
 import stellar.sdk.model.TimeBounds.Unbounded
 import stellar.sdk.model.op.{CreateAccountOperation, Operation, PaymentOperation}
 import stellar.sdk.util.ByteArrays.bytesToHex
-import stellar.sdk.{ArbitraryInput, DomainMatchers, KeyPair, model}
+import stellar.sdk.{ArbitraryInput, DomainMatchers, KeyPair, TestNetwork, model}
 
 class TransactionSpec extends Specification with ArbitraryInput with DomainMatchers {
 
@@ -54,7 +54,7 @@ class TransactionSpec extends Specification with ArbitraryInput with DomainMatch
         operations = Seq(CreateAccountOperation(dest.toAccountId, NativeAmount(20000000000L))),
         timeBounds = Unbounded,
         maxFee = NativeAmount(100)
-      ).sign(source)
+      )(TestNetwork).sign(source)
 
       txn.encodeXDR mustEqual "AAAAAF7FIiDToW1fOYUFBC0dmyufJbFTOa2GQESGz+S2h5ViAAAAZAAKVaMAAAABAAAAAAAAAAAAAAABAAAA" +
         "AAAAAAAAAAAA7eBSYbzcL5UKo7oXO24y1ckX+XuCtkDsyNHOp1n1bxAAAAAEqBfIAAAAAAAAAAABtoeVYgAAAEDLki9Oi700N60Lo8gUmE" +
@@ -75,7 +75,9 @@ class TransactionSpec extends Specification with ArbitraryInput with DomainMatch
     "add a signature to that transaction" >> prop { (source: Account, op: Operation, preImages: Seq[Array[Byte]]) =>
       val transaction = model.Transaction(source, Seq(op), NoMemo, timeBounds = Unbounded, maxFee = NativeAmount(100))
       val signedTxn = transaction.sign(preImages.head.toSeq)
-      preImages.tail.map(_.toSeq).foldLeft(signedTxn) { _ sign _ }.signatures must haveSize(preImages.length)
+      preImages.tail.map(_.toSeq).foldLeft(signedTxn) {
+        _ sign _
+      }.signatures must haveSize(preImages.length)
     }.setGen3(Gen.nonEmptyListOf(Gen.containerOf[Array, Byte](Arbitrary.arbByte.arbitrary)))
   }
 
@@ -101,7 +103,7 @@ class TransactionSpec extends Specification with ArbitraryInput with DomainMatch
         "GFuIGFuZ3BhbyEAAAAAAQAAAAAAAAABAAAAAK5TNRH+gV9qHLIuWk99Epe7OYH6l7cSXKW18R9DFoIDAAAAAAAAAAAAmJaAAAAAAAAAAAFhX" +
         "5v3AAAAQHx9LVy0EsDozAxndsy+D6E2bWmTAMmnhLoFqf2FfoRAMXjC9BW16ZQlOR+wWH5PSKnz22QpAxY4gMkJvH8LCwQ="
 
-      SignedTransaction.decodeXDR(sample) must beLike {
+      SignedTransaction.decodeXDR(sample)(TestNetwork) must beLike {
         case SignedTransaction(txn, signatures, feeBump) =>
           txn mustEqual Transaction(
             Account(
@@ -121,6 +123,14 @@ class TransactionSpec extends Specification with ArbitraryInput with DomainMatch
           bytesToHex(txn.hash) mustEqual "7D91CFC50E907A677F769E6DB82BDB958D148D810955C597AA7A4B24AE97475B"
           feeBump must beEmpty
       }
+    }
+  }
+
+  "encoding as a web+stellar url" should {
+    "decode to the original" >> prop { txn: SignedTransaction =>
+      val signingRequest = txn.signingRequest
+      val actual = TransactionSigningRequest(signingRequest.toURL)
+      actual.transaction must beEquivalentTo(signingRequest.transaction)
     }
   }
 }

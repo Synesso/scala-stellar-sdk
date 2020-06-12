@@ -1,6 +1,9 @@
 package stellar.sdk.model
 
+import java.net.{URI, URLEncoder}
+
 import cats.data._
+import okhttp3.HttpUrl
 import stellar.sdk.model.TimeBounds.Unbounded
 import stellar.sdk.model.op.Operation
 import stellar.sdk.model.response.TransactionPostResponse
@@ -39,6 +42,9 @@ case class Transaction(source: Account,
 
   def hash: Seq[Byte] = ByteArrays.sha256(network.networkId ++ Encode.int(EnvelopeTypeTx) ++ encode)
     .toIndexedSeq
+
+  /** The `web+stellar:` URL for this transaction. */
+  def signingRequest: TransactionSigningRequest = TransactionSigningRequest(SignedTransaction(this, Nil))
 
   /**
     * The base64 encoding of the XDR form of this unsigned transaction.
@@ -135,6 +141,9 @@ case class SignedTransaction(transaction: Transaction,
 
   def encode: LazyList[Byte] = feeBump.map(encodeFeeBump)
     .getOrElse(transaction.encode ++ arr(signatures))
+
+  /** The `web+stellar:` URL for this transaction. */
+  def signingRequest: TransactionSigningRequest = TransactionSigningRequest(this)
 
   private def encodeFeeBump(bump: FeeBump): LazyList[Byte] =
     int(5) ++
