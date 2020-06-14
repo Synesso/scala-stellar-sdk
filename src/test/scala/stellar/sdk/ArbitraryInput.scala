@@ -162,6 +162,9 @@ trait ArbitraryInput extends ScalaCheck {
   implicit def arbWordList: Arbitrary[WordList] = Arbitrary(
     Gen.oneOf(EnglishWords, FrenchWords, JapaneseWords, SpanishWords))
 
+  implicit def arbTransactionSigningRequest: Arbitrary[TransactionSigningRequest] =
+    Arbitrary(genTransactionSigningRequest)
+
   def genListOfNM[T](low: Int, high: Int, gen: Gen[T]): Gen[List[T]] = for {
     size <- Gen.choose(low, high)
     xs <- Gen.listOfN(size, gen)
@@ -851,4 +854,15 @@ trait ArbitraryInput extends ScalaCheck {
     tld <- Gen.oneOf("com", "net", "io", "org")
     paths <- Gen.listOf(Gen.identifier).map(_.mkString("/"))
   } yield HttpUrl.parse(s"$scheme://${subDomain.getOrElse("") + "."}$domain.$tld./$paths")
+
+  def genTransactionSigningRequest: Gen[TransactionSigningRequest] = for {
+    envelope <- genSignedTransaction
+    form <- Gen.mapOf(
+      for {
+        key <- Gen.identifier
+        label <- Gen.alphaStr.suchThat(_.nonEmpty).suchThat(_.contains(":") != true)
+        help <- Gen.alphaStr
+      } yield (label, (key, help))
+    )
+  } yield TransactionSigningRequest(envelope, form)
 }

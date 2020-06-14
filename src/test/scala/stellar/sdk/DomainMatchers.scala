@@ -193,6 +193,12 @@ trait DomainMatchers extends AnyMatchers with MustExpectations with SequenceMatc
     case op => other mustEqual op
   }
 
+  def beEquivalentTo(other: TransactionSigningRequest): Matcher[TransactionSigningRequest] = beLike {
+    case tsr =>
+      tsr.transaction must beEquivalentTo(other.transaction)
+      tsr.form mustEqual other.form
+  }
+
   def beEquivalentTo(other: Account): Matcher[Account] = beLike {
     case acc =>
       acc.id must beEquivalentTo(other.id)
