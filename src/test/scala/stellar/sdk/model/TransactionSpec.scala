@@ -125,12 +125,4 @@ class TransactionSpec extends Specification with ArbitraryInput with DomainMatch
       }
     }
   }
-
-  "encoding as a web+stellar url" should {
-    "decode to the original" >> prop { txn: SignedTransaction =>
-      val signingRequest = txn.signingRequest
-      val actual = TransactionSigningRequest(signingRequest.toURL)
-      actual.transaction must beEquivalentTo(signingRequest.transaction)
-    }
-  }
 }
