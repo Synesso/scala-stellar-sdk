@@ -57,7 +57,7 @@ lazy val root = project
       "commons-codec" % "commons-codec" % "1.14",
       "io.github.novacrypto" % "BIP39" % "2019.01.27",
       "net.i2p.crypto" % "eddsa" % "0.3.0",
-      "org.json4s" %% "json4s-native" % "3.6.8",
+      "org.json4s" %% "json4s-native" % "3.6.9",
       "org.scala-lang.modules" %% "scala-collection-compat" % "2.1.6",
       "org.typelevel" %% "cats-core" % "2.1.1",
       "tech.sparse" %%  "toml-scala" % "0.2.2",
