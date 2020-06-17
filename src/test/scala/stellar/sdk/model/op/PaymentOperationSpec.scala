@@ -48,7 +48,12 @@ class PaymentOperationSpec extends Specification with ArbitraryInput with Domain
            |}
          """.stripMargin
 
-      parse(doc).extract[Transacted[PaymentOperation]] mustEqual op
+      parse(doc).extract[Transacted[PaymentOperation]] mustEqual removeDestinationSubAccountId(op)
     }.setGen(genTransacted(genPaymentOperation.suchThat(_.sourceAccount.nonEmpty)))
+  }
+
+  // Because sub accounts are not yet supported in Horizon JSON.
+  private def removeDestinationSubAccountId(op: Transacted[PaymentOperation]): Transacted[PaymentOperation] = {
+    op.copy(operation = op.operation.copy(destinationAccount = op.operation.destinationAccount.copy(subAccountId = None)))
   }
 }

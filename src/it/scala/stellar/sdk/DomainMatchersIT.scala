@@ -56,7 +56,9 @@ trait DomainMatchersIT extends AnyMatchers with MustExpectations with SequenceMa
   }
 
   def beEquivalentTo(key: SignerStrKey): Matcher[SignerStrKey] = beLike[SignerStrKey] {
-    case AccountId(hash) if key.isInstanceOf[AccountId] => hash mustEqual key.hash
+    case AccountId(hash, subAccountId) if key.isInstanceOf[AccountId] =>
+      hash mustEqual key.hash
+      subAccountId mustEqual key.asInstanceOf[AccountId].subAccountId
     case PreAuthTx(hash) if key.isInstanceOf[PreAuthTx]  => hash mustEqual key.hash
     case SHA256Hash(hash) if key.isInstanceOf[SHA256Hash] => hash mustEqual key.hash
   }
