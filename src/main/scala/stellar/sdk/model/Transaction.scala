@@ -40,7 +40,7 @@ case class Transaction(source: Account,
     SignedTransaction(this, signatures)
   }
 
-  def hash: Seq[Byte] = ByteArrays.sha256(network.networkId ++ Encode.int(EnvelopeTypeTx) ++ encode)
+  def hash: Seq[Byte] = ByteArrays.sha256(network.networkId ++ encode)
     .toIndexedSeq
 
   /** The `web+stellar:` URL for this transaction. */
@@ -53,10 +53,10 @@ case class Transaction(source: Account,
 
   // Encodes to TransactionV0 format by default for backwards compatibility with core protocol 12.
   // But if the accountId is muxed (has a sub-account id), then encode to TransactionV1 for protocol 13+
-  def encode: LazyList[Byte] = if (source.id.isMulitplexed) encodeV1 else encodeV0
+  def encode: LazyList[Byte] = encodeV1
 
   def encodeV0: LazyList[Byte] = {
-    source.id.encode ++
+    source.id.copy(subAccountId = None).encode ++
       int(maxFee.units.toInt) ++
       long(source.sequenceNumber) ++
       opt(Some(timeBounds).filterNot(_ == Unbounded)) ++
@@ -149,7 +149,7 @@ case class SignedTransaction(transaction: Transaction,
     int(5) ++
       bump.source.encode ++
       int(bump.fee.units.toInt) ++
-      transaction.encodeV1 ++
+      transaction.encode ++
       arr(signatures) ++
       int(0) ++
       arr(bump.signatures)
