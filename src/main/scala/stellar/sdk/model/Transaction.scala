@@ -1,14 +1,11 @@
 package stellar.sdk.model
 
-import java.net.{URI, URLEncoder}
-
 import cats.data._
-import okhttp3.HttpUrl
 import stellar.sdk.model.TimeBounds.Unbounded
 import stellar.sdk.model.op.Operation
 import stellar.sdk.model.response.TransactionPostResponse
 import stellar.sdk.model.xdr.Encode.{arr, int, long, opt}
-import stellar.sdk.model.xdr.{Decode, Encodable, Encode}
+import stellar.sdk.model.xdr.{Decode, Encodable}
 import stellar.sdk.util.ByteArrays
 import stellar.sdk.util.ByteArrays._
 import stellar.sdk.{KeyPair, Network, Signature}
@@ -144,6 +141,12 @@ case class SignedTransaction(transaction: Transaction,
 
   /** The `web+stellar:` URL for this transaction. */
   def signingRequest: TransactionSigningRequest = TransactionSigningRequest(this)
+
+  /** Bump a signed transaction with a bigger fee */
+  def bumpTransaction(fee: NativeAmount, source: KeyPair): SignedTransaction = {
+    val feeBump = FeeBump(source.toAccountId, fee, Nil)
+    ???
+  }
 
   private def encodeFeeBump(bump: FeeBump): LazyList[Byte] =
     int(5) ++
