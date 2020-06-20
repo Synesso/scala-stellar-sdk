@@ -68,7 +68,8 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
             timeBounds = Unbounded,
             maxFee = NativeAmount(100 * batch.size))
           )(_ add _).sign(masterAccountKey)
-          val eventualTransactionPostResponse = signatories.foldLeft(signedTransaction)(_ sign _).submit()
+          val fullySignedTransaction = signatories.foldLeft(signedTransaction)(_ sign _)
+          val eventualTransactionPostResponse = fullySignedTransaction.submit()
           val transactionPostResponse = Await.result(eventualTransactionPostResponse, 5 minutes)
           transactionPostResponse must beLike[TransactionPostResponse] {
             case a: TransactionApproved =>
@@ -78,6 +79,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
               ok
             case r: TransactionRejected =>
               logger.info(r.detail)
+              logger.info(s"Result: ${r.resultXDR}")
               r.opResultCodes.foreach(s => logger.info(s" - $s"))
               ko
           }

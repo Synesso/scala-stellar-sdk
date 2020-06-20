@@ -1,6 +1,6 @@
 #!/bin/bash
 
-CONTAINER=synesso/stellar:v1.4.0-core13.1.0
+CONTAINER=stellar/quickstart:latest
 PROTOCOL_VERSION=13
 
 function container_started {
@@ -24,6 +24,7 @@ if [[ "$1" == true ]]; then
   db_port='-p 5433:5432'
 fi
 
+docker pull $CONTAINER
 docker stop stellar
 sleep 1
 docker run --rm -d \
@@ -46,7 +47,7 @@ upgrade_response=$(curl -s "http://localhost:11626/upgrades?mode=set&protocolver
 echo ${upgrade_response}
 echo "Upgrading to     ${PROTOCOL_VERSION}"
 while ! service_upgraded; do
-  sleep 1
+  sleep 5
 done
 echo "Protocol upgraded"
 docker logs stellar
