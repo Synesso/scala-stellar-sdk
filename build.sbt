@@ -63,6 +63,7 @@ lazy val root = project
       "tech.sparse" %%  "toml-scala" % "0.2.2",
 
       "com.squareup.okhttp3" % "mockwebserver" % okhttp % "test",
+      "org.typelevel" %% "cats-effect" % "2.1.1",
       "org.specs2" %% "specs2-core" % specs2 % "test,it",
       "org.specs2" %% "specs2-mock" % specs2 % "test",
       "org.specs2" %% "specs2-scalacheck" % specs2 % "test"

@@ -1,5 +1,7 @@
 package stellar.sdk.inet
 
+import java.time.Duration
+
 import com.typesafe.scalalogging.LazyLogging
 import okhttp3._
 import org.json4s.native.{JsonMethods, Serialization}
@@ -24,7 +26,10 @@ class OkHorizon(base: HttpUrl) extends HorizonAccess with LazyLogging {
 
   private val client = new OkHttpClient.Builder()
     // .addInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BASIC))
+    .callTimeout(Duration.ofMinutes(1))
+    .connectTimeout(Duration.ofMinutes(1))
     .build()
+
   private val headers = Headers.of(
     "X-Client-Name", BuildInfo.name,
     "X-Client-Version", BuildInfo.version)
@@ -34,10 +39,13 @@ class OkHorizon(base: HttpUrl) extends HorizonAccess with LazyLogging {
 
     val url = base.newBuilder().addPathSegment("transactions").build()
     Future(txn.encodeXDR)
-      .map(envelope => new MultipartBody.Builder()
-        .setType(MultipartBody.FORM)
-        .addFormDataPart("tx", envelope)
-        .build)
+      .map { envelope =>
+        logger.debug(s"Posting {} with tx={}", url, envelope)
+        new MultipartBody.Builder()
+          .setType(MultipartBody.FORM)
+          .addFormDataPart("tx", envelope)
+          .build
+      }
       .map(body => new Request.Builder().url(url).post(body).headers(headers).build())
       .map(request => client.newCall(request).execute().body().string())
       .map(JsonMethods.parse(_).extract[TransactionPostResponse])

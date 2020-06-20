@@ -50,6 +50,8 @@ case class AccountId(hash: Seq[Byte], subAccountId: Option[Long] = None) extends
 
   val isMulitplexed: Boolean = subAccountId.isDefined
   def publicKey: PublicKey = KeyPair.fromPublicKey(hash)
+
+  override def toString: String = s"AccountId(${KeyPair.fromPublicKey(hash).accountId}, $subAccountId)"
 }
 
 object AccountId extends Decode {
