@@ -48,7 +48,7 @@ class TestAccounts(quantity: Int = 20) extends LazyLogging {
                 case Failure(t) => logger.error("Failed to open accounts", t)
               }
             }
-            logger.debug(Await.ready(response, 30.seconds).toString)
+            Await.ready(response, 30.seconds)
         }
       }.unsafeRunSync()
     } catch {
@@ -89,7 +89,7 @@ class TestAccounts(quantity: Int = 20) extends LazyLogging {
   }
 
   /**
-   * Returns the next unused KeyPair, or dies.
+   * Returns the next unused KeyPairs, or dies.
    */
   def take(i: Int): List[KeyPair] = {
     logger.debug(s"Taking $i accounts")
@@ -99,4 +99,9 @@ class TestAccounts(quantity: Int = 20) extends LazyLogging {
     } yield next
     ioNext.unsafeRunSync()
   }
+
+  /**
+   * Returns the next unused KeyPair, or dies.
+   */
+  def take: KeyPair = take(1).head
 }
