@@ -4,7 +4,11 @@ As this project is pre 1.0, breaking changes may happen for minor version bumps.
 
 ## Next version
 
+## 0.13.0
+
+- Support for multiplexed accounts is reinstated.
 - All generated transaction are v1 in support of protocol 13.
+- Fee bump transactions are supported via `SignedTransaction.bumpFee(amount, signer)`
 
 ## 0.12.2
 

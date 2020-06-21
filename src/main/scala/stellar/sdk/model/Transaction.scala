@@ -4,7 +4,7 @@ import cats.data._
 import stellar.sdk.model.TimeBounds.Unbounded
 import stellar.sdk.model.op.Operation
 import stellar.sdk.model.response.TransactionPostResponse
-import stellar.sdk.model.xdr.Encode.{arr, int, long, opt}
+import stellar.sdk.model.xdr.Encode.{arr, int, long, opt, bytes}
 import stellar.sdk.model.xdr.{Decode, Encodable}
 import stellar.sdk.util.ByteArrays
 import stellar.sdk.util.ByteArrays._
@@ -139,20 +139,34 @@ case class SignedTransaction(transaction: Transaction,
   def encode: LazyList[Byte] = feeBump.map(encodeFeeBump)
     .getOrElse(transaction.encode ++ arr(signatures))
 
+  def encodeV0: LazyList[Byte] = transaction.encodeV0 ++ arr(signatures)
+
   /** The `web+stellar:` URL for this transaction. */
   def signingRequest: TransactionSigningRequest = TransactionSigningRequest(this)
 
   /** Bump a signed transaction with a bigger fee */
-  def bumpTransaction(fee: NativeAmount, source: KeyPair): SignedTransaction = {
-    val feeBump = FeeBump(source.toAccountId, fee, Nil)
-    ???
+  def bumpFee(fee: NativeAmount, source: KeyPair): SignedTransaction = {
+    val encodedFeeBump = ByteArrays.sha256(encodeFeeBumpBase(source.toAccountId, fee))
+    val signature = source.sign(encodedFeeBump)
+    val feeBump = FeeBump(source.toAccountId, fee, List(signature))
+    this.copy(feeBump = Some(feeBump))
+  }
+
+  private def encodeFeeBumpBase(accountId: AccountId, fee: NativeAmount): LazyList[Byte] = {
+    bytes(32, transaction.network.networkId) ++
+      int(5) ++
+      accountId.encode ++
+      long(fee.units) ++
+      transaction.encodeV1 ++
+      arr(signatures) ++
+      int(0)
   }
 
   private def encodeFeeBump(bump: FeeBump): LazyList[Byte] =
     int(5) ++
       bump.source.encode ++
-      int(bump.fee.units.toInt) ++
-      transaction.encode ++
+      long(bump.fee.units) ++
+      transaction.encodeV1 ++
       arr(signatures) ++
       int(0) ++
       arr(bump.signatures)
@@ -178,7 +192,7 @@ object SignedTransaction extends Decode {
       // parse a fee bump transaction
       case 5 =>  for {
         accountId <- AccountId.decode
-        fee <- int
+        fee <- long
         _ <- int // 2
         transaction <- Transaction.decodeV1
         transactionSigs <- arr(Signature.decode)
