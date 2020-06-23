@@ -2,6 +2,7 @@ package stellar.sdk.model
 
 import java.net.URLEncoder
 
+import okhttp3.HttpUrl
 import org.specs2.mutable.Specification
 import stellar.sdk.{ArbitraryInput, DomainMatchers}
 
@@ -33,5 +34,9 @@ class TransactionSigningRequestSpec extends Specification with ArbitraryInput wi
       val replace = URLEncoder.encode("tx.sourceAccount:foo;bar:The source account", "UTF-8")
       TransactionSigningRequest(s"web+stellar:tx?xdr=$txn&replace=$replace") must throwAn[IllegalArgumentException]
     }.set(minTestsOk = 1)
+
+    "fail when callback is not a url" >> prop { signedTransaction: SignedTransaction =>
+      pending
+    }
   }
 }

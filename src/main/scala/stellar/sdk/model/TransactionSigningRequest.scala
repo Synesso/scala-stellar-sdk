@@ -11,7 +11,8 @@ import stellar.sdk.PublicNetwork
  */
 case class TransactionSigningRequest(
   transaction: SignedTransaction,
-  form: Map[String, (String, String)] = Map.empty
+  form: Map[String, (String, String)] = Map.empty,
+  callback: Option[HttpUrl] = None
 ) {
   form.keys.foreach(validateFormLabel)
 
@@ -22,7 +23,12 @@ case class TransactionSigningRequest(
       Some("replace" -> s"$fieldToLabel;$labelToHint")
     }
 
-    val params = List(encodedForm).flatten.foldLeft(Map("xdr" -> transaction.encodeXDR)) { case (map, (key, value)) =>
+    val paramMap = Map(
+      "xdr" -> Some(transaction.encodeXDR),
+      "callback" -> callback.map(_.toString)
+    ).filter(_._2.isDefined).map { case (k, Some(v)) => k -> v }
+
+    val params = List(encodedForm).flatten.foldLeft(paramMap) { case (map, (key, value)) =>
       map.updated(key, value)
     }
 
@@ -58,10 +64,12 @@ object TransactionSigningRequest {
         ftlMap.map { case (field, label) => field -> (label, lthMap(field)) }
       }
       .getOrElse(Map.empty)
+    val callback = Option(httpUrl.queryParameter("callback"))
+        .map(HttpUrl.parse)
 
     Option(httpUrl.queryParameter("xdr"))
         .map(SignedTransaction.decodeXDR(_)(PublicNetwork))
-        .map(TransactionSigningRequest(_, form))
+        .map(TransactionSigningRequest(_, form, callback))
       .getOrElse(throw new IllegalArgumentException(s"Invalid url: [url=$url]"))
   }
 
