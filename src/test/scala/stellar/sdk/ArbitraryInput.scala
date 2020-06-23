@@ -847,12 +847,15 @@ trait ArbitraryInput extends ScalaCheck {
 
   // Not at all exhaustive.
   def genUri: Gen[HttpUrl] = for {
-    scheme <- Gen.oneOf("http", "https", "file", "ftp")
-    subDomain <- Gen.option(Gen.identifier)
-    domain <- Gen.identifier
+    scheme <- Gen.oneOf("http", "https")
+    subDomain <- Gen.option(Gen.identifier.map(_.take(20) + "."))
+    domain <- Gen.identifier.map(_.take(20))
     tld <- Gen.oneOf("com", "net", "io", "org")
-    paths <- Gen.listOf(Gen.identifier).map(_.mkString("/"))
-  } yield HttpUrl.parse(s"$scheme://${subDomain.getOrElse("") + "."}$domain.$tld./$paths")
+    paths <- Gen.listOf(Gen.identifier.map(_.take(20))).map(_.take(5).mkString("/"))
+    urlString = s"$scheme://${subDomain.getOrElse("")}$domain.$tld/$paths"
+  } yield Option(HttpUrl.parse(urlString)).getOrElse(
+    throw new IllegalStateException(s"""Could not parse - "$urlString"""")
+  )
 
   def genTransactionSigningRequest: Gen[TransactionSigningRequest] = for {
     envelope <- genSignedTransaction
@@ -863,5 +866,6 @@ trait ArbitraryInput extends ScalaCheck {
         help <- Gen.alphaStr
       } yield (label, (key, help))
     )
-  } yield TransactionSigningRequest(envelope, form)
+    callback <- Gen.option(genUri)
+  } yield TransactionSigningRequest(envelope, form, callback)
 }
