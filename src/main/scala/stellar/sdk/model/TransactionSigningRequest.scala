@@ -14,7 +14,7 @@ import stellar.sdk.{KeyPair, PublicKey, PublicNetwork}
 case class TransactionSigningRequest(
   transaction: SignedTransaction,
   form: Map[String, (String, String)] = Map.empty,
-  callback: Option[HttpUrl] = None, // TODO (jem) - Should be of type `url:`
+  callback: Option[HttpUrl] = None,
   pubkey: Option[PublicKey] = None
 ) {
   form.keys.foreach(validateFormLabel)
@@ -28,7 +28,7 @@ case class TransactionSigningRequest(
 
     val paramMap = Map(
       "xdr" -> Some(transaction.encodeXDR),
-      "callback" -> callback.map(_.toString),
+      "callback" -> callback.map(c => s"url:$c"),
       "pubkey" -> pubkey.map(_.accountId)
     ).filter(_._2.isDefined).foldLeft(Map.empty[String, String]) {
       case (m, (k, Some(v))) => m.updated(k, v)
@@ -73,8 +73,13 @@ object TransactionSigningRequest {
       .getOrElse(Map.empty)
 
     val callback = Option(httpUrl.queryParameter("callback"))
-        .map { callback => Option(HttpUrl.parse(callback))
-          .getOrElse(throw new IllegalArgumentException(s"Invalid callback: [url=$url][callback=$callback]")) }
+      .map { callback =>
+        Option(callback)
+          .filter(_.startsWith("url:"))
+          .map(_.drop(4))
+          .flatMap(c => Option(HttpUrl.parse(c)))
+          .getOrElse(throw new IllegalArgumentException(s"Invalid callback: [url=$url][callback=$callback]"))
+      }
 
     val pubKey = Option(httpUrl.queryParameter("pubkey"))
         .map(KeyPair.fromAccountId)

@@ -27,6 +27,15 @@ class TransactionSigningRequestSpec extends Specification with ArbitraryInput wi
     }.set(minTestsOk = 1)
   }
 
+  "constructing with callback url" should {
+    "prepend `url:` to the value" >> {
+      val request: String = sampleOne(genTransactionSigningRequest)
+        .copy(callback = Some(HttpUrl.parse("https://google.com/")))
+        .toUrl
+      request must contain("&callback=url%3Ahttps%3A%2F%2Fgoogle.com%2F")
+    }
+  }
+
   "parsing from url" should {
     "fail when xdr param is missing" >> {
       TransactionSigningRequest("web+stellar:tx?foo=bar") must throwAn[IllegalArgumentException]
@@ -41,6 +50,7 @@ class TransactionSigningRequestSpec extends Specification with ArbitraryInput wi
     "fail when callback is not a url" >> {
       val request: String = sampleOne(genTransactionSigningRequest).copy(callback = None).toUrl
       TransactionSigningRequest(s"$request&callback=nonsense") must throwAn[IllegalArgumentException]
+      TransactionSigningRequest(s"$request&callback=url%3Anonsense") must throwAn[IllegalArgumentException]
     }
   }
 
