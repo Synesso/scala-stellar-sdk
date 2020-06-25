@@ -65,7 +65,8 @@ object TransactionSigningRequest {
       }
       .getOrElse(Map.empty)
     val callback = Option(httpUrl.queryParameter("callback"))
-        .map(HttpUrl.parse)
+        .map { callback => Option(HttpUrl.parse(callback))
+          .getOrElse(throw new IllegalArgumentException(s"Invalid callback: [url=$url][callback=$callback]")) }
 
     Option(httpUrl.queryParameter("xdr"))
         .map(SignedTransaction.decodeXDR(_)(PublicNetwork))
@@ -80,7 +81,6 @@ object TransactionSigningRequest {
 
     split match {
       case h +: ts => h -> ts.mkString(sep)
-//      case Nil => sep -> "" // special case where a single value is equal to the separator
       case _ => throw new IllegalArgumentException(s"Cannot split by separator [str=$str][sep=$sep]")
     }
   }
