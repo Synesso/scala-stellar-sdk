@@ -1,18 +1,21 @@
 package stellar.sdk.model
 
 import okhttp3.HttpUrl
-import stellar.sdk.PublicNetwork
+import stellar.sdk.{KeyPair, PublicKey, PublicNetwork}
 
 /** A request to a transaction to be signed.
  *
  * @param transaction The signed transaction to be encoded
  * @param form The additional information required by the user in the form `form_label -> (txrep_field, form_hint)`
+ * @param callback the uri to post the transaction to after signing
+ * @param pubkey the public key associated with the signer who should sign
  * @see See [[https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0007.md#operation-tx SEP-0007 for full specification]]
  */
 case class TransactionSigningRequest(
   transaction: SignedTransaction,
   form: Map[String, (String, String)] = Map.empty,
-  callback: Option[HttpUrl] = None
+  callback: Option[HttpUrl] = None, // TODO (jem) - Should be of type `url:`
+  pubkey: Option[PublicKey] = None
 ) {
   form.keys.foreach(validateFormLabel)
 
@@ -25,8 +28,12 @@ case class TransactionSigningRequest(
 
     val paramMap = Map(
       "xdr" -> Some(transaction.encodeXDR),
-      "callback" -> callback.map(_.toString)
-    ).filter(_._2.isDefined).map { case (k, Some(v)) => k -> v }
+      "callback" -> callback.map(_.toString),
+      "pubkey" -> pubkey.map(_.accountId)
+    ).filter(_._2.isDefined).foldLeft(Map.empty[String, String]) {
+      case (m, (k, Some(v))) => m.updated(k, v)
+      case (m, _) =>            m
+    }
 
     val params = List(encodedForm).flatten.foldLeft(paramMap) { case (map, (key, value)) =>
       map.updated(key, value)
@@ -64,13 +71,17 @@ object TransactionSigningRequest {
         ftlMap.map { case (field, label) => field -> (label, lthMap(field)) }
       }
       .getOrElse(Map.empty)
+
     val callback = Option(httpUrl.queryParameter("callback"))
         .map { callback => Option(HttpUrl.parse(callback))
           .getOrElse(throw new IllegalArgumentException(s"Invalid callback: [url=$url][callback=$callback]")) }
 
+    val pubKey = Option(httpUrl.queryParameter("pubkey"))
+        .map(KeyPair.fromAccountId)
+
     Option(httpUrl.queryParameter("xdr"))
         .map(SignedTransaction.decodeXDR(_)(PublicNetwork))
-        .map(TransactionSigningRequest(_, form, callback))
+        .map(TransactionSigningRequest(_, form, callback, pubKey))
       .getOrElse(throw new IllegalArgumentException(s"Invalid url: [url=$url]"))
   }
 
