@@ -3,8 +3,11 @@ package stellar.sdk.model
 import java.net.URLEncoder
 
 import okhttp3.HttpUrl
+import org.scalacheck.Gen
 import org.specs2.mutable.Specification
 import stellar.sdk.{ArbitraryInput, DomainMatchers}
+
+import scala.annotation.tailrec
 
 class TransactionSigningRequestSpec extends Specification with ArbitraryInput with DomainMatchers {
 
@@ -35,8 +38,15 @@ class TransactionSigningRequestSpec extends Specification with ArbitraryInput wi
       TransactionSigningRequest(s"web+stellar:tx?xdr=$txn&replace=$replace") must throwAn[IllegalArgumentException]
     }.set(minTestsOk = 1)
 
-    "fail when callback is not a url" >> prop { signedTransaction: SignedTransaction =>
-      pending
+    "fail when callback is not a url" >> {
+      val request: String = sampleOne(genTransactionSigningRequest).copy(callback = None).toUrl
+      TransactionSigningRequest(s"$request&callback=nonsense") must throwAn[IllegalArgumentException]
     }
+  }
+
+  @tailrec
+  private def sampleOne[T](genT: Gen[T]): T = genT.sample match {
+    case None => sampleOne(genT)
+    case Some(t) => t
   }
 }
