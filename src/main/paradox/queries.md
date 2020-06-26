@@ -5,7 +5,7 @@ A convenient HTTP API for accessing Stellar is provided by the Stellar Developme
 methods on the @apidoc[Network] interface. These methods mirror the REST API provided by Horizon.
 
 The SDF supports two main networks, the primary public network and another for testing. These are represented separately by the objects
-@apidoc[PublicNetwork] and @apidoc[TestNetwork].
+`PublicNetwork` and `TestNetwork`.
 
 > If it is your use-case that you are deploying a separate, private Stellar network, then you can implement
 the `Network` trait to provide access to the Horizon endpoints on your network.

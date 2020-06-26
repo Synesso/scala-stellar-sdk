@@ -15,9 +15,11 @@ case class TransactionSigningRequest(
   transaction: SignedTransaction,
   form: Map[String, (String, String)] = Map.empty,
   callback: Option[HttpUrl] = None,
-  pubkey: Option[PublicKey] = None
+  pubkey: Option[PublicKey] = None,
+  message: Option[String] = None
 ) {
   form.keys.foreach(validateFormLabel)
+  message.foreach(m => require(m.length <= 300, "Message must not exceed 300 characters"))
 
   def toUrl: String = {
     val encodedForm = if (form.isEmpty) None else {
@@ -29,7 +31,8 @@ case class TransactionSigningRequest(
     val paramMap = Map(
       "xdr" -> Some(transaction.encodeXDR),
       "callback" -> callback.map(c => s"url:$c"),
-      "pubkey" -> pubkey.map(_.accountId)
+      "pubkey" -> pubkey.map(_.accountId),
+      "msg" -> message
     ).filter(_._2.isDefined).foldLeft(Map.empty[String, String]) {
       case (m, (k, Some(v))) => m.updated(k, v)
       case (m, _) =>            m
@@ -84,9 +87,11 @@ object TransactionSigningRequest {
     val pubKey = Option(httpUrl.queryParameter("pubkey"))
         .map(KeyPair.fromAccountId)
 
+    val message = Option(httpUrl.queryParameter("msg"))
+
     Option(httpUrl.queryParameter("xdr"))
         .map(SignedTransaction.decodeXDR(_)(PublicNetwork))
-        .map(TransactionSigningRequest(_, form, callback, pubKey))
+        .map(TransactionSigningRequest(_, form, callback, pubKey, message))
       .getOrElse(throw new IllegalArgumentException(s"Invalid url: [url=$url]"))
   }
 

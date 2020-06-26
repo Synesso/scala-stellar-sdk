@@ -52,6 +52,11 @@ class TransactionSigningRequestSpec extends Specification with ArbitraryInput wi
       TransactionSigningRequest(s"$request&callback=nonsense") must throwAn[IllegalArgumentException]
       TransactionSigningRequest(s"$request&callback=url%3Anonsense") must throwAn[IllegalArgumentException]
     }
+
+    "fail when msg is greater than 300 chars" >> {
+      val request: String = sampleOne(genTransactionSigningRequest).copy(message = None).toUrl
+      TransactionSigningRequest(s"$request&msg=${"x" * 301}") must throwAn[IllegalArgumentException]
+    }
   }
 
   @tailrec

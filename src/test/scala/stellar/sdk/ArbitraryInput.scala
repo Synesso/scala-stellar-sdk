@@ -868,5 +868,6 @@ trait ArbitraryInput extends ScalaCheck {
     )
     callback <- Gen.option(genUri)
     pubkey <- Gen.option(genPublicKey)
-  } yield TransactionSigningRequest(envelope, form, callback, pubkey)
+    message <- Gen.option(Gen.alphaNumStr.map(_.take(300)))
+  } yield TransactionSigningRequest(envelope, form, callback, pubkey, message)
 }
