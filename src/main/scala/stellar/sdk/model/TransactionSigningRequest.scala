@@ -19,6 +19,7 @@ case class TransactionSigningRequest(
   message: Option[String] = None
 ) {
   form.keys.foreach(validateFormLabel)
+  message.foreach(m => require(m.length <= 300, "Message must not exceed 300 characters"))
 
   def toUrl: String = {
     val encodedForm = if (form.isEmpty) None else {
