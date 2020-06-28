@@ -62,7 +62,9 @@ case class TransactionSigningRequest(
     port: Int = 443
   )(implicit ec: ExecutionContext): Future[SignatureValidation] = {
     signature.map { case DomainSignature(domain, sigBytes) =>
-      DomainInfo.forDomain(domain, useHttps, port).map(_.flatMap(_.uriRequestSigningKey) match {
+      DomainInfo.forDomain(domain, useHttps, port)
+        .recover { case _ => None }
+        .map(_.flatMap(_.uriRequestSigningKey) match {
         case None => InvalidSignature
         case Some(signingKey) =>
           val payload = baseSigningPayload(domain)
