@@ -1,7 +1,14 @@
 package stellar.sdk.model
 
 import okhttp3.HttpUrl
-import stellar.sdk.{KeyPair, PublicKey, PublicNetwork}
+import org.json4s.CustomSerializer
+import stellar.sdk.inet.HorizonAccess
+import stellar.sdk.model.response.TransactionPostResponse
+import stellar.sdk.util.DoNothingNetwork
+import stellar.sdk.{KeyPair, Network, PublicKey, PublicNetwork}
+
+import scala.concurrent.{ExecutionContext, Future}
+import scala.reflect.ClassTag
 
 /** A request to a transaction to be signed.
  *
@@ -9,6 +16,8 @@ import stellar.sdk.{KeyPair, PublicKey, PublicNetwork}
  * @param form The additional information required by the user in the form `form_label -> (txrep_field, form_hint)`
  * @param callback the uri to post the transaction to after signing
  * @param pubkey the public key associated with the signer who should sign
+ * @param message an optional message for displaying to the user
+ * @param networkPassphrase the passphrase of the target network, if it's not the public/main network
  * @see See [[https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0007.md#operation-tx SEP-0007 for full specification]]
  */
 case class TransactionSigningRequest(
@@ -16,7 +25,8 @@ case class TransactionSigningRequest(
   form: Map[String, (String, String)] = Map.empty,
   callback: Option[HttpUrl] = None,
   pubkey: Option[PublicKey] = None,
-  message: Option[String] = None
+  message: Option[String] = None,
+  networkPassphrase: Option[String] = None
 ) {
   form.keys.foreach(validateFormLabel)
   message.foreach(m => require(m.length <= 300, "Message must not exceed 300 characters"))
@@ -32,7 +42,8 @@ case class TransactionSigningRequest(
       "xdr" -> Some(transaction.encodeXDR),
       "callback" -> callback.map(c => s"url:$c"),
       "pubkey" -> pubkey.map(_.accountId),
-      "msg" -> message
+      "msg" -> message,
+      "network_passphrase" -> networkPassphrase
     ).filter(_._2.isDefined).foldLeft(Map.empty[String, String]) {
       case (m, (k, Some(v))) => m.updated(k, v)
       case (m, _) =>            m
@@ -89,9 +100,13 @@ object TransactionSigningRequest {
 
     val message = Option(httpUrl.queryParameter("msg"))
 
+    val network = Option(httpUrl.queryParameter("network_passphrase"))
+        // TODO (jem) - The transaction objects should take a strongly typed network passphrase object.
+        .map(p => new DoNothingNetwork(p))
+
     Option(httpUrl.queryParameter("xdr"))
-        .map(SignedTransaction.decodeXDR(_)(PublicNetwork))
-        .map(TransactionSigningRequest(_, form, callback, pubKey, message))
+        .map(SignedTransaction.decodeXDR(_)(network.getOrElse(PublicNetwork)))
+        .map(TransactionSigningRequest(_, form, callback, pubKey, message, network.map(_.passphrase)))
       .getOrElse(throw new IllegalArgumentException(s"Invalid url: [url=$url]"))
   }
 
