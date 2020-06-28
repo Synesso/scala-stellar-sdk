@@ -1,14 +1,14 @@
 package stellar.sdk.model
 
+import java.net.URLEncoder
+
 import okhttp3.HttpUrl
-import org.json4s.CustomSerializer
-import stellar.sdk.inet.HorizonAccess
-import stellar.sdk.model.response.TransactionPostResponse
+import okio.{Buffer, ByteString}
+import stellar.sdk.model.domain.DomainInfo
 import stellar.sdk.util.DoNothingNetwork
-import stellar.sdk.{KeyPair, Network, PublicKey, PublicNetwork}
+import stellar.sdk.{KeyPair, PublicKey, PublicNetwork}
 
 import scala.concurrent.{ExecutionContext, Future}
-import scala.reflect.ClassTag
 
 /** A request to a transaction to be signed.
  *
@@ -26,10 +26,51 @@ case class TransactionSigningRequest(
   callback: Option[HttpUrl] = None,
   pubkey: Option[PublicKey] = None,
   message: Option[String] = None,
-  networkPassphrase: Option[String] = None
+  networkPassphrase: Option[String] = None,
+  signature: Option[DomainSignature] = None
 ) {
+
   form.keys.foreach(validateFormLabel)
   message.foreach(m => require(m.length <= 300, "Message must not exceed 300 characters"))
+
+  /**
+   * Sign the signing request with the given key.
+   * @param fqdn The fully-qualified domain name that contains the TOML file specifying the signer's public key.
+   * @param key The private key associated with the declared public key.
+   * @return this request with a signature populated. No attempt is made to validate that the provided `key` matches
+   *         the public key declared in the TOML file of the `fqdn` under `URI_REQUEST_SIGNING_KEY`. No structural
+   *         validation is performed on `fqdn` String.
+   * @see https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0007.md#request-signing for more info.
+   */
+  def sign(fqdn: String, key: KeyPair): TransactionSigningRequest = {
+    val payload = baseSigningPayload(fqdn)
+    val signature = key.sign(payload.toByteArray)
+    this.copy(signature = Some(DomainSignature(fqdn, new ByteString(signature.data))))
+  }
+
+  /**
+   * If a signature is present, executes a round-trip to the domain info of the declared domain to fetch the signing
+   * public key and checks the signature against that key.
+
+   * @return NoSignaturePresent if there is no signature declared
+   *         InvalidSignature if the domain cannot be reached, has no TOML, does not declare a signing key or the key
+   *          used does not match the declared key
+   *         ValidSignature if the signature is valid.
+   */
+  def validateSignature(
+    useHttps: Boolean = true,
+    port: Int = 443
+  )(implicit ec: ExecutionContext): Future[SignatureValidation] = {
+    signature.map { case DomainSignature(domain, sigBytes) =>
+      DomainInfo.forDomain(domain, useHttps, port).map(_.flatMap(_.uriRequestSigningKey) match {
+        case None => InvalidSignature
+        case Some(signingKey) =>
+          val payload = baseSigningPayload(domain)
+          if (signingKey.verify(payload.toByteArray, sigBytes.toByteArray)) ValidSignature(domain, signingKey)
+          else InvalidSignature
+      })
+    }.getOrElse(Future(NoSignaturePresent))
+  }
 
   def toUrl: String = {
     val encodedForm = if (form.isEmpty) None else {
@@ -60,6 +101,16 @@ case class TransactionSigningRequest(
       builder.addQueryParameter(key, value)
     }.toString()
       .replaceFirst("http://z/", "web+stellar:")
+  }
+
+  private def baseSigningPayload(domain: String): ByteString = {
+    val baseUrl = s"${this.copy(signature = None).toUrl}&origin_domain=${URLEncoder.encode(domain, "UTF-8")}"
+    new Buffer()
+      .write(Array.fill(35)(0.toByte))
+      .writeByte(4)
+      .write("stellar.sep.7 - URI Scheme".getBytes("UTF-8"))
+      .write(baseUrl.getBytes("UTF-8"))
+      .readByteString()
   }
 
   private def validateFormLabel(label: String) {
@@ -122,3 +173,19 @@ object TransactionSigningRequest {
   }
 
 }
+
+case class DomainSignature(
+  originDomain: String,
+  signature: ByteString
+)
+
+sealed trait SignatureValidation
+
+case object NoSignaturePresent extends SignatureValidation
+
+case class ValidSignature(
+  originDomain: String,
+  signedBy: PublicKey
+) extends SignatureValidation
+
+case object InvalidSignature extends SignatureValidation
