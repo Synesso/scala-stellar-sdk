@@ -202,6 +202,7 @@ trait DomainMatchers extends AnyMatchers with MustExpectations with SequenceMatc
       tsr.callback mustEqual other.callback
       tsr.pubkey mustEqual other.pubkey
       tsr.message mustEqual other.message
+      tsr.networkPassphrase mustEqual other.networkPassphrase
   }
 
   def beEquivalentTo(other: Account): Matcher[Account] = beLike {

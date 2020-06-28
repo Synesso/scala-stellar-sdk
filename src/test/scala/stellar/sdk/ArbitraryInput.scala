@@ -9,6 +9,7 @@ import okhttp3.HttpUrl
 import org.apache.commons.codec.binary.Base64
 import org.scalacheck.{Arbitrary, Gen}
 import org.specs2.ScalaCheck
+import stellar.sdk.inet.HorizonAccess
 import stellar.sdk.key.{EnglishWords, FrenchWords, JapaneseWords, SpanishWords, WordList}
 import stellar.sdk.model._
 import stellar.sdk.model.ledger.OfferEntry
@@ -16,7 +17,7 @@ import stellar.sdk.model.op._
 import stellar.sdk.model.response._
 import stellar.sdk.model.result.TransactionResult._
 import stellar.sdk.model.result.{PathPaymentResult, _}
-import stellar.sdk.util.ByteArrays
+import stellar.sdk.util.{ByteArrays, DoNothingNetwork}
 import stellar.sdk.util.ByteArrays.trimmedByteArray
 
 import scala.util.Random
@@ -469,21 +470,27 @@ trait ArbitraryInput extends ScalaCheck {
 
   def genMemo: Gen[Memo] = Gen.oneOf(genMemoNone, genMemoText, genMemoId, genMemoHash, genMemoReturnHash)
 
-  def genTransaction: Gen[Transaction] = for {
+  def genTransaction: Gen[Transaction] = genTransaction(PublicNetwork)
+
+  def genTransaction(network: Network): Gen[Transaction] = for {
     source <- genAccount
     memo <- genMemo
     operations <- Gen.nonEmptyListOf(genOperation)
     timeBounds <- genTimeBounds
     maxFee <- genNativeAmount.map(a => NativeAmount(math.max(a.units, operations.size * 100)))
   } yield {
-    Transaction(source, operations, memo, timeBounds, maxFee)
+    Transaction(source, operations, memo, timeBounds, maxFee)(network)
   }
 
-  def genSignedTransaction: Gen[SignedTransaction] = for {
-    txn <- genTransaction
+  def genSignedTransaction: Gen[SignedTransaction] = genSignedTransaction(PublicNetwork)
+
+  def genSignedTransaction(network: Network): Gen[SignedTransaction] = for {
+    txn <- genTransaction(network)
     signer <- genKeyPair
     feeBump <- Gen.option(genFeeBump)
   } yield txn.sign(signer).copy(feeBump = feeBump)
+
+  def genNetwork: Gen[Network] = Gen.identifier.map(new DoNothingNetwork(_))
 
   def genThresholds: Gen[Thresholds] = for {
     low <- Gen.choose(0, 255)
@@ -858,7 +865,8 @@ trait ArbitraryInput extends ScalaCheck {
   )
 
   def genTransactionSigningRequest: Gen[TransactionSigningRequest] = for {
-    envelope <- genSignedTransaction
+    network <- Gen.option(genNetwork)
+    envelope: SignedTransaction <- genSignedTransaction(network.getOrElse(PublicNetwork))
     form <- Gen.mapOf(
       for {
         key <- Gen.identifier
@@ -869,5 +877,6 @@ trait ArbitraryInput extends ScalaCheck {
     callback <- Gen.option(genUri)
     pubkey <- Gen.option(genPublicKey)
     message <- Gen.option(Gen.alphaNumStr.map(_.take(300)))
-  } yield TransactionSigningRequest(envelope, form, callback, pubkey, message)
+    passphrase = network.map(_.passphrase)
+  } yield TransactionSigningRequest(envelope, form, callback, pubkey, message, passphrase)
 }
