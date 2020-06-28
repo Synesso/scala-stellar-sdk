@@ -3,13 +3,16 @@ package stellar.sdk.model
 import java.net.URLEncoder
 
 import okhttp3.HttpUrl
+import okhttp3.mockwebserver.{MockResponse, MockWebServer}
 import org.scalacheck.Gen
+import org.specs2.concurrent.ExecutionEnv
 import org.specs2.mutable.Specification
-import stellar.sdk.{ArbitraryInput, DomainMatchers}
+import stellar.sdk.{ArbitraryInput, DomainMatchers, KeyPair}
+import scala.concurrent.duration._
 
 import scala.annotation.tailrec
 
-class TransactionSigningRequestSpec extends Specification with ArbitraryInput with DomainMatchers {
+class TransactionSigningRequestSpec(implicit ee: ExecutionEnv) extends Specification with ArbitraryInput with DomainMatchers {
 
   "encoding as a web+stellar url" should {
     "decode to the original" >> prop { signingRequest: TransactionSigningRequest =>
@@ -56,6 +59,73 @@ class TransactionSigningRequestSpec extends Specification with ArbitraryInput wi
     "fail when msg is greater than 300 chars" >> {
       val request: String = sampleOne(genTransactionSigningRequest).copy(message = None).toUrl
       TransactionSigningRequest(s"$request&msg=${"x" * 301}") must throwAn[IllegalArgumentException]
+    }
+  }
+
+  "signing a request" should {
+    "add a valid signature" >> {
+      val signingRequest: TransactionSigningRequest = sampleOne(genTransactionSigningRequest)
+      val requestSigner = KeyPair.random
+      val server = new MockWebServer
+      server.enqueue(new MockResponse().setBody(s"""URI_REQUEST_SIGNING_KEY="${requestSigner.accountId}""""))
+      server.start()
+      val signedRequest = signingRequest.sign(server.getHostName, requestSigner)
+      signedRequest.signature must beSome[DomainSignature]
+      val hasValidSignature = signedRequest.validateSignature(useHttps = false, port = server.getPort())
+      hasValidSignature.onComplete(_ => server.shutdown())
+      hasValidSignature must beLikeA[SignatureValidation] { case ValidSignature(domain, publicKey) =>
+        domain mustEqual server.getHostName
+        publicKey.accountId mustEqual requestSigner.accountId
+      }.await
+    }
+
+    "fail signature validation if there is no signature" >> {
+      val signingRequest: TransactionSigningRequest = sampleOne(genTransactionSigningRequest)
+      val requestSigner = KeyPair.random
+      val hasValidSignature = signingRequest.validateSignature()
+      hasValidSignature must beEqualTo(NoSignaturePresent).await
+    }
+
+    "fail signature validation if the host doesn't exist" >> {
+      val signingRequest: TransactionSigningRequest = sampleOne(genTransactionSigningRequest)
+      val requestSigner = KeyPair.random
+      val signedRequest = signingRequest.sign("skajdfhalksjdfhalksf.com", requestSigner)
+      val hasValidSignature = signedRequest.validateSignature()
+      hasValidSignature must beEqualTo(InvalidSignature).await(0, 30.seconds)
+    }
+
+    "fail signature validation if the host doesn't have domain info" >> {
+      val signingRequest: TransactionSigningRequest = sampleOne(genTransactionSigningRequest)
+      val requestSigner = KeyPair.random
+      val signedRequest = signingRequest.sign("example.com", requestSigner)
+      val hasValidSignature = signedRequest.validateSignature()
+      hasValidSignature must beEqualTo(InvalidSignature).await(0, 30.seconds)
+    }
+
+    "fail signature validation if the domain info doesn't have a declared signer" >> {
+      val signingRequest: TransactionSigningRequest = sampleOne(genTransactionSigningRequest)
+      val requestSigner = KeyPair.random
+      val server = new MockWebServer
+      server.enqueue(new MockResponse().setBody(""))
+      server.start()
+      val signedRequest = signingRequest.sign(server.getHostName, requestSigner)
+      signedRequest.signature must beSome[DomainSignature]
+      val hasValidSignature = signedRequest.validateSignature(useHttps = false, port = server.getPort())
+      hasValidSignature.onComplete(_ => server.shutdown())
+      hasValidSignature must beEqualTo(InvalidSignature).await(0, 30.seconds)
+    }
+
+    "fail signature validation if the signature byes do not match the declared signer" >> {
+      val signingRequest: TransactionSigningRequest = sampleOne(genTransactionSigningRequest)
+      val requestSigner = KeyPair.random
+      val server = new MockWebServer
+      server.enqueue(new MockResponse().setBody(s"""URI_REQUEST_SIGNING_KEY="${KeyPair.random.accountId}""""))
+      server.start()
+      val signedRequest = signingRequest.sign(server.getHostName, requestSigner)
+      signedRequest.signature must beSome[DomainSignature]
+      val hasValidSignature = signedRequest.validateSignature(useHttps = false, port = server.getPort())
+      hasValidSignature.onComplete(_ => server.shutdown())
+      hasValidSignature must beEqualTo(InvalidSignature).await(0, 30.seconds)
     }
   }
 

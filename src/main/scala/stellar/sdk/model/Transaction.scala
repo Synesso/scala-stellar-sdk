@@ -1,14 +1,15 @@
 package stellar.sdk.model
 
 import cats.data._
+import okhttp3.HttpUrl
 import stellar.sdk.model.TimeBounds.Unbounded
 import stellar.sdk.model.op.Operation
 import stellar.sdk.model.response.TransactionPostResponse
-import stellar.sdk.model.xdr.Encode.{arr, int, long, opt, bytes}
+import stellar.sdk.model.xdr.Encode.{arr, bytes, int, long, opt}
 import stellar.sdk.model.xdr.{Decode, Encodable}
 import stellar.sdk.util.ByteArrays
 import stellar.sdk.util.ByteArrays._
-import stellar.sdk.{KeyPair, Network, Signature}
+import stellar.sdk.{KeyPair, Network, PublicKey, Signature}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -142,7 +143,17 @@ case class SignedTransaction(transaction: Transaction,
   def encodeV0: LazyList[Byte] = transaction.encodeV0 ++ arr(signatures)
 
   /** The `web+stellar:` URL for this transaction. */
-  def signingRequest: TransactionSigningRequest = TransactionSigningRequest(this)
+  def signingRequest(
+    form: Map[String, (String, String)] = Map.empty,
+    callback: Option[HttpUrl] = None,
+    pubkey: Option[PublicKey] = None,
+    message: Option[String] = None,
+    networkPassphrase: Option[String] = None,
+    requestSigner: Option[KeyPair] = None
+  ): TransactionSigningRequest = {
+    val tsr = TransactionSigningRequest(this, form, callback, pubkey, message, networkPassphrase)
+    requestSigner.map(tsr.sign("foo.com:", _)).getOrElse(tsr)
+  }
 
   /** Bump a signed transaction with a bigger fee */
   def bumpFee(fee: NativeAmount, source: KeyPair): SignedTransaction = {

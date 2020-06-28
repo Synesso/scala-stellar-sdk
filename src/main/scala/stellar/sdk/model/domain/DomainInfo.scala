@@ -16,21 +16,22 @@ import scala.util.{Failure, Try}
   *
   * @see https://www.stellar.org/developers/guides/concepts/stellar-toml.html
   */
-case class DomainInfo(federationServer: Option[FederationServer] = None,
-                      authServer: Option[HttpUrl] = None,
-                      transferServer: Option[HttpUrl] = None,
-                      kycServer: Option[HttpUrl] = None,
-                      webAuthEndpoint: Option[HttpUrl] = None,
-                      signerKey: Option[PublicKey] = None,
-                      horizonEndpoint: Option[HttpUrl] = None,
-                      uriRequestSigningKey: Option[PublicKey] = None,
-                      version: Option[String] = None,
-                      accounts: List[PublicKey] = List.empty[PublicKey],
-                      issuerDocumentation: Option[IssuerDocumentation] = None,
-                      pointsOfContact: List[PointOfContact] = Nil,
-                      currencies: List[Currency] = Nil,
-                      validators: List[Validator] = Nil,
-                     )
+case class DomainInfo(
+  federationServer: Option[FederationServer] = None,
+  authServer: Option[HttpUrl] = None,
+  transferServer: Option[HttpUrl] = None,
+  kycServer: Option[HttpUrl] = None,
+  webAuthEndpoint: Option[HttpUrl] = None,
+  signerKey: Option[PublicKey] = None,
+  horizonEndpoint: Option[HttpUrl] = None,
+  uriRequestSigningKey: Option[PublicKey] = None,
+  version: Option[String] = None,
+  accounts: List[PublicKey] = List.empty[PublicKey],
+  issuerDocumentation: Option[IssuerDocumentation] = None,
+  pointsOfContact: List[PointOfContact] = Nil,
+  currencies: List[Currency] = Nil,
+  validators: List[Validator] = Nil,
+)
 
 object DomainInfo extends TomlParsers {
 
@@ -81,8 +82,12 @@ object DomainInfo extends TomlParsers {
   /**
     * Returns domain info for the given domain's base URI string.
     */
-  def forDomain(uri: String)(implicit ec: ExecutionContext): Future[Option[DomainInfo]] = {
-    val url = HttpUrl.parse(if (uri.startsWith("http")) uri else s"https://$uri")
+  def forDomain(
+    uri: String,
+    useHttps: Boolean = true,
+    port: Int = 443
+  )(implicit ec: ExecutionContext): Future[Option[DomainInfo]] = {
+    val url = HttpUrl.parse(if (uri.startsWith("http")) uri else s"http${if (useHttps) "s" else ""}://$uri:$port")
         .newBuilder()
         .addPathSegment(".well-known")
         .addPathSegment("stellar.toml")
@@ -92,10 +97,12 @@ object DomainInfo extends TomlParsers {
       .map { response =>
         response.code() match {
           case HTTP_NOT_FOUND => None
-          case _ => Try(DomainInfo.from(response.body().string())) match {
-            case Failure(t) => throw RestException("Error parsing domain info.", t)
-            case s => s.toOption
-          }
+          case _ =>
+            val body = response.body().string()
+            Try(DomainInfo.from(body)) match {
+              case Failure(t) => throw RestException(s"Error parsing domain info: $body", t)
+              case s => s.toOption
+            }
         }
       }
   }
