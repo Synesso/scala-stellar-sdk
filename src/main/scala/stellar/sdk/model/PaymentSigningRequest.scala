@@ -11,12 +11,14 @@ import scala.Option
  *
  * @param destination A valid account ID for the payment
  * @param amount optionally, a specific amount to pay
- * @param memo optionally, a memo to attach to the transaction
+ * @param memo a memo to attach to the transaction
+ * @param callback the uri to post the transaction to after signing
  */
 case class PaymentSigningRequest(
   destination: PublicKey,
   amount: Option[Amount] = None,
-  memo: Memo = NoMemo
+  memo: Memo = NoMemo,
+  callback: Option[HttpUrl] = None
 ) {
 
   def toUrl: String = {
@@ -34,6 +36,7 @@ case class PaymentSigningRequest(
       "amount" -> amount.map(_.units.toString),
       "asset_code" -> amount.filterNot(_.asset == NativeAsset).map(_.asset.code),
       "asset_issuer" -> amount.filterNot(_.asset == NativeAsset).map(_.asset.asInstanceOf[NonNativeAsset].issuer.accountId),
+      "callback" -> callback.map(c => s"url:$c"),
       "memo" -> memoEncoded.map(_._1),
       "memo_type" -> memoEncoded.map(_._2)
     ).filter(_._2.isDefined).foldLeft(Map.empty[String, String]) {
@@ -77,8 +80,18 @@ object PaymentSigningRequest {
       }
     }).getOrElse(NoMemo)
 
+    //noinspection DuplicatedCode
+    val callback = Option(httpUrl.queryParameter("callback"))
+      .map { callback =>
+        Option(callback)
+          .filter(_.startsWith("url:"))
+          .map(_.drop(4))
+          .flatMap(c => Option(HttpUrl.parse(c)))
+          .getOrElse(throw new IllegalArgumentException(s"Invalid callback: [url=$url][callback=$callback]"))
+      }
+
     Option(httpUrl.queryParameter("destination")).map(KeyPair.fromAccountId).map { destination =>
-      PaymentSigningRequest(destination, amount, memo)
+      PaymentSigningRequest(destination, amount, memo, callback)
     }
     .getOrElse(throw new IllegalArgumentException(s"Invalid url: [url=$url]"))
   }
