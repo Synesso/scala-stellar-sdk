@@ -6,6 +6,7 @@ import java.time.{Instant, ZoneId, ZonedDateTime}
 import java.util.Locale
 
 import okhttp3.HttpUrl
+import okio.ByteString
 import org.apache.commons.codec.binary.Base64
 import org.scalacheck.{Arbitrary, Gen}
 import org.specs2.ScalaCheck
@@ -875,7 +876,8 @@ trait ArbitraryInput extends ScalaCheck {
     message <- Gen.option(Gen.alphaNumStr.map(_.take(300)))
     network <- Gen.option(genNetwork)
     passphrase = network.map(_.passphrase)
-  } yield PaymentSigningRequest(destination, amount, memo, callback, message, passphrase)
+    signature <- Gen.option(genDomainSignature)
+  } yield PaymentSigningRequest(destination, amount, memo, callback, message, passphrase, signature)
 
   def genTransactionSigningRequest: Gen[TransactionSigningRequest] = for {
     network <- Gen.option(genNetwork)
@@ -891,8 +893,13 @@ trait ArbitraryInput extends ScalaCheck {
     pubkey <- Gen.option(genPublicKey)
     message <- Gen.option(Gen.alphaNumStr.map(_.take(300)))
     passphrase = network.map(_.passphrase)
-  } yield TransactionSigningRequest(envelope, form, callback, pubkey, message, passphrase)
+    signature <- Gen.option(genDomainSignature)
+  } yield TransactionSigningRequest(envelope, form, callback, pubkey, message, passphrase, signature)
 
+  def genDomainSignature: Gen[DomainSignature] = for {
+    domain <- Gen.identifier
+    signature <- genKeyPair.map(_.sign("anything".getBytes())).map(_.data).map(new ByteString(_))
+  } yield DomainSignature(domain, signature)
 
   @tailrec
   final def sampleOne[T](genT: Gen[T]): T = genT.sample match {
