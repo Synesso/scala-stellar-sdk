@@ -128,10 +128,4 @@ class TransactionSigningRequestSpec(implicit ee: ExecutionEnv) extends Specifica
       hasValidSignature must beEqualTo(InvalidSignature).await(0, 30.seconds)
     }
   }
-
-  @tailrec
-  private def sampleOne[T](genT: Gen[T]): T = genT.sample match {
-    case None => sampleOne(genT)
-    case Some(t) => t
-  }
 }

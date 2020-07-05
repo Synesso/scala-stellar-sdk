@@ -13,13 +13,17 @@ import scala.Option
  * @param amount optionally, a specific amount to pay
  * @param memo a memo to attach to the transaction
  * @param callback the uri to post the transaction to after signing
+ * @param message an optional message for displaying to the user
  */
 case class PaymentSigningRequest(
   destination: PublicKey,
   amount: Option[Amount] = None,
   memo: Memo = NoMemo,
-  callback: Option[HttpUrl] = None
+  callback: Option[HttpUrl] = None,
+  message: Option[String] = None
 ) {
+
+  message.foreach(m => require(m.length <= 300, "Message must not exceed 300 characters"))
 
   def toUrl: String = {
 
@@ -38,7 +42,8 @@ case class PaymentSigningRequest(
       "asset_issuer" -> amount.filterNot(_.asset == NativeAsset).map(_.asset.asInstanceOf[NonNativeAsset].issuer.accountId),
       "callback" -> callback.map(c => s"url:$c"),
       "memo" -> memoEncoded.map(_._1),
-      "memo_type" -> memoEncoded.map(_._2)
+      "memo_type" -> memoEncoded.map(_._2),
+      "msg" -> message
     ).filter(_._2.isDefined).foldLeft(Map.empty[String, String]) {
       case (m, (k, Some(v))) => m.updated(k, v)
       case (m, _) =>            m
@@ -90,8 +95,10 @@ object PaymentSigningRequest {
           .getOrElse(throw new IllegalArgumentException(s"Invalid callback: [url=$url][callback=$callback]"))
       }
 
+    val message = Option(httpUrl.queryParameter("msg"))
+
     Option(httpUrl.queryParameter("destination")).map(KeyPair.fromAccountId).map { destination =>
-      PaymentSigningRequest(destination, amount, memo, callback)
+      PaymentSigningRequest(destination, amount, memo, callback, message)
     }
     .getOrElse(throw new IllegalArgumentException(s"Invalid url: [url=$url]"))
   }
