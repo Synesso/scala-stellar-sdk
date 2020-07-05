@@ -12,4 +12,10 @@ class PaymentSigningRequestSpec extends Specification with ArbitraryInput with D
     }
   }
 
+  "parsing from url" should {
+    "fail when msg is greater than 300 chars" >> {
+      val request: String = sampleOne(genPaymentSigningRequest).copy(message = None).toUrl
+      PaymentSigningRequest(s"$request&msg=${"x" * 301}") must throwAn[IllegalArgumentException]
+    }
+  }
 }

@@ -20,6 +20,7 @@ import stellar.sdk.model.result.{PathPaymentResult, _}
 import stellar.sdk.util.{ByteArrays, DoNothingNetwork}
 import stellar.sdk.util.ByteArrays.trimmedByteArray
 
+import scala.annotation.tailrec
 import scala.util.Random
 
 trait ArbitraryInput extends ScalaCheck {
@@ -871,7 +872,8 @@ trait ArbitraryInput extends ScalaCheck {
     amount <- Gen.option(genAmount)
     memo <- genMemo
     callback <- Gen.option(genUri)
-  } yield PaymentSigningRequest(destination, amount, memo, callback)
+    message <- Gen.option(Gen.alphaNumStr.map(_.take(300)))
+  } yield PaymentSigningRequest(destination, amount, memo, callback, message)
 
   def genTransactionSigningRequest: Gen[TransactionSigningRequest] = for {
     network <- Gen.option(genNetwork)
@@ -888,4 +890,11 @@ trait ArbitraryInput extends ScalaCheck {
     message <- Gen.option(Gen.alphaNumStr.map(_.take(300)))
     passphrase = network.map(_.passphrase)
   } yield TransactionSigningRequest(envelope, form, callback, pubkey, message, passphrase)
+
+
+  @tailrec
+  final def sampleOne[T](genT: Gen[T]): T = genT.sample match {
+    case None => sampleOne(genT)
+    case Some(t) => t
+  }
 }
