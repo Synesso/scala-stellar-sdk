@@ -1,25 +1,41 @@
 package stellar.sdk.model
 
 import okhttp3.HttpUrl
+import stellar.sdk.util.ByteArrays
 import stellar.sdk.{KeyPair, PublicKey}
+
+import scala.Option
 
 /**
  * A request for a payment to be signed.
  *
  * @param destination A valid account ID for the payment
  * @param amount optionally, a specific amount to pay
+ * @param memo optionally, a memo to attach to the transaction
  */
 case class PaymentSigningRequest(
   destination: PublicKey,
-  amount: Option[Amount]
+  amount: Option[Amount] = None,
+  memo: Memo = NoMemo
 ) {
 
   def toUrl: String = {
+
+    val memoEncoded: Option[(String, String)] = memo match {
+      case NoMemo => None
+      case MemoId(id) => Some(id.toString -> "MEMO_ID")
+      case MemoText(text) => Some(text -> "MEMO_TEXT")
+      case MemoHash(xs) => Some(ByteArrays.base64(xs) -> "MEMO_HASH")
+      case MemoReturnHash(xs) => Some(ByteArrays.base64(xs) -> "MEMO_RETURN")
+    }
+
     val params = Map(
       "destination" -> Some(destination.accountId),
       "amount" -> amount.map(_.units.toString),
       "asset_code" -> amount.filterNot(_.asset == NativeAsset).map(_.asset.code),
-      "asset_issuer" -> amount.filterNot(_.asset == NativeAsset).map(_.asset.asInstanceOf[NonNativeAsset].issuer.accountId)
+      "asset_issuer" -> amount.filterNot(_.asset == NativeAsset).map(_.asset.asInstanceOf[NonNativeAsset].issuer.accountId),
+      "memo" -> memoEncoded.map(_._1),
+      "memo_type" -> memoEncoded.map(_._2)
     ).filter(_._2.isDefined).foldLeft(Map.empty[String, String]) {
       case (m, (k, Some(v))) => m.updated(k, v)
       case (m, _) =>            m
@@ -49,11 +65,20 @@ object PaymentSigningRequest {
         .orElse(Some(NativeAmount(units)))
     }
 
+    val memo = (for {
+      memoValue <- Option(httpUrl.queryParameter("memo"))
+      memoType <- Option(httpUrl.queryParameter("memo_type"))
+    } yield {
+      memoType match {
+        case "MEMO_ID" => MemoId(memoValue.toLong)
+        case "MEMO_TEXT" => MemoText(memoValue)
+        case "MEMO_HASH" => MemoHash(ByteArrays.base64(memoValue))
+        case "MEMO_RETURN" => MemoReturnHash(ByteArrays.base64(memoValue))
+      }
+    }).getOrElse(NoMemo)
+
     Option(httpUrl.queryParameter("destination")).map(KeyPair.fromAccountId).map { destination =>
-      PaymentSigningRequest(
-        destination = destination,
-        amount
-      )
+      PaymentSigningRequest(destination, amount, memo)
     }
     .getOrElse(throw new IllegalArgumentException(s"Invalid url: [url=$url]"))
   }
