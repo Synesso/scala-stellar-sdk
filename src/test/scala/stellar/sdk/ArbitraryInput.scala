@@ -873,7 +873,9 @@ trait ArbitraryInput extends ScalaCheck {
     memo <- genMemo
     callback <- Gen.option(genUri)
     message <- Gen.option(Gen.alphaNumStr.map(_.take(300)))
-  } yield PaymentSigningRequest(destination, amount, memo, callback, message)
+    network <- Gen.option(genNetwork)
+    passphrase = network.map(_.passphrase)
+  } yield PaymentSigningRequest(destination, amount, memo, callback, message, passphrase)
 
   def genTransactionSigningRequest: Gen[TransactionSigningRequest] = for {
     network <- Gen.option(genNetwork)

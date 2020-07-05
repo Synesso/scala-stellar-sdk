@@ -18,7 +18,7 @@ import scala.concurrent.{ExecutionContext, Future}
  * @param pubkey the public key associated with the signer who should sign
  * @param message an optional message for displaying to the user
  * @param networkPassphrase the passphrase of the target network, if it's not the public/main network
- * @see See [[https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0007.md#operation-tx SEP-0007 for full specification]]
+ * @see See [[https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0007.md#operation-tx|SEP-0007]] for full specification
  */
 case class TransactionSigningRequest(
   transaction: SignedTransaction,
