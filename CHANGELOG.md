@@ -4,6 +4,9 @@ As this project is pre 1.0, breaking changes may happen for minor version bumps.
 
 ## Next version
 
+- [SEP-7 web+stellar:tx Transaction Signging Requests](https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0007.md)
+  can be generated, parsed, signed and validated.
+
 ## 0.13.0
 
 - Support for multiplexed accounts is reinstated.

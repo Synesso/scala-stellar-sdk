@@ -9,7 +9,7 @@ import stellar.sdk.model.xdr.Encode.{arr, bytes, int, long, opt}
 import stellar.sdk.model.xdr.{Decode, Encodable}
 import stellar.sdk.util.ByteArrays
 import stellar.sdk.util.ByteArrays._
-import stellar.sdk.{KeyPair, Network, PublicKey, Signature}
+import stellar.sdk.{KeyPair, Network, PublicKey, PublicNetwork, Signature}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -42,7 +42,10 @@ case class Transaction(source: Account,
     .toIndexedSeq
 
   /** The `web+stellar:` URL for this transaction. */
-  def signingRequest: TransactionSigningRequest = TransactionSigningRequest(SignedTransaction(this, Nil))
+  def signingRequest: TransactionSigningRequest = TransactionSigningRequest(
+    transaction = SignedTransaction(this, Nil),
+    networkPassphrase = Some(network).filterNot(_ == PublicNetwork).map(_.passphrase)
+  )
 
   /**
     * The base64 encoding of the XDR form of this unsigned transaction.
