@@ -139,6 +139,7 @@ object TransactionSigningRequest {
       }
       .getOrElse(Map.empty)
 
+    //noinspection DuplicatedCode
     val callback = Option(httpUrl.queryParameter("callback"))
       .map { callback =>
         Option(callback)
