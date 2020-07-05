@@ -1,6 +1,7 @@
 package stellar.sdk.model
 
 import okhttp3.HttpUrl
+import okio.ByteString
 import stellar.sdk.util.{ByteArrays, DoNothingNetwork}
 import stellar.sdk.{KeyPair, PublicKey}
 
@@ -15,6 +16,7 @@ import scala.Option
  * @param callback the uri to post the transaction to after signing
  * @param message an optional message for displaying to the user
  * @param networkPassphrase the passphrase of the target network, if it's not the public/main network
+ * @param signature a domain and signature that proves the validity of this signing request
  * @see See [[https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0007.md#operation-pay|SEP-0007]] for full specification
  */
 case class PaymentSigningRequest(
@@ -23,7 +25,8 @@ case class PaymentSigningRequest(
   memo: Memo = NoMemo,
   callback: Option[HttpUrl] = None,
   message: Option[String] = None,
-  networkPassphrase: Option[String] = None
+  networkPassphrase: Option[String] = None,
+  signature: Option[DomainSignature] = None
 ) {
 
   message.foreach(m => require(m.length <= 300, "Message must not exceed 300 characters"))
@@ -47,7 +50,9 @@ case class PaymentSigningRequest(
       "memo" -> memoEncoded.map(_._1),
       "memo_type" -> memoEncoded.map(_._2),
       "msg" -> message,
-      "network_passphrase" -> networkPassphrase
+      "network_passphrase" -> networkPassphrase,
+      "origin_domain" -> signature.map(_.originDomain),
+      "signature" -> signature.map(_.signature.base64())
     ).filter(_._2.isDefined).foldLeft(Map.empty[String, String]) {
       case (m, (k, Some(v))) => m.updated(k, v)
       case (m, _) =>            m
@@ -103,8 +108,13 @@ object PaymentSigningRequest {
 
     val networkPassphrase = Option(httpUrl.queryParameter("network_passphrase"))
 
+    val signature = for {
+      domain <- Option(httpUrl.queryParameter("origin_domain"))
+      sigBytes <- Option(httpUrl.queryParameter("signature")).map(ByteString.decodeBase64)
+    } yield DomainSignature(domain, sigBytes)
+
     Option(httpUrl.queryParameter("destination")).map(KeyPair.fromAccountId).map { destination =>
-      PaymentSigningRequest(destination, amount, memo, callback, message, networkPassphrase)
+      PaymentSigningRequest(destination, amount, memo, callback, message, networkPassphrase, signature)
     }
     .getOrElse(throw new IllegalArgumentException(s"Invalid url: [url=$url]"))
   }
