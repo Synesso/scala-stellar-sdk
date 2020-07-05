@@ -198,6 +198,7 @@ trait DomainMatchers extends AnyMatchers with MustExpectations with SequenceMatc
   def beEquivalentTo(other: PaymentSigningRequest): Matcher[PaymentSigningRequest] = beLike {
     case psr =>
       psr.destination mustEqual other.destination
+      psr.amount mustEqual other.amount
   }
 
   def beEquivalentTo(other: TransactionSigningRequest): Matcher[TransactionSigningRequest] = beLike {
