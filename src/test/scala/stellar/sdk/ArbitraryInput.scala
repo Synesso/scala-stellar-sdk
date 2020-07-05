@@ -159,6 +159,8 @@ trait ArbitraryInput extends ScalaCheck {
   implicit def arbWordList: Arbitrary[WordList] = Arbitrary(
     Gen.oneOf(EnglishWords, FrenchWords, JapaneseWords, SpanishWords))
 
+  implicit def arbPaymentSigningRequest: Arbitrary[PaymentSigningRequest] = Arbitrary(genPaymentSigningRequest)
+
   implicit def arbTransactionSigningRequest: Arbitrary[TransactionSigningRequest] =
     Arbitrary(genTransactionSigningRequest)
 
@@ -863,6 +865,10 @@ trait ArbitraryInput extends ScalaCheck {
   } yield Option(HttpUrl.parse(urlString)).getOrElse(
     throw new IllegalStateException(s"""Could not parse - "$urlString"""")
   )
+
+  def genPaymentSigningRequest: Gen[PaymentSigningRequest] = for {
+    destination <- genPublicKey
+  } yield PaymentSigningRequest(destination)
 
   def genTransactionSigningRequest: Gen[TransactionSigningRequest] = for {
     network <- Gen.option(genNetwork)
