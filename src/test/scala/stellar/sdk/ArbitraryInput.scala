@@ -868,7 +868,8 @@ trait ArbitraryInput extends ScalaCheck {
 
   def genPaymentSigningRequest: Gen[PaymentSigningRequest] = for {
     destination <- genPublicKey
-  } yield PaymentSigningRequest(destination)
+    amount <- Gen.option(genAmount)
+  } yield PaymentSigningRequest(destination, amount)
 
   def genTransactionSigningRequest: Gen[TransactionSigningRequest] = for {
     network <- Gen.option(genNetwork)

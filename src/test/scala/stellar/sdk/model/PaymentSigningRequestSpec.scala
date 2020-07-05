@@ -7,7 +7,8 @@ class PaymentSigningRequestSpec extends Specification with ArbitraryInput with D
 
   "encoding as a web+stellar url" should {
     "decode to the original" >> prop { signingRequest: PaymentSigningRequest =>
-      PaymentSigningRequest(signingRequest.toUrl) must beEquivalentTo(signingRequest)
+      val url = signingRequest.toUrl
+      PaymentSigningRequest(url) must beEquivalentTo(signingRequest)
     }
   }
 
