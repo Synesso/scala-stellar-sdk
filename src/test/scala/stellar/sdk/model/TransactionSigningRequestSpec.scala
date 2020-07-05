@@ -4,13 +4,11 @@ import java.net.URLEncoder
 
 import okhttp3.HttpUrl
 import okhttp3.mockwebserver.{MockResponse, MockWebServer}
-import org.scalacheck.Gen
 import org.specs2.concurrent.ExecutionEnv
 import org.specs2.mutable.Specification
 import stellar.sdk.{ArbitraryInput, DomainMatchers, KeyPair}
-import scala.concurrent.duration._
 
-import scala.annotation.tailrec
+import scala.concurrent.duration._
 
 class TransactionSigningRequestSpec(implicit ee: ExecutionEnv) extends Specification with ArbitraryInput with DomainMatchers {
 
@@ -80,8 +78,7 @@ class TransactionSigningRequestSpec(implicit ee: ExecutionEnv) extends Specifica
     }
 
     "fail signature validation if there is no signature" >> {
-      val signingRequest: TransactionSigningRequest = sampleOne(genTransactionSigningRequest)
-      val requestSigner = KeyPair.random
+      val signingRequest: TransactionSigningRequest = sampleOne(genTransactionSigningRequest).copy(signature = None)
       val hasValidSignature = signingRequest.validateSignature()
       hasValidSignature must beEqualTo(NoSignaturePresent).await
     }

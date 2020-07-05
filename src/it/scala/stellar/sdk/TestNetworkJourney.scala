@@ -5,7 +5,6 @@ import org.specs2.mutable.Specification
 import org.specs2.specification.BeforeAfterAll
 import stellar.sdk.model._
 import stellar.sdk.model.op.PaymentOperation
-import stellar.sdk.util.ByteArrays
 
 import scala.concurrent.Await
 import scala.concurrent.duration._
