@@ -3,6 +3,7 @@ package stellar.sdk
 import cats.data.State
 import org.apache.commons.codec.binary.Hex
 import org.specs2.matcher.{AnyMatchers, Matcher, MustExpectations, OptionMatchers, SequenceMatchersCreation}
+import stellar.sdk.auth.Challenge
 import stellar.sdk.model._
 import stellar.sdk.util.ByteArrays.base64
 import stellar.sdk.model.op._
@@ -253,6 +254,12 @@ trait DomainMatchers extends AnyMatchers with MustExpectations with SequenceMatc
     case thr =>
       other.memo must beEquivalentTo(thr.memo)
       other.copy(memo = thr.memo) mustEqual thr
+  }
+
+  def beEquivalentTo(other: Challenge): Matcher[Challenge] = beLike {
+    case challenge =>
+      other.signedTransaction must beEquivalentTo(challenge.signedTransaction)
+      other.networkPassphrase mustEqual challenge.networkPassphrase
   }
 
   def serdeUsing[E <: Encodable](decoder: State[Seq[Byte], E]): Matcher[E] = beLike {

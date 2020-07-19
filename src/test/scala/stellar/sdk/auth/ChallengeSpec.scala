@@ -4,7 +4,7 @@ import java.time.Instant
 
 import org.specs2.mutable.Specification
 import stellar.sdk.model.op.{Operation, WriteDataOperation}
-import stellar.sdk.{KeyPair, PublicNetwork}
+import stellar.sdk.{ArbitraryInput, DomainMatchers, KeyPair, PublicNetwork}
 
 import scala.concurrent.duration._
 
@@ -12,7 +12,7 @@ import scala.concurrent.duration._
  * Describes the implementation of behaviour specified by SEP-10.
  * @see https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0010.md
  */
-class ChallengeSpec extends Specification {
+class ChallengeSpec extends Specification with DomainMatchers with ArbitraryInput {
 
   val serverKey = KeyPair.random
   val subject = new AuthChallenger(serverKey, PublicNetwork)
@@ -60,6 +60,11 @@ class ChallengeSpec extends Specification {
       val challenge = subject.challenge(clientKey.toAccountId)
       challenge.signedTransaction.signatures.size mustEqual 1
       challenge.signedTransaction.verify(serverKey) must beTrue
+    }
+
+    "json serialise and deserialise" >> prop { clientKey: KeyPair =>
+      val challenge = subject.challenge(clientKey.toAccountId)
+      Challenge(challenge.toJson) must beEquivalentTo(challenge)
     }
   }
 
