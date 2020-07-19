@@ -63,13 +63,8 @@ If you'd like to contribute new ideas, bug fixes or help to build out a planned 
 
 To get started developing on the SDK itself, see the [DEV](https://github.com/Synesso/scala-stellar-sdk/blob/master/DEV.md) notes.
 
-If you've found this SDK helpful and you'd like to donate, the address is [![Donate](https://img.shields.io/keybase/xlm/jem.svg)](https://keybase.io/jem)
-
 ## Ack
 
-_Thanks to the [Stellar Development Foundation](https://www.stellar.org/about/) for their support via their
-[build challenge program](https://www.stellar.org/lumens/build)._
+_Thanks to the [Stellar Development Foundation](https://www.stellar.org/about/) for their ongoing support.
 
 [![JetBrains](https://github.com/JetBrains/logos/blob/master/web/intellij-idea/intellij-idea.svg?sanitize=true)](https://www.jetbrains.com/?from=ScalaStellarSDK)
-
-by [Jem Mawson](https://keybase.io/jem)

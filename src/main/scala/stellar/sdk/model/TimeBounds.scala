@@ -1,6 +1,7 @@
 package stellar.sdk.model
 
 import java.time.Instant
+import java.time.temporal.{ChronoField, TemporalAdjuster, TemporalField}
 
 import cats.data.State
 import stellar.sdk.model.xdr.{Decode, Encodable}
@@ -27,7 +28,7 @@ object TimeBounds extends Decode {
   val Unbounded = TimeBounds(Instant.ofEpochSecond(0), Instant.ofEpochSecond(0))
 
   def timeout(duration: Duration) = {
-    val now = Instant.now()
+    val now = Instant.now().`with`(ChronoField.NANO_OF_SECOND, 0)
     TimeBounds(now.minusSeconds(5), now.plusMillis(duration.toMillis))
   }
 
