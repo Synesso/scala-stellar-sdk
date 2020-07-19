@@ -9,9 +9,10 @@ import stellar.sdk.model.xdr.Encode.{arr, bytes, int, long, opt}
 import stellar.sdk.model.xdr.{Decode, Encodable}
 import stellar.sdk.util.ByteArrays
 import stellar.sdk.util.ByteArrays._
-import stellar.sdk.{KeyPair, Network, PublicKey, PublicNetwork, Signature}
+import stellar.sdk.{KeyPair, Network, PublicKey, PublicKeyOps, PublicNetwork, Signature}
 
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.{Failure, Success}
 
 case class Transaction(source: Account,
                        operations: Seq[Operation] = Nil,
@@ -120,7 +121,6 @@ object Transaction extends Decode {
 case class SignedTransaction(transaction: Transaction,
                              signatures: Seq[Signature],
                              feeBump: Option[FeeBump] = None) {
-
   assert(transaction.minFee.units <= transaction.maxFee.units,
     "Insufficient maxFee. Allow at least 100 stroops per operation. " +
       s"[maxFee=${transaction.maxFee.units}, operations=${transaction.operations.size}].")
@@ -134,6 +134,15 @@ case class SignedTransaction(transaction: Transaction,
 
   def sign(preImage: Seq[Byte]): SignedTransaction =
     this.copy(signatures = Signature(preImage.toArray, ByteArrays.sha256(preImage)) +: signatures)
+
+  /**
+   * Returns true if any of the signatures are valid for this transaction and signed by the account indicated by the
+   * `key` parameter.
+   * @param key the account to test
+   */
+  def verify(key: PublicKeyOps): Boolean = {
+    signatures.exists(signature => key.verify(transaction.hash.toArray, signature.data))
+  }
 
   /**
     * The base64 encoding of the XDR form of this signed transaction.
