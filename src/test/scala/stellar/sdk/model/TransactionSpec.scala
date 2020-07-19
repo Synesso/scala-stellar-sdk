@@ -69,6 +69,20 @@ class TransactionSpec extends Specification with ArbitraryInput with DomainMatch
         .sign(signers.head, signers.tail: _*).signatures
       signatures must haveSize(signers.length)
     }.setGen3(Gen.nonEmptyListOf(genKeyPair))
+
+    "verify for the signed keypairs" >> prop { (source: Account, op: Operation, signers: Seq[KeyPair]) =>
+      val signedTransaction =
+        model.Transaction(source, Seq(op), NoMemo, timeBounds = Unbounded, maxFee = NativeAmount(100))
+          .sign(signers.head, signers.tail: _*)
+      signers.map(signedTransaction.verify) mustEqual signers.map(_ => true)
+    }.setGen3(Gen.nonEmptyListOf(genKeyPair))
+
+    "not verify for some other keypair" >> prop { (source: Account, op: Operation, signer: KeyPair, nonSigner: KeyPair) =>
+      val signedTransaction =
+        model.Transaction(source, Seq(op), NoMemo, timeBounds = Unbounded, maxFee = NativeAmount(100))
+          .sign(signer)
+      signedTransaction.verify(nonSigner) must beFalse
+    }
   }
 
   "signing a transaction with a pre-image" should {

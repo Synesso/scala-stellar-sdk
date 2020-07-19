@@ -59,7 +59,7 @@ class ChallengeSpec extends Specification {
       val clientKey = KeyPair.random
       val challenge = subject.challenge(clientKey.toAccountId)
       challenge.signedTransaction.signatures.size mustEqual 1
-//      challenge.signedTransaction.verify(serverKey) // TODO
+      challenge.signedTransaction.verify(serverKey) must beTrue
     }
   }
 
@@ -90,12 +90,10 @@ class ChallengeSpec extends Specification {
 
     "have a cryptographic random 48 byte value" >> {
       val clientKey = KeyPair.random
-      val challenge = subject.challenge(clientKey.toAccountId, dataKey = "Fancy auth key")
+      val challenge = subject.challenge(clientKey.toAccountId)
       challenge.transaction.operations.head must beLike[Operation] { case op: WriteDataOperation =>
         op.value must haveSize(48)
       }
     }
-
   }
-
 }
