@@ -15,14 +15,14 @@ class AuthChallenger(
 
   def challenge(
     accountId: AccountId,
-    timeout: Duration = 15.minutes,
-    dataKey: String = "auth"
+    homeDomain: String,
+    timeout: Duration = 15.minutes
   ): Challenge = Challenge(
     Transaction(
       source = Account(serverKey.toAccountId, 0L),
       operations = List(
         WriteDataOperation(
-          name = dataKey,
+          name = s"$homeDomain auth",
           value = generateDataKey,
           sourceAccount = Some(accountId.publicKey)
         )
