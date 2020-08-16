@@ -38,5 +38,32 @@ class TimeBoundsSpec extends Specification with ArbitraryInput with DomainMatche
     "serde to/from xdr" >> prop { tb: TimeBounds =>
       tb must serdeUsing(TimeBounds.decode)
     }
+
+    "exclude any instant before the start" >> prop { tb: TimeBounds =>
+      tb.includes(tb.start.minusNanos(1)) must beFalse
+    }
+
+    "exclude any instant after the end" >> prop { tb: TimeBounds =>
+      tb.includes(tb.end.plusNanos(1)) must beFalse
+    }
+
+    "include the instant at the start" >> prop { tb: TimeBounds =>
+      tb.includes(tb.start) must beTrue
+    }
+
+    "include the instant at the end" >> prop { tb: TimeBounds =>
+      tb.includes(tb.end) must beTrue
+    }
+
+    "include the instants within the bounds" >> prop { tb: TimeBounds =>
+      val midpoint = Instant.ofEpochMilli((tb.end.toEpochMilli - tb.start.toEpochMilli) / 2 + tb.start.toEpochMilli)
+      tb.includes(midpoint) must beTrue
+    }
+  }
+
+  "unbounded time bounds" should {
+    "always include any instant" >> prop { instant: Instant =>
+      TimeBounds.Unbounded.includes(instant) must beTrue
+    }
   }
 }

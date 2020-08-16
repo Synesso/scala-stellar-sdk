@@ -1,9 +1,11 @@
 package stellar.sdk.auth
 
 import java.time.Instant
+import java.util.concurrent.TimeUnit
 
 import org.specs2.mutable.Specification
 import stellar.sdk.model.op.{Operation, WriteDataOperation}
+import stellar.sdk.util.FakeClock
 import stellar.sdk.{ArbitraryInput, DomainMatchers, KeyPair, PublicNetwork}
 
 import scala.concurrent.duration._
@@ -14,40 +16,41 @@ import scala.concurrent.duration._
  */
 class ChallengeSpec extends Specification with DomainMatchers with ArbitraryInput {
 
-  val serverKey = KeyPair.random
-  val subject = new AuthChallenger(serverKey, PublicNetwork)
+  private val serverKey = KeyPair.random
+  private def fixtures: (AuthChallenger, FakeClock, KeyPair) = {
+    val fakeClock = FakeClock()
+    (new AuthChallenger(serverKey, fakeClock)(PublicNetwork), fakeClock, KeyPair.random)
+  }
 
   "a generated authentication challenge" should {
     "have the source account set the the server's signing account" >> {
-      val clientKey = KeyPair.random
+      val (subject, _, clientKey) = fixtures
       val challenge = subject.challenge(clientKey.toAccountId, "test.com")
       challenge.transaction.source.id mustEqual serverKey.toAccountId
     }
 
     "have a sequence number of zero" >> {
-      val clientKey = KeyPair.random
+      val (subject, _, clientKey) = fixtures
       val challenge = subject.challenge(clientKey.toAccountId, "test.com")
       challenge.transaction.source.sequenceNumber mustEqual 0
     }
 
     "default to a timeout of the recommended 15 minutes" >> {
-      val clientKey = KeyPair.random
+      val (subject, clock, clientKey) = fixtures
       val challenge = subject.challenge(clientKey.toAccountId, "test.com")
       challenge.transaction.timeBounds.end must beLike { when: Instant =>
-        when.toEpochMilli must beCloseTo(Instant.now().plusSeconds(900).toEpochMilli, 5_000)
+        when.toEpochMilli mustEqual clock.instant().plusSeconds(900).toEpochMilli
       }
     }
 
     "include the actual timeout if one is specified" >> {
-      val clientKey = KeyPair.random
+      val (subject, clock, clientKey) = fixtures
       val challenge = subject.challenge(clientKey.toAccountId, "test.com", timeout = 3.minutes)
-      challenge.transaction.timeBounds.end must beLike { when: Instant =>
-        when.toEpochMilli must beCloseTo(Instant.now().plusSeconds(180).toEpochMilli, 2_000)
-      }
+      challenge.transaction.timeBounds.end mustEqual clock.instant().plusSeconds(180)
     }
 
     "have a single manage data operation from the challenged account" >> {
-      val clientKey = KeyPair.random
+      val (subject, _, clientKey) = fixtures
       val challenge = subject.challenge(clientKey.toAccountId, "test.com")
       challenge.transaction.operations.size mustEqual 1
       challenge.transaction.operations.head must beLike[Operation] { case op: WriteDataOperation =>
@@ -56,13 +59,14 @@ class ChallengeSpec extends Specification with DomainMatchers with ArbitraryInpu
     }
 
     "be signed by the provided server key" >> {
-      val clientKey = KeyPair.random
+      val (subject, _, clientKey) = fixtures
       val challenge = subject.challenge(clientKey.toAccountId, "test.com")
       challenge.signedTransaction.signatures.size mustEqual 1
       challenge.signedTransaction.verify(serverKey) must beTrue
     }
 
     "json serialise and deserialise" >> prop { clientKey: KeyPair =>
+      val (subject, _, clientKey) = fixtures
       val challenge = subject.challenge(clientKey.toAccountId, "test.com")
       Challenge(challenge.toJson) must beEquivalentTo(challenge)
     }
@@ -70,7 +74,7 @@ class ChallengeSpec extends Specification with DomainMatchers with ArbitraryInpu
 
   "the operation in the generated authentication challenge" should {
     "have the key '<home domain> auth'" >> {
-      val clientKey = KeyPair.random
+      val (subject, _, clientKey) = fixtures
       val challenge = subject.challenge(clientKey.toAccountId, "test.com")
       challenge.transaction.operations.head must beLike[Operation] { case op: WriteDataOperation =>
         op.name mustEqual "test.com auth"
@@ -78,7 +82,7 @@ class ChallengeSpec extends Specification with DomainMatchers with ArbitraryInpu
     }
 
     "disallow home domains greater than 59 characters" >> {
-      val clientKey = KeyPair.random
+      val (subject, _, clientKey) = fixtures
       subject.challenge(
         clientKey.toAccountId,
         homeDomain = "." * 60
@@ -86,11 +90,42 @@ class ChallengeSpec extends Specification with DomainMatchers with ArbitraryInpu
     }
 
     "have a cryptographic random 48 byte value" >> {
-      val clientKey = KeyPair.random
+      val (subject, _, clientKey) = fixtures
       val challenge = subject.challenge(clientKey.toAccountId, "test.com")
       challenge.transaction.operations.head must beLike[Operation] { case op: WriteDataOperation =>
         op.value must haveSize(48)
       }
+    }
+  }
+
+  "verifying a challenge response" should {
+    "succeed using signed transaction when the challenge is correctly signed" >> {
+      val (subject, clock, clientKey) = fixtures
+      val challenge = subject.challenge(clientKey.toAccountId, "test.com")
+      val answer = challenge.signedTransaction.sign(clientKey)
+      challenge.verify(answer, clock) must beTrue
+    }
+
+    "fail if the source account does not match that of the challenge" >> {
+      val (subject, clock, clientKey) = fixtures
+      val challenge = subject.challenge(clientKey.toAccountId, "test.com")
+      val answer = challenge.copy(signedTransaction = challenge.signedTransaction.sign(KeyPair.random))
+      challenge.verify(answer.signedTransaction, clock) must beFalse
+    }
+
+    "fail if the signed transaction does not contain the signatures of the challenge" >> {
+      val (subject, clock, clientKey) = fixtures
+      val challenge = subject.challenge(clientKey.toAccountId, "test.com")
+      val answer = challenge.signedTransaction.copy(signatures = Nil).sign(clientKey)
+      challenge.verify(answer, clock) must beFalse
+    }
+
+    "fail if the timebounds are expired" >> {
+      val (subject, clock, clientKey) = fixtures
+      val challenge = subject.challenge(clientKey.toAccountId, "test.com")
+      val answer = challenge.signedTransaction.sign(clientKey)
+      clock.advance(java.time.Duration.ofMinutes(16))
+      challenge.verify(answer, clock) must beFalse
     }
   }
 }

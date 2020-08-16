@@ -1,6 +1,7 @@
 package stellar.sdk.auth
 
 import java.security.SecureRandom
+import java.time.Clock
 
 import stellar.sdk.model.op.WriteDataOperation
 import stellar.sdk.model._
@@ -10,8 +11,8 @@ import scala.concurrent.duration._
 
 class AuthChallenger(
   serverKey: KeyPair,
-  implicit val network: Network
-) {
+  clock: Clock = Clock.systemUTC()
+)(implicit network: Network) {
 
   def challenge(
     accountId: AccountId,
@@ -27,7 +28,7 @@ class AuthChallenger(
           sourceAccount = Some(accountId.publicKey)
         )
       ),
-      timeBounds = TimeBounds.timeout(timeout),
+      timeBounds = TimeBounds.timeout(timeout, clock),
       maxFee = NativeAmount(100)
     ).sign(serverKey), network.passphrase
   )
