@@ -6,11 +6,9 @@ import okio.ByteString
 import org.json4s.JsonDSL._
 import org.json4s.native.JsonMethods._
 import org.json4s.{DefaultFormats, Formats}
-import stellar.sdk.{Network, PublicNetwork, Signature}
 import stellar.sdk.model.SignedTransaction
 import stellar.sdk.util.DoNothingNetwork
-
-import scala.util.Try
+import stellar.sdk.{Network, PublicNetwork, Signature}
 
 /**
  * An authentication challenge as specified in SEP-0010
@@ -30,10 +28,13 @@ case class Challenge(
    * @param clock   the clock to used to detect timebound expiry.
    * @param network the network that the transaction is signed for.
    */
-  def verify(answer: SignedTransaction, clock: Clock = Clock.systemUTC())(implicit network: Network): Boolean =
-    byteStrings(answer.signatures).containsSlice(byteStrings(signedTransaction.signatures)) &&
-      transaction.timeBounds.includes(clock.instant()) &&
-      answer.verify(transaction.operations.head.sourceAccount.get)
+  def verify(answer: SignedTransaction, clock: Clock = Clock.systemUTC())(implicit network: Network): ChallengeResult = {
+    val sameSignatures = byteStrings(answer.signatures).containsSlice(byteStrings(signedTransaction.signatures))
+    if (!sameSignatures) ChallengeMalformed("Response did not contain the challenge signatures")
+    else if (!transaction.timeBounds.includes(clock.instant())) ChallengeExpired
+    else if (!answer.verify(transaction.operations.head.sourceAccount.get)) ChallengeNotSignedByClient
+    else ChallengeSuccess
+  }
 
   private def byteStrings(signatures: Seq[Signature]): Seq[ByteString] =
     signatures.map(_.data).map(new ByteString(_))
@@ -72,3 +73,9 @@ object Challenge {
     )
   }
 }
+
+sealed trait ChallengeResult
+case object ChallengeSuccess extends ChallengeResult
+case class ChallengeMalformed(message: String) extends ChallengeResult
+case object ChallengeExpired extends ChallengeResult
+case object ChallengeNotSignedByClient extends ChallengeResult

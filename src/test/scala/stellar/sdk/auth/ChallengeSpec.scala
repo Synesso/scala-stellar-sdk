@@ -1,7 +1,6 @@
 package stellar.sdk.auth
 
 import java.time.Instant
-import java.util.concurrent.TimeUnit
 
 import org.specs2.mutable.Specification
 import stellar.sdk.model.op.{Operation, WriteDataOperation}
@@ -103,29 +102,31 @@ class ChallengeSpec extends Specification with DomainMatchers with ArbitraryInpu
       val (subject, clock, clientKey) = fixtures
       val challenge = subject.challenge(clientKey.toAccountId, "test.com")
       val answer = challenge.signedTransaction.sign(clientKey)
-      challenge.verify(answer, clock) must beTrue
+      challenge.verify(answer, clock) mustEqual ChallengeSuccess
     }
 
     "fail if the source account does not match that of the challenge" >> {
       val (subject, clock, clientKey) = fixtures
       val challenge = subject.challenge(clientKey.toAccountId, "test.com")
-      val answer = challenge.copy(signedTransaction = challenge.signedTransaction.sign(KeyPair.random))
-      challenge.verify(answer.signedTransaction, clock) must beFalse
+      val answer = challenge.copy(signedTransaction = challenge.signedTransaction.sign(KeyPair.random)).signedTransaction
+      challenge.verify(answer, clock) mustEqual ChallengeNotSignedByClient
     }
 
     "fail if the signed transaction does not contain the signatures of the challenge" >> {
       val (subject, clock, clientKey) = fixtures
       val challenge = subject.challenge(clientKey.toAccountId, "test.com")
       val answer = challenge.signedTransaction.copy(signatures = Nil).sign(clientKey)
-      challenge.verify(answer, clock) must beFalse
+      challenge.verify(answer, clock) must beEqualTo(
+        ChallengeMalformed("Response did not contain the challenge signatures")
+      )
     }
 
     "fail if the timebounds are expired" >> {
       val (subject, clock, clientKey) = fixtures
       val challenge = subject.challenge(clientKey.toAccountId, "test.com")
       val answer = challenge.signedTransaction.sign(clientKey)
-      clock.advance(java.time.Duration.ofMinutes(16))
-      challenge.verify(answer, clock) must beFalse
+      clock.advance(16.minutes)
+      challenge.verify(answer, clock) mustEqual ChallengeExpired
     }
   }
 }

@@ -1,6 +1,8 @@
 package stellar.sdk.util
 
-import java.time.{Clock, Duration, Instant, ZoneId, ZonedDateTime}
+import java.time.{Clock, Instant, ZoneId, ZonedDateTime}
+
+import scala.concurrent.duration._
 
 case class FakeClock(
   zoneId: ZoneId = ZoneId.of("UTC")
@@ -14,5 +16,5 @@ case class FakeClock(
 
   override def instant(): Instant = fixedInstant
 
-  def advance(duration: Duration): Unit = fixedInstant = fixedInstant.plus(duration)
+  def advance(duration: Duration): Unit = fixedInstant = fixedInstant.plus(java.time.Duration.ofNanos(duration.toNanos))
 }
