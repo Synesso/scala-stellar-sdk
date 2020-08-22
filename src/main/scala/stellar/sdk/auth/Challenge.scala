@@ -6,7 +6,8 @@ import okio.ByteString
 import org.json4s.JsonDSL._
 import org.json4s.native.JsonMethods._
 import org.json4s.{DefaultFormats, Formats}
-import stellar.sdk.model.SignedTransaction
+import stellar.sdk.model.response.AccountResponse
+import stellar.sdk.model.{Account, SignedTransaction}
 import stellar.sdk.util.DoNothingNetwork
 import stellar.sdk.{Network, PublicNetwork, Signature}
 
@@ -24,11 +25,16 @@ case class Challenge(
    * Verifies that the provided signed transaction is the same as the challenge and has been signed by the
    * challenged account.
    *
-   * @param answer  the transaction that may have been signed by the challenged account.
-   * @param clock   the clock to used to detect timebound expiry.
-   * @param network the network that the transaction is signed for.
+   * @param challenged the client account that was challenged.
+   * @param answer     the transaction that may have been signed by the challenged account.
+   * @param clock      the clock to used to detect timebound expiry.
+   * @param network    the network that the transaction is signed for.
    */
-  def verify(answer: SignedTransaction, clock: Clock = Clock.systemUTC())(implicit network: Network): ChallengeResult = {
+  def verify(
+    challenged: AccountResponse,
+    answer: SignedTransaction,
+    clock: Clock = Clock.systemUTC()
+  )(implicit network: Network): ChallengeResult = {
     val sameSignatures = byteStrings(answer.signatures).containsSlice(byteStrings(signedTransaction.signatures))
     if (!sameSignatures) ChallengeMalformed("Response did not contain the challenge signatures")
     else if (!transaction.timeBounds.includes(clock.instant())) ChallengeExpired
@@ -74,8 +80,16 @@ object Challenge {
   }
 }
 
+/** The result of verifying a challenge. */
 sealed trait ChallengeResult
 case object ChallengeSuccess extends ChallengeResult
 case class ChallengeMalformed(message: String) extends ChallengeResult
 case object ChallengeExpired extends ChallengeResult
 case object ChallengeNotSignedByClient extends ChallengeResult
+
+/** The threshold that a cumulative weight of signatures met. */
+sealed trait Threshold
+case object Not
+case object Low
+case object Medium
+case object High
