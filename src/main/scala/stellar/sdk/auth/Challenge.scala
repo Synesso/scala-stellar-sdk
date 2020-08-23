@@ -7,7 +7,7 @@ import org.json4s.JsonDSL._
 import org.json4s.native.JsonMethods._
 import org.json4s.{DefaultFormats, Formats}
 import stellar.sdk.model.response.AccountResponse
-import stellar.sdk.model.{Account, SignedTransaction}
+import stellar.sdk.model.{Account, AccountId, SignedTransaction, Transaction}
 import stellar.sdk.util.DoNothingNetwork
 import stellar.sdk.{Network, PublicNetwork, Signature}
 
@@ -30,14 +30,12 @@ case class Challenge(
    * @param answer     the transaction that may have been signed by the challenged account.
    * @param network    the network that the transaction is signed for.
    */
-  def verify(answer: SignedTransaction)(implicit network: Network): ChallengeResult = {
-    val sameSignatures = byteStrings(answer.signatures).containsSlice(byteStrings(signedTransaction.signatures))
-    if (!sameSignatures) ChallengeMalformed("Response did not contain the challenge signatures")
-    else if (!transaction.timeBounds.includes(clock.instant())) ChallengeExpired
-    else if (!answer.verify(transaction.operations.head.sourceAccount.get)) ChallengeNotSignedByClient
-    else if (answer.transaction.source.sequenceNumber != 0) ChallengeMalformed("Transaction did not have a sequenceNumber of zero")
-    else ChallengeSuccess
-  }
+  def verify(answer: SignedTransaction)(implicit network: Network): ChallengeResult =
+    checkSequenceNumber(answer)
+      .orElse(checkExpiry(transaction))
+      .orElse(checkSameSignatures(signedTransaction, answer))
+      .orElse(checkSignedByClient(answer))
+      .getOrElse(ChallengeSuccess)
 
   /**
    * Verifies that the provided signed transaction is the same as the challenge and has been signed by the
@@ -52,16 +50,58 @@ case class Challenge(
     answer: SignedTransaction,
     challenged: AccountResponse,
     threshold: Threshold
-  )(implicit network: Network): ChallengeResult = {
-    val sameSignatures = byteStrings(answer.signatures).containsSlice(byteStrings(signedTransaction.signatures))
-    if (!sameSignatures) ChallengeMalformed("Response did not contain the challenge signatures")
-    else if (!transaction.timeBounds.includes(clock.instant())) ChallengeExpired
-    else if (!answer.verify(transaction.operations.head.sourceAccount.get)) ChallengeNotSignedByClient
-    else if (answer.transaction.source.sequenceNumber != 0) ChallengeMalformed("Transaction did not have a sequenceNumber of zero")
-    else ChallengeSuccess
+  )(implicit network: Network): ChallengeResult =
+    checkSequenceNumber(answer)
+      .orElse(checkExpiry(transaction))
+      .orElse(checkSameSignatures(signedTransaction, answer))
+      .orElse(checkSignaturesMatchThreshold(answer, challenged, threshold))
+      .getOrElse(ChallengeSuccess)
+
+  private def checkSequenceNumber(answer: SignedTransaction): Option[ChallengeResult] =
+    if (answer.transaction.source.sequenceNumber == 0) None
+    else Some(ChallengeMalformed("Transaction did not have a sequenceNumber of zero"))
+
+  private def checkSameSignatures(original: SignedTransaction, answer: SignedTransaction): Option[ChallengeResult] = {
+    val challengeSigs = byteStrings(original.signatures.toSet)
+    val answerSigs = byteStrings(answer.signatures.toSet)
+    if (challengeSigs.intersect(answerSigs) != challengeSigs)
+      Some(ChallengeMalformed("Response did not contain the challenge signatures"))
+    else None
   }
 
-  private def byteStrings(signatures: Seq[Signature]): Seq[ByteString] =
+  private def checkExpiry(transaction: Transaction): Option[ChallengeResult] =
+    if (transaction.timeBounds.includes(clock.instant())) None
+    else Some(ChallengeExpired)
+
+  private def checkSignedByClient(answer: SignedTransaction): Option[ChallengeResult] = {
+    // FIXmE - deal with 0 or multi operations. Deal with no source account.
+    if (answer.verify(transaction.operations.head.sourceAccount.get)) None
+    else Some(ChallengeNotSignedByClient)
+  }
+
+  private def checkSignaturesMatchThreshold(
+    answer: SignedTransaction,
+    challenged: AccountResponse,
+    threshold: Threshold
+  ): Option[ChallengeResult] = {
+    val cumulativeWeight = challenged.signers.flatMap(signer => signer.key match {
+      case a: AccountId => Some(a -> signer.weight)
+      case _ => Option.empty[(AccountId, Int)]
+    }).flatMap { case (accountId, weight) => if (answer.verify(accountId.publicKey)) Some(weight) else None }
+      .sum
+    val attained =
+      if (cumulativeWeight >= challenged.thresholds.high) Some(High)
+      else if (cumulativeWeight >= challenged.thresholds.med) Some(Medium)
+      else if (cumulativeWeight >= challenged.thresholds.low) Some(Low)
+      else None
+
+    val tooLow = attained.forall(_ < threshold)
+    if (tooLow) Some(ChallengeThresholdNotMet(threshold, attained))
+    else None
+  }
+
+
+  private def byteStrings(signatures: Set[Signature]): Set[ByteString] =
     signatures.map(_.data).map(new ByteString(_))
 
   /**
@@ -105,9 +145,18 @@ case object ChallengeSuccess extends ChallengeResult
 case class ChallengeMalformed(message: String) extends ChallengeResult
 case object ChallengeExpired extends ChallengeResult
 case object ChallengeNotSignedByClient extends ChallengeResult
+case class ChallengeThresholdNotMet(expected: Threshold, attained: Option[Threshold]) extends ChallengeResult
 
 /** The threshold that a cumulative weight of signatures met. */
-sealed trait Threshold
-case object Low extends Threshold
-case object Medium extends Threshold
-case object High extends Threshold
+sealed trait Threshold {
+  def <(o: Threshold): Boolean
+}
+case object Low extends Threshold {
+  override def <(o: Threshold): Boolean = o != Low
+}
+case object Medium extends Threshold {
+  override def <(o: Threshold): Boolean = o == High
+}
+case object High extends Threshold {
+  override def <(o: Threshold): Boolean = false
+}
