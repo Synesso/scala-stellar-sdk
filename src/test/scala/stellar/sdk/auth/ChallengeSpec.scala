@@ -21,9 +21,13 @@ class ChallengeSpec extends Specification with DomainMatchers with ArbitraryInpu
   private val serverKey = KeyPair.random
   private def fixtures: (AuthChallenger, FakeClock, KeyPair, AccountResponse) = {
     val fakeClock = FakeClock()
+    val signersWithWeights = List(1, 2, 3).map { w =>
+      val key = KeyPair.random
+      key -> Signer(key.toAccountId, w)
+    }
     val clientKey = KeyPair.random
-    val challenged = AccountResponse(clientKey.asPublicKey, 0, 0, Thresholds(1, 2, 3), authRequired = false,
-      authRevocable = false, Nil, List(Signer(clientKey.toAccountId, 2)), Map.empty)
+    val challenged = AccountResponse(clientKey.asPublicKey, 0, 0, Thresholds(1, 4, 6),
+      authRequired = false, authRevocable = false, Nil, signersWithWeights.map(_._2), Map.empty)
     (new AuthChallenger(serverKey, fakeClock)(PublicNetwork), fakeClock, clientKey, challenged)
   }
 
@@ -103,46 +107,60 @@ class ChallengeSpec extends Specification with DomainMatchers with ArbitraryInpu
     }
   }
 
-  "verifying a challenge response" should {
+  "verifying a challenge response signed by master key" should {
     "succeed using signed transaction when the challenge is correctly signed" >> {
-      val (subject, clock, clientKey, challenged) = fixtures
+      val (subject, _, clientKey, _) = fixtures
       val challenge = subject.challenge(clientKey.toAccountId, "test.com")
       val answer = challenge.signedTransaction.sign(clientKey)
-      challenge.verify(challenged, answer, clock) mustEqual ChallengeSuccess
+      challenge.verify(answer) mustEqual ChallengeSuccess
     }
 
     "fail if the source account does not match that of the challenge" >> {
-      val (subject, clock, clientKey, challenged) = fixtures
+      val (subject, _, clientKey, _) = fixtures
       val challenge = subject.challenge(clientKey.toAccountId, "test.com")
       val answer = challenge.copy(signedTransaction = challenge.signedTransaction.sign(KeyPair.random)).signedTransaction
-      challenge.verify(challenged, answer, clock) mustEqual ChallengeNotSignedByClient
+      challenge.verify(answer) mustEqual ChallengeNotSignedByClient
     }
 
     "fail if the signed transaction does not contain the signatures of the challenge" >> {
-      val (subject, clock, clientKey, challenged) = fixtures
+      val (subject, _, clientKey, _) = fixtures
       val challenge = subject.challenge(clientKey.toAccountId, "test.com")
       val answer = challenge.signedTransaction.copy(signatures = Nil).sign(clientKey)
-      challenge.verify(challenged, answer, clock) must beEqualTo(
+      challenge.verify(answer) must beEqualTo(
         ChallengeMalformed("Response did not contain the challenge signatures")
       )
     }
 
     "fail if the timebounds are expired" >> {
-      val (subject, clock, clientKey, challenged) = fixtures
+      val (subject, clock, clientKey, _) = fixtures
       val challenge = subject.challenge(clientKey.toAccountId, "test.com")
+          .copy(clock = clock)
       val answer = challenge.signedTransaction.sign(clientKey)
       clock.advance(16.minutes)
-      challenge.verify(challenged, answer, clock) mustEqual ChallengeExpired
+      challenge.verify(answer) mustEqual ChallengeExpired
     }
 
     "fail if the transaction sequence is not zero" >> {
       val seqNumberLens = GenLens[Challenge](_.signedTransaction.transaction.source.sequenceNumber)
-      val (subject, clock, clientKey, challenged) = fixtures
+      val (subject, _, clientKey, _) = fixtures
       val challenge = subject.challenge(clientKey.toAccountId, "test.com")
       val answer = seqNumberLens.modify(_ => 1L)(challenge).signedTransaction.sign(clientKey)
-      challenge.verify(challenged, answer, clock) must beEqualTo(
+      challenge.verify(answer) must beEqualTo(
         ChallengeMalformed("Transaction did not have a sequenceNumber of zero")
       )
     }
   }
+
+/*
+  "verifying a challenge response signed by different signers" should {
+    "succeed when valid for the account" >> {
+      val signer01 = KeyPair.random
+      val signer02 = KeyPair.random
+      val (subject, clock, clientKey, challenged) = fixtures
+      val challenge = subject.challenge(clientKey.toAccountId, "test.com")
+      val answer = challenge.signedTransaction.sign(signer01).sign(signer02)
+      challenge.verify(answer, challenged, Low, clock) mustEqual ChallengeSuccess
+    }
+  }
+*/
 }

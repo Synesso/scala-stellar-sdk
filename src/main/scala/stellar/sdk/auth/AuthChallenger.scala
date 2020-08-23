@@ -30,7 +30,8 @@ class AuthChallenger(
       ),
       timeBounds = TimeBounds.timeout(timeout, clock),
       maxFee = NativeAmount(100)
-    ).sign(serverKey), network.passphrase
+    ).sign(serverKey), network.passphrase,
+    clock
   )
 
   private def generateDataKey: Array[Byte] = {
