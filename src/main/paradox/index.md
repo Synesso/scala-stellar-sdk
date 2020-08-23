@@ -11,7 +11,7 @@ This is the SDK for performing [Stellar](https://www.stellar.org/) operations vi
 access the Stellar network via Horizon instances to build and submit transactions, query the state of the network and
 stream updates.
 
-Scala developers may prefer to use this SDK because because it provides a more natural API for Scala developers than the
+Scala developers may prefer to use this SDK because it provides a more natural API for Scala developers than the
 official Java SDK
 
 The code throughout this documentation is compiled against Scala $scalaBinaryVersion$.
@@ -74,5 +74,6 @@ You can [contact me on KeyBase](https://keybase.io/jem/chat).
 * [Queries](queries.md)
 * [Sources](sources.md)
 * [Domains](domains.md)
+* [Authentication](authentication.md)
 
 @@@

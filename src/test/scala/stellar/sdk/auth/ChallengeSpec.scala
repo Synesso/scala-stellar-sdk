@@ -78,9 +78,11 @@ class ChallengeSpec extends Specification with DomainMatchers with ArbitraryInpu
     }
 
     "json serialise and deserialise" >> prop { clientKey: KeyPair =>
-      val (subject, _, clientKey, _, _) = fixtures
-      val challenge = subject.challenge(clientKey.toAccountId, "test.com")
+      val (authChallenger, _, clientKey, _, _) = fixtures
+      // #challenge_to_from_json_example
+      val challenge = authChallenger.challenge(clientKey.toAccountId, "test.com")
       Challenge(challenge.toJson) must beEquivalentTo(challenge)
+      // #challenge_to_from_json_example
     }
   }
 
@@ -112,10 +114,16 @@ class ChallengeSpec extends Specification with DomainMatchers with ArbitraryInpu
 
   "verifying a challenge response signed by master key" should {
     "succeed using signed transaction when the challenge is correctly signed" >> {
-      val (subject, _, clientKey, _, _) = fixtures
-      val challenge = subject.challenge(clientKey.toAccountId, "test.com")
+      val (authChallenger, _, clientKey, _, _) = fixtures
+      // #auth_challenge_success_example
+      val challenge = authChallenger.challenge(
+        accountId = clientKey.toAccountId,
+        homeDomain = "test.com",
+        timeout = 15.minutes
+      )
       val answer = challenge.signedTransaction.sign(clientKey)
       challenge.verify(answer) mustEqual ChallengeSuccess
+      // #auth_challenge_success_example
     }
 
     "fail if the source account does not match that of the challenge" >> {
