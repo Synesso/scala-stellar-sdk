@@ -62,6 +62,8 @@ lazy val root = project
       "org.typelevel" %% "cats-core" % "2.1.1",
       "tech.sparse" %%  "toml-scala" % "0.2.2",
 
+      "com.github.julien-truffaut" %% "monocle-core"  % "2.0.3" % "test",
+      "com.github.julien-truffaut" %% "monocle-macro" % "2.0.3" % "test",
       "com.squareup.okhttp3" % "mockwebserver" % okhttp % "test",
       "org.typelevel" %% "cats-effect" % "2.1.4",
       "org.specs2" %% "specs2-core" % specs2 % "test,it",

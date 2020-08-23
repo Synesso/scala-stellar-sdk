@@ -39,6 +39,7 @@ case class Challenge(
     if (!sameSignatures) ChallengeMalformed("Response did not contain the challenge signatures")
     else if (!transaction.timeBounds.includes(clock.instant())) ChallengeExpired
     else if (!answer.verify(transaction.operations.head.sourceAccount.get)) ChallengeNotSignedByClient
+    else if (answer.transaction.source.sequenceNumber != 0) ChallengeMalformed("Transaction did not have a sequenceNumber of zero")
     else ChallengeSuccess
   }
 
@@ -70,7 +71,7 @@ object Challenge {
    */
   def apply(json: String): Challenge = {
     val o = parse(json)
-    implicit val network = (o \ "network_passphrase").extractOpt[String]
+    implicit val network: Network = (o \ "network_passphrase").extractOpt[String]
       .map(p => new DoNothingNetwork(p))
         .getOrElse(PublicNetwork)
     Challenge(
@@ -89,7 +90,6 @@ case object ChallengeNotSignedByClient extends ChallengeResult
 
 /** The threshold that a cumulative weight of signatures met. */
 sealed trait Threshold
-case object Not
-case object Low
-case object Medium
-case object High
+case object Low extends Threshold
+case object Medium extends Threshold
+case object High extends Threshold

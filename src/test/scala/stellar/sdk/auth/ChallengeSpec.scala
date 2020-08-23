@@ -2,6 +2,7 @@ package stellar.sdk.auth
 
 import java.time.Instant
 
+import monocle.macros.GenLens
 import org.specs2.mutable.Specification
 import stellar.sdk.model.op.{Operation, WriteDataOperation}
 import stellar.sdk.model.response.AccountResponse
@@ -132,6 +133,16 @@ class ChallengeSpec extends Specification with DomainMatchers with ArbitraryInpu
       val answer = challenge.signedTransaction.sign(clientKey)
       clock.advance(16.minutes)
       challenge.verify(challenged, answer, clock) mustEqual ChallengeExpired
+    }
+
+    "fail if the transaction sequence is not zero" >> {
+      val seqNumberLens = GenLens[Challenge](_.signedTransaction.transaction.source.sequenceNumber)
+      val (subject, clock, clientKey, challenged) = fixtures
+      val challenge = subject.challenge(clientKey.toAccountId, "test.com")
+      val answer = seqNumberLens.modify(_ => 1L)(challenge).signedTransaction.sign(clientKey)
+      challenge.verify(challenged, answer, clock) must beEqualTo(
+        ChallengeMalformed("Transaction did not have a sequenceNumber of zero")
+      )
     }
   }
 }
