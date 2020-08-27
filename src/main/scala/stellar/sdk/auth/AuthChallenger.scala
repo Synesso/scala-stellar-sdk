@@ -9,11 +9,21 @@ import stellar.sdk.{KeyPair, Network}
 
 import scala.concurrent.duration._
 
+/**
+ * Factory for creating authentication challenges.
+ * @param serverKey This must be the keypair associated with the SIGNING_KEY as defined in your service's stellar.toml
+ */
 class AuthChallenger(
   serverKey: KeyPair,
   clock: Clock = Clock.systemUTC()
 )(implicit network: Network) {
 
+  /**
+   * Generates a Challenge for the given account.
+   * @param accountId   The stellar account that the wallet wishes to authenticate with the server
+   * @param homeDomain  The fully qualified domain name of the service requiring authentication.
+   * @param timeout     The period that during which valid responses to this challenge will be accepted.
+   */
   def challenge(
     accountId: AccountId,
     homeDomain: String,

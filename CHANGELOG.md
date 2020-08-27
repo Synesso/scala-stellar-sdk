@@ -4,6 +4,12 @@ As this project is pre 1.0, breaking changes may happen for minor version bumps.
 
 ## Next version
 
+## 0.15.0
+
+- [SEP-10 Transaction-based Authentication](https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0010.md#preamble):
+  Create and verify authentication challenges encoded into transactions. This feature allows two parties to perform 
+  account-based authentication via existing transaction schemes & standard SDK functionality.
+
 ## 0.14.0
 
 - [SEP-7 web+stellar:tx Transaction Signging Requests](https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0007.md)
