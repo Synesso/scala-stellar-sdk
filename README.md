@@ -52,9 +52,8 @@ Please see the full [SDK documentation](https://synesso.github.io/scala-stellar-
 There are a few ways to get help using this SDK.
 
 1. Post your question to the [Stellar StackExchange](https://stellar.stackexchange.com/) and tag it with `scala-sdk`.
-2. Ask in the [Scala-Stellar-SDK Gitter channel](https://gitter.im/scala-stellar-sdk/community).
-3. Ask in the #dev_discussion channel in [Keybase](https://keybase.io/team/stellar.public).
-4. Raise an issue on [this repository in GitHub](https://github.com/Synesso/scala-stellar-sdk/issues).
+2. Ask in the #dev_discussion channel in [Keybase](https://keybase.io/team/stellar.public).
+3. Raise an issue on [this repository in GitHub](https://github.com/Synesso/scala-stellar-sdk/issues).
 
 
 ## Contributing
