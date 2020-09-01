@@ -54,7 +54,7 @@ lazy val root = project
       "com.squareup.okhttp3" % "logging-interceptor" % okhttp,
       "com.typesafe.scala-logging" %% "scala-logging" % "3.9.2",
       "com.squareup.okio" % "okio" % "2.8.0",
-      "commons-codec" % "commons-codec" % "1.14",
+      "commons-codec" % "commons-codec" % "1.15",
       "io.github.novacrypto" % "BIP39" % "2019.01.27",
       "net.i2p.crypto" % "eddsa" % "0.3.0",
       "org.json4s" %% "json4s-native" % "3.6.9",
