@@ -1,6 +1,7 @@
 package stellar.sdk.model.ledger
 
 import cats.data.State
+import okio.ByteString
 import stellar.sdk.model.op.{IssuerFlag, IssuerFlags}
 import stellar.sdk.model.xdr.{Decode, Encodable, Encode}
 import stellar.sdk.model._
@@ -19,7 +20,8 @@ object LedgerEntry extends Decode {
       widen(AccountEntry.decode),
       widen(TrustLineEntry.decode),
       widen(OfferEntry.decode),
-      widen(DataEntry.decode)
+      widen(DataEntry.decode),
+      widen(ClaimableBalanceEntry.decode)
     )
     (data, disc) = dataDisc
   } yield LedgerEntry(lastModifiedLedgerSeq, data, disc)
@@ -245,4 +247,63 @@ object DataEntry extends Decode {
     value <- padded()
     _ <- int
   } yield DataEntry(account, name, value)
+}
+
+/*
+struct ClaimableBalanceEntry
+{
+    // Unique identifier for this ClaimableBalanceEntry
+    ClaimableBalanceID balanceID;
+
+    // Account that created this ClaimableBalanceEntry
+    AccountID createdBy;
+
+    // List of claimants with associated predicate
+    Claimant claimants<10>;
+
+    // Any asset including native
+    Asset asset;
+
+    // Amount of asset
+    int64 amount;
+
+    // Amount of native asset to pay the reserve
+    int64 reserve;
+
+    // reserved for future use
+    union switch (int v)
+    {
+    case 0:
+        void;
+    }
+    ext;
+};
+ */
+case class ClaimableBalanceEntry(
+  id: ByteString,
+  createdBy: PublicKeyOps,
+  claimants: List[Claimant],
+  amount: Amount,
+  reserve: NativeAmount
+) extends LedgerEntryData {
+
+  override def encode: LazyList[Byte] =
+    Encode.int(0) ++ Encode.bytes(32, id.toByteArray) ++
+      createdBy.encode ++
+      Encode.arr(claimants) ++
+      amount.encode ++
+      Encode.long(reserve.units) ++
+      Encode.int(0)
+}
+
+object ClaimableBalanceEntry extends Decode {
+  val decode: State[Seq[Byte], ClaimableBalanceEntry] = for {
+    _ <- int
+    id <- bytes(32).map(_.toArray).map(new ByteString(_))
+    createdBy <- KeyPair.decode
+    claimants <- arr(Claimant.decode).map(_.toList)
+    amount <- Amount.decode
+    reserve <- long.map(NativeAmount)
+    _ <- int
+  } yield ClaimableBalanceEntry(id, createdBy, claimants, amount, reserve)
 }

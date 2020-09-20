@@ -53,8 +53,7 @@ case class Transaction(source: Account,
     */
   def encodeXDR: String = base64(encode)
 
-  // Encodes to TransactionV0 format by default for backwards compatibility with core protocol 12.
-  // But if the accountId is muxed (has a sub-account id), then encode to TransactionV1 for protocol 13+
+  // Encodes to TransactionV1 format by default
   def encode: LazyList[Byte] = encodeV1
 
   def encodeV0: LazyList[Byte] = {
