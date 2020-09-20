@@ -38,9 +38,13 @@ trait LedgerEntryGenerators extends ArbitraryInput {
     name <- Gen.identifier
   } yield DataKey(account, name)
 
-  val genLedgerKey: Gen[LedgerKey] = Gen.oneOf(genAccountKey, genTrustLineKey, genOfferKey, genDataKey)
+  val genClaimableBalanceKey: Gen[ClaimableBalanceKey] = for {
+    id <- Gen.containerOfN[Array, Byte](32, Gen.posNum[Byte]).map(new ByteString(_))
+  } yield ClaimableBalanceKey(id)
 
-  implicit val arbLedgerKey = Arbitrary(genLedgerKey)
+  val genLedgerKey: Gen[LedgerKey] = Gen.oneOf(genAccountKey, genTrustLineKey, genOfferKey, genDataKey, genClaimableBalanceKey)
+
+  implicit val arbLedgerKey: Arbitrary[LedgerKey] = Arbitrary(genLedgerKey)
 
 
   // LedgerEntries
