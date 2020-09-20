@@ -1,8 +1,10 @@
 package stellar.sdk.model.ledger
 
+import okio.ByteString
 import org.scalacheck.{Arbitrary, Gen}
 import stellar.sdk.ArbitraryInput
-import stellar.sdk.model.LedgerThresholds
+import stellar.sdk.model.ClaimantGenerators.genClaimant
+import stellar.sdk.model.{Claimant, ClaimantGenerators, LedgerThresholds}
 import stellar.sdk.model.op.IssuerFlag
 
 trait LedgerEntryGenerators extends ArbitraryInput {
@@ -71,9 +73,17 @@ trait LedgerEntryGenerators extends ArbitraryInput {
     value <- Gen.identifier.map(_.getBytes("UTF-8").toIndexedSeq)
   } yield DataEntry(account, name, value)
 
+  val genClaimableBalanceEntry: Gen[ClaimableBalanceEntry] = for {
+    id <- Gen.containerOfN[Array, Byte](32, Gen.posNum[Byte]).map(new ByteString(_))
+    createdBy <- genPublicKey
+    claimants <- Gen.chooseNum(1, 10).flatMap(Gen.containerOfN[List, Claimant](_, genClaimant))
+    amount <- genAmount
+    reserve <- genNativeAmount
+  } yield ClaimableBalanceEntry(id, createdBy, claimants, amount, reserve)
+
   val genLedgerEntryData: Gen[(LedgerEntryData, Int)] = for {
-    idx <- Gen.choose(0, 3)
-    data <- List(genAccountEntry, genTrustLineEntry, genOfferEntry, genDataEntry)(idx)
+    idx <- Gen.choose(0, 4)
+    data <- List(genAccountEntry, genTrustLineEntry, genOfferEntry, genDataEntry, genClaimableBalanceEntry)(idx)
   } yield data -> idx
 
   val genLedgerEntry: Gen[LedgerEntry] = for {
