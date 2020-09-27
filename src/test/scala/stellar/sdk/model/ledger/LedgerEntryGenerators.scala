@@ -4,7 +4,7 @@ import okio.ByteString
 import org.scalacheck.{Arbitrary, Gen}
 import stellar.sdk.ArbitraryInput
 import stellar.sdk.model.ClaimantGenerators.genClaimant
-import stellar.sdk.model.{Claimant, ClaimantGenerators, LedgerThresholds}
+import stellar.sdk.model.{ClaimableBalanceIds, Claimant, ClaimantGenerators, LedgerThresholds}
 import stellar.sdk.model.op.IssuerFlag
 
 trait LedgerEntryGenerators extends ArbitraryInput {
@@ -39,7 +39,7 @@ trait LedgerEntryGenerators extends ArbitraryInput {
   } yield DataKey(account, name)
 
   val genClaimableBalanceKey: Gen[ClaimableBalanceKey] = for {
-    id <- Gen.containerOfN[Array, Byte](32, Gen.posNum[Byte]).map(new ByteString(_))
+    id <- ClaimableBalanceIds.genClaimableBalanceId
   } yield ClaimableBalanceKey(id)
 
   val genLedgerKey: Gen[LedgerKey] = Gen.oneOf(genAccountKey, genTrustLineKey, genOfferKey, genDataKey, genClaimableBalanceKey)

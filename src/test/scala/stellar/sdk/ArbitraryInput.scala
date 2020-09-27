@@ -435,11 +435,17 @@ trait ArbitraryInput extends ScalaCheck {
     sourceAccount <- Gen.option(genPublicKey)
   } yield CreateClaimableBalanceOperation(amount, claimants, sourceAccount)
 
+  def genClaimClaimableBalanceOperation: Gen[ClaimClaimableBalanceOperation] = for {
+    id <- ClaimableBalanceIds.genClaimableBalanceId
+    sourceAccount <- Gen.option(genPublicKey)
+  } yield ClaimClaimableBalanceOperation(id, sourceAccount)
+
   def genOperation: Gen[Operation] = {
     Gen.oneOf(genAccountMergeOperation, genAllowTrustOperation, genChangeTrustOperation, genCreateAccountOperation,
       genCreatePassiveSellOfferOperation, genInflationOperation, genManageDataOperation, genManageSellOfferOperation,
       genManageBuyOfferOperation, genPathPaymentStrictReceiveOperation, genPaymentOperation, genSetOptionsOperation,
-      genBumpSequenceOperation, genPathPaymentStrictSendOperation, genCreateClaimableBalanceOperation)
+      genBumpSequenceOperation, genPathPaymentStrictSendOperation, genCreateClaimableBalanceOperation,
+      genClaimClaimableBalanceOperation)
   }
 
   def genPrice: Gen[Price] = for {
