@@ -54,6 +54,7 @@ object Operation extends Decode {
           case x: DeleteBuyOfferOperation => x.copy(sourceAccount = source)
         })
         case 13 => widen(PathPaymentStrictSendOperation.decode.map(_.copy(sourceAccount = source)))
+        case 14 => widen(CreateClaimableBalanceOperation.decode.map(_.copy(sourceAccount = source)))
       }
     }
 
@@ -790,4 +791,29 @@ case class BumpSequenceOperation(bumpTo: Long,
 
 object BumpSequenceOperation extends Decode {
   def decode: State[Seq[Byte], BumpSequenceOperation] = long.map(BumpSequenceOperation(_))
+}
+
+/**
+ * Creates a payment reservation, referred to as a claimable balance.
+ *
+ * @param amount the reserved payment amount
+ * @param claimants the accounts who can claim this payment, along with the requirements for doing so.
+ * @param sourceAccount the account effecting this operation, if different from the owning account of the transaction
+ * @see [[https://www.stellar.org/developers/horizon/reference/resources/operation.html#create-claimable-balance endpoint doc]]
+ */
+case class CreateClaimableBalanceOperation(
+  amount: Amount,
+  claimants: List[Claimant],
+  sourceAccount: Option[PublicKeyOps] = None
+) extends Operation {
+  require(claimants.nonEmpty && claimants.size <= 10)
+
+  override def encode: LazyList[Byte] = super.encode ++ Encode.int(14) ++ amount.encode ++ Encode.arr(claimants)
+}
+
+object CreateClaimableBalanceOperation extends Decode {
+  def decode: State[Seq[Byte], CreateClaimableBalanceOperation] = for {
+    amount <- Amount.decode
+    claimants <- arr(Claimant.decode)
+  } yield CreateClaimableBalanceOperation(amount, claimants.toList)
 }
