@@ -3,7 +3,7 @@ package stellar.sdk.model.ledger
 import cats.data.State
 import okio.ByteString
 import stellar.sdk.model.xdr.{Decode, Encodable, Encode}
-import stellar.sdk.model.{Asset, NonNativeAsset}
+import stellar.sdk.model.{Asset, ClaimableBalanceId, NonNativeAsset}
 import stellar.sdk.{KeyPair, PublicKeyOps}
 
 sealed trait LedgerKey extends Encodable
@@ -60,12 +60,10 @@ object DataKey extends Decode {
   } yield DataKey(account, name)
 }
 
-case class ClaimableBalanceKey(id: ByteString) extends LedgerKey {
-  override def encode: LazyList[Byte] = Encode.int(4) ++ Encode.bytes(32, id.toByteArray)
+case class ClaimableBalanceKey(id: ClaimableBalanceId) extends LedgerKey {
+  override def encode: LazyList[Byte] = Encode.int(4) ++ id.encode
 }
 
 object ClaimableBalanceKey extends Decode {
-  val decode: State[Seq[Byte], ClaimableBalanceKey] = for {
-    id <- bytes(32).map(_.toArray).map(new ByteString(_))
-  } yield ClaimableBalanceKey(id)
+  val decode: State[Seq[Byte], ClaimableBalanceKey] = ClaimableBalanceId.decode.map(ClaimableBalanceKey(_))
 }

@@ -55,6 +55,7 @@ object Operation extends Decode {
         })
         case 13 => widen(PathPaymentStrictSendOperation.decode.map(_.copy(sourceAccount = source)))
         case 14 => widen(CreateClaimableBalanceOperation.decode.map(_.copy(sourceAccount = source)))
+        case 15 => widen(ClaimClaimableBalanceOperation.decode.map(_.copy(sourceAccount = source)))
       }
     }
 
@@ -816,4 +817,22 @@ object CreateClaimableBalanceOperation extends Decode {
     amount <- Amount.decode
     claimants <- arr(Claimant.decode)
   } yield CreateClaimableBalanceOperation(amount, claimants.toList)
+}
+
+/**
+ * Claims a previously created claimable balance.
+ *
+ * @param id the id of the claimable balance entry to attempt to claim.
+ * @param sourceAccount the account effecting this operation, if different from the owning account of the transaction
+ */
+case class ClaimClaimableBalanceOperation(
+  id: ClaimableBalanceId,
+  sourceAccount: Option[PublicKeyOps] = None
+) extends Operation {
+  override def encode: LazyList[Byte] = super.encode ++ Encode.int(15) ++ id.encode
+}
+
+object ClaimClaimableBalanceOperation extends Decode {
+  def decode: State[Seq[Byte], ClaimClaimableBalanceOperation] =
+    ClaimableBalanceId.decode.map(id => ClaimClaimableBalanceOperation(id))
 }
