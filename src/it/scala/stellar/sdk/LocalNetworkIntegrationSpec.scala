@@ -177,9 +177,8 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
   "fee stats" should {
     "be parsed" >> {
       for (feeStats <- network.feeStats()) yield {
-        // Changed to a large value because standalone docker needs to wait 5 mins at this time.
-        val fiveMinutesPlusFixtureTimeInLedgers = 67L
-        feeStats.lastLedger must beCloseTo(fiveMinutesPlusFixtureTimeInLedgers, 6)
+        val fixtureTimeInLedgers = 7L
+        feeStats.lastLedger must beCloseTo(fixtureTimeInLedgers, 2)
       }
     }
   }

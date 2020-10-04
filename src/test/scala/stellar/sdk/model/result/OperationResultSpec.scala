@@ -61,6 +61,12 @@ class OperationResultSpec extends Specification with ArbitraryInput with DomainM
     }
   }
 
+  "claim claimable balance results" should {
+    "serde via xdr bytes" >> prop { r: ClaimClaimableBalanceResult =>
+      r should serdeUsing(OperationResult.decode)
+    }
+  }
+
   "inflation results" should {
     "serde via xdr bytes" >> prop { r: InflationResult =>
       r should serdeUsing(OperationResult.decode)
