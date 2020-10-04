@@ -11,6 +11,7 @@ import org.specs2.concurrent.ExecutionEnv
 import org.specs2.mutable.Specification
 import stellar.sdk.inet.HorizonEntityNotFound
 import stellar.sdk.model.Amount.lumens
+import stellar.sdk.model.ClaimPredicate.{AbsolutelyBefore, And, Or, SinceClaimCreation, Unconditional}
 import stellar.sdk.model.TimeBounds.Unbounded
 import stellar.sdk.model.TradeAggregation.FifteenMinutes
 import stellar.sdk.model._
@@ -608,6 +609,44 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
       } yield txnResult must beLike[TransactionPostResponse] { case r =>
         r.isSuccess must beTrue
       }
+    }
+  }
+
+  "claimable balances" should {
+    "be creatable" >> {
+      val now = Instant.now()
+      val predicate = Or(
+        And(
+          AbsolutelyBefore(now),
+          SinceClaimCreation(600)
+        ),
+        Unconditional
+      )
+      for {
+        account <- network.account(accnB)
+        txn = Transaction(
+          source = account,
+          operations = List(CreateClaimableBalanceOperation(
+            amount = Amount(5000, dachshundB),
+            claimants = List(
+              AccountIdClaimant(accnA, predicate),
+              AccountIdClaimant(accnC, Unconditional)
+            ),
+            sourceAccount = Some(accnB)
+          )),
+          timeBounds = TimeBounds.Unbounded,
+          maxFee = NativeAmount(100))
+          .sign(accnB)
+        txnResult <- txn.submit()
+      } yield txnResult must beLike[TransactionPostResponse] { case r: TransactionApproved =>
+//        println(r.envelopeXDR)
+//        println(r.resultXDR)
+        r.isSuccess must beTrue
+      }
+    }
+
+    "and claimable" >> {
+      pending
     }
   }
 }

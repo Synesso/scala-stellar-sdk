@@ -13,8 +13,8 @@ object ClaimPredicate extends Decode {
 
   def decode: State[Seq[Byte], ClaimPredicate] = int.flatMap {
     case 0 => State.pure(Unconditional)
-    case 1 => decode.flatMap(left => decode.map(right => And(left, right)))
-    case 2 => decode.flatMap(left => decode.map(right => Or(left, right)))
+    case 1 => arr(decode).map { case Seq(left, right) => And(left, right) }
+    case 2 => arr(decode).map { case Seq(left, right) => Or(left, right) }
     case 3 => decode.map(Not)
     case 4 => long.map(Instant.ofEpochSecond).map(AbsolutelyBefore)
     case 5 => long.map(SinceClaimCreation)
@@ -26,13 +26,13 @@ object ClaimPredicate extends Decode {
   }
 
   case class And(left: ClaimPredicate, right: ClaimPredicate) extends ClaimPredicate {
-    override def encode: LazyList[Byte] = Encode.int(1) ++ left.encode ++ right.encode
+    override def encode: LazyList[Byte] = Encode.int(1) ++ Encode.arr(List(left, right))
     override def check(claimCreation: Instant, instant: Instant): Boolean =
       left.check(claimCreation, instant) && right.check(claimCreation, instant)
   }
 
   case class Or(left: ClaimPredicate, right: ClaimPredicate) extends ClaimPredicate {
-    override def encode: LazyList[Byte] = Encode.int(2) ++ left.encode ++ right.encode
+    override def encode: LazyList[Byte] = Encode.int(2) ++ Encode.arr(List(left, right))
     override def check(claimCreation: Instant, instant: Instant): Boolean =
       left.check(claimCreation, instant) || right.check(claimCreation, instant)
   }
