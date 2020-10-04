@@ -122,6 +122,8 @@ trait ArbitraryInput extends ScalaCheck {
 
   implicit def arbCreateAccountResult: Arbitrary[CreateAccountResult] = Arbitrary(genCreateAccountResult)
 
+  implicit def arbCreateClaimableBalanceResult: Arbitrary[CreateClaimableBalanceResult] = Arbitrary(genCreateClaimableBalanceResult)
+
   implicit def arbCreatePassiveSellOfferResult: Arbitrary[CreatePassiveSellOfferResult] = Arbitrary(genCreatePassiveSellOfferResult)
 
   implicit def arbInflationResult: Arbitrary[InflationResult] = Arbitrary(genInflationResult)
@@ -709,6 +711,13 @@ trait ArbitraryInput extends ScalaCheck {
   def genCreateAccountResult: Gen[CreateAccountResult] = Gen.oneOf(
     CreateAccountSuccess, CreateAccountAlreadyExists, CreateAccountLowReserve, CreateAccountMalformed,
     CreateAccountUnderfunded
+  )
+
+  def genCreateClaimableBalanceResult: Gen[CreateClaimableBalanceResult] = Gen.oneOf(
+    Gen.const(CreateClaimableBalanceMalformed), Gen.const(CreateClaimableBalanceLowReserve),
+    Gen.const(CreateClaimableBalanceNoTrust), Gen.const(CreateClaimableBalanceNotAuthorized),
+    Gen.const(CreateClaimableBalanceUnderfunded),
+    ClaimableBalanceIds.genClaimableBalanceId.map(CreateClaimableBalanceSuccess)
   )
 
   def genCreatePassiveSellOfferResult: Gen[CreatePassiveSellOfferResult] = Gen.oneOf(

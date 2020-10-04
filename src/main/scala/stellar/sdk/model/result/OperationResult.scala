@@ -43,6 +43,7 @@ object OperationResult extends Decode {
       widen(BumpSequenceResult.decode),
       widen(ManageOfferResult.decode),
       widen(PathPaymentResult.decode),
+      widen(CreateClaimableBalanceResult.decode),
     )
   }
 }
