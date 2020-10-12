@@ -21,7 +21,6 @@ case class Transaction(source: Account,
                        maxFee: NativeAmount)(implicit val network: Network) extends Encodable {
 
   private val BaseFee = 100L
-  private val EnvelopeTypeTx = 2
 
   def add(op: Operation): Transaction = this.copy(operations = operations :+ op)
 

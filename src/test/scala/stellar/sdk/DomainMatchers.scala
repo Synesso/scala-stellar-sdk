@@ -10,6 +10,9 @@ import stellar.sdk.model.op._
 import stellar.sdk.model.result.TransactionHistory
 import stellar.sdk.model.xdr.Encodable
 
+import scala.math.Ordering.Implicits.seqOrdering
+import scala.util.Random
+
 trait DomainMatchers extends AnyMatchers with MustExpectations with SequenceMatchersCreation with OptionMatchers {
 
   def beEquivalentTo(other: Asset): Matcher[Asset] = beLike[Asset] {
@@ -234,7 +237,7 @@ trait DomainMatchers extends AnyMatchers with MustExpectations with SequenceMatc
   def beEquivalentTo(other: SignedTransaction): Matcher[SignedTransaction] = beLike {
     case stxn =>
       stxn.transaction must beEquivalentTo(other.transaction)
-      forall(stxn.signatures.zip(other.signatures)) {
+      forall(stxn.signatures.sortBy(_.hint.toList).zip(other.signatures.sortBy(_.hint.toList))) {
         case (stxnSig: Signature, otherSig: Signature) =>
           stxnSig.hint.toSeq mustEqual otherSig.hint.toSeq
           stxnSig.data.toSeq mustEqual otherSig.data.toSeq
