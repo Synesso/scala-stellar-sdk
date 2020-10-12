@@ -1,8 +1,12 @@
 package stellar.sdk.model
 
-import java.time.Instant
+import java.time.{Instant, ZonedDateTime}
 
 import cats.data.State
+import org.json4s.JsonAST.{JInt, JString}
+import org.json4s.{DefaultFormats, JArray, JObject}
+import stellar.sdk.model.ClaimPredicate.{AbsolutelyBefore, And, Or, SinceClaimCreation, Unconditional, parseClaimPredicate}
+import stellar.sdk.model.response.ResponseParser
 import stellar.sdk.model.xdr.{Decode, Encodable, Encode}
 
 sealed trait ClaimPredicate extends Encodable {
@@ -56,4 +60,17 @@ object ClaimPredicate extends Decode {
     override def check(claimCreation: Instant, instant: Instant): Boolean =
       instant.minusSeconds(seconds).isBefore(claimCreation)
   }
+
+  private def parseClaimPredicate(o: Map[String, Any]): ClaimPredicate = o.headOption match {
+    case Some(("unconditional", _)) => Unconditional
+    case Some(("abs_before", time: String)) => AbsolutelyBefore(ZonedDateTime.parse(time).toInstant)
+    case Some(("rel_before", seconds: String)) => SinceClaimCreation(seconds.toLong)
+    case Some(("and", List(l, r))) => And(parseClaimPredicate(l.asInstanceOf[Map[String, Any]]), parseClaimPredicate(r.asInstanceOf[Map[String, Any]]))
+    case Some(("or", List(l, r))) => Or(parseClaimPredicate(l.asInstanceOf[Map[String, Any]]), parseClaimPredicate(r.asInstanceOf[Map[String, Any]]))
+    case Some(("not", p)) => Not(parseClaimPredicate(p.asInstanceOf[Map[String, Any]]))
+  }
+
+  def parseClaimPredicate(o: JObject): ClaimPredicate = parseClaimPredicate(o.values)
 }
+
+object ClaimPredicateDeserializer extends ResponseParser[ClaimPredicate](parseClaimPredicate)

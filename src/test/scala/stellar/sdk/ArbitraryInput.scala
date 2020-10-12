@@ -177,7 +177,7 @@ trait ArbitraryInput extends ScalaCheck {
 
   def round(d: Double): Double = "%.7f".formatLocal(Locale.ROOT, d).toDouble
 
-  def genKeyPair: Gen[KeyPair] = Gen.oneOf(Seq(KeyPair.random))
+  def genKeyPair: Gen[KeyPair] = Gen.delay(Gen.const(KeyPair.random))
 
   def genPublicKey: Gen[PublicKey] = genKeyPair.map(kp => PublicKey(kp.pk))
 
