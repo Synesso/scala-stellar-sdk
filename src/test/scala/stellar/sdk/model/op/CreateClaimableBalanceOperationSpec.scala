@@ -1,15 +1,20 @@
 package stellar.sdk.model.op
 
+import org.json4s.{Formats, NoTypeHints}
+import org.json4s.native.JsonMethods.parse
+import org.json4s.native.Serialization
 import org.scalacheck.Arbitrary
 import org.specs2.mutable.Specification
 import stellar.sdk.ArbitraryInput
+import stellar.sdk.model.ClaimantGenerators
 import stellar.sdk.util.ByteArrays
 
-class CreateClaimableBalanceOperationSpec extends Specification with ArbitraryInput {
+class CreateClaimableBalanceOperationSpec extends Specification with ArbitraryInput with JsonSnippets {
 
   implicit val arbOp: Arbitrary[CreateClaimableBalanceOperation] = Arbitrary(genCreateClaimableBalanceOperation)
   implicit val arbTx: Arbitrary[Transacted[CreateClaimableBalanceOperation]] =
     Arbitrary(genTransacted(genCreateClaimableBalanceOperation))
+  implicit val formats: Formats = Serialization.formats(NoTypeHints) + TransactedOperationDeserializer
 
   "create claimable balance operation" should {
     "serde via xdr bytes" >> prop { actual: CreateClaimableBalanceOperation =>
@@ -22,7 +27,6 @@ class CreateClaimableBalanceOperationSpec extends Specification with ArbitraryIn
       Operation.decodeXDR(ByteArrays.base64(actual.encode)) mustEqual actual
     }
 
-/*
     "parse from json" >> prop { op: Transacted[CreateClaimableBalanceOperation] =>
       val doc =
         s"""
@@ -44,48 +48,22 @@ class CreateClaimableBalanceOperationSpec extends Specification with ArbitraryIn
            |      "href": "http://localhost:8000/effects?order=asc\u0026cursor=42949677057"
            |    }
            |  },
-           |  "id": "42949677057",
+           |  "id": "${op.id}",
            |  "paging_token": "42949677057",
            |  "transaction_successful": true,
-           |  "source_account": "GCYTIVTAEF6AJOZG5TVXE7OZE7FLUXJUJSYAZ3IR2YH4MNINDJJX4DXF",
+           |  "source_account": "${op.operation.sourceAccount.get.accountId}",
            |  "type": "create_claimable_balance",
            |  "type_i": 14,
-           |  "created_at": "2020-10-11T03:00:16Z",
-           |  "transaction_hash": "25a461789570755483e3d3f078ae58ba5de2a083115c287e2ed14262107e0315",
-           |  "sponsor": "GCYTIVTAEF6AJOZG5TVXE7OZE7FLUXJUJSYAZ3IR2YH4MNINDJJX4DXF",
-           |  "asset": "Dachshund:GCYTIVTAEF6AJOZG5TVXE7OZE7FLUXJUJSYAZ3IR2YH4MNINDJJX4DXF",
-           |  "amount": "0.0005000",
-           |  "claimants": [
-           |    {
-           |      "destination": "GAAYHQF2PNZ3H6LE5AX3UJSGUR2DQXHHGXYMHF32TDYF2FFPTTOFI3PA",
-           |      "predicate": {
-           |        "or": [
-           |          {
-           |            "and": [
-           |              {
-           |                "abs_before": "2020-10-11T03:00:12Z"
-           |              },
-           |              {
-           |                "rel_before": "600"
-           |              }
-           |            ]
-           |          },
-           |          {
-           |            "unconditional": true
-           |          }
-           |        ]
-           |      }
-           |    },
-           |    {
-           |      "destination": "GC6O6NSTRLQU3XSDB3SHF3T4K2WQ5DVXYYH7NPPN4K6M4CMHRCGPHCOF",
-           |      "predicate": {
-           |        "unconditional": true
-           |      }
-           |    }
-           |  ]
+           |  "created_at": "${formatter.format(op.createdAt)}",
+           |  "transaction_hash": "${op.txnHash}",
+           |  "sponsor": "${op.operation.sourceAccount.get.accountId}",
+           |  "asset": "${op.operation.amount.asset.stringEncode}",
+           |  "amount": "${op.operation.amount.toDisplayUnits}",
+           |  "claimants": [${op.operation.claimants.map(ClaimantGenerators.json).mkString(",")}]
            |}
          """.stripMargin
-    }
-*/
+
+      parse(doc).extract[Transacted[CreateClaimableBalanceOperation]] mustEqual op
+    }.setGen(genTransacted(genCreateClaimableBalanceOperation.suchThat(_.sourceAccount.nonEmpty)))
   }
 }

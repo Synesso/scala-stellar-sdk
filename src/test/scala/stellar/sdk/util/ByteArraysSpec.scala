@@ -2,6 +2,8 @@ package stellar.sdk.util
 
 import java.math.BigInteger
 
+import kotlin.text.Charsets
+import okio.ByteString
 import org.scalacheck.Gen
 import org.specs2.mutable.Specification
 import stellar.sdk.ArbitraryInput

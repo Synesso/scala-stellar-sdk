@@ -37,6 +37,10 @@ object ClaimantGenerators extends ArbitraryInput {
 
   val genClaimant: Gen[Claimant] = Gen.oneOf(genAccountIdClaimant, genAccountIdClaimant)
 
+  def json(claimant: Claimant): String = claimant match {
+    case a: AccountIdClaimant => json(a)
+  }
+
   def json(claimant: AccountIdClaimant): String =
     s"""
        |{

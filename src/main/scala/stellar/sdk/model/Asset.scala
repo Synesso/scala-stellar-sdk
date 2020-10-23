@@ -7,6 +7,7 @@ import stellar.sdk.{KeyPair, PublicKeyOps}
 
 sealed trait Asset extends Encodable {
   val code: String
+  def stringEncode: String
 }
 
 object Asset extends Decode {
@@ -25,6 +26,7 @@ object Asset extends Decode {
 case object NativeAsset extends Asset {
   val code: String = "XLM"
   override def encode: LazyList[Byte] = Encode.int(0)
+  def stringEncode: String = "native"
 }
 
 sealed trait NonNativeAsset extends Asset {
@@ -32,7 +34,8 @@ sealed trait NonNativeAsset extends Asset {
   val issuer: PublicKeyOps
   val typeString: String
 
-  override def toString: String = s"${issuer.accountId}:$code"
+  def stringEncode: String = s"$code:${issuer.accountId}"
+  override def toString: String = stringEncode
 }
 
 /**
