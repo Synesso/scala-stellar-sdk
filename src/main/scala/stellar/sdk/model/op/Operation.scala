@@ -63,7 +63,7 @@ object Operation extends Decode {
 }
 
 object OperationDeserializer extends ResponseParser[Operation]({ o: JObject =>
-  implicit val formats = DefaultFormats
+  implicit val formats = DefaultFormats + ClaimantDeserializer
 
   def publicKey(accountKey: String = "account") = KeyPair.fromAccountId((o \ accountKey).extract[String])
 
@@ -72,15 +72,22 @@ object OperationDeserializer extends ResponseParser[Operation]({ o: JObject =>
   def sourceAccount: Option[PublicKey] = Some(publicKey("source_account"))
 
   def asset(prefix: String = "", obj: JValue = o) = {
+
     def assetCode = (obj \ s"${prefix}asset_code").extract[String]
 
     def assetIssuer = KeyPair.fromAccountId((obj \ s"${prefix}asset_issuer").extract[String])
 
-    (obj \ s"${prefix}asset_type").extract[String] match {
-      case "native" => NativeAsset
-      case "credit_alphanum4" => IssuedAsset4(assetCode, assetIssuer)
-      case "credit_alphanum12" => IssuedAsset12(assetCode, assetIssuer)
-      case t => throw new RuntimeException(s"Unrecognised asset type '$t'")
+    (obj \ "asset").extractOpt[String].map(_.split(":")) match {
+      case Some(Array(code, issuer)) if code.length > 4 => IssuedAsset12(code, KeyPair.fromAccountId(issuer))
+      case Some(Array(code, issuer)) => IssuedAsset4(code, KeyPair.fromAccountId(issuer))
+      case Some(Array("native")) => NativeAsset
+      case _ =>
+        (obj \ s"${prefix}asset_type").extract[String] match {
+          case "native" => NativeAsset
+          case "credit_alphanum4" => IssuedAsset4(assetCode, assetIssuer)
+          case "credit_alphanum12" => IssuedAsset12(assetCode, assetIssuer)
+          case t => throw new RuntimeException(s"Unrecognised asset type '$t'")
+        }
     }
   }
 
@@ -199,6 +206,12 @@ object OperationDeserializer extends ResponseParser[Operation]({ o: JObject =>
       }
     case "bump_sequence" =>
       BumpSequenceOperation((o \ "bump_to").extract[String].toLong, sourceAccount)
+    case "create_claimable_balance" =>
+      CreateClaimableBalanceOperation(
+        amount = amount(),
+        claimants = (o \ "claimants").extract[List[Claimant]],
+        sourceAccount
+      )
     case t =>
       throw new RuntimeException(s"Unrecognised operation type '$t'")
   }
