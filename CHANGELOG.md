@@ -4,6 +4,9 @@ As this project is pre 1.0, breaking changes may happen for minor version bumps.
 
 ## Next version
 
+- [CAP-23 Two-Part Payments](https://github.com/stellar/stellar-protocol/blob/master/core/cap-0023.md)
+  Introduces two new operations that separate sending a payment from receiving that payment.
+
 ## 0.15.0
 
 - [SEP-10 Transaction-based Authentication](https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0010.md#preamble):
