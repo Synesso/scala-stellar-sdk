@@ -27,7 +27,6 @@ class ClaimClaimableBalanceOperationSpec extends Specification with ArbitraryInp
       Operation.decodeXDR(ByteArrays.base64(actual.encode)) mustEqual actual
     }
 
-/*
     "parse from json" >> prop { op: Transacted[ClaimClaimableBalanceOperation] =>
       val doc =
         s"""
@@ -50,22 +49,18 @@ class ClaimClaimableBalanceOperationSpec extends Specification with ArbitraryInp
            |    }
            |  },
            |  "id": "${op.id}",
-           |  "paging_token": "42949677057",
            |  "transaction_successful": true,
            |  "source_account": "${op.operation.sourceAccount.get.accountId}",
-           |  "type": "create_claimable_balance",
-           |  "type_i": 14,
+           |  "type": "claim_claimable_balance",
+           |  "type_i": 15,
            |  "created_at": "${formatter.format(op.createdAt)}",
            |  "transaction_hash": "${op.txnHash}",
-           |  "sponsor": "${op.operation.sourceAccount.get.accountId}",
-           |  "asset": "${op.operation.amount.asset.stringEncode}",
-           |  "amount": "${op.operation.amount.toDisplayUnits}",
-           |  "claimants": [${op.operation.claimants.map(ClaimantGenerators.json).mkString(",")}]
+           |  "balance_id": "${op.operation.id.encodeString}",
+           |  "claimant": "${op.operation.sourceAccount.get.accountId}"
            |}
          """.stripMargin
 
       parse(doc).extract[Transacted[ClaimClaimableBalanceOperation]] mustEqual op
     }.setGen(genTransacted(genClaimClaimableBalanceOperation.suchThat(_.sourceAccount.nonEmpty)))
-*/
   }
 }

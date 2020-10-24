@@ -3,6 +3,7 @@ package stellar.sdk.model.op
 import java.nio.charset.StandardCharsets.UTF_8
 
 import cats.data.State
+import okio.ByteString
 import org.apache.commons.codec.binary.Base64
 import org.json4s.DefaultFormats
 import org.json4s.JsonAST.{JArray, JBool, JInt, JObject, JValue}
@@ -191,6 +192,11 @@ object OperationDeserializer extends ResponseParser[Operation]({ o: JObject =>
       CreateClaimableBalanceOperation(
         amount = amount(),
         claimants = (o \ "claimants").extract[List[Claimant]],
+        sourceAccount
+      )
+    case "claim_claimable_balance" =>
+      ClaimClaimableBalanceOperation(
+        id = ClaimableBalanceHashId(ByteString.decodeHex((o \ "balance_id").extract[String].takeRight(64))),
         sourceAccount
       )
     case t =>
