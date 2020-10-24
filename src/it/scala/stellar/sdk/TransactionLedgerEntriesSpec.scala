@@ -30,17 +30,4 @@ class TransactionLedgerEntriesSpec(ee: ExecutionEnv) extends Specification {
       } must beSuccessfulTry[Seq[LedgerEntryChange]]
     }
   }
-
-  "wait, what" >> {
-    println("From GAAOQIEA24IKDMTLND2G57FN6MFJ4MNULNLPKUGDAH3XPBOAKDT7SSXQ")
-    Await.result(
-      TestNetwork.transactionsByAccount(KeyPair.fromAccountId("GAAOQIEA24IKDMTLND2G57FN6MFJ4MNULNLPKUGDAH3XPBOAKDT7SSXQ")),
-      1.minute).map(_.transaction(TestNetwork)).foreach(println)
-    println("From GBLTATTF5XIUVYPI5XMU7YX5BUUMWGXCFFFXD4XKTOTRMLGCNIWO25CY")
-    Await.result(
-      TestNetwork.transactionsByAccount(KeyPair.fromAccountId("GBLTATTF5XIUVYPI5XMU7YX5BUUMWGXCFFFXD4XKTOTRMLGCNIWO25CY")),
-      1.minute).map(_.transaction(TestNetwork)).foreach(println)
-    pending
-  }
-
 }

@@ -4,7 +4,9 @@ import cats.data.State
 import okio.ByteString
 import stellar.sdk.model.xdr.{Decode, Encodable, Encode}
 
-sealed trait ClaimableBalanceId extends Encodable
+sealed trait ClaimableBalanceId extends Encodable {
+  def encodeString: String
+}
 
 object ClaimableBalanceId extends Decode {
   def decode: State[Seq[Byte], ClaimableBalanceId] = switch[ClaimableBalanceId](
@@ -15,7 +17,8 @@ object ClaimableBalanceId extends Decode {
 case class ClaimableBalanceHashId(hash: ByteString) extends ClaimableBalanceId {
   override def encode: LazyList[Byte] = {
     val array = hash.toByteArray
-    println(s">>> ${array.length}")
     Encode.int(0) ++ Encode.bytes(32, array)
   }
+
+  override def encodeString: String = hash.hex()
 }
