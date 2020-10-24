@@ -639,8 +639,6 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
           .sign(accnB)
         txnResult <- txn.submit()
       } yield txnResult must beLike[TransactionPostResponse] { case r: TransactionApproved =>
-//        println(r.envelopeXDR)
-//        println(r.resultXDR)
         r.isSuccess must beTrue
       }
     }

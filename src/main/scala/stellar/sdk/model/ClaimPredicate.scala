@@ -3,7 +3,6 @@ package stellar.sdk.model
 import java.time.{Instant, ZonedDateTime}
 
 import cats.data.State
-import org.json4s.JsonAST.{JInt, JString}
 import org.json4s.{DefaultFormats, JArray, JObject}
 import stellar.sdk.model.ClaimPredicate.{AbsolutelyBefore, And, Or, SinceClaimCreation, Unconditional, parseClaimPredicate}
 import stellar.sdk.model.response.ResponseParser
