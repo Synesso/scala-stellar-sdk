@@ -1,6 +1,8 @@
 package stellar.sdk.model
 
 import cats.data.State
+import org.json4s.{DefaultFormats, Formats}
+import org.json4s.JsonAST.JValue
 import stellar.sdk.model.xdr.{Decode, Encodable, Encode}
 import stellar.sdk.util.ByteArrays._
 import stellar.sdk.{KeyPair, PublicKeyOps}
@@ -11,6 +13,8 @@ sealed trait Asset extends Encodable {
 }
 
 object Asset extends Decode {
+  implicit val formats: Formats = DefaultFormats
+
   def apply(code: String, issuer: PublicKeyOps): NonNativeAsset = {
     require(code.matches("[a-zA-Z0-9?]+"), s"Asset code $code does not match [a-zA-Z0-9]+")
     if (code.length <= 4) IssuedAsset4.of(code, issuer) else IssuedAsset12.of(code, issuer)
@@ -20,6 +24,26 @@ object Asset extends Decode {
     case 0 => State.pure(NativeAsset)
     case 1 => IssuedAsset4.decode.map(x => x: Asset)
     case 2 => IssuedAsset12.decode.map(x => x: Asset)
+  }
+
+  def parseAsset(prefix: String = "", obj: JValue) = {
+
+    def assetCode = (obj \ s"${prefix}asset_code").extract[String]
+
+    def assetIssuer = KeyPair.fromAccountId((obj \ s"${prefix}asset_issuer").extract[String])
+
+    (obj \ "asset").extractOpt[String].map(_.split(":")) match {
+      case Some(Array(code, issuer)) if code.length > 4 => IssuedAsset12(code, KeyPair.fromAccountId(issuer))
+      case Some(Array(code, issuer)) => IssuedAsset4(code, KeyPair.fromAccountId(issuer))
+      case Some(Array("native")) => NativeAsset
+      case _ =>
+        (obj \ s"${prefix}asset_type").extract[String] match {
+          case "native" => NativeAsset
+          case "credit_alphanum4" => IssuedAsset4(assetCode, assetIssuer)
+          case "credit_alphanum12" => IssuedAsset12(assetCode, assetIssuer)
+          case t => throw new RuntimeException(s"Unrecognised asset type '$t'")
+        }
+    }
   }
 }
 

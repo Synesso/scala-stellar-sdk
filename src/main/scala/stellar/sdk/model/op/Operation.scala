@@ -7,6 +7,7 @@ import org.apache.commons.codec.binary.Base64
 import org.json4s.DefaultFormats
 import org.json4s.JsonAST.{JArray, JBool, JInt, JObject, JValue}
 import stellar.sdk._
+import stellar.sdk.model.Asset.parseAsset
 import stellar.sdk.model._
 import stellar.sdk.model.op.IssuerFlags.{all, int}
 import stellar.sdk.model.response.ResponseParser
@@ -71,27 +72,7 @@ object OperationDeserializer extends ResponseParser[Operation]({ o: JObject =>
 
   def sourceAccount: Option[PublicKey] = Some(publicKey("source_account"))
 
-  def asset(prefix: String = "", obj: JValue = o) = {
-
-    def assetCode = (obj \ s"${prefix}asset_code").extract[String]
-
-    def assetIssuer = KeyPair.fromAccountId((obj \ s"${prefix}asset_issuer").extract[String])
-
-    (obj \ "asset").extractOpt[String].map(_.split(":")) match {
-      case Some(Array(code, issuer)) if code.length > 4 => IssuedAsset12(code, KeyPair.fromAccountId(issuer))
-      case Some(Array(code, issuer)) => IssuedAsset4(code, KeyPair.fromAccountId(issuer))
-      case Some(Array("native")) => NativeAsset
-      case _ =>
-        (obj \ s"${prefix}asset_type").extract[String] match {
-          case "native" => NativeAsset
-          case "credit_alphanum4" => IssuedAsset4(assetCode, assetIssuer)
-          case "credit_alphanum12" => IssuedAsset12(assetCode, assetIssuer)
-          case t => throw new RuntimeException(s"Unrecognised asset type '$t'")
-        }
-    }
-  }
-
-  def nonNativeAsset = asset().asInstanceOf[NonNativeAsset]
+  def nonNativeAsset = parseAsset("", o).asInstanceOf[NonNativeAsset]
 
   def price(label: String = "price_r"): Price = Price(
     n = (o \ label \ "n").extract[Int],
@@ -108,7 +89,7 @@ object OperationDeserializer extends ResponseParser[Operation]({ o: JObject =>
 
   def amount(label: String = "amount", assetPrefix: String = "") = {
     val units = Amount.toBaseUnits(doubleFromString(label)).get
-    asset(assetPrefix) match {
+    parseAsset(assetPrefix, o) match {
       case nna: NonNativeAsset => IssuedAmount(units, nna)
       case NativeAsset => NativeAmount(units)
     }
@@ -119,26 +100,26 @@ object OperationDeserializer extends ResponseParser[Operation]({ o: JObject =>
     case "payment" => PaymentOperation(accountId("to"), amount(), sourceAccount)
     case "path_payment" | "path_payment_strict_receive" =>
       val JArray(pathJs) = o \ "path"
-      val path: List[Asset] = pathJs.map(a => asset(obj = a))
+      val path: List[Asset] = pathJs.map(a => parseAsset(obj = a))
       PathPaymentStrictReceiveOperation(amount("source_max", "source_"), accountId("to"), amount(), path, sourceAccount)
     case "path_payment_strict_send" =>
       val JArray(pathJs) = o \ "path"
-      val path: List[Asset] = pathJs.map(a => asset(obj = a))
+      val path: List[Asset] = pathJs.map(a => parseAsset(obj = a))
       PathPaymentStrictSendOperation(amount(assetPrefix = "source_"), accountId("to"), amount(label = "destination_min"), path, sourceAccount)
     case "manage_offer" | "manage_sell_offer" =>
       (o \ "offer_id").extract[String].toLong match {
         case 0L => CreateSellOfferOperation(
           selling = amount(assetPrefix = "selling_"),
-          buying = asset("buying_"),
+          buying = parseAsset("buying_", o),
           price = price(),
           sourceAccount = sourceAccount
         )
         case id =>
           val amnt = (o \ "amount").extract[String].toDouble
           if (amnt == 0.0) {
-            DeleteSellOfferOperation(id, asset("selling_"), asset("buying_"), price(), sourceAccount)
+            DeleteSellOfferOperation(id, parseAsset("selling_", o), parseAsset("buying_", o), price(), sourceAccount)
           } else {
-            UpdateSellOfferOperation(id, selling = amount(assetPrefix = "selling_"), buying = asset("buying_"),
+            UpdateSellOfferOperation(id, selling = amount(assetPrefix = "selling_"), buying = parseAsset("buying_", o),
               price = price(), sourceAccount)
           }
       }
@@ -146,22 +127,22 @@ object OperationDeserializer extends ResponseParser[Operation]({ o: JObject =>
       (o \ "offer_id").extract[String].toLong match {
         case 0L => CreateBuyOfferOperation(
           buying = amount(assetPrefix = "buying_"),
-          selling = asset("selling_"),
+          selling = parseAsset("selling_", o),
           price = price(),
           sourceAccount = sourceAccount
         )
         case id =>
           val amnt = (o \ "amount").extract[String].toDouble
           if (amnt == 0.0) {
-            DeleteBuyOfferOperation(id, asset("selling_"), asset("buying_"), price(), sourceAccount)
+            DeleteBuyOfferOperation(id, parseAsset("selling_", o), parseAsset("buying_", o), price(), sourceAccount)
           } else {
-            UpdateBuyOfferOperation(id, asset("selling_"), amount(assetPrefix = "buying_"), price(), sourceAccount)
+            UpdateBuyOfferOperation(id, parseAsset("selling_", o), amount(assetPrefix = "buying_"), price(), sourceAccount)
           }
       }
     case "create_passive_offer" | "create_passive_sell_offer" =>
       CreatePassiveSellOfferOperation(
         selling = amount(assetPrefix = "selling_"),
-        buying = asset("buying_"),
+        buying = parseAsset("buying_", o),
         price = price(),
         sourceAccount = sourceAccount
       )

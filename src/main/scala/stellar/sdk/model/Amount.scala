@@ -4,6 +4,7 @@ import java.math.{MathContext, RoundingMode}
 import java.util.Locale
 
 import cats.data.State
+import org.json4s.{DefaultFormats, Formats, JObject}
 import stellar.sdk.model.xdr.{Decode, Encodable, Encode}
 
 import scala.util.Try
@@ -27,6 +28,7 @@ case class IssuedAmount(units: Long, asset: NonNativeAsset) extends Amount {
 }
 
 object Amount extends Decode {
+  implicit val formats: Formats = DefaultFormats
   private val decimalPlaces = 7
   private val toIntegralFactor = BigDecimal(math.pow(10, decimalPlaces))
 
@@ -59,6 +61,22 @@ object Amount extends Decode {
     asset <- Asset.decode
     units <- long
   } yield apply(units, asset)
+
+  def doubleFromString(o: JObject, key: String) = (o \ key).extract[String].toDouble
+
+  def parseNativeAmount(o: JObject, key: String) = {
+    NativeAmount(Amount.toBaseUnits(doubleFromString(o, key)).get)
+  }
+
+  def parseIssuedAmount(o: JObject, label: String) = parseAmount(o, label).asInstanceOf[IssuedAmount]
+
+  def parseAmount(o: JObject, label: String = "amount", assetPrefix: String = "") = {
+    val units = Amount.toBaseUnits(doubleFromString(o, label)).get
+    Asset.parseAsset(assetPrefix, o) match {
+      case nna: NonNativeAsset => IssuedAmount(units, nna)
+      case NativeAsset => NativeAmount(units)
+    }
+  }
 }
 
 object IssuedAmount {
