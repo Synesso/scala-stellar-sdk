@@ -3,6 +3,7 @@ package stellar.sdk
 import java.io.EOFException
 import java.time.temporal.ChronoField.NANO_OF_SECOND
 import java.time.temporal.{ChronoField, TemporalField}
+import java.nio.charset.StandardCharsets
 import java.time.{Instant, Period}
 
 import com.typesafe.scalalogging.LazyLogging
@@ -626,17 +627,20 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
         account <- network.account(accnB)
         txn = Transaction(
           source = account,
-          operations = List(CreateClaimableBalanceOperation(
-            amount = Amount(5000, dachshundB),
-            claimants = List(
-              AccountIdClaimant(accnA, predicate),
-              AccountIdClaimant(accnC, Unconditional)
+          operations = List(
+            CreateClaimableBalanceOperation(
+              amount = Amount(5000, dachshundB),
+              claimants = List(
+                AccountIdClaimant(accnA, predicate),
+                AccountIdClaimant(accnC, Unconditional)
+              ),
+              sourceAccount = Some(accnB)
             ),
-            sourceAccount = Some(accnB)
-          )),
+            ChangeTrustOperation(IssuedAmount(100000000, dachshundB), Some(accnA)),
+          ),
           timeBounds = TimeBounds.Unbounded,
-          maxFee = NativeAmount(100))
-          .sign(accnB)
+          maxFee = NativeAmount(200)
+        ).sign(accnA, accnB)
         txnResult <- txn.submit()
       } yield txnResult must beLike[TransactionPostResponse] { case r: TransactionApproved =>
         r.isSuccess must beTrue
@@ -647,7 +651,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
       for {
         balances <- network.claimsByClaimant(accnA)
       } yield balances.toList must beLike[List[ClaimableBalance]] { case List(only) =>
-        only.id mustEqual ByteString.decodeHex("00000000a20bec491b3901338a39b1430c4ca177176641698a267c1c92df5aaf8b9688ee")
+        only.id mustEqual ByteString.decodeHex("a20bec491b3901338a39b1430c4ca177176641698a267c1c92df5aaf8b9688ee")
         only.amount mustEqual Amount(5000, dachshundB)
         only.sponsor mustEqual accnB
         only.claimants must containTheSameElementsAs(List(
@@ -658,7 +662,19 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
     }
 
     "and claimable" >> {
-      pending
+      for {
+        account <- network.account(accnA)
+        hash <- network.claimsByClaimant(accnA).map(_.head.id)
+        txn = Transaction(
+          source = account,
+          operations = List(ClaimClaimableBalanceOperation(ClaimableBalanceHashId(hash))),
+          timeBounds = TimeBounds.Unbounded,
+          maxFee = NativeAmount(100)
+        ).sign(accnA)
+        txnResult <- txn.submit()
+      } yield txnResult must beLike[TransactionPostResponse] { case r: TransactionApproved =>
+        r.isSuccess must beTrue
+      }
     }
   }
 }
