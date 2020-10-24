@@ -13,5 +13,9 @@ object ClaimableBalanceId extends Decode {
 }
 
 case class ClaimableBalanceHashId(hash: ByteString) extends ClaimableBalanceId {
-  override def encode: LazyList[Byte] = Encode.int(0) ++ Encode.bytes(32, hash.toByteArray)
+  override def encode: LazyList[Byte] = {
+    val array = hash.toByteArray
+    println(s">>> ${array.length}")
+    Encode.int(0) ++ Encode.bytes(32, array)
+  }
 }

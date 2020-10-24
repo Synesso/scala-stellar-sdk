@@ -21,7 +21,7 @@ object ClaimableBalance {
   implicit val formats: Formats = DefaultFormats + ClaimantDeserializer
 
   def parseClaimableBalance(o: JObject): ClaimableBalance = ClaimableBalance(
-    id = ByteString.decodeHex((o \ "id").extract[String]),
+    id = ByteString.decodeHex((o \ "id").extract[String].takeRight(64)),
     amount = Amount.parseAmount(o),
     sponsor = KeyPair.fromAccountId((o \ "sponsor").extract[String]),
     claimants = (o \ "claimants").extract[List[Claimant]],

@@ -9,7 +9,7 @@ import stellar.sdk.model.ledger.TransactionLedgerEntries.arr
 import stellar.sdk.model.ledger.{LedgerEntryChange, LedgerEntryChanges, TransactionLedgerEntries}
 import stellar.sdk.model.response.ResponseParser
 import stellar.sdk.util.ByteArrays.base64
-import stellar.sdk.{KeyPair, PublicKey}
+import stellar.sdk.{KeyPair, Network, PublicKey}
 
 import scala.util.Try
 
@@ -26,6 +26,7 @@ case class TransactionHistory(hash: String, ledgerId: Long, createdAt: ZonedDate
 
   def ledgerEntries: TransactionLedgerEntries = TransactionLedgerEntries.decodeXDR(resultMetaXDR)
   def feeLedgerEntries: Seq[LedgerEntryChange] = LedgerEntryChanges.decodeXDR(feeMetaXDR)
+  def transaction(network: Network): Transaction = Transaction.decodeXDR(envelopeXDR)(network)
 
   @deprecated("Replaced by `feeCharged`", "v0.7.2")
   val feePaid: NativeAmount = feeCharged
