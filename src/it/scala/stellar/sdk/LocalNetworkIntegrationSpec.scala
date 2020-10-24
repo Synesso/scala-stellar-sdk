@@ -1,6 +1,8 @@
 package stellar.sdk
 
 import java.io.EOFException
+import java.time.temporal.ChronoField.NANO_OF_SECOND
+import java.time.temporal.{ChronoField, TemporalField}
 import java.time.{Instant, Period}
 
 import com.typesafe.scalalogging.LazyLogging
@@ -14,7 +16,7 @@ import stellar.sdk.model.Amount.lumens
 import stellar.sdk.model.ClaimPredicate.{AbsolutelyBefore, And, Or, SinceClaimCreation, Unconditional}
 import stellar.sdk.model.TimeBounds.Unbounded
 import stellar.sdk.model.TradeAggregation.FifteenMinutes
-import stellar.sdk.model._
+import stellar.sdk.model.{ClaimableBalance, _}
 import stellar.sdk.model.op._
 import stellar.sdk.model.response._
 import stellar.sdk.model.result.TransactionHistory
@@ -613,15 +615,13 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
   }
 
   "claimable balances" should {
+    val instant = Instant.parse("2025-01-20T09:00:00Z")
+    val predicate = Or(
+      AbsolutelyBefore(instant),
+      Unconditional
+    )
+
     "be creatable" >> {
-      val now = Instant.now()
-      val predicate = Or(
-        And(
-          AbsolutelyBefore(now),
-          SinceClaimCreation(600)
-        ),
-        Unconditional
-      )
       for {
         account <- network.account(accnB)
         txn = Transaction(
@@ -640,6 +640,20 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
         txnResult <- txn.submit()
       } yield txnResult must beLike[TransactionPostResponse] { case r: TransactionApproved =>
         r.isSuccess must beTrue
+      }
+    }
+
+    "and listable" >> {
+      for {
+        balances <- network.claimsByClaimant(accnA)
+      } yield balances.toList must beLike[List[ClaimableBalance]] { case List(only) =>
+        only.id mustEqual ByteString.decodeHex("00000000a20bec491b3901338a39b1430c4ca177176641698a267c1c92df5aaf8b9688ee")
+        only.amount mustEqual Amount(5000, dachshundB)
+        only.sponsor mustEqual accnB
+        only.claimants must containTheSameElementsAs(List(
+          AccountIdClaimant(accnA.asPublicKey, predicate),
+          AccountIdClaimant(accnC.asPublicKey, Unconditional)
+        ))
       }
     }
 
