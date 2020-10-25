@@ -644,35 +644,37 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
       }
     }
 
-    "listable by account" >> {
+    def includeTheOneWeJustPosted = {
+      beLike[List[ClaimableBalance]] { case List(only) =>
+        only.id mustEqual ByteString.decodeHex("a20bec491b3901338a39b1430c4ca177176641698a267c1c92df5aaf8b9688ee")
+        only.amount mustEqual Amount(5000, dachshundB)
+        only.sponsor mustEqual accnB
+        only.claimants must containTheSameElementsAs(List(
+          AccountIdClaimant(accnA.asPublicKey, predicate),
+          AccountIdClaimant(accnC.asPublicKey, Unconditional)
+        ))
+      }
+    }
+
+    "be listable by account" >> {
       for {
         balances <- network.claimsByClaimant(accnA)
-      } yield balances.toList must beLike[List[ClaimableBalance]] { case List(only) =>
-        only.id mustEqual ByteString.decodeHex("a20bec491b3901338a39b1430c4ca177176641698a267c1c92df5aaf8b9688ee")
-        only.amount mustEqual Amount(5000, dachshundB)
-        only.sponsor mustEqual accnB
-        only.claimants must containTheSameElementsAs(List(
-          AccountIdClaimant(accnA.asPublicKey, predicate),
-          AccountIdClaimant(accnC.asPublicKey, Unconditional)
-        ))
-      }
+      } yield balances.toList must includeTheOneWeJustPosted
     }
 
-    "listable by asset" >> {
+    "be listable by asset" >> {
       for {
         balances <- network.claimsByAsset(dachshundB)
-      } yield balances.toList must beLike[List[ClaimableBalance]] { case List(only) =>
-        only.id mustEqual ByteString.decodeHex("a20bec491b3901338a39b1430c4ca177176641698a267c1c92df5aaf8b9688ee")
-        only.amount mustEqual Amount(5000, dachshundB)
-        only.sponsor mustEqual accnB
-        only.claimants must containTheSameElementsAs(List(
-          AccountIdClaimant(accnA.asPublicKey, predicate),
-          AccountIdClaimant(accnC.asPublicKey, Unconditional)
-        ))
-      }
+      } yield balances.toList must includeTheOneWeJustPosted
     }
 
-    "claimable" >> {
+    "be listable by sponsor" >> {
+      for {
+        balances <- network.claimsBySponsor(accnB)
+      } yield balances.toList must includeTheOneWeJustPosted
+    }
+
+    "be claimable" >> {
       for {
         account <- network.account(accnA)
         hash <- network.claimsByClaimant(accnA).map(_.head.id)
