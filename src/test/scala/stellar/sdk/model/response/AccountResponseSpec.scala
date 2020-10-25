@@ -130,6 +130,12 @@ class AccountResponseSpec extends Specification with ArbitraryInput with DomainM
           |      "weight": 1,
           |      "key": "GBU6GMZZ2KTQ33CHNVPAWWEJ22ZHLYGBGO3LIBKNANXUMNEOFROZKO62",
           |      "type": "ed25519_public_key"
+          |    },
+          |    {
+          |      "weight": 2,
+          |      "key": "GAP5LETOV6YIE62YAM56STDANPRDO7ZFDBGSNHJQIYGGKSMOZAHOOS2S",
+          |      "type": "ed25519_public_key",
+          |      "sponsor": "GAREELUB43IRHWEASCFBLKHURCGMHE5IF6XSE7EXDLACYHGRHM43RFOX"
           |    }
           |  ],
           |  "data": {},
@@ -178,8 +184,15 @@ class AccountResponseSpec extends Specification with ArbitraryInput with DomainM
               authorized = true
             )
           ))
-          r.signers must haveSize(1)
+          r.signers must haveSize(2)
           r.signers.head must beEquivalentTo(Signer(AccountId(KeyPair.fromAccountId("GBU6GMZZ2KTQ33CHNVPAWWEJ22ZHLYGBGO3LIBKNANXUMNEOFROZKO62").publicKey.toIndexedSeq), 1))
+          r.signers(1) must beEquivalentTo(
+            Signer(
+              AccountId(KeyPair.fromAccountId("GAP5LETOV6YIE62YAM56STDANPRDO7ZFDBGSNHJQIYGGKSMOZAHOOS2S").publicKey.toIndexedSeq),
+              2,
+              Some(KeyPair.fromAccountId("GAREELUB43IRHWEASCFBLKHURCGMHE5IF6XSE7EXDLACYHGRHM43RFOX"))
+            )
+          )
           r.sponsor must beSome(KeyPair.fromAccountId("GAP5LETOV6YIE62YAM56STDANPRDO7ZFDBGSNHJQIYGGKSMOZAHOOS2S"))
           r.reservesSponsored mustEqual 2
           r.reservesSponsoring mustEqual 1
