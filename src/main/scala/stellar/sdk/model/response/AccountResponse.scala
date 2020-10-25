@@ -73,7 +73,8 @@ object AccountRespDeserializer extends ResponseParser[AccountResponse]({ o: JObj
     case signerObj: JObject =>
       val key = StrKey.decodeFromString((signerObj \ "key").extract[String]).asInstanceOf[SignerStrKey]
       val weight = (signerObj \ "weight").extract[Int]
-      Signer(key, weight)
+      val sponsor = (signerObj \ "sponsor").extractOpt[String].map(KeyPair.fromAccountId)
+      Signer(key, weight, sponsor)
     case _ => throw new RuntimeException(s"Expected js object at 'signers'")
   }
   val JObject(dataFields) = o \ "data"

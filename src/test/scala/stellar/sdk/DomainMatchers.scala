@@ -49,9 +49,10 @@ trait DomainMatchers extends AnyMatchers with MustExpectations with SequenceMatc
   }
 
   def beEquivalentTo(other: Signer): Matcher[Signer] = beLike[Signer] {
-    case Signer(key, weight) =>
+    case Signer(key, weight, sponsor) =>
         weight mustEqual other.weight
         key must beEquivalentTo(other.key)
+        sponsor mustEqual other.sponsor
   }
 
   def beEquivalentTo(key: StrKey): Matcher[StrKey] = beLike[StrKey] {
