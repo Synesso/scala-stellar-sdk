@@ -37,7 +37,7 @@ object ClaimableBalanceGenerators extends ArbitraryInput {
   def json(balance: ClaimableBalance): String =
     s"""{
        |  "id": "${balance.id.hex()}",
-       |  "asset": "${balance.amount.asset.stringEncode}",
+       |  "asset": "${balance.amount.asset.canoncialString}",
        |  "amount": "${balance.amount.toDisplayUnits}",
        |  "sponsor": "${balance.sponsor.accountId}",
        |  "last_modified_ledger": ${balance.lastModifiedLedger},
