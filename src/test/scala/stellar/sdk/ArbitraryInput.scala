@@ -472,7 +472,13 @@ trait ArbitraryInput extends ScalaCheck {
 
   def genMemoNone: Gen[Memo] = Gen.oneOf(Seq(NoMemo))
 
-  def genMemoText: Gen[MemoText] = Gen.identifier.map(_.take(28)).map(MemoText.apply)
+  def genMemoText: Gen[MemoText] = Gen.oneOf(
+    Gen.identifier.map(_.take(28)).map(MemoText.apply),
+    for {
+      n <- Gen.chooseNum(1, 28)
+      bs <- Gen.containerOfN[Array, Byte](n, Gen.posNum[Byte])
+    } yield MemoText(new String(bs))
+  )
 
   def genMemoId: Gen[MemoId] = Arbitrary.arbLong.arbitrary.map(MemoId.apply)
 
@@ -539,8 +545,12 @@ trait ArbitraryInput extends ScalaCheck {
     authRevocable <- Gen.oneOf(true, false)
     balances <- Gen.nonEmptyListOf(genBalance)
     signers <- Gen.nonEmptyListOf(genSigner)
+    sponsor <- Gen.option(genPublicKey)
+    sponsoring <- Gen.chooseNum(0, 20)
+    sponsored <- Gen.chooseNum(0, 20)
     data <- genDataMap
-  } yield AccountResponse(id, lastSequence, subEntryCount, thresholds, authRequired, authRevocable, balances, signers, data)
+  } yield AccountResponse(id, lastSequence, subEntryCount, thresholds, authRequired, authRevocable, balances, signers,
+    sponsor, sponsored, sponsoring, data)
 
   def genDataMap: Gen[Map[String, Array[Byte]]] = for {
     qty <- Gen.choose(0, 30)

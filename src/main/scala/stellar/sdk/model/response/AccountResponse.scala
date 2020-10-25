@@ -9,15 +9,20 @@ import stellar.sdk.model.Amount.toBaseUnits
 import stellar.sdk.model._
 import stellar.sdk.util.ByteArrays
 
-case class AccountResponse(id: PublicKey,
-                           lastSequence: Long,
-                           subEntryCount: Int,
-                           thresholds: Thresholds,
-                           authRequired: Boolean,
-                           authRevocable: Boolean,
-                           balances: List[Balance],
-                           signers: List[Signer],
-                           data: Map[String, Array[Byte]]) {
+case class AccountResponse(
+  id: PublicKey,
+  lastSequence: Long,
+  subEntryCount: Int,
+  thresholds: Thresholds,
+  authRequired: Boolean,
+  authRevocable: Boolean,
+  balances: List[Balance],
+  signers: List[Signer],
+  sponsor: Option[PublicKey],
+  reservesSponsored: Int,
+  reservesSponsoring: Int,
+  data: Map[String, Array[Byte]]
+) {
 
   def toAccount: Account = Account(AccountId(id.publicKey), lastSequence + 1)
 
@@ -71,9 +76,13 @@ object AccountRespDeserializer extends ResponseParser[AccountResponse]({ o: JObj
     case _ => throw new RuntimeException(s"Expected js object at 'signers'")
   }
   val JObject(dataFields) = o \ "data"
-  val data = dataFields.map{ case (k, v) => k -> ByteArrays.base64(v.extract[String]) }.toMap
+  val data = dataFields.map { case (k, v) => k -> ByteArrays.base64(v.extract[String]) }.toMap
+  val sponsor = (o \ "sponsor").extractOpt[String].map(KeyPair.fromAccountId)
+  val reservesSponsored = (o \ "num_sponsored").extractOpt[Int].getOrElse(0)
+  val reservesSponsoring = (o \ "num_sponsoring").extractOpt[Int].getOrElse(0)
 
   AccountResponse(id, seq, subEntryCount, Thresholds(lowThreshold, mediumThreshold, highThreshold),
-    authRequired, authRevocable, balances, signers, data)
+    authRequired, authRevocable, balances, signers, sponsor, reservesSponsored,
+    reservesSponsoring, data)
 
 })

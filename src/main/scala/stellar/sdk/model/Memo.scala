@@ -3,6 +3,7 @@ package stellar.sdk.model
 import java.nio.charset.StandardCharsets.UTF_8
 
 import cats.data.State
+import okio.ByteString
 import stellar.sdk.util.ByteArrays._
 import stellar.sdk.model.xdr.{Decode, Encode}
 
@@ -15,7 +16,7 @@ sealed trait Memo {
 object Memo extends Decode {
   def decode: State[Seq[Byte], Memo] = switch(
     State.pure(NoMemo),
-    string.map(MemoText),
+    string.map(MemoText(_)),
     long.map(MemoId),
     bytes.map(_.toIndexedSeq).map(MemoHash(_)),
     bytes.map(_.toIndexedSeq).map(MemoReturnHash(_))
@@ -26,12 +27,17 @@ case object NoMemo extends Memo {
   override def encode: LazyList[Byte] = Encode.int(0)
 }
 
-case class MemoText(text: String) extends Memo {
+case class MemoText(byteString: ByteString) extends Memo {
   val Length = 28
-  val bytes = text.getBytes(UTF_8)
-  assert(bytes.length <= Length, s"Text exceeded limit (${bytes.length}/$Length bytes)")
+  val bytes = byteString.toByteArray
+  val text: String = byteString.utf8()
+  assert(byteString.size() <= Length, s"Text exceeded limit (${byteString.size()}/$Length bytes)")
 
   override def encode: LazyList[Byte] = Encode.int(1) ++ Encode.string(text)
+}
+
+object MemoText {
+  def apply(text: String): MemoText = MemoText(ByteString.encodeUtf8(text))
 }
 
 case class MemoId(id: Long) extends Memo {

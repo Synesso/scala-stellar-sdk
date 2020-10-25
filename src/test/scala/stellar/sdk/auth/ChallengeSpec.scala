@@ -29,7 +29,7 @@ class ChallengeSpec extends Specification with DomainMatchers with ArbitraryInpu
     }
     val clientKey = KeyPair.random
     val challenged = AccountResponse(clientKey.asPublicKey, 0, 0, Thresholds(2, 4, 6),
-      authRequired = false, authRevocable = false, Nil, signersWithWeights.map(_._2), Map.empty)
+      authRequired = false, authRevocable = false, Nil, signersWithWeights.map(_._2), None, 0, 0, Map.empty)
     val challenger = new AuthChallenger(serverKey, fakeClock)(PublicNetwork)
     (challenger, fakeClock, clientKey, challenged, signersWithWeights.map(_._1))
   }

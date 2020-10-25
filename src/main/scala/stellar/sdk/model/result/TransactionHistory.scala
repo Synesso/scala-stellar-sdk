@@ -2,6 +2,7 @@ package stellar.sdk.model.result
 
 import java.time.ZonedDateTime
 
+import okio.ByteString
 import org.json4s.{DefaultFormats, Formats}
 import org.json4s.JsonAST.JObject
 import stellar.sdk.model._
@@ -61,7 +62,10 @@ object TransactionHistoryDeserializer extends {
       memo = (o \ "memo_type").extract[String] match {
         case "none" => NoMemo
         case "id" => MemoId(BigInt((o \ "memo").extract[String]).toLong)
-        case "text" => MemoText((o \ "memo").extractOpt[String].getOrElse(""))
+        case "text" =>
+          (o \ "memo_bytes").extractOpt[String]
+            .map(ByteString.decodeBase64).map(MemoText(_))
+            .getOrElse(MemoText((o \ "memo").extractOpt[String].getOrElse("")))
         case "hash" => MemoHash(base64((o \ "memo").extract[String]).toIndexedSeq)
         case "return" => MemoReturnHash(base64((o \ "memo").extract[String]).toIndexedSeq)
       },

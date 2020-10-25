@@ -36,7 +36,7 @@ case class PaymentSigningRequest(
     val memoEncoded: Option[(String, String)] = memo match {
       case NoMemo => None
       case MemoId(id) => Some(id.toString -> "MEMO_ID")
-      case MemoText(text) => Some(text -> "MEMO_TEXT")
+      case MemoText(text) => Some(text.utf8() -> "MEMO_TEXT")
       case MemoHash(xs) => Some(ByteArrays.base64(xs) -> "MEMO_HASH")
       case MemoReturnHash(xs) => Some(ByteArrays.base64(xs) -> "MEMO_RETURN")
     }
