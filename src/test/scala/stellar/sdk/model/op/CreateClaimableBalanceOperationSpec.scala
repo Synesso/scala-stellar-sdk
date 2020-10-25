@@ -57,7 +57,7 @@ class CreateClaimableBalanceOperationSpec extends Specification with ArbitraryIn
            |  "created_at": "${formatter.format(op.createdAt)}",
            |  "transaction_hash": "${op.txnHash}",
            |  "sponsor": "${op.operation.sourceAccount.get.accountId}",
-           |  "asset": "${op.operation.amount.asset.stringEncode}",
+           |  "asset": "${op.operation.amount.asset.canoncialString}",
            |  "amount": "${op.operation.amount.toDisplayUnits}",
            |  "claimants": [${op.operation.claimants.map(ClaimantGenerators.json).mkString(",")}]
            |}

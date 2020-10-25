@@ -385,6 +385,26 @@ trait Network extends LazyLogging {
     horizon.getSeq[ClaimableBalance]("claimable_balances", ClaimableBalanceDeserializer, queryParams)
   }
 
+  /**
+   * Fetch a list of claimable balances for an account.
+   *
+   * @param asset The asset to be claimed.
+   */
+  def claimsByAsset(asset: Asset)(implicit ex: ExecutionContext): Future[Seq[ClaimableBalance]] = {
+    val queryParams = Map("asset" -> asset.canoncialString)
+    horizon.getSeq[ClaimableBalance]("claimable_balances", ClaimableBalanceDeserializer, queryParams)
+  }
+
+  /**
+   * Fetch a list of claimable balances for an account.
+   *
+   * @param sponsor the account that is sponsoring this balance.
+   */
+  def claimsBySponsor(sponsor: PublicKeyOps)(implicit ex: ExecutionContext): Future[Seq[ClaimableBalance]] = {
+    val queryParams = Map("sponsor" -> sponsor.accountId)
+    horizon.getSeq[ClaimableBalance]("claimable_balances", ClaimableBalanceDeserializer, queryParams)
+  }
+
   private def amountParams(prefix: String, amount: Amount): Map[String, String] = {
     (amount match {
       case issuedAmount: IssuedAmount => assetParams(prefix, issuedAmount.asset)
