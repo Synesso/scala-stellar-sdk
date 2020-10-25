@@ -7,8 +7,16 @@ import org.json4s.JsonAST.JObject
 import stellar.sdk._
 import stellar.sdk.model._
 
-case class OfferResponse(id: Long, seller: PublicKeyOps, selling: Amount, buying: Asset, price: Price,
-                         lastModifiedLedger: Long, lastModifiedTime: ZonedDateTime) {
+case class OfferResponse(
+  id: Long,
+  seller: PublicKeyOps,
+  selling: Amount,
+  buying: Asset,
+  price: Price,
+  lastModifiedLedger: Long,
+  lastModifiedTime: ZonedDateTime,
+  sponsor: Option[PublicKey]
+) {
 
   override def toString = {
     s"Offer $id: ${seller.accountId} selling $selling, buying $buying @ rate $price"
@@ -56,6 +64,16 @@ object OfferRespDeserializer extends ResponseParser[OfferResponse]({ o: JObject 
 
   def lastModifiedTime = ZonedDateTime.parse((o \ "last_modified_time").extract[String])
 
-  OfferResponse(id, account("seller"), amount("selling"), asset("buying"), price, lastModifiedLedger, lastModifiedTime)
+  def sponsor = (o \ "sponsor").extractOpt[String].map(KeyPair.fromAccountId)
+
+  OfferResponse(
+    id,
+    account("seller"),
+    amount("selling"),
+    asset("buying"),
+    price,
+    lastModifiedLedger,
+    lastModifiedTime,
+    sponsor)
 })
 

@@ -44,6 +44,7 @@ class OfferResponseSpec extends Specification with ArbitraryInput {
            |    "d": ${or.price.d}
            |  },
            |  "price": "3.0300000",
+           |  ${or.sponsor.map(s => s""""sponsor": "${s.accountId}",""").getOrElse("")}
            |  "last_modified_ledger": ${or.lastModifiedLedger},
            |  "last_modified_time": "${formatter.format(or.lastModifiedTime)}"
            |}
