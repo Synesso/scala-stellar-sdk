@@ -24,7 +24,7 @@ class FederationServerSpec(implicit ec: ExecutionEnv) extends Specification with
     val memo: Option[JObject] = fr.memo match {
       case NoMemo => None
       case MemoId(id) => Some(("memo_type" -> "id") ~ ("memo" -> id.toString))
-      case MemoText(txt) => Some(("memo_type" -> "text") ~ ("memo" -> txt))
+      case MemoText(txt) => Some(("memo_type" -> "text") ~ ("memo" -> txt.utf8()))
       case m: MemoWithHash => Some(("memo_type" -> "hash") ~ ("memo" -> m.hex))
     }
 
