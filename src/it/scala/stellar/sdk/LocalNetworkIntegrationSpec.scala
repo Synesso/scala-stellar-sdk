@@ -1,9 +1,6 @@
 package stellar.sdk
 
 import java.io.EOFException
-import java.time.temporal.ChronoField.NANO_OF_SECOND
-import java.time.temporal.{ChronoField, TemporalField}
-import java.nio.charset.StandardCharsets
 import java.time.{Instant, Period}
 
 import com.typesafe.scalalogging.LazyLogging
@@ -14,13 +11,13 @@ import org.specs2.concurrent.ExecutionEnv
 import org.specs2.mutable.Specification
 import stellar.sdk.inet.HorizonEntityNotFound
 import stellar.sdk.model.Amount.lumens
-import stellar.sdk.model.ClaimPredicate.{AbsolutelyBefore, And, Or, SinceClaimCreation, Unconditional}
+import stellar.sdk.model.ClaimPredicate.{AbsolutelyBefore, Or, Unconditional}
 import stellar.sdk.model.TimeBounds.Unbounded
 import stellar.sdk.model.TradeAggregation.FifteenMinutes
-import stellar.sdk.model.{ClaimableBalance, _}
 import stellar.sdk.model.op._
 import stellar.sdk.model.response._
 import stellar.sdk.model.result.TransactionHistory
+import stellar.sdk.model.{ClaimableBalance, _}
 import stellar.sdk.util.ByteArrays
 
 import scala.annotation.tailrec
@@ -201,7 +198,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
   "account endpoint" should {
     "fetch account response details" >> {
       network.account(accnA) must beLike[AccountResponse] {
-        case AccountResponse(id, _, _, _, _, _, balances, _, data) =>
+        case AccountResponse(id, _, _, _, _, _, balances, _, _, _, _, data) =>
           id mustEqual accnA
           balances must containTheSameElementsAs(Seq(
             Balance(lumens(1000.000495), buyingLiabilities = 16000000000L),

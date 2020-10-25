@@ -131,7 +131,10 @@ class AccountResponseSpec extends Specification with ArbitraryInput with DomainM
           |      "type": "ed25519_public_key"
           |    }
           |  ],
-          |  "data": {}
+          |  "data": {},
+          |  "sponsor": "GAP5LETOV6YIE62YAM56STDANPRDO7ZFDBGSNHJQIYGGKSMOZAHOOS2S",
+          |  "num_sponsoring": 1,
+          |  "num_sponsored": 2
           |}
           |""".stripMargin
 
@@ -175,6 +178,9 @@ class AccountResponseSpec extends Specification with ArbitraryInput with DomainM
           ))
           r.signers must haveSize(1)
           r.signers.head must beEquivalentTo(Signer(AccountId(KeyPair.fromAccountId("GBU6GMZZ2KTQ33CHNVPAWWEJ22ZHLYGBGO3LIBKNANXUMNEOFROZKO62").publicKey.toIndexedSeq), 1))
+          r.sponsor must beSome(KeyPair.fromAccountId("GAP5LETOV6YIE62YAM56STDANPRDO7ZFDBGSNHJQIYGGKSMOZAHOOS2S"))
+          r.reservesSponsored mustEqual 2
+          r.reservesSponsoring mustEqual 1
       }
     }
 
