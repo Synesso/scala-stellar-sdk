@@ -570,7 +570,9 @@ trait ArbitraryInput extends ScalaCheck {
     sellingLiabilities <- Gen.choose(0, amount.units)
     authorized <- Gen.oneOf(true, false)
     authorizedToMaintainLiabilities <- Gen.oneOf(true, false)
-  } yield Balance(amount, limit, buyingLiabilities = buyingLiabilities, sellingLiabilities, authorized, authorizedToMaintainLiabilities)
+    sponsor <- Gen.option(genPublicKey)
+  } yield Balance(amount, limit, buyingLiabilities = buyingLiabilities, sellingLiabilities, authorized,
+    authorizedToMaintainLiabilities, sponsor)
 
   def genLedgerResp: Gen[LedgerResponse] = for {
     id <- Gen.identifier

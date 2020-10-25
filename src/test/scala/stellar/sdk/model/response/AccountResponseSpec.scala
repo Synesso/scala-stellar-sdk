@@ -115,7 +115,8 @@ class AccountResponseSpec extends Specification with ArbitraryInput with DomainM
           |      "asset_code": "EURT",
           |      "asset_issuer": "GAP5LETOV6YIE62YAM56STDANPRDO7ZFDBGSNHJQIYGGKSMOZAHOOS2S",
           |      "is_authorized": true,
-          |      "is_authorized_to_maintain_liabilities": true
+          |      "is_authorized_to_maintain_liabilities": true,
+          |      "sponsor": "GAP5LETOV6YIE62YAM56STDANPRDO7ZFDBGSNHJQIYGGKSMOZAHOOS2S"
           |    },
           |    {
           |      "balance": "19309.4481807",
@@ -151,7 +152,8 @@ class AccountResponseSpec extends Specification with ArbitraryInput with DomainM
               limit = Some(1000000000000000000L),
               sellingLiabilities = 23000000L,
               authorized = true,
-              authorizedToMaintainLiabilities = true
+              authorizedToMaintainLiabilities = true,
+              sponsor = Some(KeyPair.fromAccountId("GAP5LETOV6YIE62YAM56STDANPRDO7ZFDBGSNHJQIYGGKSMOZAHOOS2S"))
             ),
             Balance(
               amount = Amount(386158026333L, IssuedAsset4("CNY", KeyPair.fromAccountId("GAREELUB43IRHWEASCFBLKHURCGMHE5IF6XSE7EXDLACYHGRHM43RFOX"))),

@@ -63,8 +63,9 @@ object AccountRespDeserializer extends ResponseParser[AccountResponse]({ o: JObj
       val authorised = (balObj \ "is_authorized").extractOpt[Boolean].getOrElse(false)
       val authorisedToMaintainLiabilities = (balObj \ "is_authorized_to_maintain_liabilities")
         .extractOpt[Boolean].getOrElse(false)
+      val sponsor = (balObj \ "sponsor").extractOpt[String].map(KeyPair.fromAccountId)
 
-      Balance(amount, limit, buyingLiabilities, sellingLiabilities, authorised, authorisedToMaintainLiabilities)
+      Balance(amount, limit, buyingLiabilities, sellingLiabilities, authorised, authorisedToMaintainLiabilities, sponsor)
     case _ => throw new RuntimeException(s"Expected js object at 'balances'")
   }
   val JArray(jsSigners) = o \ "signers"
