@@ -10,7 +10,9 @@ class ResponseParser[T](f: JObject => T)(implicit m: Manifest[T]) extends Custom
     try {
       f(o)
     } catch {
-      case NonFatal(t) => throw ResponseParseException(pretty(render(o)), t)
+      case NonFatal(t) =>
+        t.printStackTrace()
+        throw ResponseParseException(pretty(render(o)), t)
     }
 }, PartialFunction.empty))
 

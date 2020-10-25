@@ -3,7 +3,9 @@ package stellar.sdk.model.response
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
+import okio.ByteString
 import org.json4s.JsonAST
+import org.json4s.JsonAST.JObject
 import org.specs2.mutable.Specification
 import stellar.sdk.util.ByteArrays.{base64, bytesToHex}
 import stellar.sdk._
@@ -95,14 +97,14 @@ class TransactionResponseSpec extends Specification with ArbitraryInput with Dom
           ))
       }
 
-      val (memoType, memo) = h.memo match {
-        case NoMemo => "none" -> None
-        case MemoId(id) => "id" -> Some("memo" -> java.lang.Long.toUnsignedString(id))
-        case MemoText(t) => "text" -> Some("memo" -> t)
-        case MemoHash(bs) => "hash" -> Some("memo" -> base64(bs))
-        case MemoReturnHash(bs) => "return" -> Some("memo" -> base64(bs))
+      val ((memoType, memo), memoSecondary) = h.memo match {
+        case NoMemo => "none" -> None -> None
+        case MemoId(id) => "id" -> Some("memo" -> java.lang.Long.toUnsignedString(id)) -> None
+        case MemoText(t) => "text" -> Some("memo" -> t) -> Some("memo_bytes" -> ByteString.encodeUtf8(t).base64())
+        case MemoHash(bs) => "hash" -> Some("memo" -> base64(bs)) -> None
+        case MemoReturnHash(bs) => "return" -> Some("memo" -> base64(bs)) -> None
       }
-      val json = feeBump.foldLeft(memo.foldLeft(
+      val json = feeBump.foldLeft(memo.foldLeft(memoSecondary.foldLeft(
         ("hash" -> h.feeBump.map(_.hash).getOrElse(h.hash)) ~
           ("ledger" -> h.ledgerId) ~
           ("created_at" -> formatter.format(h.createdAt)) ~
@@ -123,6 +125,7 @@ class TransactionResponseSpec extends Specification with ArbitraryInput with Dom
           ("valid_before" -> h.validBefore.map(formatter.format))
       ) {
         case (js, part) => js ~ part
+      }) { case (js, part) => js ~ part
       }) { case (js, part) => js ~ part }
 
       implicit val fmt = org.json4s.DefaultFormats + TransactionHistoryDeserializer
