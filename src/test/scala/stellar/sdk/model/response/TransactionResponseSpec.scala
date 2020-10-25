@@ -100,7 +100,7 @@ class TransactionResponseSpec extends Specification with ArbitraryInput with Dom
       val ((memoType, memo), memoSecondary) = h.memo match {
         case NoMemo => "none" -> None -> None
         case MemoId(id) => "id" -> Some("memo" -> java.lang.Long.toUnsignedString(id)) -> None
-        case MemoText(t) => "text" -> Some("memo" -> t) -> Some("memo_bytes" -> ByteString.encodeUtf8(t).base64())
+        case MemoText(t) => "text" -> Some("memo" -> new String(t.toByteArray)) -> Some("memo_bytes" -> t.base64())
         case MemoHash(bs) => "hash" -> Some("memo" -> base64(bs)) -> None
         case MemoReturnHash(bs) => "return" -> Some("memo" -> base64(bs)) -> None
       }
