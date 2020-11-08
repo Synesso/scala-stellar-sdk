@@ -4,6 +4,8 @@ As this project is pre 1.0, breaking changes may happen for minor version bumps.
 
 ## Next version
 
+## 0.16.0
+
 - [CAP-23 Two-Part Payments](https://github.com/stellar/stellar-protocol/blob/master/core/cap-0023.md)
   Introduces two new operations that separate sending a payment from receiving that payment.
 - Adds Sponsor details in the account response, account response balances & signers and in the offer response.
