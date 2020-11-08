@@ -1,8 +1,10 @@
 package stellar.sdk.model.response
 
-import org.json4s.{Formats, NoTypeHints}
+import java.nio.charset.StandardCharsets.UTF_8
+
 import org.json4s.native.JsonMethods._
 import org.json4s.native.Serialization
+import org.json4s.{Formats, NoTypeHints}
 import org.specs2.mutable.Specification
 import stellar.sdk._
 import stellar.sdk.model.Amount.lumens
@@ -202,6 +204,15 @@ class AccountResponseSpec extends Specification with ArbitraryInput with DomainM
     "an account response" should {
       "be convertible to an account" >> prop { ar: AccountResponse =>
         ar.toAccount mustEqual Account(AccountId(ar.id.publicKey), ar.lastSequence + 1)
+      }
+
+      "denote when memos are required" >> prop { ar: AccountResponse =>
+        ar.copy(data = ar.data.updated("config.memo_required", "1".getBytes(UTF_8)))
+          .isMemoRequired must beTrue
+        ar.copy(data = ar.data.updated("config.memo_required", "0".getBytes(UTF_8)))
+          .isMemoRequired must beFalse
+        ar.copy(data = ar.data.removed("config.memo_required"))
+          .isMemoRequired must beFalse
       }
     }
   }

@@ -27,6 +27,11 @@ case class AccountResponse(
   def toAccount: Account = Account(AccountId(id.publicKey), lastSequence + 1)
 
   def decodedData: Map[String, String] = data.map { case (k, v) => k -> new String(v, UTF_8) }
+
+  def isMemoRequired: Boolean = data.get("config.memo_required")
+    .filter(_.length == 1)
+    .map(_.head)
+    .contains('1')
 }
 
 object AccountRespDeserializer extends ResponseParser[AccountResponse]({ o: JObject =>
