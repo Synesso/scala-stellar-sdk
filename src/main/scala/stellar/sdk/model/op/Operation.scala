@@ -196,7 +196,7 @@ object OperationDeserializer extends ResponseParser[Operation]({ o: JObject =>
       )
     case "claim_claimable_balance" =>
       ClaimClaimableBalanceOperation(
-        id = ClaimableBalanceHashId(ByteString.decodeHex((o \ "balance_id").extract[String].takeRight(64))),
+        id = ClaimableBalanceId.decode.run(ByteString.decodeHex((o \ "balance_id").extract[String]).toByteArray).value._2,
         sourceAccount
       )
     case t =>

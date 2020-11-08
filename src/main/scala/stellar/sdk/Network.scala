@@ -376,6 +376,12 @@ trait Network extends LazyLogging {
   }
 
   /**
+   * Fetch a single claimable balance by its id.
+   */
+  def claim(id: ClaimableBalanceId)(implicit ex: ExecutionContext): Future[ClaimableBalance] =
+    horizon.get[ClaimableBalance](s"claimable_balances/${id.encodeString}")
+
+  /**
    * Fetch a list of claimable balances for a claimant account.
    *
    * @param claimant The account that can claim the balances.

@@ -22,7 +22,7 @@ class OkHorizon(base: HttpUrl) extends HorizonAccess with LazyLogging {
   implicit val formats: Formats = Serialization.formats(NoTypeHints) + AccountRespDeserializer +
     DataValueRespDeserializer + LedgerRespDeserializer + TransactedOperationDeserializer +
     OrderBookDeserializer + TransactionPostResponseDeserializer + TransactionHistoryDeserializer +
-    FeeStatsRespDeserializer + NetworkInfoDeserializer
+    FeeStatsRespDeserializer + NetworkInfoDeserializer + ClaimableBalanceDeserializer
 
   private val client = new OkHttpClient.Builder()
     // .addInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BASIC))
@@ -66,7 +66,10 @@ class OkHorizon(base: HttpUrl) extends HorizonAccess with LazyLogging {
         case doc: JObject =>
           Try(doc.extract[T]) match {
             case Success(t) => t
-            case Failure(_) => throw HorizonEntityNotFound(url, doc)
+            case Failure(t) =>
+              // TODO - Explicitly parse 400 errors, rather than rely on this failure
+              // t.printStackTrace()
+              throw HorizonEntityNotFound(url, doc)
           }
         case js => throw HorizonEntityNotFound(url, js)
       }
@@ -100,6 +103,7 @@ class OkHorizon(base: HttpUrl) extends HorizonAccess with LazyLogging {
     val requestUrl = fullParams.foldLeft(base.newBuilder().addPathSegments(path)) {
       case (url, (k, v)) => url.addQueryParameter(k, v)
     }.build()
+    logger.debug(s"Getting stream {}", requestUrl)
 
     def streamFromPage(buffer: List[T], nextLink: Option[HttpUrl]): LazyList[T] = {
       buffer match {
