@@ -16,7 +16,7 @@ import stellar.sdk.model.TimeBounds.Unbounded
 import stellar.sdk.model.TradeAggregation.FifteenMinutes
 import stellar.sdk.model.op._
 import stellar.sdk.model.response._
-import stellar.sdk.model.result.TransactionHistory
+import stellar.sdk.model.result.{CreateAccountLowReserve, TransactionFailure, TransactionHistory}
 import stellar.sdk.model.{ClaimableBalance, _}
 import stellar.sdk.util.ByteArrays
 
@@ -38,11 +38,13 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
   val accnB = KeyPair.fromPassphrase("account b")
   val accnC = KeyPair.fromPassphrase("account c")
   val accnD = KeyPair.fromPassphrase("account d")
+  val accnE = KeyPair.fromPassphrase("account e")
 
   logger.debug(s"Account A = ${accnA.accountId}")
   logger.debug(s"Account B = ${accnB.accountId}")
   logger.debug(s"Account C = ${accnC.accountId}")
   logger.debug(s"Account D = ${accnD.accountId}")
+  logger.debug(s"Account E = ${accnE.accountId}")
 
   val accounts = Set(accnA, accnB, accnC, accnD)
 
@@ -687,6 +689,23 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
         txnResult <- txn.submit()
       } yield txnResult must beLike[TransactionPostResponse] { case r: TransactionApproved =>
         r.isSuccess must beTrue
+      }
+    }
+  }
+
+  "creating accounts with no starting balance" should {
+    "not be blocked by the SDK" >> {
+      for {
+        account <- network.account(accnA)
+        txn = Transaction(
+          source = account,
+          operations = List(CreateAccountOperation(accnE.toAccountId, Amount.lumens(0))),
+          timeBounds = TimeBounds.Unbounded,
+          maxFee = NativeAmount(100)
+        ).sign(accnA)
+        txnResult <- txn.submit()
+      } yield txnResult must beLike[TransactionPostResponse] { case r: TransactionRejected =>
+        r.opResultCodes mustEqual List("op_low_reserve")
       }
     }
   }
