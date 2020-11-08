@@ -26,7 +26,7 @@ class ClaimableBalanceSpec extends Specification with ScalaCheck {
 object ClaimableBalanceGenerators extends ArbitraryInput {
 
   def genClaimableBalance: Gen[ClaimableBalance] = for {
-    id <- Gen.containerOfN[Array, Byte](32, Gen.posNum[Byte]).map(new ByteString(_))
+    id <- Gen.containerOfN[Array, Byte](32, Gen.posNum[Byte]).map(new ByteString(_)).map(ClaimableBalanceHashId)
     amount <- genAmount
     sponsor <- genPublicKey
     claimants <- Gen.nonEmptyListOf[Claimant](genClaimant)
@@ -36,7 +36,7 @@ object ClaimableBalanceGenerators extends ArbitraryInput {
 
   def json(balance: ClaimableBalance): String =
     s"""{
-       |  "id": "${balance.id.hex()}",
+       |  "id": "${balance.id.encodeString}",
        |  "asset": "${balance.amount.asset.canoncialString}",
        |  "amount": "${balance.amount.toDisplayUnits}",
        |  "sponsor": "${balance.sponsor.accountId}",

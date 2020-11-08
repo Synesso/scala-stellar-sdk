@@ -1,7 +1,7 @@
 #!/bin/bash
 
 CONTAINER=stellar/quickstart:latest
-PROTOCOL_VERSION=14
+PROTOCOL_VERSION=15
 
 function container_started {
     local state=$(curl -s "http://localhost:11626/info" | jq -r .info.state)

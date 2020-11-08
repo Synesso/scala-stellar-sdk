@@ -7,7 +7,7 @@ As this project is pre 1.0, breaking changes may happen for minor version bumps.
 - [CAP-23 Two-Part Payments](https://github.com/stellar/stellar-protocol/blob/master/core/cap-0023.md)
   Introduces two new operations that separate sending a payment from receiving that payment.
 - Adds Sponsor details in the account response, account response balances & signers and in the offer response.
-- Provides 3 new methods to obtain claimable balances by account, asset or sponsor.
+- Provides 4 new methods to obtain claimable balances by id, account, asset or sponsor.
 - Fixes failure to parse transaction history with unusually encoded memo text
   ([example](https://horizon.stellar.org/transactions/424ac176edc448b3e87db0eae61ba621f5f7b5217c10b6016f74d85cdcaafb0a)).
 

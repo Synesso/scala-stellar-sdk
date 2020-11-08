@@ -20,5 +20,5 @@ case class ClaimableBalanceHashId(hash: ByteString) extends ClaimableBalanceId {
     Encode.int(0) ++ Encode.bytes(32, array)
   }
 
-  override def encodeString: String = hash.hex()
+  override def encodeString: String = new ByteString(encode.toArray).hex()
 }
