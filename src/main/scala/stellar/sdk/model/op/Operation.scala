@@ -4,25 +4,23 @@ import java.nio.charset.StandardCharsets.UTF_8
 
 import cats.data.State
 import okio.ByteString
-import org.apache.commons.codec.binary.Base64
 import org.json4s.DefaultFormats
-import org.json4s.JsonAST.{JArray, JBool, JInt, JObject, JValue}
+import org.json4s.JsonAST.{JArray, JObject}
 import stellar.sdk._
 import stellar.sdk.model.Asset.parseAsset
 import stellar.sdk.model._
-import stellar.sdk.model.op.IssuerFlags.{all, int}
+import stellar.sdk.model.op.IssuerFlags.int
 import stellar.sdk.model.response.ResponseParser
 import stellar.sdk.model.xdr.{Decode, Encodable, Encode}
 import stellar.sdk.util.ByteArrays
 import stellar.sdk.util.ByteArrays.{base64, paddedByteArray}
-
-import scala.deprecated
 
 /**
   * An Operation represents a change to the ledger. It is the action, as opposed to the effects resulting from that action.
   */
 sealed trait Operation extends Encodable {
   val sourceAccount: Option[PublicKeyOps]
+  def accountRequiringMemo: Option[AccountId] = None
   override def encode: LazyList[Byte] = Encode.opt(sourceAccount)
 }
 
@@ -249,6 +247,8 @@ case class PaymentOperation(destinationAccount: AccountId,
                             amount: Amount,
                             sourceAccount: Option[PublicKeyOps] = None) extends PayOperation {
 
+  override def accountRequiringMemo: Option[AccountId] = Some(destinationAccount)
+
   override def encode: LazyList[Byte] =
     super.encode ++
       Encode.int(1) ++
@@ -285,6 +285,8 @@ case class PathPaymentStrictReceiveOperation(sendMax: Amount,
                                              destinationAmount: Amount,
                                              path: Seq[Asset] = Nil,
                                              sourceAccount: Option[PublicKeyOps] = None) extends PayOperation {
+
+  override def accountRequiringMemo: Option[AccountId] = Some(destinationAccount)
 
   override def encode: LazyList[Byte] =
     super.encode ++
@@ -325,6 +327,8 @@ case class PathPaymentStrictSendOperation(sendAmount: Amount,
                                           destinationMin: Amount,
                                           path: Seq[Asset] = Nil,
                                           sourceAccount: Option[PublicKeyOps] = None) extends PayOperation {
+
+  override def accountRequiringMemo: Option[AccountId] = Some(destinationAccount)
 
   override def encode: LazyList[Byte] =
     super.encode ++
@@ -707,6 +711,7 @@ object AllowTrustOperation extends Decode {
   * @see [[https://www.stellar.org/developers/horizon/reference/resources/operation.html#account-merge endpoint doc]]
   */
 case class AccountMergeOperation(destination: AccountId, sourceAccount: Option[PublicKeyOps] = None) extends PayOperation {
+  override def accountRequiringMemo: Option[AccountId] = Some(destination)
   override def encode: LazyList[Byte] = super.encode ++ Encode.int(8) ++ destination.encode
 }
 

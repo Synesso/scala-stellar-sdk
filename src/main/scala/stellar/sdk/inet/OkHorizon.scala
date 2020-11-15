@@ -6,7 +6,7 @@ import com.typesafe.scalalogging.LazyLogging
 import okhttp3._
 import org.json4s.native.{JsonMethods, Serialization}
 import org.json4s.{CustomSerializer, DefaultFormats, Formats, JObject, NoTypeHints}
-import stellar.sdk.BuildInfo
+import stellar.sdk.{BuildInfo, InvalidTransactionException}
 import stellar.sdk.model.op.TransactedOperationDeserializer
 import stellar.sdk.model.response.{TransactionPostResponse, _}
 import stellar.sdk.model.result.TransactionHistoryDeserializer

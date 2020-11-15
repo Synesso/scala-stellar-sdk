@@ -7,6 +7,7 @@ import org.json4s.JsonAST.{JArray, JObject}
 import stellar.sdk._
 import stellar.sdk.model.Amount.toBaseUnits
 import stellar.sdk.model._
+import stellar.sdk.model.response.AccountResponse.DATA_KEY_MEMO_REQUIRED
 import stellar.sdk.util.ByteArrays
 
 case class AccountResponse(
@@ -28,10 +29,14 @@ case class AccountResponse(
 
   def decodedData: Map[String, String] = data.map { case (k, v) => k -> new String(v, UTF_8) }
 
-  def isMemoRequired: Boolean = data.get("config.memo_required")
+  def isMemoRequired: Boolean = data.get(DATA_KEY_MEMO_REQUIRED)
     .filter(_.length == 1)
     .map(_.head)
     .contains('1')
+}
+
+object AccountResponse {
+  val DATA_KEY_MEMO_REQUIRED = "config.memo_required"
 }
 
 object AccountRespDeserializer extends ResponseParser[AccountResponse]({ o: JObject =>
