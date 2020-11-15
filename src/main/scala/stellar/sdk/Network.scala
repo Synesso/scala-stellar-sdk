@@ -34,7 +34,18 @@ trait Network extends LazyLogging {
     * Submit the SignedTransaction to the network and eventually receive a TransactionPostResp with the results.
     * @see [[https://www.stellar.org/developers/horizon/reference/endpoints/transactions-create.html endpoint doc]]
     */
-  def submit(txn: SignedTransaction)(implicit ec: ExecutionContext): Future[TransactionPostResponse] = horizon.post(txn)
+  def submit(txn: SignedTransaction)(implicit ec: ExecutionContext): Future[TransactionPostResponse] = {
+    val payeeAccounts =
+      if (txn.hasMemo) Future(List())
+      else Future.sequence((txn.payeeAccounts.toSet -- txn.createdAccounts.toSet).map(_.publicKey).map(account))
+    for {
+      accountsRequiringMemo <- payeeAccounts.map(_.filter(_.isMemoRequired))
+      response <-
+        if (accountsRequiringMemo.nonEmpty) Future.failed(InvalidTransactionException(
+          s"No memo provided, but required by ${accountsRequiringMemo.map(_.id.accountId).mkString(",")}"))
+        else horizon.post(txn)
+    } yield response
+  }
 
   /**
     * Fetch details regarding the account identified by `pubKey`.

@@ -4,7 +4,8 @@ CONTAINER=stellar/quickstart:latest
 PROTOCOL_VERSION=15
 
 function container_started {
-    local state=$(curl -s "http://localhost:11626/info" | jq -r .info.state)
+    local state
+    state=$(curl -s "http://localhost:11626/info" | jq -r .info.state)
     if [ "${state}" == "Synced!" ]; then
         return 0
     fi
@@ -12,7 +13,8 @@ function container_started {
 }
 
 function service_upgraded {
-    local version=$(curl -s "http://localhost:8000/ledgers?order=desc&limit=1" | jq '._embedded.records[].protocol_version')
+    local version
+    version=$(curl -s "http://localhost:8000/ledgers?order=desc&limit=1" | jq '._embedded.records[].protocol_version')
     echo "Current:         ${version}"
     if [ "$version" == "$PROTOCOL_VERSION" ]; then
         return 0

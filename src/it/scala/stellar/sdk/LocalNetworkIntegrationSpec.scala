@@ -15,8 +15,9 @@ import stellar.sdk.model.ClaimPredicate.{AbsolutelyBefore, Or, Unconditional}
 import stellar.sdk.model.TimeBounds.Unbounded
 import stellar.sdk.model.TradeAggregation.FifteenMinutes
 import stellar.sdk.model.op._
+import stellar.sdk.model.response.AccountResponse.DATA_KEY_MEMO_REQUIRED
 import stellar.sdk.model.response._
-import stellar.sdk.model.result.{CreateAccountLowReserve, TransactionFailure, TransactionHistory}
+import stellar.sdk.model.result.TransactionHistory
 import stellar.sdk.model.{ClaimableBalance, _}
 import stellar.sdk.util.ByteArrays
 
@@ -73,7 +74,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
           )(_ add _).sign(masterAccountKey)
           val fullySignedTransaction = signatories.foldLeft(signedTransaction)(_ sign _)
           val eventualTransactionPostResponse = fullySignedTransaction.submit()
-          val transactionPostResponse = Await.result(eventualTransactionPostResponse, 5 minutes)
+          val transactionPostResponse = Await.result(eventualTransactionPostResponse, 5.minutes)
           transactionPostResponse must beLike[TransactionPostResponse] {
             case a: TransactionApproved =>
               logger.debug(s"Approved. Hash is ${a.hash}")
@@ -707,6 +708,71 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
       } yield txnResult must beLike[TransactionPostResponse] { case r: TransactionRejected =>
         r.opResultCodes mustEqual List("op_low_reserve")
       }
+    }
+  }
+
+  "a transaction with payments that need memos" should {
+
+    "refuse to submit if any payments are present but there is no memo" >> {
+      Await.ready(for {
+        account <- network.account(accnD)
+        txn = Transaction(
+          source = account,
+          operations = List(WriteDataOperation(DATA_KEY_MEMO_REQUIRED, "1")),
+          timeBounds = TimeBounds.Unbounded,
+          maxFee = NativeAmount(100)
+        ).sign(accnD)
+        txnResult <- txn.submit()
+      } yield txnResult must beLike[TransactionPostResponse] { case r: TransactionApproved =>
+        r.isSuccess must beTrue
+      }, 10.seconds)
+
+      val attempt = for {
+        account <- network.account(accnA)
+        txn = Transaction(
+          source = account,
+          operations = List(PaymentOperation(accnD.toAccountId, Amount.lumens(100))),
+          timeBounds = TimeBounds.Unbounded,
+          maxFee = NativeAmount(100)
+        ).sign(accnA)
+        txnResult <- txn.submit()
+      } yield txnResult
+      attempt must throwAn[InvalidTransactionException].awaitFor(10.seconds)
+    }
+
+    /*
+    "except when an override is in place" >> {
+      for {
+        account <- network.account(accnA)
+        txn = Transaction(
+          source = account,
+          operations = List(PaymentOperation(accnD.toAccountId, Amount.lumens(10000))),
+          timeBounds = TimeBounds.Unbounded,
+          maxFee = NativeAmount(100),
+          overrideMemoRequirement = true
+        ).sign(accnA)
+        txnResult <- txn.submit()
+      } yield txnResult must beLike[TransactionPostResponse] { case r: TransactionApproved =>
+        r.isSuccess must beTrue
+      }
+    }
+    */
+
+    "submit if any payments are present and there is a memo" >> {
+      val attempt = for {
+        account <- network.account(accnA)
+        txn = Transaction(
+          source = account,
+          operations = List(PaymentOperation(accnD.toAccountId, Amount.lumens(100))),
+          timeBounds = TimeBounds.Unbounded,
+          maxFee = NativeAmount(100),
+          memo = MemoText("Bananas")
+        ).sign(accnA)
+        txnResult <- txn.submit()
+      } yield txnResult
+      attempt must beLike[TransactionPostResponse] { case r: TransactionApproved =>
+        r.isSuccess must beTrue
+      }.awaitFor(10.seconds)
     }
   }
 }

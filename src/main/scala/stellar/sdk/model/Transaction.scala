@@ -3,7 +3,7 @@ package stellar.sdk.model
 import cats.data._
 import okhttp3.HttpUrl
 import stellar.sdk.model.TimeBounds.Unbounded
-import stellar.sdk.model.op.Operation
+import stellar.sdk.model.op.{CreateAccountOperation, Operation}
 import stellar.sdk.model.response.TransactionPostResponse
 import stellar.sdk.model.xdr.Encode.{arr, bytes, int, long, opt}
 import stellar.sdk.model.xdr.{Decode, Encodable}
@@ -46,6 +46,12 @@ case class Transaction(source: Account,
     transaction = SignedTransaction(this, Nil),
     networkPassphrase = Some(network).filterNot(_ == PublicNetwork).map(_.passphrase)
   )
+
+  /**
+   * If the transaction has no memo, these are the payment destination accounts that must be OK with not receiving
+   * a memo.
+   */
+  def payeeAccounts: List[AccountId] = operations.toList.flatMap(_.accountRequiringMemo)
 
   /**
     * The base64 encoding of the XDR form of this unsigned transaction.
@@ -142,6 +148,8 @@ case class SignedTransaction(transaction: Transaction,
     signatures.exists(signature => key.verify(transaction.hash.toArray, signature.data))
   }
 
+  def hasMemo = transaction.memo != NoMemo
+
   /**
     * The base64 encoding of the XDR form of this signed transaction.
     */
@@ -171,6 +179,12 @@ case class SignedTransaction(transaction: Transaction,
     val signature = source.sign(encodedFeeBump)
     val feeBump = FeeBump(source.toAccountId, fee, List(signature))
     this.copy(feeBump = Some(feeBump))
+  }
+
+  def payeeAccounts: List[AccountId] = transaction.payeeAccounts
+  def createdAccounts: List[AccountId] = transaction.operations.toList.flatMap {
+    case CreateAccountOperation(destination, _, _) => Some(destination)
+    case _ => None
   }
 
   private def encodeFeeBumpBase(accountId: AccountId, fee: NativeAmount): LazyList[Byte] = {
