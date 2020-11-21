@@ -14,11 +14,14 @@ import stellar.sdk.{KeyPair, Network, PublicKey, PublicKeyOps, PublicNetwork, Si
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success}
 
-case class Transaction(source: Account,
-                       operations: Seq[Operation] = Nil,
-                       memo: Memo = NoMemo,
-                       timeBounds: TimeBounds,
-                       maxFee: NativeAmount)(implicit val network: Network) extends Encodable {
+case class Transaction(
+  source: Account,
+  operations: Seq[Operation] = Nil,
+  memo: Memo = NoMemo,
+  timeBounds: TimeBounds,
+  maxFee: NativeAmount,
+  overrideMemoRequirement: Boolean = false
+)(implicit val network: Network) extends Encodable {
 
   private val BaseFee = 100L
 
@@ -54,8 +57,8 @@ case class Transaction(source: Account,
   def payeeAccounts: List[AccountId] = operations.toList.flatMap(_.accountRequiringMemo)
 
   /**
-    * The base64 encoding of the XDR form of this unsigned transaction.
-    */
+   * The base64 encoding of the XDR form of this unsigned transaction.
+   */
   def encodeXDR: String = base64(encode)
 
   // Encodes to TransactionV1 format by default
@@ -86,8 +89,8 @@ case class Transaction(source: Account,
 object Transaction extends Decode {
 
   /**
-    * Decodes an unsigned transaction from base64-encoded XDR.
-    */
+   * Decodes an unsigned transaction from base64-encoded XDR.
+   */
   def decodeXDR(base64: String)(implicit network: Network): Transaction =
     decode.run(ByteArrays.base64(base64).toIndexedSeq).value._2
 
@@ -123,8 +126,8 @@ object Transaction extends Decode {
 }
 
 case class SignedTransaction(transaction: Transaction,
-                             signatures: Seq[Signature],
-                             feeBump: Option[FeeBump] = None) {
+  signatures: Seq[Signature],
+  feeBump: Option[FeeBump] = None) {
   assert(transaction.minFee.units <= transaction.maxFee.units,
     "Insufficient maxFee. Allow at least 100 stroops per operation. " +
       s"[maxFee=${transaction.maxFee.units}, operations=${transaction.operations.size}].")
@@ -142,6 +145,7 @@ case class SignedTransaction(transaction: Transaction,
   /**
    * Returns true if any of the signatures are valid for this transaction and signed by the account indicated by the
    * `key` parameter.
+   *
    * @param key the account to test
    */
   def verify(key: PublicKeyOps): Boolean = {
@@ -151,8 +155,8 @@ case class SignedTransaction(transaction: Transaction,
   def hasMemo = transaction.memo != NoMemo
 
   /**
-    * The base64 encoding of the XDR form of this signed transaction.
-    */
+   * The base64 encoding of the XDR form of this signed transaction.
+   */
   def encodeXDR: String = base64(encode)
 
   def encode: LazyList[Byte] = feeBump.map(encodeFeeBump)
@@ -182,6 +186,7 @@ case class SignedTransaction(transaction: Transaction,
   }
 
   def payeeAccounts: List[AccountId] = transaction.payeeAccounts
+
   def createdAccounts: List[AccountId] = transaction.operations.toList.flatMap {
     case CreateAccountOperation(destination, _, _) => Some(destination)
     case _ => None
@@ -210,8 +215,8 @@ case class SignedTransaction(transaction: Transaction,
 object SignedTransaction extends Decode {
 
   /**
-    * Decodes a signed transaction (aka envelope) from base64-encoded XDR.
-    */
+   * Decodes a signed transaction (aka envelope) from base64-encoded XDR.
+   */
   def decodeXDR(base64: String)(implicit network: Network): SignedTransaction =
     decode.run(ByteArrays.base64(base64).toIndexedSeq).value._2
 
@@ -225,7 +230,7 @@ object SignedTransaction extends Decode {
       case 2 => Transaction.decodeV1.map(Left(_))
 
       // parse a fee bump transaction
-      case 5 =>  for {
+      case 5 => for {
         accountId <- AccountId.decode
         fee <- long
         _ <- int // 2
