@@ -36,7 +36,7 @@ trait Network extends LazyLogging {
     */
   def submit(txn: SignedTransaction)(implicit ec: ExecutionContext): Future[TransactionPostResponse] = {
     val payeeAccounts =
-      if (txn.hasMemo) Future(List())
+      if (txn.hasMemo || txn.transaction.overrideMemoRequirement) Future(List())
       else Future.sequence((txn.payeeAccounts.toSet -- txn.createdAccounts.toSet).map(_.publicKey).map(account))
     for {
       accountsRequiringMemo <- payeeAccounts.map(_.filter(_.isMemoRequired))
