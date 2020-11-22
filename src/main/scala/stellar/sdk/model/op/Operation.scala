@@ -9,6 +9,7 @@ import org.json4s.JsonAST.{JArray, JObject}
 import stellar.sdk._
 import stellar.sdk.model.Asset.parseAsset
 import stellar.sdk.model._
+import stellar.sdk.model.ledger.{AccountKey, ClaimableBalanceKey, DataEntry, DataKey, LedgerKey, OfferEntry, OfferKey, TrustLineEntry, TrustLineKey}
 import stellar.sdk.model.op.IssuerFlags.int
 import stellar.sdk.model.response.ResponseParser
 import stellar.sdk.model.xdr.{Decode, Encodable, Encode}
@@ -56,6 +57,7 @@ object Operation extends Decode {
         case 13 => widen(PathPaymentStrictSendOperation.decode.map(_.copy(sourceAccount = source)))
         case 14 => widen(CreateClaimableBalanceOperation.decode.map(_.copy(sourceAccount = source)))
         case 15 => widen(ClaimClaimableBalanceOperation.decode.map(_.copy(sourceAccount = source)))
+        case 16 => widen(BeginSponsoringFutureReservesOperation.decode.map(_.copy(sourceAccount = source)))
       }
     }
 
@@ -799,6 +801,7 @@ object BumpSequenceOperation extends Decode {
   def decode: State[Seq[Byte], BumpSequenceOperation] = long.map(BumpSequenceOperation(_))
 }
 
+
 /**
  * Creates a payment reservation, referred to as a claimable balance.
  *
@@ -828,7 +831,7 @@ object CreateClaimableBalanceOperation extends Decode {
  * Claims a previously created claimable balance.
  *
  * @param id the id of the claimable balance entry to attempt to claim.
- * @param sourceAccount the account effecting this operation, if different from the owning account of the transaction
+ * @param sourceAccount the account effecting this operation, if different from the owning account of the transaction.
  */
 case class ClaimClaimableBalanceOperation(
   id: ClaimableBalanceId,
@@ -840,4 +843,125 @@ case class ClaimClaimableBalanceOperation(
 object ClaimClaimableBalanceOperation extends Decode {
   def decode: State[Seq[Byte], ClaimClaimableBalanceOperation] =
     ClaimableBalanceId.decode.map(id => ClaimClaimableBalanceOperation(id))
+}
+
+/**
+ * Begin sponsoring (paying for) any reserve that the sponsored account would have to pay.
+ *
+ * @param sponsored the id of the account that is being sponsored.
+ * @param sourceAccount the account effecting this operation, if different from the owning account of the transaction.
+ */
+case class BeginSponsoringFutureReservesOperation(
+  sponsored: AccountId,
+  sourceAccount: Option[PublicKeyOps] = None
+) extends Operation {
+  override def encode: LazyList[Byte] = super.encode ++ Encode.int(16) ++ sponsored.encode
+}
+
+object BeginSponsoringFutureReservesOperation extends Decode {
+  def decode: State[Seq[Byte], BeginSponsoringFutureReservesOperation] =
+    AccountId.decode.map(BeginSponsoringFutureReservesOperation(_))
+}
+
+sealed trait RevokeSponsorshipOperation extends Operation {
+  override def encode: LazyList[Byte] = super.encode ++ Encode.int(18)
+}
+
+/**
+ * Decoder for all kinds of sponsorship revocation operations.
+ */
+object RevokeSponsorshipOperation extends Decode {
+  def decode: State[Seq[Byte], RevokeSponsorshipOperation] = switch(
+    LedgerKey.decode.map {
+      case k: AccountKey => RevokeAccountSponsorshipOperation(k)
+      case k: ClaimableBalanceKey => RevokeClaimableBalanceSponsorshipOperation(k)
+      case k: DataKey => RevokeDataSponsorshipOperation(k)
+      case k: OfferKey => RevokeOfferSponsorshipOperation(k)
+      case k: TrustLineKey => RevokeTrustLineSponsorshipOperation(k)
+    },
+    for {
+      accountId <- AccountId.decode
+      signer <- Signer.decode
+    } yield RevokeSignerSponsorshipOperation(accountId, signer)
+  )
+}
+
+/**
+ * Remove the sponsorship of ledger account entries.
+ *
+ * @param revokeAccountKey the key for the account ledger entry to have its sponsorship removed.
+ * @param sourceAccount the account effecting this operation, if different from the owning account of the transaction.
+ */
+case class RevokeAccountSponsorshipOperation(
+  revokeAccountKey: AccountKey,
+  sourceAccount: Option[PublicKeyOps] = None
+) extends RevokeSponsorshipOperation {
+  override def encode: LazyList[Byte] = super.encode ++ Encode.int(0) ++ revokeAccountKey.encode
+}
+
+/**
+ * Remove the sponsorship of ledger claimable balance entries.
+ *
+ * @param revokeClaimableBalanceKey the key for the claimable balance entry to have its sponsorship removed.
+ * @param sourceAccount the account effecting this operation, if different from the owning account of the transaction.
+ */
+case class RevokeClaimableBalanceSponsorshipOperation(
+  revokeClaimableBalanceKey: ClaimableBalanceKey,
+  sourceAccount: Option[PublicKeyOps] = None
+) extends RevokeSponsorshipOperation {
+  override def encode: LazyList[Byte] = super.encode ++ Encode.int(0) ++ revokeClaimableBalanceKey.encode
+}
+
+/**
+ * Remove the sponsorship of ledger data entries.
+ *
+ * @param revokeDataKey the key for the data ledger entry to have its sponsorship removed.
+ * @param sourceAccount the account effecting this operation, if different from the owning account of the transaction.
+ */
+case class RevokeDataSponsorshipOperation(
+  revokeDataKey: DataKey,
+  sourceAccount: Option[PublicKeyOps] = None
+) extends RevokeSponsorshipOperation {
+  override def encode: LazyList[Byte] = super.encode ++ Encode.int(0) ++ revokeDataKey.encode
+}
+
+/**
+ * Remove the sponsorship of ledger offer entries.
+ *
+ * @param revokeOfferKey the key for the offer ledger entry to have its sponsorship removed.
+ * @param sourceAccount the account effecting this operation, if different from the owning account of the transaction.
+ */
+case class RevokeOfferSponsorshipOperation(
+  revokeOfferKey: OfferKey,
+  sourceAccount: Option[PublicKeyOps] = None
+) extends RevokeSponsorshipOperation {
+  override def encode: LazyList[Byte] = super.encode ++ Encode.int(0) ++ revokeOfferKey.encode
+}
+
+/**
+ * Remove a signer's sponsorship of an account.
+ *
+ * @param accountId the id for the account to have a sponsor removed.
+ * @param signer the signer of the sponsor to be removed.
+ * @param sourceAccount the account effecting this operation, if different from the owning account of the transaction.
+ */
+case class RevokeSignerSponsorshipOperation(
+  accountId: AccountId,
+  signer: Signer,
+  sourceAccount: Option[PublicKeyOps] = None
+) extends RevokeSponsorshipOperation {
+  override def encode: LazyList[Byte] = super.encode ++ Encode.int(1) ++ accountId.encode ++ signer.key.encode
+}
+
+/**
+ * Remove the sponsorship of ledger trustline entries.
+ *
+ * @param revokeTrustLineKey the key for the trustline ledger entry to have its sponsorship removed.
+ * @param sourceAccount the account effecting this operation, if different from the owning account of the transaction.
+ */
+case class RevokeTrustLineSponsorshipOperation(
+  revokeTrustLineKey: TrustLineKey,
+  sourceAccount: Option[PublicKeyOps] = None
+) extends RevokeSponsorshipOperation {
+  override def encode: LazyList[Byte] = super.encode ++ Encode.int(0) ++ revokeTrustLineKey.encode
 }
