@@ -59,7 +59,7 @@ lazy val root = project
       "net.i2p.crypto" % "eddsa" % "0.3.0",
       "org.json4s" %% "json4s-native" % "3.6.10",
       "org.scala-lang.modules" %% "scala-collection-compat" % "2.2.0",
-      "org.typelevel" %% "cats-core" % "2.2.0",
+      "org.typelevel" %% "cats-core" % "2.3.0",
       "tech.sparse" %%  "toml-scala" % "0.2.2",
 
       "com.github.julien-truffaut" %% "monocle-core"  % "2.0.5" % "test",
