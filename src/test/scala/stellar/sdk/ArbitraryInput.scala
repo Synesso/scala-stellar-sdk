@@ -10,16 +10,15 @@ import okio.ByteString
 import org.apache.commons.codec.binary.Base64
 import org.scalacheck.{Arbitrary, Gen}
 import org.specs2.ScalaCheck
-import stellar.sdk.inet.HorizonAccess
-import stellar.sdk.key.{EnglishWords, FrenchWords, JapaneseWords, SpanishWords, WordList}
+import stellar.sdk.key._
 import stellar.sdk.model._
-import stellar.sdk.model.ledger.OfferEntry
+import stellar.sdk.model.ledger._
 import stellar.sdk.model.op._
 import stellar.sdk.model.response._
 import stellar.sdk.model.result.TransactionResult._
 import stellar.sdk.model.result.{PathPaymentResult, _}
-import stellar.sdk.util.{ByteArrays, DoNothingNetwork}
 import stellar.sdk.util.ByteArrays.trimmedByteArray
+import stellar.sdk.util.{ByteArrays, DoNothingNetwork}
 
 import scala.annotation.tailrec
 import scala.util.Random
@@ -449,12 +448,61 @@ trait ArbitraryInput extends ScalaCheck {
     sourceAccount <- Gen.option(genPublicKey)
   } yield BeginSponsoringFutureReservesOperation(sponsored, sourceAccount)
 
+  def genRevokeSponsorshipOperation: Gen[RevokeSponsorshipOperation] = Gen.oneOf(
+    genRevokeAccountSponsorshipOperation,
+    genRevokeClaimableBalanceSponsorshipOperation,
+    genRevokeDataSponsorshipOperation,
+    genRevokeOfferSponsorshipOperation,
+    genRevokeSignerSponsorshipOperation,
+    genRevokeTrustLineSponsorshipOperation
+  )
+
+  def genRevokeAccountSponsorshipOperation: Gen[RevokeAccountSponsorshipOperation] = for {
+    key <- genPublicKey.map(AccountKey.apply)
+    sourceAccount <- Gen.option(genPublicKey)
+  } yield RevokeAccountSponsorshipOperation(key, sourceAccount)
+  
+  def genRevokeClaimableBalanceSponsorshipOperation: Gen[RevokeClaimableBalanceSponsorshipOperation] = for {
+    key <- ClaimableBalanceIds.genClaimableBalanceId.map(ClaimableBalanceKey.apply)
+    sourceAccount <- Gen.option(genPublicKey)
+  } yield RevokeClaimableBalanceSponsorshipOperation(key, sourceAccount)
+  
+  def genRevokeDataSponsorshipOperation: Gen[RevokeDataSponsorshipOperation] = for {
+    key <- for {
+      account <- genPublicKey
+      name <- Gen.identifier
+    } yield DataKey(account, name)
+    sourceAccount <- Gen.option(genPublicKey)
+  } yield RevokeDataSponsorshipOperation(key, sourceAccount)
+  
+  def genRevokeOfferSponsorshipOperation: Gen[RevokeOfferSponsorshipOperation] = for {
+    key <- for {
+      pk <- genPublicKey
+      offerId <- Gen.posNum[Long]
+    } yield OfferKey(pk, offerId)
+    sourceAccount <- Gen.option(genPublicKey)
+  } yield RevokeOfferSponsorshipOperation(key, sourceAccount)
+  
+  def genRevokeSignerSponsorshipOperation: Gen[RevokeSignerSponsorshipOperation] = for {
+    accountId <- genAccountId
+    signerKey <- genSignerStrKey
+    sourceAccount <- Gen.option(genPublicKey)
+  } yield RevokeSignerSponsorshipOperation(accountId, signerKey, sourceAccount)
+  
+  def genRevokeTrustLineSponsorshipOperation: Gen[RevokeTrustLineSponsorshipOperation] = for {
+    key <- for {
+      pk <- genPublicKey
+      asset <- genNonNativeAsset
+    } yield TrustLineKey(pk, asset)
+    sourceAccount <- Gen.option(genPublicKey)
+  } yield RevokeTrustLineSponsorshipOperation(key, sourceAccount)
+  
   def genOperation: Gen[Operation] = {
     Gen.oneOf(genAccountMergeOperation, genAllowTrustOperation, genChangeTrustOperation, genCreateAccountOperation,
       genCreatePassiveSellOfferOperation, genInflationOperation, genManageDataOperation, genManageSellOfferOperation,
       genManageBuyOfferOperation, genPathPaymentStrictReceiveOperation, genPaymentOperation, genSetOptionsOperation,
       genBumpSequenceOperation, genPathPaymentStrictSendOperation, genCreateClaimableBalanceOperation,
-      genClaimClaimableBalanceOperation, genBeginSponsoringFutureReservesOperation)
+      genClaimClaimableBalanceOperation, genBeginSponsoringFutureReservesOperation, genRevokeSponsorshipOperation)
   }
 
   def genPrice: Gen[Price] = for {

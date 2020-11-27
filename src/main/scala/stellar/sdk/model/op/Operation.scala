@@ -58,6 +58,14 @@ object Operation extends Decode {
         case 14 => widen(CreateClaimableBalanceOperation.decode.map(_.copy(sourceAccount = source)))
         case 15 => widen(ClaimClaimableBalanceOperation.decode.map(_.copy(sourceAccount = source)))
         case 16 => widen(BeginSponsoringFutureReservesOperation.decode.map(_.copy(sourceAccount = source)))
+        case 18 => widen(RevokeSponsorshipOperation.decode.map {
+          case x: RevokeAccountSponsorshipOperation => x.copy(sourceAccount = source)
+          case x: RevokeClaimableBalanceSponsorshipOperation => x.copy(sourceAccount = source)
+          case x: RevokeDataSponsorshipOperation => x.copy(sourceAccount = source)
+          case x: RevokeOfferSponsorshipOperation => x.copy(sourceAccount = source)
+          case x: RevokeSignerSponsorshipOperation => x.copy(sourceAccount = source)
+          case x: RevokeTrustLineSponsorshipOperation => x.copy(sourceAccount = source)
+        })
       }
     }
 
@@ -881,8 +889,8 @@ object RevokeSponsorshipOperation extends Decode {
     },
     for {
       accountId <- AccountId.decode
-      signer <- Signer.decode
-    } yield RevokeSignerSponsorshipOperation(accountId, signer)
+      signerKey <- StrKey.decode
+    } yield RevokeSignerSponsorshipOperation(accountId, signerKey)
   )
 }
 
@@ -942,15 +950,15 @@ case class RevokeOfferSponsorshipOperation(
  * Remove a signer's sponsorship of an account.
  *
  * @param accountId the id for the account to have a sponsor removed.
- * @param signer the signer of the sponsor to be removed.
+ * @param signerKey the signer's key of the sponsor to be removed.
  * @param sourceAccount the account effecting this operation, if different from the owning account of the transaction.
  */
 case class RevokeSignerSponsorshipOperation(
   accountId: AccountId,
-  signer: Signer,
+  signerKey: SignerStrKey,
   sourceAccount: Option[PublicKeyOps] = None
 ) extends RevokeSponsorshipOperation {
-  override def encode: LazyList[Byte] = super.encode ++ Encode.int(1) ++ accountId.encode ++ signer.key.encode
+  override def encode: LazyList[Byte] = super.encode ++ Encode.int(1) ++ accountId.encode ++ signerKey.encode
 }
 
 /**
