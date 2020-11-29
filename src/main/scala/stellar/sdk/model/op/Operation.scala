@@ -58,6 +58,7 @@ object Operation extends Decode {
         case 14 => widen(CreateClaimableBalanceOperation.decode.map(_.copy(sourceAccount = source)))
         case 15 => widen(ClaimClaimableBalanceOperation.decode.map(_.copy(sourceAccount = source)))
         case 16 => widen(BeginSponsoringFutureReservesOperation.decode.map(_.copy(sourceAccount = source)))
+        case 17 => widen(EndSponsoringFutureReservesOperation.decode.map(_.copy(sourceAccount = source)))
         case 18 => widen(RevokeSponsorshipOperation.decode.map {
           case x: RevokeAccountSponsorshipOperation => x.copy(sourceAccount = source)
           case x: RevokeClaimableBalanceSponsorshipOperation => x.copy(sourceAccount = source)
@@ -878,6 +879,11 @@ case class EndSponsoringFutureReservesOperation(
   sourceAccount: Option[PublicKeyOps] = None
 ) extends Operation {
   override def encode: LazyList[Byte] = super.encode ++ Encode.int(17)
+}
+
+object EndSponsoringFutureReservesOperation extends Decode {
+  def decode: State[Seq[Byte], EndSponsoringFutureReservesOperation] =
+    State.pure(EndSponsoringFutureReservesOperation())
 }
 
 sealed trait RevokeSponsorshipOperation extends Operation {
