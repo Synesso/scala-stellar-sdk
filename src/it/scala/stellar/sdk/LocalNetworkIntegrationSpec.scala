@@ -775,8 +775,9 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
   }
 
   "an account that wishes to sponsor" should {
+    val sponsoredAccount = KeyPair.random
+
     "be able to begin a sponsorship" >> {
-      val sponsoredAccount = KeyPair.random
       val attempt = for {
         account <- network.account(accnA)
         txn = Transaction(
@@ -806,7 +807,6 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
         a.reservesSponsored mustEqual 2
         a.sponsor must beSome(accnA.asPublicKey)
       }.awaitFor(5.seconds)
-
     }
   }
 }

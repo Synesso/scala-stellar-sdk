@@ -102,22 +102,17 @@ class AccountEffectResponseSpec extends Specification with ArbitraryInput {
     }.setGen1(Gen.identifier)
   }
 
+  "an account sponsorship created effect document" should {
+    "parse from json" >> prop { (id: String, accn: KeyPair) =>
+      val json = doc(id, accn, "account_sponsorship_created")
+      parse(json).extract[EffectResponse] mustEqual EffectAccountSponsorshipCreated(id, accn.asPublicKey)
+    }.setGen1(Gen.identifier)
+  }
+
   def doc(id: String, accn: PublicKeyOps, tpe: String, extra: (String, Any)*) =
     s"""
        |{
-       |  "_links": {
-       |    "operation": {
-       |      "href": "https://horizon-testnet.stellar.org/operations/10157597659144"
-       |    },
-       |    "succeeds": {
-       |      "href": "https://horizon-testnet.stellar.org/effects?order=desc\u0026cursor=10157597659144-2"
-       |    },
-       |    "precedes": {
-       |      "href": "https://horizon-testnet.stellar.org/effects?order=asc\u0026cursor=10157597659144-2"
-       |    }
-       |  },
        |  "id": "$id",
-       |  "paging_token": "10157597659144-2",
        |  "account": "${accn.accountId}",
        |  "type": "$tpe",
        |  "type_i": 3,

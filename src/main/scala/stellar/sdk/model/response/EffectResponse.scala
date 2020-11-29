@@ -20,6 +20,8 @@ case class EffectAccountInflationDestinationUpdated(id: String, account: PublicK
 
 case class EffectAccountRemoved(id: String, account: PublicKeyOps) extends EffectResponse
 
+case class EffectAccountSponsorshipCreated(id: String, account: PublicKeyOps) extends EffectResponse
+
 case class EffectAccountThresholdsUpdated(id: String, account: PublicKeyOps, thresholds: Thresholds) extends EffectResponse
 
 case class EffectAccountHomeDomainUpdated(id: String, account: PublicKeyOps, domain: String) extends EffectResponse
@@ -106,6 +108,7 @@ object EffectResponseDeserializer extends ResponseParser[EffectResponse]({ o: JO
       EffectAccountThresholdsUpdated(id, account(), thresholds)
     case "account_home_domain_updated" => EffectAccountHomeDomainUpdated(id, account(), (o \ "home_domain").extract[String])
     case "account_flags_updated" => EffectAccountFlagsUpdated(id, account())
+    case "account_sponsorship_created" => EffectAccountSponsorshipCreated(id, account())
     case "data_created" => EffectDataCreated(id, account())
     case "data_removed" => EffectDataRemoved(id, account())
     case "data_updated" => EffectDataUpdated(id, account())
