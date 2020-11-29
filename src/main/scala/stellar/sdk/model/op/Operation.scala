@@ -210,9 +210,11 @@ object OperationDeserializer extends ResponseParser[Operation]({ o: JObject =>
       )
     case "begin_sponsoring_future_reserves" =>
       BeginSponsoringFutureReservesOperation(
-        sponsored = AccountId(KeyPair.fromAccountId((o \ "sponsored_id").extract[String]).publicKey),
+        sponsored = accountId("sponsored_id"),
         sourceAccount
       )
+    case "end_sponsoring_future_reserves" =>
+      EndSponsoringFutureReservesOperation(sourceAccount)
     case t =>
       throw new RuntimeException(s"Unrecognised operation type '$t'")
   }
