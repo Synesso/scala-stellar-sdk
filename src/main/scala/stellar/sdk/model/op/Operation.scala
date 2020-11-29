@@ -871,6 +871,15 @@ object BeginSponsoringFutureReservesOperation extends Decode {
     AccountId.decode.map(BeginSponsoringFutureReservesOperation(_))
 }
 
+/**
+ * End sponsoring all reserves from the source account.
+ */
+case class EndSponsoringFutureReservesOperation(
+  sourceAccount: Option[PublicKeyOps] = None
+) extends Operation {
+  override def encode: LazyList[Byte] = super.encode ++ Encode.int(17)
+}
+
 sealed trait RevokeSponsorshipOperation extends Operation {
   override def encode: LazyList[Byte] = super.encode ++ Encode.int(18)
 }
