@@ -773,5 +773,41 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
       }.awaitFor(10.seconds)
     }
   }
+
+  "an account that wishes to sponsor" should {
+    "be able to begin a sponsorship" >> {
+      val sponsoredAccount = KeyPair.random
+      val attempt = for {
+        account <- network.account(accnA)
+        txn = Transaction(
+          source = account,
+          operations = List(
+            BeginSponsoringFutureReservesOperation(sponsoredAccount.toAccountId),
+            CreateAccountOperation(sponsoredAccount.toAccountId, startingBalance = Amount.lumens(0)),
+            EndSponsoringFutureReservesOperation(sourceAccount = Some(sponsoredAccount))
+          ),
+          timeBounds = TimeBounds.Unbounded,
+          maxFee = NativeAmount(300)
+        ).sign(accnA, sponsoredAccount)
+        txnResult <- txn.submit()
+      } yield txnResult
+      attempt must beLike[TransactionPostResponse] { case r: TransactionApproved =>
+        r.isSuccess must beTrue
+      }.awaitFor(60.seconds)
+
+      network.account(accnA) must beLike[AccountResponse] { case a: AccountResponse =>
+        a.reservesSponsoring mustEqual 2
+        a.reservesSponsored mustEqual 0
+        a.sponsor must beNone
+      }.awaitFor(5.seconds)
+
+      network.account(sponsoredAccount) must beLike[AccountResponse] { case a: AccountResponse =>
+        a.reservesSponsoring mustEqual 0
+        a.reservesSponsored mustEqual 2
+        a.sponsor must beSome(accnA.asPublicKey)
+      }.awaitFor(5.seconds)
+
+    }
+  }
 }
 
