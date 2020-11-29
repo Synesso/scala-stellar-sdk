@@ -208,6 +208,13 @@ object OperationDeserializer extends ResponseParser[Operation]({ o: JObject =>
         id = ClaimableBalanceId.decode.run(ByteString.decodeHex((o \ "balance_id").extract[String]).toByteArray).value._2,
         sourceAccount
       )
+    case "begin_sponsoring_future_reserves" =>
+      BeginSponsoringFutureReservesOperation(
+        sponsored = accountId("sponsored_id"),
+        sourceAccount
+      )
+    case "end_sponsoring_future_reserves" =>
+      EndSponsoringFutureReservesOperation(sourceAccount)
     case t =>
       throw new RuntimeException(s"Unrecognised operation type '$t'")
   }
