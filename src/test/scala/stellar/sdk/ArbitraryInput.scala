@@ -444,7 +444,7 @@ trait ArbitraryInput extends ScalaCheck {
   } yield ClaimClaimableBalanceOperation(id, sourceAccount)
 
   def genBeginSponsoringFutureReservesOperation: Gen[BeginSponsoringFutureReservesOperation] = for {
-    sponsored <- genAccountId
+    sponsored <- genPublicKey.map(_.publicKey).map(AccountId(_))
     sourceAccount <- Gen.option(genPublicKey)
   } yield BeginSponsoringFutureReservesOperation(sponsored, sourceAccount)
 
