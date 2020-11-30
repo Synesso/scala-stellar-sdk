@@ -307,7 +307,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
       val byAccount = network.effectsByAccount(accnA).map(_.take(10).toList)
       byAccount.map(_.size) must beEqualTo(10).awaitFor(10 seconds)
       byAccount.map(_.head) must beLike[EffectResponse] {
-        case EffectAccountCreated(_, account, startingBalance) =>
+        case EffectAccountCreated(_, _, account, startingBalance) =>
           account.accountId mustEqual accnA.accountId
           startingBalance mustEqual lumens(1000)
       }.awaitFor(10.seconds)
@@ -316,7 +316,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
     "filter effects by ledger" >> {
       val byLedger = network.effectsByLedger(0).map(_.toList)
       byLedger.map(_.head) must beLike[EffectResponse] {
-        case EffectAccountCreated(_, account, startingBalance) =>
+        case EffectAccountCreated(_, _, account, startingBalance) =>
           account.accountId mustEqual accnA.accountId
           startingBalance mustEqual lumens(1000)
       }.awaitFor(10.seconds)
@@ -326,10 +326,10 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
       val byTransaction = network.effectsByTransaction(txnHash2).map(_.toList)
       byTransaction must beLike[List[EffectResponse]] {
         case List(
-        EffectAccountDebited(_, accn1, amount1),
-        EffectAccountCredited(_, accn2, amount2),
-        EffectAccountRemoved(_, accn3),
-        EffectTrustLineDeauthorized(_, accn4, IssuedAsset12(code, accn5))
+        EffectAccountDebited(_, _, accn1, amount1),
+        EffectAccountCredited(_, _, accn2, amount2),
+        EffectAccountRemoved(_, _, accn3),
+        EffectTrustLineDeauthorized(_, created, accn4, IssuedAsset12(code, accn5))
         ) =>
           accn1 must beEquivalentTo(accnC)
           accn2 must beEquivalentTo(accnB)
@@ -348,9 +348,9 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
         byOperation <- network.effectsByOperation(operationId).map(_.toSeq)
       } yield byOperation) must beLike[Seq[EffectResponse]] {
         case Seq(
-        EffectAccountDebited(_, accn1, amount1),
-        EffectAccountCredited(_, accn2, amount2),
-        EffectAccountRemoved(_, accn3)) =>
+        EffectAccountDebited(_, _, accn1, amount1),
+        EffectAccountCredited(_, _, accn2, amount2),
+        EffectAccountRemoved(_, _, accn3)) =>
           accn1 must beEquivalentTo(accnC)
           accn2 must beEquivalentTo(accnB)
           accn3 must beEquivalentTo(accnC)
