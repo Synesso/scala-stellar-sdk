@@ -4,6 +4,17 @@ As this project is pre 1.0, breaking changes may happen for minor version bumps.
 
 ## Next version
 
+## 0.17.0
+
+- [CAP-33 Sponsored Reserves](https://github.com/stellar/stellar-protocol/blob/master/core/cap-0033.md)
+  Provides the ability for an account to sponsor the reserves of another account, and for the sponsored account
+  to revoke the sponsorship.
+- [SEP-29 Account Memo Requirement](https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0029.md)
+  When a payment does not contain a memo, a pre-check is made to ensure the recpient accounts do not require a memo to be set.
+  This behaviour can be overrideen.
+- Fixes parsing errors for [esoteric memo_text encodings](https://horizon.stellar.org/transactions/d58ce29002f385774ced32898f6efcfe196e271db6ef0e63865bd868cc3cf329).   
+
+
 ## 0.16.0
 
 - [CAP-23 Two-Part Payments](https://github.com/stellar/stellar-protocol/blob/master/core/cap-0023.md)
