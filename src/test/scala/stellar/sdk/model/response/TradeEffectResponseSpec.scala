@@ -1,5 +1,6 @@
 package stellar.sdk.model.response
 
+import java.time.ZonedDateTime
 import java.util.Locale
 
 import org.json4s.NoTypeHints
@@ -8,38 +9,29 @@ import org.json4s.native.Serialization
 import org.scalacheck.Gen
 import org.specs2.mutable.Specification
 import stellar.sdk._
+import stellar.sdk.model.op.JsonSnippets
 import stellar.sdk.model.{Amount, NonNativeAsset}
 
-class TradeEffectResponseSpec extends Specification with ArbitraryInput {
+class TradeEffectResponseSpec extends Specification with ArbitraryInput with JsonSnippets {
 
   implicit val formats = Serialization.formats(NoTypeHints) + EffectResponseDeserializer
 
   "a trade effect document" should {
     "parse to a trade effect" >> prop {
-      (id: String, offerId: Long, buyer: KeyPair, bought: Amount, seller: KeyPair, sold: Amount) =>
-        val json = doc(id, offerId, buyer, bought, seller, sold)
-        parse(json).extract[EffectResponse] mustEqual EffectTrade(id, offerId, buyer, bought, seller, sold)
-    }.setGen1(Gen.identifier).setGen2(Gen.posNum[Long])
+      (id: String, created: ZonedDateTime, offerId: Long, buyer: KeyPair, bought: Amount, seller: KeyPair, sold: Amount) =>
+        val json = doc(id, created, offerId, buyer, bought, seller, sold)
+        parse(json).extract[EffectResponse] mustEqual EffectTrade(id, created, offerId, buyer, bought, seller, sold)
+    }.setGen1(Gen.identifier).setGen3(Gen.posNum[Long])
   }
 
-  def doc(id: String, offerId: Long, buyer: PublicKeyOps, bought: Amount, seller: PublicKeyOps, sold: Amount) = {
+  def doc(id: String, created: ZonedDateTime, offerId: Long, buyer: PublicKeyOps, bought: Amount, seller: PublicKeyOps, sold: Amount) = {
     s""" {
-        "_links": {
-          "operation": {
-            "href": "https://horizon-testnet.stellar.org/operations/31161168848490497"
-          },
-          "succeeds": {
-            "href": "https://horizon-testnet.stellar.org/effects?order=desc&cursor=31161168848490497-2"
-          },
-          "precedes": {
-            "href": "https://horizon-testnet.stellar.org/effects?order=asc&cursor=31161168848490497-2"
-          }
-        },
         "id": "$id",
         "paging_token": "31161168848490497-2",
         "account": "${buyer.accountId}",
         "type": "trade",
         "type_i": 33,
+        "created_at": "${formatter.format(created)}",
         "seller": "${seller.accountId}",
         "offer_id": $offerId,
         ${amountDocPortion(sold, sold = true)},
@@ -63,6 +55,4 @@ class TradeEffectResponseSpec extends Specification with ArbitraryInput {
         """.stripMargin.trim
     }
   }
-
-  def amountString(a: Amount): String = "%.7f".formatLocal(Locale.ROOT, a.units / math.pow(10, 7))
 }

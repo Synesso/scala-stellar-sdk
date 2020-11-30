@@ -169,6 +169,8 @@ trait ArbitraryInput extends ScalaCheck {
   implicit def arbTransactionSigningRequest: Arbitrary[TransactionSigningRequest] =
     Arbitrary(genTransactionSigningRequest)
 
+  implicit def arbZonedDateTime: Arbitrary[ZonedDateTime] = Arbitrary(genZonedDateTime)
+
   def genListOfNM[T](low: Int, high: Int, gen: Gen[T]): Gen[List[T]] = for {
     size <- Gen.choose(low, high)
     xs <- Gen.listOfN(size, gen)
