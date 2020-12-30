@@ -150,20 +150,22 @@ trait Network extends LazyLogging {
 
   /**
    * Fetch a stream of offers.
+   * @param sponsor optional account of the sponsor who is paying the reserves for the offer
+   * @param account optional account making the offer
+   * @param selling optional asset being sold
+   * @param buying optional asset being bought
    * @param cursor optional record id to start results from (defaults to `0`)
    * @param order  optional order to sort results by (defaults to `Asc`)
    * @see [[https://www.stellar.org/developers/horizon/reference/endpoints/offers.html endpoint doc]]
    */
-  def offers(selling: Option[Asset] = None, buying: Option[Asset] = None, failed: Boolean = false, cursor: HorizonCursor = Record(0), order: HorizonOrder = Asc)(implicit ex: ExecutionContext):
+  def offers(sponsor: Option[PublicKeyOps] = None, account: Option[PublicKeyOps] = None, selling: Option[Asset] = None,
+             buying: Option[Asset] = None, cursor: HorizonCursor = Record(0), order: HorizonOrder = Asc)(implicit ex: ExecutionContext):
   Future[LazyList[OfferResponse]] = {
-    val params = List(
-      "selling"         -> selling,
-      "buying"          -> buying,
-      "include_failed"  -> Some(failed)
-    ).foldLeft(Map.empty[String,String])({
-      case (acc, (_,     None))        => acc
-      case (acc, (param, Some(value))) => acc + (param -> value.toString)
-    })
+    val params =
+      optional("sponsor", sponsor.map(_.accountId)) ++
+      optional("seller", account.map(_.accountId)) ++
+      optional(buying.map(asset => assetParams("buying", asset))) ++
+      optional(selling.map(asset => assetParams("selling", asset)))
     horizon.getStream[OfferResponse](s"offers", OfferRespDeserializer, cursor, order, params)
   }
 
@@ -459,6 +461,9 @@ trait Network extends LazyLogging {
     }
   }
 
+  private def optional(params: Option[Map[String, String]]): Map[String, String] = params.getOrElse(Map.empty[String,String])
+
+  private def optional(key: String, value: Option[String]): Map[String, String] = value.fold(Map.empty[String,String])(v => Map(key -> v))
 }
 
 /**

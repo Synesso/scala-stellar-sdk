@@ -377,35 +377,80 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
   }
 
   "offer endpoint" should {
-    "list offers" >> {
+    "list all offers" >> {
       network.offers().map(_.toSeq) must beLike[Seq[OfferResponse]] {
         case Seq(first, second, third) =>
           first.id mustEqual 2
           first.seller must beEquivalentTo(accnB)
           first.selling mustEqual lumens(5)
-          first.buying must beEquivalentTo(IssuedAsset12("Chinchilla", accnA))
+          first.buying must beEquivalentTo(Asset("Chinchilla", accnA))
           first.price mustEqual Price(1, 5)
           second.id mustEqual 5
           second.seller must beEquivalentTo(accnA)
-          second.selling must beEquivalentTo(Amount(800000000, IssuedAsset12("Chinchilla", accnA)))
+          second.selling must beEquivalentTo(Amount(800000000, Asset("Chinchilla", accnA)))
           second.buying mustEqual NativeAsset
           second.price mustEqual Price(80, 4)
           third.id mustEqual 6
           third.seller must beEquivalentTo(accnA)
-          third.selling must beEquivalentTo(Amount(9999899, IssuedAsset12("Chinchilla", accnA)))
-          third.buying must beEquivalentTo(IssuedAsset12("Chinchilla", masterAccountKey))
+          third.selling must beEquivalentTo(Amount(9999899, Asset("Chinchilla", accnA)))
+          third.buying must beEquivalentTo(Asset("Chinchilla", masterAccountKey))
           third.price mustEqual Price(1, 1)
-
       }.awaitFor(10.seconds)
     }
 
+    "list offers by selling asset" >> {
+      network.offers(selling = Some(Asset("Chinchilla", accnA))).map(_.toSeq) must beLike[Seq[OfferResponse]] {
+        case Seq(first, second) =>
+          first.id mustEqual 5
+          first.seller must beEquivalentTo(accnA)
+          first.selling must beEquivalentTo(Amount(800000000, Asset("Chinchilla", accnA)))
+          first.buying mustEqual NativeAsset
+          first.price mustEqual Price(80, 4)
+          second.id mustEqual 6
+          second.seller must beEquivalentTo(accnA)
+          second.selling must beEquivalentTo(Amount(9999899, Asset("Chinchilla", accnA)))
+          second.buying must beEquivalentTo(Asset("Chinchilla", masterAccountKey))
+          second.price mustEqual Price(1, 1)
+      }.awaitFor(10.seconds)
+    }
+
+    "list offers by buying asset" >> {
+      network.offers(buying = Some(Asset("Chinchilla", accnA))).map(_.toSeq) must beLike[Seq[OfferResponse]] {
+        case Seq(only) =>
+          only.id mustEqual 2
+          only.seller must beEquivalentTo(accnB)
+          only.selling mustEqual lumens(5)
+          only.buying must beEquivalentTo(Asset("Chinchilla", accnA))
+          only.price mustEqual Price(1, 5)
+      }.awaitFor(10.seconds)
+    }
+
+    "list offers by account" >> {
+      network.offers(account = Some(accnA)).map(_.toSeq) must beLike[Seq[OfferResponse]] {
+        case Seq(first, second) =>
+          logger.debug("Sponsor1=" + first.sponsor)
+          logger.debug("Sponsor2=" + second.sponsor)
+          first.seller must beEquivalentTo(accnA)
+          first.selling must beEquivalentTo(Amount(800000000, Asset("Chinchilla", accnA)))
+          first.buying mustEqual NativeAsset
+          first.price mustEqual Price(80, 4)
+          second.id mustEqual 6
+          second.seller must beEquivalentTo(accnA)
+          second.selling must beEquivalentTo(Amount(9999899, Asset("Chinchilla", accnA)))
+          second.buying must beEquivalentTo(Asset("Chinchilla", masterAccountKey))
+          second.price mustEqual Price(1, 1)
+      }.awaitFor(10.seconds)
+    }
+  }
+
+  "account endpoint" should {
     "list offers by account" >> {
       network.offersByAccount(accnB).map(_.toSeq) must beLike[Seq[OfferResponse]] {
         case Seq(only) =>
           only.id mustEqual 2
           only.seller must beEquivalentTo(accnB)
           only.selling mustEqual lumens(5)
-          only.buying must beEquivalentTo(IssuedAsset12("Chinchilla", accnA))
+          only.buying must beEquivalentTo(Asset("Chinchilla", accnA))
           only.price mustEqual Price(1, 5)
       }.awaitFor(10.seconds)
     }
