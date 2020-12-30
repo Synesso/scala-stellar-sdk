@@ -149,6 +149,25 @@ trait Network extends LazyLogging {
     horizon.get[LedgerResponse](s"ledgers/$ledgerId")
 
   /**
+   * Fetch a stream of offers.
+   * @param cursor optional record id to start results from (defaults to `0`)
+   * @param order  optional order to sort results by (defaults to `Asc`)
+   * @see [[https://www.stellar.org/developers/horizon/reference/endpoints/offers.html endpoint doc]]
+   */
+  def offers(selling: Option[Asset] = None, buying: Option[Asset] = None, failed: Boolean = false, cursor: HorizonCursor = Record(0), order: HorizonOrder = Asc)(implicit ex: ExecutionContext):
+  Future[LazyList[OfferResponse]] = {
+    val params = List(
+      "selling"         -> selling,
+      "buying"          -> buying,
+      "include_failed"  -> Some(failed)
+    ).foldLeft(Map.empty[String,String])({
+      case (acc, (_,     None))        => acc
+      case (acc, (param, Some(value))) => acc + (param -> value.toString)
+    })
+    horizon.getStream[OfferResponse](s"offers", OfferRespDeserializer, cursor, order, params)
+  }
+
+  /**
     * Fetch a stream of offers for an account.
     * @param account the relevant account
     * @param cursor optional record id to start results from (defaults to `0`)

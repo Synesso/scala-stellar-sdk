@@ -377,6 +377,28 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
   }
 
   "offer endpoint" should {
+    "list offers" >> {
+      network.offers().map(_.toSeq) must beLike[Seq[OfferResponse]] {
+        case Seq(first, second, third) =>
+          first.id mustEqual 2
+          first.seller must beEquivalentTo(accnB)
+          first.selling mustEqual lumens(5)
+          first.buying must beEquivalentTo(IssuedAsset12("Chinchilla", accnA))
+          first.price mustEqual Price(1, 5)
+          second.id mustEqual 5
+          second.seller must beEquivalentTo(accnA)
+          second.selling must beEquivalentTo(Amount(800000000, IssuedAsset12("Chinchilla", accnA)))
+          second.buying mustEqual NativeAsset
+          second.price mustEqual Price(80, 4)
+          third.id mustEqual 6
+          third.seller must beEquivalentTo(accnA)
+          third.selling must beEquivalentTo(Amount(9999899, IssuedAsset12("Chinchilla", accnA)))
+          third.buying must beEquivalentTo(IssuedAsset12("Chinchilla", masterAccountKey))
+          third.price mustEqual Price(1, 1)
+
+      }.awaitFor(10.seconds)
+    }
+
     "list offers by account" >> {
       network.offersByAccount(accnB).map(_.toSeq) must beLike[Seq[OfferResponse]] {
         case Seq(only) =>
