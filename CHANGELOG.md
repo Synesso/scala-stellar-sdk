@@ -4,6 +4,11 @@ As this project is pre 1.0, breaking changes may happen for minor version bumps.
 
 ## Next version
 
+## 0.18.0
+
+- [#219](https://github.com/Synesso/scala-stellar-sdk/issues/219) Implement Offers endpoint
+
+
 ## 0.17.0
 
 - [CAP-33 Sponsored Reserves](https://github.com/stellar/stellar-protocol/blob/master/core/cap-0033.md)
