@@ -6,7 +6,6 @@ import okio.ByteString
 import org.json4s.{DefaultFormats, Formats}
 import org.json4s.JsonAST.JObject
 import stellar.sdk.model._
-import stellar.sdk.model.ledger.TransactionLedgerEntries.arr
 import stellar.sdk.model.ledger.{LedgerEntryChange, LedgerEntryChanges, TransactionLedgerEntries}
 import stellar.sdk.model.response.ResponseParser
 import stellar.sdk.util.ByteArrays.base64

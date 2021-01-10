@@ -10,13 +10,14 @@ import okio.ByteString
 import org.apache.commons.codec.binary.Base64
 import org.scalacheck.{Arbitrary, Gen}
 import org.specs2.ScalaCheck
+import org.stellar.xdr.ManageOfferEffect
 import stellar.sdk.key._
 import stellar.sdk.model._
 import stellar.sdk.model.ledger._
 import stellar.sdk.model.op._
 import stellar.sdk.model.response._
 import stellar.sdk.model.result.TransactionResult._
-import stellar.sdk.model.result.{PathPaymentResult, _}
+import stellar.sdk.model.result.{PathPaymentReceiveResult, _}
 import stellar.sdk.util.ByteArrays.trimmedByteArray
 import stellar.sdk.util.{ByteArrays, DoNothingNetwork}
 
@@ -133,7 +134,7 @@ trait ArbitraryInput extends ScalaCheck {
 
   implicit def arbManageOfferResult: Arbitrary[ManageOfferResult] = Arbitrary(genManageOfferResult)
 
-  implicit def arbPathPaymentResult: Arbitrary[PathPaymentResult] = Arbitrary(genPathPaymentResult)
+  implicit def arbPathPaymentResult: Arbitrary[PathPaymentReceiveResult] = Arbitrary(genPathPaymentResult)
 
   implicit def arbPaymentResult: Arbitrary[PaymentResult] = Arbitrary(genPaymentResult)
 
@@ -830,7 +831,8 @@ trait ArbitraryInput extends ScalaCheck {
   def genManageOfferSuccess: Gen[ManageOfferSuccess] = for {
     claims <- Gen.listOf(genOfferClaim)
     entry <- Gen.option(genOfferEntry)
-  } yield ManageOfferSuccess(claims, entry)
+    effect <- Gen.oneOf(ManageOfferEffect.values())
+  } yield ManageOfferSuccess(claims, entry, effect)
 
   def genManageOfferResult: Gen[ManageOfferResult] = Gen.oneOf(
     genManageOfferSuccess,
@@ -841,27 +843,27 @@ trait ArbitraryInput extends ScalaCheck {
     Gen.const(ManageOfferLowReserve), Gen.const(UpdateOfferIdNotFound)
   )
 
-  def genPathPaymentResult: Gen[PathPaymentResult] = Gen.oneOf(
+  def genPathPaymentResult: Gen[PathPaymentReceiveResult] = Gen.oneOf(
     genPathPaymentSuccess,
-    Gen.const(PathPaymentMalformed),
-    Gen.const(PathPaymentUnderfunded),
-    Gen.const(PathPaymentSourceNoTrust),
-    Gen.const(PathPaymentSourceNotAuthorised),
-    Gen.const(PathPaymentNoDestination),
-    Gen.const(PathPaymentDestinationNoTrust),
-    Gen.const(PathPaymentDestinationNotAuthorised),
-    Gen.const(PathPaymentDestinationLineFull),
-    genAsset.map(PathPaymentNoIssuer),
-    Gen.const(PathPaymentTooFewOffers),
-    Gen.const(PathPaymentOfferCrossesSelf),
-    Gen.const(PathPaymentSendMaxExceeded)
+    Gen.const(PathPaymentReceiveMalformed),
+    Gen.const(PathPaymentReceiveUnderfunded),
+    Gen.const(PathPaymentReceiveSourceNoTrust),
+    Gen.const(PathPaymentReceiveSourceNotAuthorised),
+    Gen.const(PathPaymentReceiveNoDestination),
+    Gen.const(PathPaymentReceiveDestinationNoTrust),
+    Gen.const(PathPaymentReceiveDestinationNotAuthorised),
+    Gen.const(PathPaymentReceiveDestinationLineFull),
+    genAsset.map(PathPaymentReceiveNoIssuer),
+    Gen.const(PathPaymentReceiveTooFewOffers),
+    Gen.const(PathPaymentReceiveOfferCrossesSelf),
+    Gen.const(PathPaymentReceiveSendMaxExceeded)
   )
 
-  def genPathPaymentSuccess: Gen[PathPaymentSuccess] = for {
+  def genPathPaymentSuccess: Gen[PathPaymentReceiveSuccess] = for {
     claims <- Gen.listOf(genOfferClaim)
     destination <- genPublicKey
     amount <- genAmount
-  }  yield PathPaymentSuccess(claims, destination, amount)
+  }  yield PathPaymentReceiveSuccess(claims, destination, amount)
 
   def genPaymentResult: Gen[PaymentResult] = Gen.oneOf(
     PaymentSuccess,

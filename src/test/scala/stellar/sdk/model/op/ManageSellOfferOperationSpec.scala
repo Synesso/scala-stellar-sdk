@@ -16,14 +16,8 @@ class ManageSellOfferOperationSpec extends Specification with ArbitraryInput wit
   implicit val formats = Serialization.formats(NoTypeHints) + TransactedOperationDeserializer + OperationDeserializer
 
   "create sell offer operation" should {
-    "serde via xdr string" >> prop { actual: CreateSellOfferOperation =>
-      Operation.decodeXDR(base64(actual.encode)) must beEquivalentTo(actual)
-    }
-
-    "serde via xdr bytes" >> prop { actual: CreateSellOfferOperation =>
-      val (remaining, decoded) = Operation.decode.run(actual.encode).value
-      decoded mustEqual actual
-      remaining must beEmpty
+    "serde via xdr" >> prop { actual: CreateSellOfferOperation =>
+      Operation.decode(actual.xdr) mustEqual actual
     }
 
     "be parsed from json" >> prop { op: Transacted[CreateSellOfferOperation] =>

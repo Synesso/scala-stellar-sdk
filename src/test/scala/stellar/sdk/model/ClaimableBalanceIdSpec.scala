@@ -11,12 +11,9 @@ class ClaimableBalanceIdSpec extends Specification with ArbitraryInput {
   implicit val arbClaimableBalanceId: Arbitrary[ClaimableBalanceId] = Arbitrary(genClaimableBalanceId)
 
   "claimable balance hash id" should {
-    "serde via xdr bytes" >> prop { actual: ClaimableBalanceId =>
-      val (remaining, decoded) = ClaimableBalanceId.decode.run(actual.encode).value
-      decoded mustEqual actual
-      remaining must beEmpty
+    "serde via xdr" >> prop { actual: ClaimableBalanceId =>
+      ClaimableBalanceId.decode(actual.xdr) mustEqual actual
     }
-
   }
 }
 

@@ -12,7 +12,7 @@ class TransactionSpec extends Specification with ArbitraryInput with DomainMatch
   "a transaction" should {
 
     "serde via xdr bytes" >> prop { transaction: Transaction =>
-      transaction must serdeUsing(Transaction.decode)
+      Transaction.decode(transaction.xdr)(transaction.network) mustEqual transaction
     }
 
     "allow adding of operations one at a time" >> prop { (source: Account, ops: Seq[Operation]) =>

@@ -2,13 +2,11 @@ package stellar.sdk.model
 
 import java.nio.ByteBuffer
 
-import cats.data.State
 import org.apache.commons.codec.binary.Base32
-import stellar.sdk.{KeyPair, PublicKey}
+import org.stellar.xdr.{PublicKey => XPublicKey, _}
 import stellar.sdk.model.StrKey.codec
-import stellar.sdk.model.xdr.Encode.{bytes, int, long}
-import stellar.sdk.model.xdr.{Decode, Encodable}
 import stellar.sdk.util.ByteArrays
+import stellar.sdk.{KeyPair, PublicKey}
 
 
 /**
@@ -25,7 +23,17 @@ sealed trait StrKey {
   * Only a subset of StrKeys can be signers. Seeds should not be the declared signer
   * (as they are the private dual of the AccountId).
   */
-sealed trait SignerStrKey extends StrKey with Encodable
+sealed trait SignerStrKey extends StrKey {
+  def xdr: SignerKey
+}
+
+object SignerStrKey {
+  def decode(xdr: SignerKey): SignerStrKey = xdr.getDiscriminant match {
+    case SignerKeyType.SIGNER_KEY_TYPE_ED25519 => AccountId(xdr.getEd25519.getUint256)
+    case SignerKeyType.SIGNER_KEY_TYPE_HASH_X => SHA256Hash(xdr.getHashX.getUint256)
+    case SignerKeyType.SIGNER_KEY_TYPE_PRE_AUTH_TX => PreAuthTx(xdr.getPreAuthTx.getUint256)
+  }
+}
 
 case class AccountId(hash: Seq[Byte], subAccountId: Option[Long] = None) extends SignerStrKey {
   val kind: Byte = subAccountId match {
@@ -33,11 +41,35 @@ case class AccountId(hash: Seq[Byte], subAccountId: Option[Long] = None) extends
     case _ => (12 << 3).toByte   // M
   }
 
-  def encode: LazyList[Byte] = subAccountId match {
-    case None => int(0x000) ++ bytes(32, hash)
-    case Some(id) => int(0x100) ++ long(id) ++ bytes(32, hash)
+  override def xdr: SignerKey = new SignerKey.Builder()
+    .discriminant(SignerKeyType.SIGNER_KEY_TYPE_ED25519)
+    .ed25519(new Uint256(hash.toArray))
+    .build()
+
+  def accountIdXdr: AccountID = new AccountID(new XPublicKey.Builder()
+      .discriminant(PublicKeyType.PUBLIC_KEY_TYPE_ED25519)
+      .ed25519(new Uint256(hash.toArray))
+      .build())
+
+  def muxedXdr: MuxedAccount = {
+    val builder = new MuxedAccount.Builder()
+    subAccountId match {
+      case None =>
+        builder
+          .discriminant(CryptoKeyType.KEY_TYPE_ED25519)
+          .ed25519(new Uint256(hash.toArray))
+      case Some(id) =>
+        builder
+          .discriminant(CryptoKeyType.KEY_TYPE_MUXED_ED25519)
+          .med25519(new MuxedAccount.MuxedAccountMed25519.Builder()
+            .id(new Uint64(id))
+            .ed25519(new Uint256(hash.toArray))
+            .build())
+    }
+    builder.build()
   }
 
+/*
   override def encodeToChars: Seq[Char] = subAccountId match {
     case None => super.encodeToChars
     case Some(id) => codec.encode((kind +: long(id) ++: hash ++: checksum).toArray).map(_.toChar).toIndexedSeq
@@ -47,6 +79,7 @@ case class AccountId(hash: Seq[Byte], subAccountId: Option[Long] = None) extends
     case None => ByteArrays.checksum((kind +: hash).toArray).toIndexedSeq
     case Some(id) => ByteArrays.checksum((kind +: long(id) ++: hash).toArray).toIndexedSeq
   }
+*/
 
   val isMulitplexed: Boolean = subAccountId.isDefined
   def publicKey: PublicKey = KeyPair.fromPublicKey(hash)
@@ -54,14 +87,21 @@ case class AccountId(hash: Seq[Byte], subAccountId: Option[Long] = None) extends
   override def toString: String = s"AccountId(${KeyPair.fromPublicKey(hash).accountId}, $subAccountId)"
 }
 
-object AccountId extends Decode {
-  val decode: State[Seq[Byte], AccountId] = int.flatMap {
-    case 0x000 => bytes(32).map(bs => AccountId(bs.toIndexedSeq))
-    case 0x100 => for {
-      subAccountId <- long
-      bs <- bytes(32)
-    } yield AccountId(bs.toIndexedSeq, Some(subAccountId))
-  }
+object AccountId {
+  def decode(accountId: AccountID): AccountId =
+    AccountId(KeyPair.fromPublicKey(accountId.getAccountID.getEd25519.getUint256).publicKey)
+
+  def decode(muxedAccount: MuxedAccount): AccountId =
+    muxedAccount.getDiscriminant match {
+      case CryptoKeyType.KEY_TYPE_ED25519 =>
+        AccountId(KeyPair.fromPublicKey(muxedAccount.getEd25519.getUint256).publicKey)
+      case CryptoKeyType.KEY_TYPE_MUXED_ED25519 =>
+        AccountId(
+          hash = KeyPair.fromPublicKey(muxedAccount.getMed25519.getEd25519.getUint256).publicKey,
+          subAccountId = Some(muxedAccount.getMed25519.getId.getUint64)
+        )
+      case d => throw new IllegalArgumentException(s"Cannot decode $d into an AccountId")
+    }
 }
 
 case class Seed(hash: Seq[Byte]) extends StrKey {
@@ -70,27 +110,23 @@ case class Seed(hash: Seq[Byte]) extends StrKey {
 
 case class PreAuthTx(hash: Seq[Byte]) extends SignerStrKey {
   val kind: Byte = (19 << 3).toByte // T
-  def encode: LazyList[Byte] = int(0x001) ++ bytes(32, hash)
+  override def xdr: SignerKey = new SignerKey.Builder()
+    .discriminant(SignerKeyType.SIGNER_KEY_TYPE_PRE_AUTH_TX)
+    .preAuthTx(new Uint256(hash.toArray))
+    .build()
 }
 
 case class SHA256Hash(hash: Seq[Byte]) extends SignerStrKey {
   val kind: Byte = (23 << 3).toByte // X
-  def encode: LazyList[Byte] = int(0x002) ++ bytes(32, hash)
+  override def xdr: SignerKey = new SignerKey.Builder()
+    .discriminant(SignerKeyType.SIGNER_KEY_TYPE_HASH_X)
+    .hashX(new Uint256(hash.toArray))
+    .build()
 }
 
-object StrKey extends Decode {
+object StrKey {
 
   val codec = new Base32()
-
-  val decode: State[Seq[Byte], SignerStrKey] = int.flatMap {
-    case 0x000 => bytes(32).map(bs => AccountId(bs.toIndexedSeq))
-    case 0x001 => bytes(32).map(bs => PreAuthTx(bs.toIndexedSeq))
-    case 0x002 => bytes(32).map(bs => SHA256Hash(bs.toIndexedSeq))
-    case 0x100 => for {
-      subAccountId <- long
-      bs <- bytes(32)
-    } yield AccountId(bs.toIndexedSeq, Some(subAccountId))
-  }
 
   def decodeFromString(key: String): StrKey = decodeFromChars(key.toIndexedSeq)
 

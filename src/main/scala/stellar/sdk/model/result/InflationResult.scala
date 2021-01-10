@@ -1,39 +1,47 @@
 package stellar.sdk.model.result
 
-import cats.data.State
+import org.stellar.xdr.OperationResult.OperationResultTr
+import org.stellar.xdr.{InflationResultCode, Int64, OperationType, InflationResult => XInflationResult}
+import stellar.sdk.PublicKey
 import stellar.sdk.model.NativeAmount
-import stellar.sdk.model.xdr.{Decode, Encodable, Encode}
-import stellar.sdk.{KeyPair, PublicKey}
 
-sealed abstract class InflationResult(val opResultCode: Int) extends ProcessedOperationResult(opCode = 9)
+sealed abstract class InflationResult extends ProcessedOperationResult {
+  val result: XInflationResult
+  val transactionResult: OperationResultTr = new OperationResultTr.Builder()
+    .discriminant(OperationType.INFLATION)
+    .inflationResult(result)
+    .build()
+}
 
-object InflationResult extends Decode {
-  val decode: State[Seq[Byte], InflationResult] = int.flatMap {
-    case 0 => arr(InflationPayout.decode).map(InflationSuccess)
-    case -1 => State.pure(InflationNotDue)
-  }
+object InflationResult {
 }
 
 /**
   * Inflation operation was successful.
   */
-case class InflationSuccess(payouts: Seq[InflationPayout]) extends InflationResult(0) {
-  override def encode: LazyList[Byte] = super.encode ++ Encode.arr(payouts)
+case class InflationSuccess(payouts: Seq[InflationPayout]) extends InflationResult {
+  val result: XInflationResult = new XInflationResult.Builder()
+    .discriminant(InflationResultCode.INFLATION_SUCCESS)
+    .payouts(payouts.map(_.xdr).toArray)
+    .build()
 }
 
 /**
-  * Inflation operation failed because inflation is not yet due.
-  */
-case object InflationNotDue extends InflationResult(-1)
-
-
-case class InflationPayout(recipient: PublicKey, amount: NativeAmount) extends Encodable {
-  def encode: LazyList[Byte] = recipient.encode ++ Encode.long(amount.units)
+ * Inflation operation failed because inflation is not yet due.
+ */
+case object InflationNotDue extends InflationResult {
+  val result: XInflationResult = new XInflationResult.Builder()
+    .discriminant(InflationResultCode.INFLATION_NOT_TIME)
+    .build()
 }
 
-object InflationPayout extends Decode {
-  val decode: State[Seq[Byte], InflationPayout] = for {
-    recipient <- KeyPair.decode
-    units <- long
-  } yield InflationPayout(recipient, NativeAmount(units))
+
+case class InflationPayout(recipient: PublicKey, amount: NativeAmount) {
+  def xdr: org.stellar.xdr.InflationPayout = new org.stellar.xdr.InflationPayout.Builder()
+    .amount(new Int64(amount.units))
+    .destination(recipient.toAccountId.accountIdXdr)
+    .build()
+}
+
+object InflationPayout {
 }

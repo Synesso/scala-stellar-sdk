@@ -8,7 +8,6 @@ import stellar.sdk.model._
 import stellar.sdk.util.ByteArrays.base64
 import stellar.sdk.model.op._
 import stellar.sdk.model.result.TransactionHistory
-import stellar.sdk.model.xdr.Encodable
 
 import scala.math.Ordering.Implicits.seqOrdering
 import scala.util.Random
@@ -265,7 +264,7 @@ trait DomainMatchers extends AnyMatchers with MustExpectations with SequenceMatc
       other.signedTransaction must beEquivalentTo(challenge.signedTransaction)
       other.networkPassphrase mustEqual challenge.networkPassphrase
   }
-
+/*
   def serdeUsing[E <: Encodable](decoder: State[Seq[Byte], E]): Matcher[E] = beLike {
     case expected: Encodable =>
       val encoded = expected.encode.toList
@@ -273,4 +272,5 @@ trait DomainMatchers extends AnyMatchers with MustExpectations with SequenceMatc
       actual mustEqual expected
       remaining must beEmpty
   }
+  */
 }

@@ -2,7 +2,7 @@ package stellar.sdk.model
 
 import java.time.{Instant, ZoneId}
 
-import org.json4s.DefaultFormats
+import org.json4s.{DefaultFormats, Formats}
 import org.json4s.native.JsonMethods
 import org.scalacheck.{Arbitrary, Gen}
 import org.specs2.ScalaCheck
@@ -15,13 +15,11 @@ class ClaimPredicateSpec extends Specification with ScalaCheck {
 
   implicit val arbClaimPredicate: Arbitrary[ClaimPredicate] = Arbitrary(Gen.lzy(genClaimPredicate))
   implicit val arbInstant: Arbitrary[Instant] = Arbitrary(genInstant)
-  implicit val formats = DefaultFormats + ClaimPredicateDeserializer
+  implicit val formats: Formats = DefaultFormats + ClaimPredicateDeserializer
 
   "a claim predicate" should {
     "serde to/from XDR" >> prop { p: ClaimPredicate =>
-      val (state, decoded) = ClaimPredicate.decode.run(p.encode).value
-      state.isEmpty must beTrue
-      decoded mustEqual p
+      ClaimPredicate.decode(p.xdr) mustEqual p
     }
 
     "parse from JSON" >> prop { p: ClaimPredicate =>

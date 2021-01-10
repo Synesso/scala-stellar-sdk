@@ -1,13 +1,12 @@
 package stellar.sdk.model.op
 
-import org.json4s.{Formats, NoTypeHints}
 import org.json4s.native.JsonMethods.parse
 import org.json4s.native.Serialization
+import org.json4s.{Formats, NoTypeHints}
 import org.scalacheck.Arbitrary
 import org.specs2.mutable.Specification
 import stellar.sdk.ArbitraryInput
 import stellar.sdk.model.ClaimantGenerators
-import stellar.sdk.util.ByteArrays
 
 class CreateClaimableBalanceOperationSpec extends Specification with ArbitraryInput with JsonSnippets {
 
@@ -17,14 +16,8 @@ class CreateClaimableBalanceOperationSpec extends Specification with ArbitraryIn
   implicit val formats: Formats = Serialization.formats(NoTypeHints) + TransactedOperationDeserializer
 
   "create claimable balance operation" should {
-    "serde via xdr bytes" >> prop { actual: CreateClaimableBalanceOperation =>
-      val (remaining, decoded) = Operation.decode.run(actual.encode).value
-      decoded mustEqual actual
-      remaining must beEmpty
-    }
-
-    "serde via xdr string" >> prop { actual: CreateClaimableBalanceOperation =>
-      Operation.decodeXDR(ByteArrays.base64(actual.encode)) mustEqual actual
+    "serde via xdr" >> prop { actual: CreateClaimableBalanceOperation =>
+      Operation.decode(actual.xdr) mustEqual actual
     }
 
     "parse from json" >> prop { op: Transacted[CreateClaimableBalanceOperation] =>

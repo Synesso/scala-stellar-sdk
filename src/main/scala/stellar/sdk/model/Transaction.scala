@@ -1,18 +1,15 @@
 package stellar.sdk.model
 
-import cats.data._
 import okhttp3.HttpUrl
-import stellar.sdk.model.TimeBounds.Unbounded
+import okio.ByteString
+import org.stellar.xdr.EnvelopeType.{ENVELOPE_TYPE_TX, ENVELOPE_TYPE_TX_FEE_BUMP}
+import org.stellar.xdr.{EnvelopeType, FeeBumpTransaction, FeeBumpTransactionEnvelope, Int64, SequenceNumber, TransactionEnvelope, TransactionV0Envelope, TransactionV1Envelope, Uint32, Transaction => XTransaction}
 import stellar.sdk.model.op.{CreateAccountOperation, Operation}
 import stellar.sdk.model.response.TransactionPostResponse
-import stellar.sdk.model.xdr.Encode.{arr, bytes, int, long, opt}
-import stellar.sdk.model.xdr.{Decode, Encodable}
 import stellar.sdk.util.ByteArrays
-import stellar.sdk.util.ByteArrays._
 import stellar.sdk.{KeyPair, Network, PublicKey, PublicKeyOps, PublicNetwork, Signature}
 
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.{Failure, Success}
 
 case class Transaction(
   source: Account,
@@ -21,8 +18,7 @@ case class Transaction(
   timeBounds: TimeBounds,
   maxFee: NativeAmount,
   overrideMemoRequirement: Boolean = false
-)(implicit val network: Network) extends Encodable {
-
+)(implicit val network: Network) {
   private val BaseFee = 100L
 
   def add(op: Operation): Transaction = this.copy(operations = operations :+ op)
@@ -41,7 +37,17 @@ case class Transaction(
     SignedTransaction(this, signatures)
   }
 
-  def hash: Seq[Byte] = ByteArrays.sha256(network.networkId ++ encode)
+  def xdr: XTransaction = new XTransaction.Builder()
+    .sourceAccount(source.id.muxedXdr)
+    .fee(new Uint32(maxFee.units.toInt))
+    .seqNum(new SequenceNumber(new Int64(source.sequenceNumber)))
+    .timeBounds(timeBounds.xdr)
+    .memo(memo.xdr)
+    .operations(operations.map(_.xdr).toArray)
+    .ext(new XTransaction.TransactionExt.Builder().discriminant(0).build())
+    .build()
+
+  def hash: Seq[Byte] = ByteArrays.sha256(network.networkId ++ xdr.encode().toByteArray)
     .toIndexedSeq
 
   /** The `web+stellar:` URL for this transaction. */
@@ -56,78 +62,28 @@ case class Transaction(
    */
   def payeeAccounts: List[AccountId] = operations.toList.flatMap(_.accountRequiringMemo)
 
-  /**
-   * The base64 encoding of the XDR form of this unsigned transaction.
-   */
-  def encodeXDR: String = base64(encode)
+  def encodeXDR: String = xdr.encode().base64()
 
-  // Encodes to TransactionV1 format by default
-  def encode: LazyList[Byte] = encodeV1
-
-  def encodeV0: LazyList[Byte] = {
-    source.id.copy(subAccountId = None).encode ++
-      int(maxFee.units.toInt) ++
-      long(source.sequenceNumber) ++
-      opt(Some(timeBounds).filterNot(_ == Unbounded)) ++
-      memo.encode ++
-      arr(operations) ++
-      int(0)
-  }
-
-  def encodeV1: LazyList[Byte] = {
-    int(2) ++
-      source.id.encode ++
-      int(maxFee.units.toInt) ++
-      long(source.sequenceNumber) ++
-      opt(Some(timeBounds).filterNot(_ == Unbounded)) ++
-      memo.encode ++
-      arr(operations) ++
-      int(0)
-  }
 }
 
-object Transaction extends Decode {
+object Transaction {
+  def decode(xdr: XTransaction)(implicit network: Network): Transaction = Transaction(
+    source = ???,
+    operations = ???,
+    memo = ???,
+    timeBounds = ???,
+    maxFee = ???,
+    overrideMemoRequirement = ???
+  )
 
-  /**
-   * Decodes an unsigned transaction from base64-encoded XDR.
-   */
-  def decodeXDR(base64: String)(implicit network: Network): Transaction =
-    decode.run(ByteArrays.base64(base64).toIndexedSeq).value._2
-
-  def decode(implicit network: Network): State[Seq[Byte], Transaction] = int.flatMap {
-    case 0 => decodeV0
-    case 2 => decodeV1
-  }
-
-  def decodeV0(implicit network: Network): State[Seq[Byte], Transaction] = {
-    for {
-      publicKeyBytes <- bytes(32)
-      accountId = AccountId(publicKeyBytes.toArray[Byte])
-      fee <- int
-      seqNo <- long
-      timeBounds <- opt(TimeBounds.decode).map(_.getOrElse(Unbounded))
-      memo <- Memo.decode
-      ops <- arr(Operation.decode)
-      _ <- int
-    } yield Transaction(Account(accountId, seqNo), ops, memo, timeBounds, NativeAmount(fee))
-  }
-
-  def decodeV1(implicit network: Network): State[Seq[Byte], Transaction] = {
-    for {
-      accountId <- AccountId.decode
-      fee <- int
-      seqNo <- long
-      timeBounds <- opt(TimeBounds.decode).map(_.getOrElse(Unbounded))
-      memo <- Memo.decode
-      ops <- arr(Operation.decode)
-      _ <- int
-    } yield Transaction(Account(accountId, seqNo), ops, memo, timeBounds, NativeAmount(fee))
-  }
+  def decodeXDR(envelopeXDR: String)(implicit network: Network): Transaction = ???
 }
 
-case class SignedTransaction(transaction: Transaction,
+case class SignedTransaction(
+  transaction: Transaction,
   signatures: Seq[Signature],
-  feeBump: Option[FeeBump] = None) {
+  feeBump: Option[FeeBump] = None
+) {
   assert(transaction.minFee.units <= transaction.maxFee.units,
     "Insufficient maxFee. Allow at least 100 stroops per operation. " +
       s"[maxFee=${transaction.maxFee.units}, operations=${transaction.operations.size}].")
@@ -157,12 +113,35 @@ case class SignedTransaction(transaction: Transaction,
   /**
    * The base64 encoding of the XDR form of this signed transaction.
    */
-  def encodeXDR: String = base64(encode)
+  def encodeXDR: String = xdr.encode.hex()
 
-  def encode: LazyList[Byte] = feeBump.map(encodeFeeBump)
-    .getOrElse(transaction.encode ++ arr(signatures))
-
-  def encodeV0: LazyList[Byte] = transaction.encodeV0 ++ arr(signatures)
+  def xdr: TransactionEnvelope = {
+    val transactionXdr = new TransactionV1Envelope.Builder()
+      .tx(transaction.xdr)
+      .signatures(signatures.map(_.xdr).toArray)
+      .build()
+    val builder = new TransactionEnvelope.Builder()
+    feeBump match {
+      case None =>
+        builder
+          .discriminant(ENVELOPE_TYPE_TX)
+          .v1(transactionXdr)
+      case Some(bump) =>
+        builder
+          .discriminant(ENVELOPE_TYPE_TX_FEE_BUMP)
+          .feeBump(new FeeBumpTransactionEnvelope.Builder()
+          .tx(new FeeBumpTransaction.Builder()
+            .fee(new Int64(bump.fee.units))
+            .feeSource(bump.source.muxedXdr)
+            .innerTx(new FeeBumpTransaction.FeeBumpTransactionInnerTx.Builder()
+              .discriminant(ENVELOPE_TYPE_TX)
+              .v1(transactionXdr)
+              .build())
+            .build())
+          .build())
+    }
+    builder.build()
+  }
 
   /** The `web+stellar:` URL for this transaction. */
   def signingRequest(
@@ -179,7 +158,10 @@ case class SignedTransaction(transaction: Transaction,
 
   /** Bump a signed transaction with a bigger fee */
   def bumpFee(fee: NativeAmount, source: KeyPair): SignedTransaction = {
-    val encodedFeeBump = ByteArrays.sha256(encodeFeeBumpBase(source.toAccountId, fee))
+    val encodedFeeBump = transaction.copy(
+      source = Account(source.toAccountId, 0L),
+      maxFee = fee
+    )(transaction.network).xdr.encode().sha256().toByteArray
     val signature = source.sign(encodedFeeBump)
     val feeBump = FeeBump(source.toAccountId, fee, List(signature))
     this.copy(feeBump = Some(feeBump))
@@ -191,58 +173,74 @@ case class SignedTransaction(transaction: Transaction,
     case CreateAccountOperation(destination, _, _) => Some(destination)
     case _ => None
   }
-
-  private def encodeFeeBumpBase(accountId: AccountId, fee: NativeAmount): LazyList[Byte] = {
-    bytes(32, transaction.network.networkId) ++
-      int(5) ++
-      accountId.encode ++
-      long(fee.units) ++
-      transaction.encodeV1 ++
-      arr(signatures) ++
-      int(0)
-  }
-
-  private def encodeFeeBump(bump: FeeBump): LazyList[Byte] =
-    int(5) ++
-      bump.source.encode ++
-      long(bump.fee.units) ++
-      transaction.encodeV1 ++
-      arr(signatures) ++
-      int(0) ++
-      arr(bump.signatures)
 }
 
-object SignedTransaction extends Decode {
+object SignedTransaction {
+
+  /**
+   * Decodes a signed transaction (aka envelope) from base64-encoded XDR.
+   */
+  def decode(bs: ByteString)(implicit network: Network): SignedTransaction = {
+    val decoded = TransactionEnvelope.decode(bs)
+    decoded.getDiscriminant match {
+      case EnvelopeType.ENVELOPE_TYPE_TX_V0 =>
+        val envelope = TransactionV0Envelope.decode(bs)
+        val tx = envelope.getTx
+        SignedTransaction(
+          transaction = Transaction(
+            source = Account(
+              id = AccountId(tx.getSourceAccountEd25519.getUint256),
+              sequenceNumber = tx.getSeqNum.getSequenceNumber.getInt64
+            ),
+            operations = tx.getOperations.map(Operation.decode),
+            // TODO - From here!
+            memo = ???,
+            timeBounds = ???,
+            maxFee = ???,
+            overrideMemoRequirement = ???
+          ),
+          signatures = List(???),
+          feeBump = Some(???)
+        )
+
+      case EnvelopeType.ENVELOPE_TYPE_TX =>
+        val envelope = TransactionV1Envelope.decode(bs)
+        SignedTransaction(
+          transaction = Transaction(
+            source = ???,
+            operations = ???,
+            memo = ???,
+            timeBounds = ???,
+            maxFee = ???,
+            overrideMemoRequirement = ???
+          ),
+          signatures = List(???),
+          feeBump = Some(???)
+        )
+
+      case EnvelopeType.ENVELOPE_TYPE_TX_FEE_BUMP =>
+        val envelope = FeeBumpTransactionEnvelope.decode(bs)
+        SignedTransaction(
+          transaction = Transaction(
+            source = ???,
+            operations = ???,
+            memo = ???,
+            timeBounds = ???,
+            maxFee = ???,
+            overrideMemoRequirement = ???
+          ),
+          signatures = List(???),
+          feeBump = Some(???)
+        )
+
+      case _ => throw new IllegalArgumentException(s"Cannot decode ${decoded.getDiscriminant} into a SignedTransaction")
+    }
+  }
 
   /**
    * Decodes a signed transaction (aka envelope) from base64-encoded XDR.
    */
   def decodeXDR(base64: String)(implicit network: Network): SignedTransaction =
-    decode.run(ByteArrays.base64(base64).toIndexedSeq).value._2
+    decode(ByteString.decodeBase64(base64))
 
-  def decode(implicit network: Network): State[Seq[Byte], SignedTransaction] = for {
-    discriminator <- int
-    txn <- discriminator match {
-      // parse a legacy transaction, without the public key discriminator, into a standard transaction
-      case 0 => Transaction.decodeV0.map(Left(_))
-
-      // parse a standard transaction, with MuxedAccount
-      case 2 => Transaction.decodeV1.map(Left(_))
-
-      // parse a fee bump transaction
-      case 5 => for {
-        accountId <- AccountId.decode
-        fee <- long
-        _ <- int // 2
-        transaction <- Transaction.decodeV1
-        transactionSigs <- arr(Signature.decode)
-        _ <- int // 0
-        feeBump = Some(FeeBump(accountId, NativeAmount(fee), Nil))
-      } yield Right(SignedTransaction(transaction, transactionSigs, feeBump))
-    }
-    sigs <- arr(Signature.decode).map(_.toList)
-  } yield txn match {
-    case Left(t: Transaction) => SignedTransaction(t, sigs)
-    case Right(st: SignedTransaction) => st.copy(feeBump = st.feeBump.map(_.copy(signatures = sigs)))
-  }
 }

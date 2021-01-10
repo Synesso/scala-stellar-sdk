@@ -1,12 +1,9 @@
 package stellar.sdk.model.result
 
-import cats.data.State
 import stellar.sdk.model.NativeAmount
 import stellar.sdk.model.result.TransactionResult.Code
-import stellar.sdk.model.xdr.{Decode, Encodable, Encode}
-import stellar.sdk.util.ByteArrays
 
-sealed trait TransactionResult extends Encodable {
+sealed trait TransactionResult {
   val isSuccess: Boolean
   def sequenceUpdated: Boolean
 }
@@ -18,12 +15,6 @@ case class TransactionSuccess(feeCharged: NativeAmount, operationResults: Seq[Op
   val isSuccess: Boolean = true
 
   def sequenceUpdated: Boolean = true
-
-  def encode: LazyList[Byte] =
-    Encode.long(feeCharged.units) ++
-      Encode.int(0) ++
-      Encode.arr(operationResults) ++
-      Encode.int(0)
 }
 
 sealed trait TransactionNotSuccessful extends TransactionResult {
@@ -37,11 +28,6 @@ sealed trait TransactionNotSuccessful extends TransactionResult {
   * The transaction failed when processing the operations.
   */
 case class TransactionFailure(feeCharged: NativeAmount, operationResults: Seq[OperationResult]) extends TransactionNotSuccessful {
-  def encode: LazyList[Byte] =
-    Encode.long(feeCharged.units) ++
-      Encode.int(-1) ++
-      Encode.arr(operationResults) ++
-      Encode.int(0)
 }
 
 /**
@@ -49,37 +35,18 @@ case class TransactionFailure(feeCharged: NativeAmount, operationResults: Seq[Op
   */
 case class TransactionNotAttempted(reason: Code, feeCharged: NativeAmount) extends TransactionNotSuccessful {
   val resultCode: Int = reason.id
-
-  def encode: LazyList[Byte] =
-      Encode.long(feeCharged.units) ++
-      Encode.int(reason.id) ++
-      Encode.int(0)
 }
 
 
-object TransactionResult extends Decode {
-
-  def decodeXDR(base64: String): TransactionResult = decode.run(ByteArrays.base64(base64).toIndexedSeq).value._2
-
-  def decode: State[Seq[Byte], TransactionResult] = for {
-    feeCharged <- long.map(NativeAmount)
-    result <- Code.decode
-    operationResults <- result.decodeOperationResults
-    _ <- int
-  } yield result match {
-    case Successful => TransactionSuccess(feeCharged, operationResults)
-    case OperationsFailed => TransactionFailure(feeCharged, operationResults)
-    case reason: OperationsNotAttempted => TransactionNotAttempted(reason, feeCharged)
-  }
+object TransactionResult {
+  def decodeXDR(resultXDR: String): TransactionResult = ???
 
   sealed abstract class Code(val id: Int) {
-    val decodeOperationResults: State[Seq[Byte], Seq[OperationResult]] = arr(OperationResult.decode)
   }
 
   sealed trait OperationsNotAttempted {
     this: Code =>
     val id: Int
-    override val decodeOperationResults: State[Seq[Byte], Seq[OperationResult]] = State.pure(Nil)
   }
 
   case object Successful extends Code(0)
@@ -96,8 +63,6 @@ object TransactionResult extends Decode {
   case object UnspecifiedInternalError extends Code(-11) with OperationsNotAttempted
 
   object Code {
-    def decode: State[Seq[Byte], Code] = int.map(apply)
-    
     def apply(i: Int): Code = i match {
       case 0 => Successful
       case -1 => OperationsFailed

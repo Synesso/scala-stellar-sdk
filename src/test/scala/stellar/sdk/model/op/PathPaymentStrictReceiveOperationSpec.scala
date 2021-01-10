@@ -1,11 +1,10 @@
 package stellar.sdk.model.op
 
-import org.json4s.{Formats, NoTypeHints}
 import org.json4s.native.JsonMethods.parse
 import org.json4s.native.Serialization
+import org.json4s.{Formats, NoTypeHints}
 import org.scalacheck.Arbitrary
 import org.specs2.mutable.Specification
-import stellar.sdk.util.ByteArrays.base64
 import stellar.sdk.{ArbitraryInput, DomainMatchers}
 
 class PathPaymentStrictReceiveOperationSpec extends Specification with ArbitraryInput with DomainMatchers with JsonSnippets {
@@ -14,14 +13,8 @@ class PathPaymentStrictReceiveOperationSpec extends Specification with Arbitrary
   implicit val formats: Formats = Serialization.formats(NoTypeHints) + TransactedOperationDeserializer
 
   "path payment operation" should {
-    "serde via xdr string" >> prop { actual: PathPaymentStrictReceiveOperation =>
-      Operation.decodeXDR(base64(actual.encode)) must beEquivalentTo(actual)
-    }
-
-    "serde via xdr bytes" >> prop { actual: PathPaymentStrictReceiveOperation =>
-      val (remaining, decoded) = Operation.decode.run(actual.encode).value
-      decoded mustEqual actual
-      remaining must beEmpty
+    "serde via xdr" >> prop { actual: PathPaymentStrictReceiveOperation =>
+      Operation.decode(actual.xdr) mustEqual actual
     }
 
     "parse from json" >> prop { op: Transacted[PathPaymentStrictReceiveOperation] =>

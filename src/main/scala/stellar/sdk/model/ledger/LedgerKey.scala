@@ -1,69 +1,80 @@
 package stellar.sdk.model.ledger
 
-import cats.data.State
-import okio.ByteString
-import stellar.sdk.model.xdr.{Decode, Encodable, Encode}
-import stellar.sdk.model.{Asset, ClaimableBalanceId, NonNativeAsset}
-import stellar.sdk.{KeyPair, PublicKeyOps}
+import org.stellar.xdr.LedgerKey._
+import org.stellar.xdr.{Int64, LedgerEntryType, String64, XdrString, LedgerKey => XLedgerKey}
+import stellar.sdk.PublicKeyOps
+import stellar.sdk.model.{AccountId, Asset, ClaimableBalanceId, NonNativeAsset}
 
-sealed trait LedgerKey extends Encodable
+sealed trait LedgerKey
 
-object LedgerKey extends Decode {
-
-  val decode: State[Seq[Byte], LedgerKey] = switch[LedgerKey](
-    widen(AccountKey.decode),
-    widen(TrustLineKey.decode),
-    widen(OfferKey.decode),
-    widen(DataKey.decode),
-    widen(ClaimableBalanceKey.decode)
-  )
+object LedgerKey {
+  def decode(xdr: XLedgerKey): LedgerKey = {
+    xdr.getDiscriminant match {
+      case LedgerEntryType.ACCOUNT =>
+        AccountKey(AccountId.decode(xdr.getAccount.getAccountID).publicKey)
+      case LedgerEntryType.CLAIMABLE_BALANCE =>
+        ClaimableBalanceKey(ClaimableBalanceId.decode(xdr.getClaimableBalance.getBalanceID))
+      case LedgerEntryType.DATA =>
+        DataKey(
+          account = AccountId.decode(xdr.getData.getAccountID).publicKey,
+          name = xdr.getData.getDataName.getString64.toString
+        )
+      case LedgerEntryType.OFFER =>
+        OfferKey(
+          account = AccountId.decode(xdr.getOffer.getSellerID).publicKey,
+          offerId = xdr.getOffer.getOfferID.getInt64
+        )
+      case LedgerEntryType.TRUSTLINE =>
+        TrustLineKey(
+          account = AccountId.decode(xdr.getTrustLine.getAccountID).publicKey,
+          asset = Asset.decode(xdr.getTrustLine.getAsset).asInstanceOf[NonNativeAsset]
+        )
+    }
+  }
 }
 
 case class AccountKey(account: PublicKeyOps) extends LedgerKey {
-  override def encode: LazyList[Byte] = Encode.int(0) ++ account.encode
-}
-
-object AccountKey extends Decode {
-  val decode: State[Seq[Byte], AccountKey] = KeyPair.decode.map(AccountKey(_))
+  def xdr: XLedgerKey = new XLedgerKey.Builder()
+    .discriminant(LedgerEntryType.ACCOUNT)
+    .account(new LedgerKeyAccount.Builder()
+      .accountID(account.toAccountId.accountIdXdr)
+      .build())
+    .build()
 }
 
 case class TrustLineKey(account: PublicKeyOps, asset: NonNativeAsset) extends LedgerKey {
-  override def encode: LazyList[Byte] = Encode.int(1) ++ account.encode ++ asset.encode
-}
-
-object TrustLineKey extends Decode {
-  val decode: State[Seq[Byte], TrustLineKey] = for {
-    account <- KeyPair.decode
-    asset <- Asset.decode.map(_.asInstanceOf[NonNativeAsset])
-  } yield TrustLineKey(account, asset)
+  def xdr: XLedgerKey = new XLedgerKey.Builder()
+    .discriminant(LedgerEntryType.TRUSTLINE)
+    .trustLine(new LedgerKeyTrustLine.Builder()
+      .accountID(account.toAccountId.accountIdXdr)
+      .build())
+    .build()
 }
 
 case class OfferKey(account: PublicKeyOps, offerId: Long) extends LedgerKey {
-  override def encode: LazyList[Byte] = Encode.int(2) ++ account.encode ++ Encode.long(offerId)
-}
-
-object OfferKey extends Decode {
-  val decode: State[Seq[Byte], OfferKey] = for {
-    account <- KeyPair.decode
-    offerId <- long
-  } yield OfferKey(account, offerId)
+  def xdr: XLedgerKey = new XLedgerKey.Builder()
+    .discriminant(LedgerEntryType.OFFER)
+    .offer(new LedgerKeyOffer.Builder()
+      .offerID(new Int64(offerId))
+      .sellerID(account.toAccountId.accountIdXdr)
+      .build())
+    .build()
 }
 
 case class DataKey(account: PublicKeyOps, name: String) extends LedgerKey {
-  override def encode: LazyList[Byte] = Encode.int(3) ++ account.encode ++ Encode.string(name)
-}
-
-object DataKey extends Decode {
-  val decode: State[Seq[Byte], DataKey] = for {
-    account <- KeyPair.decode
-    name <- string
-  } yield DataKey(account, name)
+  def xdr: XLedgerKey = new XLedgerKey.Builder()
+    .discriminant(LedgerEntryType.DATA)
+    .data(new LedgerKeyData.Builder()
+      .dataName(new String64(new XdrString(name)))
+      .build())
+    .build()
 }
 
 case class ClaimableBalanceKey(id: ClaimableBalanceId) extends LedgerKey {
-  override def encode: LazyList[Byte] = Encode.int(4) ++ id.encode
-}
-
-object ClaimableBalanceKey extends Decode {
-  val decode: State[Seq[Byte], ClaimableBalanceKey] = ClaimableBalanceId.decode.map(ClaimableBalanceKey(_))
+  def xdr: XLedgerKey = new XLedgerKey.Builder()
+    .discriminant(LedgerEntryType.CLAIMABLE_BALANCE)
+    .claimableBalance(new LedgerKeyClaimableBalance.Builder()
+      .balanceID(id.xdr)
+      .build())
+    .build()
 }

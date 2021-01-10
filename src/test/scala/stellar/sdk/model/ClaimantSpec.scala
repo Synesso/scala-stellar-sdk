@@ -1,8 +1,8 @@
 package stellar.sdk.model
 
-import org.json4s.NoTypeHints
-import org.json4s.native.{JsonMethods, Serialization}
 import org.json4s.native.JsonMethods.parse
+import org.json4s.native.Serialization
+import org.json4s.{Formats, NoTypeHints}
 import org.scalacheck.{Arbitrary, Gen}
 import org.specs2.ScalaCheck
 import org.specs2.mutable.Specification
@@ -13,13 +13,11 @@ class ClaimantSpec extends Specification with ScalaCheck {
 
   implicit val arbClaimant: Arbitrary[Claimant] = Arbitrary(genClaimant)
   implicit val arbAccountIdClaimant: Arbitrary[AccountIdClaimant] = Arbitrary(genAccountIdClaimant)
-  implicit val formats = Serialization.formats(NoTypeHints) + ClaimantDeserializer
+  implicit val formats: Formats = Serialization.formats(NoTypeHints) + ClaimantDeserializer
 
   "a claimant" should {
     "serde to/from XDR" >> prop { claimant: Claimant =>
-      val (state, decoded) = Claimant.decode.run(claimant.encode).value
-      state.isEmpty must beTrue
-      decoded mustEqual claimant
+      Claimant.decode(claimant.xdr) mustEqual claimant
     }
 
     "parse from JSON" >> prop { claimant: AccountIdClaimant =>

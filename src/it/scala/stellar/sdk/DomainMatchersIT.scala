@@ -1,13 +1,11 @@
 package stellar.sdk
 
-import cats.data.State
 import org.apache.commons.codec.binary.Hex
 import org.specs2.matcher.{AnyMatchers, Matcher, MustExpectations, OptionMatchers, SequenceMatchersCreation}
 import stellar.sdk.model._
-import stellar.sdk.util.ByteArrays.base64
 import stellar.sdk.model.op._
 import stellar.sdk.model.result.TransactionHistory
-import stellar.sdk.model.xdr.Encodable
+import stellar.sdk.util.ByteArrays.base64
 
 trait DomainMatchersIT extends AnyMatchers with MustExpectations with SequenceMatchersCreation with OptionMatchers {
 
@@ -239,6 +237,7 @@ trait DomainMatchersIT extends AnyMatchers with MustExpectations with SequenceMa
       other.copy(memo = thr.memo) mustEqual thr
   }
 
+/*
   def serdeUsing[E <: Encodable](decoder: State[Seq[Byte], E]): Matcher[E] = beLike {
     case expected: Encodable =>
       val encoded = expected.encode
@@ -246,5 +245,6 @@ trait DomainMatchersIT extends AnyMatchers with MustExpectations with SequenceMa
       actual mustEqual expected
       remaining must beEmpty
   }
+*/
 
 }

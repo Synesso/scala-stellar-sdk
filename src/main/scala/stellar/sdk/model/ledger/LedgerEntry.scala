@@ -1,30 +1,39 @@
 package stellar.sdk.model.ledger
 
-import cats.data.State
 import okio.ByteString
-import stellar.sdk.model.op.{IssuerFlag, IssuerFlags}
-import stellar.sdk.model.xdr.{Decode, Encodable, Encode}
+import org.stellar.xdr.AccountEntryExtensionV1.AccountEntryExtensionV1Ext
+import org.stellar.xdr.LedgerEntryExtensionV1.LedgerEntryExtensionV1Ext
+import org.stellar.xdr.{AccountEntryExtensionV1, Int64, LedgerEntryExtensionV1, LedgerEntryType, SponsorshipDescriptor, Uint32, AccountEntry => XAccountEntry, LedgerEntry => XLedgerEntry}
+import stellar.sdk.PublicKeyOps
 import stellar.sdk.model._
-import stellar.sdk.{KeyPair, PublicKeyOps}
+import stellar.sdk.model.op.IssuerFlag
 
-sealed trait LedgerEntryData extends Encodable
-
-case class LedgerEntry(lastModifiedLedgerSeq: Int, data: LedgerEntryData, private val dataDisc: Int) extends Encodable {
-  override def encode: LazyList[Byte] = Encode.int(lastModifiedLedgerSeq) ++ Encode.int(dataDisc) ++ data.encode
+sealed trait LedgerEntryData {
+  def xdr: XLedgerEntry.LedgerEntryData
 }
 
-object LedgerEntry extends Decode {
-  val decode: State[Seq[Byte], LedgerEntry] = for {
-    lastModifiedLedgerSeq <- int
-    dataDisc <- switchInt[LedgerEntryData](
-      widen(AccountEntry.decode),
-      widen(TrustLineEntry.decode),
-      widen(OfferEntry.decode),
-      widen(DataEntry.decode),
-      widen(ClaimableBalanceEntry.decode)
-    )
-    (data, disc) = dataDisc
-  } yield LedgerEntry(lastModifiedLedgerSeq, data, disc)
+case class LedgerEntry(
+  lastModifiedLedgerSeq: Int,
+  data: LedgerEntryData,
+  sponsorship: Option[AccountId],
+  private val dataDisc: Int
+) {
+  def xdr: XLedgerEntry = new XLedgerEntry.Builder()
+    .data(data.xdr)
+    .ext(new XLedgerEntry.LedgerEntryExt.Builder()
+      .discriminant(sponsorship.map(_ => 1).getOrElse(0))
+      .v1(sponsorship.map(s => new LedgerEntryExtensionV1.Builder()
+        .ext(new LedgerEntryExtensionV1Ext.Builder()
+          .discriminant(0)
+          .build())
+        .sponsoringID(new SponsorshipDescriptor(s.accountIdXdr))
+        .build()).orNull)
+      .build())
+    .lastModifiedLedgerSeq(new Uint32(lastModifiedLedgerSeq))
+    .build()
+}
+
+object LedgerEntry {
 }
 
 /*
@@ -65,39 +74,65 @@ object LedgerEntry extends Decode {
       ext;
   };
  */
-case class AccountEntry(account: PublicKeyOps, balance: Long, seqNum: Long, numSubEntries: Int,
-                        inflationDestination: Option[PublicKeyOps], flags: Set[IssuerFlag],
-                        homeDomain: Option[String], thresholds: LedgerThresholds, signers: Seq[Signer],
-                        liabilities: Option[Liabilities]) extends LedgerEntryData {
+case class AccountEntry(
+  account: PublicKeyOps,
+  balance: Long,
+  seqNum: Long,
+  numSubEntries: Int,
+  inflationDestination: Option[PublicKeyOps],
+  flags: Set[IssuerFlag],
+  homeDomain: Option[String],
+  thresholds: LedgerThresholds,
+  signers: Seq[Signer],
+  liabilities: Option[Liabilities],
+  numSponsored: Int,
+  numSponsoring: Int,
+  signerSponsoringIds: List[AccountId]
+) extends LedgerEntryData {
+  override def xdr: XLedgerEntry.LedgerEntryData = {
+    // TODO - Congrats for making it this far!! Let's keep going!!
+    val extension1 = liabilities.map { l =>
+      val hasSponsorshipInfo = numSponsored != 0 || numSponsoring != 0 || signerSponsoringIds.nonEmpty
+      val extension2 = if (hasSponsorshipInfo) Some(
+        new AccountEntryExtensionV1Ext.Builder()
+          .
+          .build()
+      ) else None
+      new AccountEntryExtensionV1.Builder()
+        .liabilities(l.xdr)
+        .ext()
+        .build()
+    }
 
-  override def encode: LazyList[Byte] =
-    account.encode ++
-    Encode.long(balance) ++
-    Encode.long(seqNum) ++
-    Encode.int(numSubEntries) ++
-    Encode.opt(inflationDestination) ++
-    Encode.int(flags.map(_.i + 0).fold(0)(_ | _)) ++
-    Encode.string(homeDomain.getOrElse("")) ++
-    thresholds.encode ++
-    Encode.arr(signers) ++
-    Encode.opt(liabilities)
 
+
+    val extension: Option[AccountEntryExtensionV1] = if (hasSponsorshipInfo) {
+      Some(new AccountEntryExtensionV1.Builder()
+        .
+        .build())
+    } else None
+    new XLedgerEntry.LedgerEntryData.Builder()
+      .discriminant(LedgerEntryType.ACCOUNT)
+      .account(new XAccountEntry.Builder()
+        .accountID(account.toAccountId.accountIdXdr)
+        .balance(new Int64(balance))
+        .ext(new XAccountEntry.AccountEntryExt.Builder()
+          .discriminant(if (hasSponsorshipInfo) 1 else 0)
+          .v1(if (hasSponsorshipInfo))
+          .build())
+        .flags()
+        .homeDomain()
+        .inflationDest()
+        .numSubEntries()
+        .seqNum()
+        .signers()
+        .thresholds()
+        .build())
+      .build()
+  }
 }
 
-object AccountEntry extends Decode {
-  val decode: State[Seq[Byte], AccountEntry] = for {
-    account <- KeyPair.decode
-    balance <- long
-    seqNum <- long
-    numSubEntries <- int
-    inflationDestination <- opt(KeyPair.decode)
-    flags <- IssuerFlags.decode
-    homeDomain <- string.map(Some(_).filter(_.nonEmpty))
-    thresholds <- LedgerThresholds.decode
-    signers <- arr(Signer.decode)
-    liabilities <- opt(Liabilities.decode)
-  } yield AccountEntry(account, balance, seqNum, numSubEntries, inflationDestination, flags, homeDomain, thresholds,
-      signers, liabilities)
+object AccountEntry {
 }
 
 /*
@@ -136,28 +171,9 @@ case class TrustLineEntry(account: PublicKeyOps, asset: NonNativeAsset, balance:
                           issuerAuthorized: Boolean, liabilities: Option[Liabilities])
   extends LedgerEntryData {
 
-  override def encode: LazyList[Byte] =
-    account.encode ++
-    asset.encode ++
-    Encode.long(balance) ++
-    Encode.long(limit) ++
-    Encode.bool(issuerAuthorized) ++
-    Encode.opt(liabilities)
-
 }
 
-object TrustLineEntry extends Decode {
-  val decode: State[Seq[Byte], TrustLineEntry] = for {
-    account <- KeyPair.decode
-    asset <- Asset.decode.map(_.asInstanceOf[NonNativeAsset])
-    balance <- long
-    limit <- long
-    issuerAuthorized <- bool
-    liabilities <- switch[Option[Liabilities]](
-      State.pure(None),
-      Liabilities.decode.map(Some(_))
-    )
-  } yield TrustLineEntry(account, asset, balance, limit, issuerAuthorized, liabilities)
+object TrustLineEntry {
 }
 
 /*
@@ -188,29 +204,9 @@ object TrustLineEntry extends Decode {
  */
 case class OfferEntry(account: PublicKeyOps, offerId: Long, selling: Amount, buying: Asset, price: Price)
   extends LedgerEntryData {
-
-  override def encode: LazyList[Byte] =
-    account.encode ++
-    Encode.long(offerId) ++
-    selling.asset.encode ++
-    buying.encode ++
-    Encode.long(selling.units) ++
-    price.encode ++
-    Encode.long(0)
-
 }
 
-object OfferEntry extends Decode {
-  val decode: State[Seq[Byte], OfferEntry] = for {
-    account <- KeyPair.decode
-    offerId <- long
-    selling <- Asset.decode
-    buying <- Asset.decode
-    units <- long
-    price <- Price.decode
-    _ <- int // flags
-    _ <- int // ext
-  } yield OfferEntry(account, offerId, Amount(units, selling), buying, price)
+object OfferEntry {
 }
 
 
@@ -233,20 +229,9 @@ object OfferEntry extends Decode {
 case class DataEntry(account: PublicKeyOps, name: String, value: Seq[Byte])
   extends LedgerEntryData {
 
-  override def encode: LazyList[Byte] =
-    account.encode ++
-    Encode.string(name) ++
-    Encode.padded(value) ++
-    Encode.int(0)
 }
 
-object DataEntry extends Decode {
-  val decode: State[Seq[Byte], DataEntry] = for {
-    account <- KeyPair.decode
-    name <- string
-    value <- padded()
-    _ <- int
-  } yield DataEntry(account, name, value)
+object DataEntry {
 }
 
 /*
@@ -287,23 +272,7 @@ case class ClaimableBalanceEntry(
   reserve: NativeAmount
 ) extends LedgerEntryData {
 
-  override def encode: LazyList[Byte] =
-    Encode.int(0) ++ Encode.bytes(32, id.toByteArray) ++
-      createdBy.encode ++
-      Encode.arr(claimants) ++
-      amount.encode ++
-      Encode.long(reserve.units) ++
-      Encode.int(0)
 }
 
-object ClaimableBalanceEntry extends Decode {
-  val decode: State[Seq[Byte], ClaimableBalanceEntry] = for {
-    _ <- int
-    id <- bytes(32).map(_.toArray).map(new ByteString(_))
-    createdBy <- KeyPair.decode
-    claimants <- arr(Claimant.decode).map(_.toList)
-    amount <- Amount.decode
-    reserve <- long.map(NativeAmount)
-    _ <- int
-  } yield ClaimableBalanceEntry(id, createdBy, claimants, amount, reserve)
+object ClaimableBalanceEntry {
 }

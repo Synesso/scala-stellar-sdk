@@ -1,39 +1,32 @@
 package stellar.sdk.model
 
-import java.nio.charset.StandardCharsets.UTF_8
-
-import cats.data.State
 import okio.ByteString
+import org.stellar.xdr.{Hash, MemoType, Uint64, XdrString, Memo => XMemo}
 import stellar.sdk.util.ByteArrays._
-import stellar.sdk.model.xdr.{Decode, Encode}
 
 import scala.util.Try
 
 sealed trait Memo {
-  def encode: LazyList[Byte]
-}
-
-object Memo extends Decode {
-  def decode: State[Seq[Byte], Memo] = switch(
-    State.pure(NoMemo),
-    string.map(MemoText(_)),
-    long.map(MemoId),
-    bytes.map(_.toIndexedSeq).map(MemoHash(_)),
-    bytes.map(_.toIndexedSeq).map(MemoReturnHash(_))
-  )
+  def xdr: XMemo
 }
 
 case object NoMemo extends Memo {
-  override def encode: LazyList[Byte] = Encode.int(0)
+  override def xdr: XMemo = new XMemo.Builder()
+    .discriminant(MemoType.MEMO_NONE)
+    .build()
 }
 
 case class MemoText(byteString: ByteString) extends Memo {
   val Length = 28
-  val bytes = byteString.toByteArray
+  val bytes: Array[Byte] = byteString.toByteArray
   val text: String = byteString.utf8()
   assert(byteString.size() <= Length, s"Text exceeded limit (${byteString.size()}/$Length bytes)")
 
-  override def encode: LazyList[Byte] = Encode.int(1) ++ Encode.string(text)
+  override def xdr: XMemo =
+    new XMemo.Builder()
+      .discriminant(MemoType.MEMO_TEXT)
+      .text(new XdrString(bytes))
+      .build()
 }
 
 object MemoText {
@@ -41,7 +34,11 @@ object MemoText {
 }
 
 case class MemoId(id: Long) extends Memo {
-  override def encode: LazyList[Byte] = Encode.int(2) ++ Encode.long(id)
+  override def xdr: XMemo =
+    new XMemo.Builder()
+      .discriminant(MemoType.MEMO_ID)
+      .id(new Uint64(id))
+      .build()
 
   def unsignedId: BigInt = BigInt(java.lang.Long.toUnsignedString(id))
 
@@ -61,7 +58,11 @@ sealed trait MemoWithHash extends Memo {
 case class MemoHash(bs: Seq[Byte]) extends MemoWithHash {
   assert(bs.length <= Length, s"Hash exceeded limit (${bytes.length}/$Length bytes)")
 
-  override def encode: LazyList[Byte] = Encode.int(3) ++ Encode.bytes(bs)
+  override def xdr: XMemo =
+    new XMemo.Builder()
+      .discriminant(MemoType.MEMO_HASH)
+      .hash(new Hash(bs.toArray))
+      .build()
 }
 
 object MemoHash {
@@ -71,9 +72,13 @@ object MemoHash {
 case class MemoReturnHash(bs: Seq[Byte]) extends MemoWithHash {
   assert(bs.length <= Length, s"Hash exceeded limit (${bytes.length}/$Length bytes)")
 
-  override def encode: LazyList[Byte] = Encode.int(4) ++ Encode.bytes(bs)
+  override def xdr: XMemo =
+    new XMemo.Builder()
+      .discriminant(MemoType.MEMO_RETURN)
+      .retHash(new Hash(bs.toArray))
+      .build()
 }
 
 object MemoReturnHash {
-  def from(hex: String) = Try(MemoReturnHash(hexToBytes(hex)))
+  def from(hex: String): Try[MemoReturnHash] = Try(MemoReturnHash(hexToBytes(hex)))
 }

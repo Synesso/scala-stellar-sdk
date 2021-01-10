@@ -5,7 +5,6 @@ import org.json4s.native.JsonMethods.parse
 import org.json4s.native.Serialization
 import org.scalacheck.Arbitrary
 import org.specs2.mutable.Specification
-import stellar.sdk.util.ByteArrays.base64
 import stellar.sdk.{ArbitraryInput, DomainMatchers}
 
 class InflationOperationSpec extends Specification with ArbitraryInput with DomainMatchers with JsonSnippets {
@@ -14,14 +13,8 @@ class InflationOperationSpec extends Specification with ArbitraryInput with Doma
   implicit val formats = Serialization.formats(NoTypeHints) + TransactedOperationDeserializer
 
   "the inflation operation" should {
-    "serde via xdr string" >> prop { actual: InflationOperation =>
-      Operation.decodeXDR(base64(actual.encode)) mustEqual actual
-    }
-
-    "serde via xdr bytes" >> prop { actual: InflationOperation =>
-      val (remaining, decoded) = Operation.decode.run(actual.encode).value
-      decoded mustEqual actual
-      remaining must beEmpty
+    "serde via xdr" >> prop { actual: InflationOperation =>
+      Operation.decode(actual.xdr) mustEqual actual
     }
 
     "parse from json" >> prop { op: Transacted[InflationOperation] =>

@@ -1,12 +1,11 @@
 package stellar.sdk.model.op
 
-import org.json4s.{Formats, NoTypeHints}
 import org.json4s.native.JsonMethods.parse
 import org.json4s.native.Serialization
+import org.json4s.{Formats, NoTypeHints}
 import org.scalacheck.Arbitrary
 import org.specs2.mutable.Specification
 import stellar.sdk.ArbitraryInput
-import stellar.sdk.util.ByteArrays
 
 class EndSponsoringReservesOperationSpec extends Specification with ArbitraryInput with JsonSnippets {
 
@@ -17,14 +16,8 @@ class EndSponsoringReservesOperationSpec extends Specification with ArbitraryInp
   implicit val formats: Formats = Serialization.formats(NoTypeHints) + TransactedOperationDeserializer
 
   "End sponsoring future reserves operation" should {
-    "serde via xdr bytes" >> prop { actual: EndSponsoringFutureReservesOperation =>
-      val (remaining, decoded) = Operation.decode.run(actual.encode).value
-      decoded mustEqual actual
-      remaining must beEmpty
-    }
-
-    "serde via xdr string" >> prop { actual: EndSponsoringFutureReservesOperation =>
-      Operation.decodeXDR(ByteArrays.base64(actual.encode)) mustEqual actual
+    "serde via xdr" >> prop { actual: EndSponsoringFutureReservesOperation =>
+      Operation.decode(actual.xdr) mustEqual actual
     }
 
     "parse from json" >> prop { op: Transacted[EndSponsoringFutureReservesOperation] =>

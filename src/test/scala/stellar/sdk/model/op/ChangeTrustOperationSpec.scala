@@ -14,14 +14,8 @@ class ChangeTrustOperationSpec extends Specification with ArbitraryInput with Do
   implicit val formats = Serialization.formats(NoTypeHints) + TransactedOperationDeserializer
 
   "change trust operation" should {
-    "serde via xdr string" >> prop { actual: ChangeTrustOperation =>
-      Operation.decodeXDR(base64(actual.encode)) must beEquivalentTo(actual)
-    }
-
-    "serde via xdr bytes" >> prop { actual: ChangeTrustOperation =>
-      val (remaining, decoded) = Operation.decode.run(actual.encode).value
-      decoded mustEqual actual
-      remaining must beEmpty
+    "serde via xdr" >> prop { actual: ChangeTrustOperation =>
+      Operation.decode(actual.xdr) mustEqual actual
     }
 
     "parse from json" >> prop { op: Transacted[ChangeTrustOperation] =>

@@ -1,24 +1,34 @@
 package stellar.sdk.model.result
 
-import cats.data.State
-import stellar.sdk.model.xdr.Decode
+import org.stellar.xdr.OperationResult.OperationResultTr
+import org.stellar.xdr.{BumpSequenceResultCode, OperationType}
 
-sealed abstract class BumpSequenceResult(val opResultCode: Int) extends ProcessedOperationResult(opCode = 11)
+sealed abstract class BumpSequenceResult extends ProcessedOperationResult {
+  val result: org.stellar.xdr.BumpSequenceResult
+  val transactionResult: OperationResultTr = new OperationResultTr.Builder()
+    .discriminant(OperationType.BUMP_SEQUENCE)
+    .bumpSeqResult(result)
+    .build()
+}
 
-object BumpSequenceResult extends Decode {
-  val decode: State[Seq[Byte], BumpSequenceResult] = int.map {
-    case 0 => BumpSequenceSuccess
-    case -1 => BumpSequenceBadSeqNo
-  }
+object BumpSequenceResult {
 }
 
 /**
   * BumpSequence operation was successful.
   */
-case object BumpSequenceSuccess extends BumpSequenceResult(0)
+case object BumpSequenceSuccess extends BumpSequenceResult {
+  val result: org.stellar.xdr.BumpSequenceResult = new org.stellar.xdr.BumpSequenceResult.Builder()
+    .discriminant(BumpSequenceResultCode.BUMP_SEQUENCE_SUCCESS)
+    .build()
+}
 
 /**
-  * BumpSequence operation failed because the desired sequence number was less than zero.
+  * BumpSequence operation failed because the desired sequence number was not within valid bounds.
   */
-case object BumpSequenceBadSeqNo extends BumpSequenceResult(-1)
+case object BumpSequenceBadSeqNo extends BumpSequenceResult {
+  val result: org.stellar.xdr.BumpSequenceResult = new org.stellar.xdr.BumpSequenceResult.Builder()
+    .discriminant(BumpSequenceResultCode.BUMP_SEQUENCE_BAD_SEQ)
+    .build()
+}
 

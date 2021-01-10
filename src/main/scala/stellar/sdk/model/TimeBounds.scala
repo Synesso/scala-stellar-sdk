@@ -1,14 +1,14 @@
 package stellar.sdk.model
 
+import java.time.temporal.ChronoField
 import java.time.{Clock, Instant}
-import java.time.temporal.{ChronoField, TemporalAdjuster, TemporalField}
 
-import cats.data.State
-import stellar.sdk.model.xdr.{Decode, Encodable}
+import org.stellar.xdr.{TimePoint, Uint64, TimeBounds => XTimeBounds}
 
 import scala.concurrent.duration.Duration
 
-case class TimeBounds(start: Instant, end: Instant) extends Encodable {
+case class TimeBounds(start: Instant, end: Instant) {
+
   private val isUnbounded: Boolean = start == end && start.getEpochSecond == 0
   require(start.isBefore(end) || isUnbounded, s"Range start is not before the end [start=$start][end=$end]")
 
@@ -18,18 +18,18 @@ case class TimeBounds(start: Instant, end: Instant) extends Encodable {
   def includes(instant: Instant): Boolean =
     isUnbounded || !(start.isAfter(instant) || end.isBefore(instant))
 
-  def encode: LazyList[Byte] = {
-    import stellar.sdk.model.xdr.Encode._
+  def xdr: XTimeBounds = new XTimeBounds.Builder()
+    .minTime(new TimePoint(new Uint64(start.getEpochSecond)))
+    .maxTime(new TimePoint(new Uint64(end.getEpochSecond)))
+    .build()
 
-    instant(start) ++ instant(end)
-  }
 }
 
-object TimeBounds extends Decode {
-  def decode: State[Seq[Byte], TimeBounds] = for {
-    start <- instant
-    end <- instant
-  } yield TimeBounds(start, end)
+object TimeBounds {
+  def decode(xdr: XTimeBounds): TimeBounds = TimeBounds(
+    Instant.ofEpochSecond(xdr.getMinTime.getTimePoint.getUint64),
+    Instant.ofEpochSecond(xdr.getMaxTime.getTimePoint.getUint64)
+  )
 
   val Unbounded: TimeBounds = TimeBounds(Instant.ofEpochSecond(0), Instant.ofEpochSecond(0))
 

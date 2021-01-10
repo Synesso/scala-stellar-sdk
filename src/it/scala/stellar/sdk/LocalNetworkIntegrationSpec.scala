@@ -150,7 +150,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
           PathPaymentStrictReceiveOperation(IssuedAmount(1, chinchillaMaster), accnB.toAccountId, IssuedAmount(1, chinchillaA), Nil),
           PathPaymentStrictSendOperation(IssuedAmount(100, chinchillaMaster), accnB.toAccountId, IssuedAmount(1, chinchillaA), Nil),
           BumpSequenceOperation(masterAccount.sequenceNumber + 20),
-          SetOptionsOperation(signer = Some(Signer(SHA256Hash(ByteArrays.sha256(dachshundB.encode).toIndexedSeq), 3)), sourceAccount = Some(accnD))
+          SetOptionsOperation(signer = Some(Signer(SHA256Hash(dachshundB.xdr.encode().sha256().toByteArray), 3)), sourceAccount = Some(accnD))
         )
 
         // example of creating and submitting a payment transaction
@@ -607,7 +607,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
           operations = List(CreateAccountOperation(KeyPair.random.toAccountId, startingBalance = lumens(100))),
           timeBounds = TimeBounds.Unbounded,
           maxFee = NativeAmount(100))
-          .sign(dachshundB.encode)
+          .sign(dachshundB.xdr.encode().toByteArray)
         txnResult <- txn.submit()
       } yield txnResult must beLike[TransactionPostResponse] { case r =>
         r.isSuccess must beTrue

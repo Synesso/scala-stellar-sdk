@@ -36,7 +36,7 @@ class TimeBoundsSpec extends Specification with ArbitraryInput with DomainMatche
 
   "time bounds" should {
     "serde to/from xdr" >> prop { tb: TimeBounds =>
-      tb must serdeUsing(TimeBounds.decode)
+      TimeBounds.decode(tb.xdr) mustEqual tb
     }
 
     "exclude any instant before the start" >> prop { tb: TimeBounds =>

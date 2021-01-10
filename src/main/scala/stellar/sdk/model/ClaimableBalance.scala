@@ -22,10 +22,8 @@ object ClaimableBalance {
 
   def parseClaimableBalance(o: JObject): ClaimableBalance = {
     val idString = (o \ "id").extract[String]
-    val decoded = ByteString.decodeHex(idString).toByteArray
-    val value = ClaimableBalanceId.decode.run(decoded).value
     ClaimableBalance(
-      id = value._2,
+      id = ClaimableBalanceId.decode(ByteString.decodeHex(idString)),
       amount = Amount.parseAmount(o),
       sponsor = KeyPair.fromAccountId((o \ "sponsor").extract[String]),
       claimants = (o \ "claimants").extract[List[Claimant]],
