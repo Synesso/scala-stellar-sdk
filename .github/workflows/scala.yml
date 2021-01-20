@@ -1,6 +1,10 @@
 name: Build
 
-on: [push]
+on:
+  push:
+    branches-ignore: []
+  pull_request:
+    branches-ignore: []
 
 jobs:
   build:
