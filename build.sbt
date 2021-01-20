@@ -1,6 +1,6 @@
 ThisBuild / scalaVersion := "2.13.3"
 
-val specs2 = "4.10.3"
+val specs2 = "4.10.6"
 val okhttp = "4.9.0"
 
 lazy val root = project
@@ -53,12 +53,12 @@ lazy val root = project
       "com.squareup.okhttp3" % "okhttp" % okhttp,
       "com.squareup.okhttp3" % "logging-interceptor" % okhttp,
       "com.typesafe.scala-logging" %% "scala-logging" % "3.9.2",
-      "com.squareup.okio" % "okio" % "2.9.0",
+      "com.squareup.okio" % "okio" % "2.10.0",
       "commons-codec" % "commons-codec" % "1.15",
       "io.github.novacrypto" % "BIP39" % "2019.01.27",
       "net.i2p.crypto" % "eddsa" % "0.3.0",
       "org.json4s" %% "json4s-native" % "3.6.10",
-      "org.scala-lang.modules" %% "scala-collection-compat" % "2.3.1",
+      "org.scala-lang.modules" %% "scala-collection-compat" % "2.3.2",
       "org.typelevel" %% "cats-core" % "2.3.1",
       "tech.sparse" %%  "toml-scala" % "0.2.2",
 

@@ -18,7 +18,7 @@ Add the JitPack & jcenter resolvers and the [latest dependency](https://jitpack.
 ```scala
 resolvers += "jitpack" at "https://jitpack.io"
 resolvers += Resolver.jcenterRepo
-libraryDependencies += "com.github.synesso" %% "scala-stellar-sdk" % "0.17.0"
+libraryDependencies += "com.github.synesso" %% "scala-stellar-sdk" % "0.18.0"
 ```
 
 From there, it is a simple affair to create and fund a new account on the test network.
