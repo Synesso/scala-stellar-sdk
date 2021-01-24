@@ -160,7 +160,7 @@ synesso/scala-stellar-sdk
 <ul style="display: none">
 <li class="md-nav__item md-version" id="project.version">
 <label class="md-nav__link" for="__version">
-<i class="md-icon" title="Version">label_outline</i> 0.17.0
+<i class="md-icon" title="Version">label_outline</i> 0.18.0
 </label>
 </li>
 </ul>
@@ -208,11 +208,11 @@ Secret Seed: SDHXK2UNHTXVW2MZSOVOPYUKVXD3PEVKMNQZZGPODQMR67YTKWMOC732
 <p>The SDK provides several ways to create or resolve <code>KeyPair</code>s and <code>PublicKey</code>s.</p>
 <h3><a href="#randomly" name="randomly" class="anchor"><span class="anchor-link"></span></a>Randomly</h3>
 <p>A random <code>KeyPair</code> is generated when you call <code>KeyPair.random</code>.</p>
-<pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/synesso/scala-stellar-sdk/tree/v0.17.0/src/test/scala/stellar/sdk/DocExamples.scala#L342" target="_blank" title="Go to snippet source"></a><code class="language-scala">KeyPair.random</code></pre>
+<pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/synesso/scala-stellar-sdk/tree/v0.18.0/src/test/scala/stellar/sdk/DocExamples.scala#L342" target="_blank" title="Go to snippet source"></a><code class="language-scala">KeyPair.random</code></pre>
 <p>The chance of receiving a key pair that has been seen before is <a href="https://stellar.stackexchange.com/a/772/111">so miniscule</a> that you might reasonably assume that any randomly generated pair is effectively unique.</p>
 <h3><a href="#by-key" name="by-key" class="anchor"><span class="anchor-link"></span></a>By Key</h3>
 <p>If you know the secret seed (private key), then you can reconstitute the <code>KeyPair</code>.</p>
-<pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/synesso/scala-stellar-sdk/tree/v0.17.0/src/test/scala/stellar/sdk/DocExamples.scala#L320-L331" target="_blank" title="Go to snippet source"></a><code class="language-scala">// Provide the secret seed as a String
+<pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/synesso/scala-stellar-sdk/tree/v0.18.0/src/test/scala/stellar/sdk/DocExamples.scala#L320-L331" target="_blank" title="Go to snippet source"></a><code class="language-scala">// Provide the secret seed as a String
 val keyPair = KeyPair.fromSecretSeed(
   &quot;SDHXK2UNHTXVW2MZSOVOPYUKVXD3PEVKMNQZZGPODQMR67YTKWMOC732&quot;)
 
@@ -225,41 +225,41 @@ KeyPair.fromSecretSeed(
   Hex.decodeHex(&quot;1123740522f11bfef6b3671f51e159ccf589ccf8965262dd5f97d1721d383dd4&quot;)
 )</code></pre>
 <p>If you only know the account id (public key), you can create the <code>PublicKey</code>.</p>
-<pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/synesso/scala-stellar-sdk/tree/v0.17.0/src/test/scala/stellar/sdk/DocExamples.scala#L33-L34" target="_blank" title="Go to snippet source"></a><code class="language-scala">val accountId = &quot;GCXYKQF35XWATRB6AWDDV2Y322IFU2ACYYN5M2YB44IBWAIITQ4RYPXK&quot;
+<pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/synesso/scala-stellar-sdk/tree/v0.18.0/src/test/scala/stellar/sdk/DocExamples.scala#L33-L34" target="_blank" title="Go to snippet source"></a><code class="language-scala">val accountId = &quot;GCXYKQF35XWATRB6AWDDV2Y322IFU2ACYYN5M2YB44IBWAIITQ4RYPXK&quot;
 val publicKey = KeyPair.fromAccountId(accountId)</code></pre>
 <h3><a href="#by-passphrase" name="by-passphrase" class="anchor"><span class="anchor-link"></span></a>By Passphrase</h3>
 <p>As a substitute for a valid secret seed, any passphrase can be used to deterministically derive a <code>KeyPair</code>. </p>
-<pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/synesso/scala-stellar-sdk/tree/v0.17.0/src/test/scala/stellar/sdk/KeyPairSpec.scala#L197-L199" target="_blank" title="Go to snippet source"></a><code class="language-scala">val kp = KeyPair.fromPassphrase(
+<pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/synesso/scala-stellar-sdk/tree/v0.18.0/src/test/scala/stellar/sdk/KeyPairSpec.scala#L197-L199" target="_blank" title="Go to snippet source"></a><code class="language-scala">val kp = KeyPair.fromPassphrase(
   &quot;But, the Babel fish is a dead giveaway isn&#39;t it?&quot;
 )</code></pre>
 <h3><a href="#by-federated-address" name="by-federated-address" class="anchor"><span class="anchor-link"></span></a>By Federated Address</h3>
 <p>As a convenience, accounts may also be identified by a human-readable address known as a <a href="https://www.lumenauts.com/guides/what-are-federated-stellar-addresses">Federated Address</a>. These are in the format <code>NAME*DOMAIN</code>.</p>
 <p>Federated addresses can be resolved using the <code>fromAddress</code> method. Because the actual public key is retrieved from the network, this method returns a <code>Future[PublicKey]</code> and may fail.</p>
-<pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/synesso/scala-stellar-sdk/tree/v0.17.0/src/test/scala/stellar/sdk/KeyPairSpec.scala#L218" target="_blank" title="Go to snippet source"></a><code class="language-scala">val resolved: Future[PublicKey] = KeyPair.fromAddress(&quot;jem*keybase.io&quot;)</code></pre>
+<pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/synesso/scala-stellar-sdk/tree/v0.18.0/src/test/scala/stellar/sdk/KeyPairSpec.scala#L218" target="_blank" title="Go to snippet source"></a><code class="language-scala">val resolved: Future[PublicKey] = KeyPair.fromAddress(&quot;jem*keybase.io&quot;)</code></pre>
 <p>That&rsquo;s all you need to know about <code>KeyPair</code>s. Continue reading to learn about how to inspect Stellar networks via <a href="queries.html">Queries</a>.</p>
 <h3><a href="#from-a-cryptographic-seed-phrase" name="from-a-cryptographic-seed-phrase" class="anchor"><span class="anchor-link"></span></a>From a cryptographic seed phrase</h3>
 <p>Keys can be restored from a mnemonic phrase and, optionally, a password.</p>
-<pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/synesso/scala-stellar-sdk/tree/v0.17.0/src/test/scala/stellar/sdk/KeyPairSpec.scala#L158-L162" target="_blank" title="Go to snippet source"></a><code class="language-scala">val keyPair = KeyPair.fromMnemonicPhrase(
+<pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/synesso/scala-stellar-sdk/tree/v0.18.0/src/test/scala/stellar/sdk/KeyPairSpec.scala#L158-L162" target="_blank" title="Go to snippet source"></a><code class="language-scala">val keyPair = KeyPair.fromMnemonicPhrase(
   phrase = &quot;cable spray genius state float twenty onion head street palace net private &quot; +
     &quot;method loan turn phrase state blanket interest dry amazing dress blast tube&quot;,
   passphrase = &quot;p4ssphr4se&quot;.getBytes(&quot;UTF-8&quot;))
 keyPair.accountId mustEqual &quot;GDAHPZ2NSYIIHZXM56Y36SBVTV5QKFIZGYMMBHOU53ETUSWTP62B63EQ&quot;</code></pre>
 <p>Mnemonic phrases are available in Chinese (simplified &amp; traditional), Czech, English, French, Italian, Japanese, Korean and Spanish. Additional languages can be implemented in clients as needed. See  </p>
-<pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/synesso/scala-stellar-sdk/tree/v0.17.0/src/test/scala/stellar/sdk/KeyPairSpec.scala#L168-L173" target="_blank" title="Go to snippet source"></a><code class="language-scala">val keyPair = KeyPair.fromMnemonicPhrase(
+<pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/synesso/scala-stellar-sdk/tree/v0.18.0/src/test/scala/stellar/sdk/KeyPairSpec.scala#L168-L173" target="_blank" title="Go to snippet source"></a><code class="language-scala">val keyPair = KeyPair.fromMnemonicPhrase(
   phrase = &quot;つぶす　きそう　かるい　ようじ　なまいき　むさぼる　あこがれる　そっせん　みせる　しちょう　&quot; +
     &quot;そんしつ　まろやか　しへい　さわやか　でんあつ　めした　せんとう　だっきゃく　ほっさ　ひるやすみ　&quot; +
     &quot;はさみ　ようちえん　おんだん　えらい&quot;,
   wordList = JapaneseWords)
 keyPair.accountId mustEqual &quot;GDEIRKSGFKJCCXUQAM2KVUOAFV626NESTZ5Q4FRCUXTTYHK6RTN66TY2&quot;</code></pre>
 <p>You can construct a new random mnemonic phrase with any supported language and 128-256 bits of entropy.</p>
-<pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/synesso/scala-stellar-sdk/tree/v0.17.0/src/test/scala/stellar/sdk/key/MnemonicSpec.scala#L61-L64" target="_blank" title="Go to snippet source"></a><code class="language-scala">val mnemonic = Mnemonic.random(SpanishWords, entropyBits = 128)
+<pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/synesso/scala-stellar-sdk/tree/v0.18.0/src/test/scala/stellar/sdk/key/MnemonicSpec.scala#L61-L64" target="_blank" title="Go to snippet source"></a><code class="language-scala">val mnemonic = Mnemonic.random(SpanishWords, entropyBits = 128)
 val passphrase = new ByteString(&quot;perro salchicha&quot;.getBytes(UTF_8))
 val keyPair = mnemonic.asRootKeyPair(passphrase)
 KeyPair.fromMnemonic(mnemonic, passphrase, SpanishWords).accountId mustEqual keyPair.accountId</code></pre>
 <p>(If you wish to use your own source of entropy, rather than rely on the JVM, you can do that via the method <code>Mnemonic.fromEntropy</code>.)</p>
 <h4><a href="#more-on-mnemonics" name="more-on-mnemonics" class="anchor"><span class="anchor-link"></span></a>More on mnemonics</h4>
 <p>Mnemonic phrases derive cryptographic seeds which are the the root of a vast tree of deterministic addresses. If you wish to do more than map a phrase to a <code>KeyPair</code>, then you should access the <code>HDNode</code> of the <code>Mnemonic</code>. From any node, you can derive the child nodes to any depth.</p>
-<pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/synesso/scala-stellar-sdk/tree/v0.17.0/src/test/scala/stellar/sdk/key/MnemonicSpec.scala#L70-L79" target="_blank" title="Go to snippet source"></a><code class="language-scala">val mnemonic = Mnemonic.random(FrenchWords)
+<pre class="prettyprint"><a class="icon go-to-source" href="https://github.com/synesso/scala-stellar-sdk/tree/v0.18.0/src/test/scala/stellar/sdk/key/MnemonicSpec.scala#L70-L79" target="_blank" title="Go to snippet source"></a><code class="language-scala">val mnemonic = Mnemonic.random(FrenchWords)
 val passphrase = new ByteString(&quot;chien saucisse&quot;.getBytes(UTF_8))
 val rootNode = mnemonic.asHDNode(passphrase)
 val node = rootNode.deriveChild(33, 18, 193, 4)
@@ -272,13 +272,13 @@ node.privateKey mustEqual rootNode
 <p>Note that the subtree of nodes <code>44/148/0</code> are dedicated to Stellar keys and can be accessed by the <code>KeyPair</code> deriving methods on both <code>KeyPair</code> and <code>Mnemonic</code>.</p>
 </div>
 <div>
-<a href="https://github.com/synesso/scala-stellar-sdk/tree/v0.17.0/src/main/paradox/key_pairs.md" title="Edit this page" class="md-source-file md-edit">
+<a href="https://github.com/synesso/scala-stellar-sdk/tree/v0.18.0/src/main/paradox/key_pairs.md" title="Edit this page" class="md-source-file md-edit">
 Edit this page
 </a>
 </div>
 <div class="print-only">
 <span class="md-source-file md-version">
-0.17.0
+0.18.0
 </span>
 </div>
 </article>
