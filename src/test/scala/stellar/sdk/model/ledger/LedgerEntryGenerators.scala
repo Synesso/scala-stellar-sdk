@@ -4,8 +4,8 @@ import okio.ByteString
 import org.scalacheck.{Arbitrary, Gen}
 import stellar.sdk.ArbitraryInput
 import stellar.sdk.model.ClaimantGenerators.genClaimant
-import stellar.sdk.model.{ClaimableBalanceIds, Claimant, ClaimantGenerators, LedgerThresholds}
 import stellar.sdk.model.op.IssuerFlag
+import stellar.sdk.model.{ClaimableBalanceHashId, ClaimableBalanceIds, Claimant, LedgerThresholds}
 
 trait LedgerEntryGenerators extends ArbitraryInput {
 
@@ -58,9 +58,18 @@ trait LedgerEntryGenerators extends ArbitraryInput {
     homeDomain <- Gen.option(Gen.identifier)
     thresholds <- genLedgerThresholds
     signers <- Gen.listOf(genSigner)
+    // ext v1
     liabilities <- Gen.option(genLiabilities)
+    // ext v2
+    numSponsored <- Gen.option(Gen.posNum[Int])
+    numSponsoring <- Gen.posNum[Int]
+    sponsorIds <- Gen.listOf(genAccountId).map(_.take(10))
   } yield AccountEntry(account, balance, seqNum, numSubEntries, inflationDestination, flags, homeDomain,
-    thresholds, signers, liabilities)
+    thresholds, signers, liabilities,
+    numSponsored = liabilities.flatMap(_ => numSponsored).getOrElse(0),
+    numSponsoring = liabilities.flatMap(_ => numSponsored).map(_ => numSponsoring).getOrElse(0),
+    signerSponsoringIds = liabilities.flatMap(_ => numSponsored).map(_ => sponsorIds).getOrElse(Nil)
+  )
 
   val genTrustLineEntry: Gen[TrustLineEntry] = for {
     account <- genPublicKey
@@ -78,22 +87,20 @@ trait LedgerEntryGenerators extends ArbitraryInput {
   } yield DataEntry(account, name, value)
 
   val genClaimableBalanceEntry: Gen[ClaimableBalanceEntry] = for {
-    id <- Gen.containerOfN[Array, Byte](32, Gen.posNum[Byte]).map(new ByteString(_))
-    createdBy <- genPublicKey
+    id <- Gen.containerOfN[Array, Byte](32, Gen.posNum[Byte]).map(new ByteString(_)).map(ClaimableBalanceHashId)
     claimants <- Gen.chooseNum(1, 10).flatMap(Gen.containerOfN[List, Claimant](_, genClaimant))
     amount <- genAmount
-    reserve <- genNativeAmount
-  } yield ClaimableBalanceEntry(id, createdBy, claimants, amount, reserve)
+  } yield ClaimableBalanceEntry(id, claimants, amount)
 
-  val genLedgerEntryData: Gen[(LedgerEntryData, Int)] = for {
-    idx <- Gen.choose(0, 4)
-    data <- List(genAccountEntry, genTrustLineEntry, genOfferEntry, genDataEntry, genClaimableBalanceEntry)(idx)
-  } yield data -> idx
+  val genLedgerEntryData: Gen[LedgerEntryData] = Gen.oneOf(
+    genAccountEntry, genTrustLineEntry, genOfferEntry, genDataEntry, genClaimableBalanceEntry
+  )
 
   val genLedgerEntry: Gen[LedgerEntry] = for {
     lastModifiedLedgerSeq <- Gen.posNum[Int]
-    (data, idx) <- genLedgerEntryData
-  } yield LedgerEntry(lastModifiedLedgerSeq, data, idx)
+    data <- genLedgerEntryData
+    sponsorship <- Gen.option(genAccountId)
+  } yield LedgerEntry(lastModifiedLedgerSeq, data, sponsorship)
 
   implicit val arbLedgerEntry = Arbitrary(genLedgerEntry)
 

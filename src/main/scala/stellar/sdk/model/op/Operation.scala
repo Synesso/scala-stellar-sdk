@@ -650,19 +650,17 @@ case class SetOptionsOperation(inflationDestination: Option[PublicKeyOps] = None
   signer: Option[Signer] = None,
   sourceAccount: Option[PublicKeyOps] = None) extends Operation {
 
-  def flagsToInt(flags: Set[IssuerFlag]): Int = (flags.map(_.i) + 0).reduce(_ | _)
-
   override def bodyXdr: OperationBody = new OperationBody.Builder()
     .discriminant(SET_OPTIONS)
     .setOptionsOp(new SetOptionsOp.Builder()
-      .clearFlags(clearFlags.map(f => new Uint32(flagsToInt(f))).orNull)
+      .clearFlags(clearFlags.map(f => new Uint32(IssuerFlags.flagsToInt(f))).orNull)
       .highThreshold(highThreshold.map(new Uint32(_)).orNull)
       .homeDomain(homeDomain.map(hd => new String32(new XdrString(hd))).orNull)
       .inflationDest(inflationDestination.map(_.toAccountId.accountIdXdr).orNull)
       .lowThreshold(lowThreshold.map(new Uint32(_)).orNull)
       .masterWeight(masterKeyWeight.map(new Uint32(_)).orNull)
       .medThreshold(mediumThreshold.map(new Uint32(_)).orNull)
-      .setFlags(setFlags.map(f => new Uint32(flagsToInt(f))).orNull)
+      .setFlags(setFlags.map(f => new Uint32(IssuerFlags.flagsToInt(f))).orNull)
       .signer(signer.map(_.xdr).orNull)
       .build())
     .build()
@@ -734,6 +732,8 @@ object IssuerFlags {
   def apply(i: Int): Option[IssuerFlag] = all.find(_.i == i)
 
   def from(i: Int): Set[IssuerFlag] = all.filter { f => (i & f.i) == f.i }
+
+  def flagsToInt(flags: Set[IssuerFlag]): Int = (flags.map(_.i) + 0).reduce(_ | _)
 }
 
 /**

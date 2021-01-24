@@ -5,7 +5,9 @@ import org.stellar.xdr.{Int64, LedgerEntryType, String64, XdrString, LedgerKey =
 import stellar.sdk.PublicKeyOps
 import stellar.sdk.model.{AccountId, Asset, ClaimableBalanceId, NonNativeAsset}
 
-sealed trait LedgerKey
+sealed trait LedgerKey {
+  def xdr: XLedgerKey
+}
 
 object LedgerKey {
   def decode(xdr: XLedgerKey): LedgerKey = {

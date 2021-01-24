@@ -1,20 +1,52 @@
 package stellar.sdk.model.result
 
+import okio.ByteString
+import org.stellar.xdr.InnerTransactionResult.InnerTransactionResultResult
+import org.stellar.xdr.{Hash, InnerTransactionResult, InnerTransactionResultPair, Int64, TransactionResultCode, TransactionResult => XTransactionResult}
 import stellar.sdk.model.NativeAmount
 import stellar.sdk.model.result.TransactionResult.Code
 
 sealed trait TransactionResult {
   val isSuccess: Boolean
   def sequenceUpdated: Boolean
+  def xdr: XTransactionResult
 }
 
 /**
   * The transaction and all contained operations were successfully processed.
   */
-case class TransactionSuccess(feeCharged: NativeAmount, operationResults: Seq[OperationResult]) extends TransactionResult {
+case class TransactionSuccess(
+  feeCharged: NativeAmount,
+  operationResults: Seq[OperationResult],
+  hash: ByteString
+) extends TransactionResult {
   val isSuccess: Boolean = true
-
   def sequenceUpdated: Boolean = true
+
+  // TODO - WIP FROM HERE. IS THIS RIGHT?? TransactionSuccess comes from parsing TransactionHistory. We never actually need to construct it ourselves.
+  override def xdr: XTransactionResult = new XTransactionResult.Builder()
+    .feeCharged(new Int64(feeCharged.units))
+    .result(new XTransactionResult.TransactionResultResult.Builder()
+      .discriminant(TransactionResultCode.txSUCCESS)
+      .innerResultPair(new InnerTransactionResultPair.Builder()
+        .result(new InnerTransactionResult.Builder()
+          .feeCharged(new Int64(feeCharged.units))
+          .result(new InnerTransactionResultResult.Builder()
+            .discriminant(TransactionResultCode.txSUCCESS)
+            .results(operationResults.map(_.xdr).toArray)
+            .build())
+          .ext(new InnerTransactionResult.InnerTransactionResultExt.Builder()
+            .discriminant(0)
+            .build())
+          .build())
+        .transactionHash(new Hash(hash.toByteArray))
+        .build())
+      .results(operationResults.map(_.xdr).toArray)
+      .build())
+    .ext(new XTransactionResult.TransactionResultExt.Builder()
+      .discriminant(0)
+      .build())
+    .build()
 }
 
 sealed trait TransactionNotSuccessful extends TransactionResult {
