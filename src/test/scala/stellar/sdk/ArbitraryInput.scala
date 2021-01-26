@@ -10,7 +10,7 @@ import okio.ByteString
 import org.apache.commons.codec.binary.Base64
 import org.scalacheck.{Arbitrary, Gen}
 import org.specs2.ScalaCheck
-import org.stellar.xdr.ManageOfferEffect
+import org.stellar.xdr.{ManageOfferEffect, TransactionResultCode}
 import stellar.sdk.key._
 import stellar.sdk.model._
 import stellar.sdk.model.ledger._
@@ -904,7 +904,8 @@ trait ArbitraryInput extends ScalaCheck {
   def genTransactionSuccess: Gen[TransactionSuccess] = for {
     fee <- genNativeAmount
     opResults <- Gen.nonEmptyListOf(genOperationResult)
-  } yield TransactionSuccess(fee, opResults)
+    hash <- Gen.containerOfN[Array, Byte](32, Gen.posNum[Byte]).map(new ByteString(_))
+  } yield TransactionSuccess(fee, opResults, hash)
 
   def genTransactionNotSuccessful: Gen[TransactionNotSuccessful] =
     Gen.oneOf(genTransactionFailure, genTransactionNotAttempted)
@@ -915,8 +916,7 @@ trait ArbitraryInput extends ScalaCheck {
   } yield TransactionFailure(fee, opResults)
 
   def genTransactionNotAttempted: Gen[TransactionNotAttempted] = for {
-    reason <- Gen.oneOf(SubmittedTooEarly, SubmittedTooLate, NoOperations, BadSequenceNumber, BadAuthorisation,
-      InsufficientBalance, SourceAccountNotFound, InsufficientFee, UnusedSignatures, UnspecifiedInternalError)
+    reason <- Gen.oneOf(TransactionResultCode.values().toSet - TransactionResultCode.txSUCCESS)
     fee <- genNativeAmount
   } yield TransactionNotAttempted(reason, fee)
 

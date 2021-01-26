@@ -6,7 +6,7 @@ class LedgerKeySpec extends Specification with LedgerEntryGenerators {
 
   "a ledger key" should {
     "serde to/from XDR" >> prop { ledgerKey: LedgerKey =>
-      LedgerKey.decode.run(ledgerKey.encode).value._2 mustEqual ledgerKey
+      LedgerKey.decode(ledgerKey.xdr) mustEqual ledgerKey
     }
   }
 

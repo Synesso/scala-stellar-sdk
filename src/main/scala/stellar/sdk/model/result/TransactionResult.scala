@@ -23,7 +23,6 @@ case class TransactionSuccess(
   val isSuccess: Boolean = true
   def sequenceUpdated: Boolean = true
 
-  // TODO - WIP FROM HERE. IS THIS RIGHT?? TransactionSuccess comes from parsing TransactionHistory. We never actually need to construct it ourselves.
   override def xdr: XTransactionResult = new XTransactionResult.Builder()
     .feeCharged(new Int64(feeCharged.units))
     .result(new XTransactionResult.TransactionResultResult.Builder()
@@ -60,13 +59,31 @@ sealed trait TransactionNotSuccessful extends TransactionResult {
   * The transaction failed when processing the operations.
   */
 case class TransactionFailure(feeCharged: NativeAmount, operationResults: Seq[OperationResult]) extends TransactionNotSuccessful {
+  override def xdr: XTransactionResult = new XTransactionResult.Builder()
+    .feeCharged(new Int64(feeCharged.units))
+    .result(new XTransactionResult.TransactionResultResult.Builder()
+      .discriminant(TransactionResultCode.txFAILED)
+      .results(operationResults.map(_.xdr).toArray)
+      .build())
+    .ext(new XTransactionResult.TransactionResultExt.Builder()
+      .discriminant(0)
+      .build())
+    .build()
 }
 
 /**
   * The transaction failed for the reason given prior to any operations being attempted.
   */
-case class TransactionNotAttempted(reason: Code, feeCharged: NativeAmount) extends TransactionNotSuccessful {
-  val resultCode: Int = reason.id
+case class TransactionNotAttempted(reason: TransactionResultCode, feeCharged: NativeAmount) extends TransactionNotSuccessful {
+  override def xdr: XTransactionResult = new XTransactionResult.Builder()
+    .feeCharged(new Int64(feeCharged.units))
+    .result(new XTransactionResult.TransactionResultResult.Builder()
+      .discriminant(reason)
+      .build())
+    .ext(new XTransactionResult.TransactionResultExt.Builder()
+      .discriminant(0)
+      .build())
+    .build()
 }
 
 

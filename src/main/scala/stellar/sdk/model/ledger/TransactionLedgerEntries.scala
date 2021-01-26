@@ -1,8 +1,11 @@
 package stellar.sdk.model.ledger
 
+import org.stellar.xdr.TransactionResultMeta
+
 /**
   * Meta data about the effect a transaction had on the ledger it was transacted in.
-  * @param txnLevelChanges the ledger changes caused by the transactions themselves (not any one specific operation).
+ *
+ * @param txnLevelChanges the ledger changes caused by the transactions themselves (not any one specific operation).
   *                        The first value is optional and represents the changes preceding the transaction (introduced in version 2 of this datatype).
   *                        The second value represents the changes following the transaction (introduced in version 1 of this datatype).
   *                        In earlier versions of the protocol, this field was not present. In such cases the field will be `None`.
@@ -23,7 +26,15 @@ case class TransactionLedgerEntries(txnLevelChanges: Option[(Option[Seq[LedgerEn
 
 }
 
+// TODO - Find a real txn, decode in laboratory and figure out exactly what I'm looking at.
 object TransactionLedgerEntries {
+  def decode(xdr: TransactionResultMeta): TransactionLedgerEntries = {
+    val changesBefore = if (xdr.)
+
+    val operationChanges = xdr.
+    TransactionLedgerEntries(???, ???)
+  }
+
   def decodeXDR(resultMetaXDR: String): TransactionLedgerEntries = ???
 }
 
