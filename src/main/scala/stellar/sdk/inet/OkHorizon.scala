@@ -98,7 +98,7 @@ class OkHorizon(base: HttpUrl) extends HorizonAccess with LazyLogging {
     val fullParams: Map[String, String] = params ++ Seq(
       cursor.map("cursor" -> _.paramValue),
       order.map("order" -> _.paramValue),
-      Some("limit" -> "100")
+      Some("limit" -> "200")
     ).flatten.toMap
     val requestUrl = fullParams.foldLeft(base.newBuilder().addPathSegments(path)) {
       case (url, (k, v)) => url.addQueryParameter(k, v)
