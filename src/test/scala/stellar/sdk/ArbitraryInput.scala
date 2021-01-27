@@ -416,9 +416,8 @@ trait ArbitraryInput extends ScalaCheck {
 
   def genAccountIdStrKey: Gen[AccountId] = for {
     pk <- genPublicKey
-    subAccountId <- Gen.option(Gen.posNum[Long])
-  } yield AccountId(pk.publicKey.toIndexedSeq, subAccountId)
-    //genPublicKey.map(pk => AccountId(pk.publicKey.toIndexedSeq))
+  } yield AccountId(pk.publicKey.toList)
+
   def genSeedStrKey: Gen[Seed] = genKeyPair.map(kp => Seed(kp.sk.getAbyte.toIndexedSeq))
   def genPreAuthTxStrKey: Gen[PreAuthTx] = Gen.containerOfN[Array, Byte](32, Arbitrary.arbByte.arbitrary)
     .map(bs => PreAuthTx(bs.toIndexedSeq))

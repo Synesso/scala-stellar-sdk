@@ -4,6 +4,7 @@ import java.nio.ByteBuffer
 
 import cats.data.State
 import org.apache.commons.codec.binary.Base32
+import org.stellar.xdr.{AccountID, PublicKey => XPublicKey, PublicKeyType, SignerKey, SignerKeyType, Uint256}
 import stellar.sdk.{KeyPair, PublicKey}
 import stellar.sdk.model.StrKey.codec
 import stellar.sdk.model.xdr.Encode.{bytes, int, long}
@@ -25,9 +26,21 @@ sealed trait StrKey {
   * Only a subset of StrKeys can be signers. Seeds should not be the declared signer
   * (as they are the private dual of the AccountId).
   */
-sealed trait SignerStrKey extends StrKey with Encodable
+sealed trait SignerStrKey extends StrKey with Encodable {
+  def signerXdr: SignerKey
+}
 
 case class AccountId(hash: Seq[Byte], subAccountId: Option[Long] = None) extends SignerStrKey {
+  def xdr: AccountID = new AccountID(new XPublicKey.Builder()
+    .discriminant(PublicKeyType.PUBLIC_KEY_TYPE_ED25519)
+    .ed25519(new Uint256(hash.toArray))
+    .build())
+
+  override def signerXdr: SignerKey = new SignerKey.Builder()
+    .discriminant(SignerKeyType.SIGNER_KEY_TYPE_ED25519)
+    .ed25519(new Uint256(hash.toArray))
+    .build()
+
   val kind: Byte = subAccountId match {
     case None => (6 << 3).toByte // G
     case _ => (12 << 3).toByte   // M
@@ -54,7 +67,18 @@ case class AccountId(hash: Seq[Byte], subAccountId: Option[Long] = None) extends
   override def toString: String = s"AccountId(${KeyPair.fromPublicKey(hash).accountId}, $subAccountId)"
 }
 
+object SignerStrKey {
+  def decodeXdr(xdr: SignerKey): SignerStrKey = xdr.getDiscriminant match {
+    case SignerKeyType.SIGNER_KEY_TYPE_ED25519 => AccountId(xdr.getEd25519.getUint256)
+    case SignerKeyType.SIGNER_KEY_TYPE_HASH_X => SHA256Hash(xdr.getHashX.getUint256)
+    case SignerKeyType.SIGNER_KEY_TYPE_PRE_AUTH_TX => PreAuthTx(xdr.getPreAuthTx.getUint256)
+  }
+}
+
 object AccountId extends Decode {
+  def decodeXdr(id: AccountID): AccountId =
+    AccountId(KeyPair.fromPublicKey(id.getAccountID.getEd25519.getUint256).publicKey)
+
   val decode: State[Seq[Byte], AccountId] = int.flatMap {
     case 0x000 => bytes(32).map(bs => AccountId(bs.toIndexedSeq))
     case 0x100 => for {
@@ -71,11 +95,21 @@ case class Seed(hash: Seq[Byte]) extends StrKey {
 case class PreAuthTx(hash: Seq[Byte]) extends SignerStrKey {
   val kind: Byte = (19 << 3).toByte // T
   def encode: LazyList[Byte] = int(0x001) ++ bytes(32, hash)
+
+  override def signerXdr: SignerKey = new SignerKey.Builder()
+    .discriminant(SignerKeyType.SIGNER_KEY_TYPE_PRE_AUTH_TX)
+    .preAuthTx(new Uint256(hash.toArray))
+    .build()
 }
 
 case class SHA256Hash(hash: Seq[Byte]) extends SignerStrKey {
   val kind: Byte = (23 << 3).toByte // X
   def encode: LazyList[Byte] = int(0x002) ++ bytes(32, hash)
+
+  override def signerXdr: SignerKey = new SignerKey.Builder()
+    .discriminant(SignerKeyType.SIGNER_KEY_TYPE_HASH_X)
+    .hashX(new Uint256(hash.toArray))
+    .build()
 }
 
 object StrKey extends Decode {

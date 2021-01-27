@@ -1,6 +1,8 @@
 package stellar.sdk.model.ledger
 
 import cats.data.State
+import okio.ByteString
+import org.stellar.xdr.{TransactionMeta, TransactionMetaV1, TransactionMetaV2}
 import stellar.sdk.model.xdr.{Decode, Encodable, Encode, Encoded}
 import stellar.sdk.util.ByteArrays
 
@@ -13,53 +15,33 @@ import stellar.sdk.util.ByteArrays
   * @param operationLevelChanges the ledger changes caused by the individual operations. The order of the outer sequence
   *                              matched the order of operations in the transaction.
   */
-case class TransactionLedgerEntries(txnLevelChanges: Option[(Option[Seq[LedgerEntryChange]], Seq[LedgerEntryChange])],
-                                    operationLevelChanges: Seq[Seq[LedgerEntryChange]]) extends Encodable {
-
-  val txnLevelChangesBefore: Option[Seq[LedgerEntryChange]] = txnLevelChanges.flatMap(_._1)
-  val txnLevelChangesAfter: Option[Seq[LedgerEntryChange]] = txnLevelChanges.map(_._2)
-
-  override def encode: LazyList[Byte] = txnLevelChanges match {
-    case Some((Some(before), after)) => encode2(before, after)
-    case Some((_, after)) => encode1(after)
-    case _ => encode0
-  }
-
-  private def encode0: LazyList[Byte] = Encode.int(0) ++
-    Encode.arr(operationLevelChanges.map(Encode.arr(_)).map(Encoded))
-
-  private def encode1(txnLevel: Seq[LedgerEntryChange]): LazyList[Byte] = Encode.int(1) ++
-    Encode.arr(txnLevel) ++
-    Encode.arr(operationLevelChanges.map(Encode.arr(_)).map(Encoded))
-
-  private def encode2(before: Seq[LedgerEntryChange], after: Seq[LedgerEntryChange]): LazyList[Byte] = Encode.int(2) ++
-    Encode.arr(before) ++
-    Encode.arr(operationLevelChanges.map(Encode.arr(_)).map(Encoded)) ++
-    Encode.arr(after)
-
-}
+case class TransactionLedgerEntries(
+  txnLevelChangesBefore: List[LedgerEntryChange],
+  operationLevelChanges: List[List[LedgerEntryChange]],
+  txnLevelChangesAfter: List[LedgerEntryChange]
+)
 
 object TransactionLedgerEntries extends Decode {
 
-  def decodeXDR(base64: String): TransactionLedgerEntries = decode.run(ByteArrays.base64(base64).toIndexedSeq).value._2
+  def decodeXDR(base64: String): TransactionLedgerEntries = {
+    val meta = TransactionMeta.decode(ByteString.decodeBase64(base64))
+    meta.getDiscriminant.toInt match {
+      case 0 => decodeXdr(meta)
+      case 1 => decodeXdr(meta.getV1)
+      case 2 => decodeXdr(meta.getV2)
+    }
+  }
 
-  private val decodeV0: State[Seq[Byte], TransactionLedgerEntries] = for {
-    ops <- arr(arr(LedgerEntryChange.decode))
-  } yield TransactionLedgerEntries(None, ops)
+  private def decodeXdr(meta: TransactionMeta): TransactionLedgerEntries = ???
 
-  private val decodeV1: State[Seq[Byte], TransactionLedgerEntries] = for {
-    txnLevelChanges <- arr(LedgerEntryChange.decode)
-    ops <- arr(arr(LedgerEntryChange.decode))
-  } yield TransactionLedgerEntries(Some(None, txnLevelChanges), ops)
+  private def decodeXdr(meta: TransactionMetaV1): TransactionLedgerEntries = ???
 
-  private val decodeV2: State[Seq[Byte], TransactionLedgerEntries] = for {
-    txnLevelChangesBefore <- arr(LedgerEntryChange.decode)
-    ops <- arr(arr(LedgerEntryChange.decode))
-    txnLevelChangesAfter <- arr(LedgerEntryChange.decode)
-  } yield TransactionLedgerEntries(Some(Some(txnLevelChangesBefore), txnLevelChangesAfter), ops)
-
-  val decode: State[Seq[Byte], TransactionLedgerEntries] = switch(decodeV0, decodeV1, decodeV2)
-
+  private def decodeXdr(meta: TransactionMetaV2): TransactionLedgerEntries =
+    TransactionLedgerEntries(
+      txnLevelChangesBefore = meta.getTxChangesBefore.getLedgerEntryChanges.map(LedgerEntryChange.decodeXdr).toList,
+      operationLevelChanges = meta.getOperations.map(_.getChanges.getLedgerEntryChanges.map(LedgerEntryChange.decodeXdr).toList).toList,
+      txnLevelChangesAfter = meta.getTxChangesAfter.getLedgerEntryChanges.map(LedgerEntryChange.decodeXdr).toList
+    )
 }
 
 

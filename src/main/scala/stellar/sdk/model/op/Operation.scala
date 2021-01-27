@@ -671,6 +671,8 @@ object IssuerFlags extends Decode {
   def from(i: Int): Set[IssuerFlag] = all.filter { f => (i & f.i) == f.i }
 
   val decode: State[Seq[Byte], Set[IssuerFlag]] = int.map(from)
+
+  def flagsToInt(flags: Set[IssuerFlag]): Int = (flags.map(_.i) + 0).reduce(_ | _)
 }
 
 /**
