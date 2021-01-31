@@ -10,7 +10,6 @@ import org.stellar.xdr.LedgerEntryExtensionV1.LedgerEntryExtensionV1Ext
 import org.stellar.xdr.OfferEntry.OfferEntryExt
 import org.stellar.xdr.TrustLineEntry.TrustLineEntryExt
 import org.stellar.xdr.{AccountEntryExtensionV1, AccountEntryExtensionV2, DataValue, Int64, LedgerEntryExtensionV1, LedgerEntryType, SequenceNumber, SponsorshipDescriptor, String32, String64, Uint32, XdrString, AccountEntry => XAccountEntry, ClaimableBalanceEntry => XClaimableBalanceEntry, DataEntry => XDataEntry, LedgerEntry => XLedgerEntry, OfferEntry => XOfferEntry, TrustLineEntry => XTrustLineEntry}
-import stellar.sdk.PublicKeyOps
 import stellar.sdk.model._
 import stellar.sdk.model.op.{IssuerFlag, IssuerFlags}
 import stellar.sdk.model.xdr.{Decode, Encodable, Encode}

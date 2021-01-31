@@ -99,7 +99,7 @@ trait LedgerEntryGenerators extends ArbitraryInput {
   val genLedgerEntry: Gen[LedgerEntry] = for {
     lastModifiedLedgerSeq <- Gen.posNum[Int]
     data <- genLedgerEntryData
-    sponsorship <- Gen.option(genAccountId.suchThat(_.subAccountId.isEmpty))
+    sponsorship <- Gen.option(genPublicKey.map(_.toAccountId))
   } yield LedgerEntry(lastModifiedLedgerSeq, data, sponsorship)
 
   implicit val arbLedgerEntry = Arbitrary(genLedgerEntry)
