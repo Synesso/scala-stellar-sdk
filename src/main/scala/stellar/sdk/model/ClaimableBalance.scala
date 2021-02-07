@@ -3,7 +3,9 @@ package stellar.sdk.model
 import java.time.Instant
 
 import okio.ByteString
+import org.json4s.native.JsonMethods
 import org.json4s.{DefaultFormats, Formats, JObject}
+import org.stellar.xdr.ClaimableBalanceID
 import stellar.sdk.model.ClaimableBalance.parseClaimableBalance
 import stellar.sdk.model.response.ResponseParser
 import stellar.sdk.{KeyPair, PublicKeyOps}
@@ -22,10 +24,9 @@ object ClaimableBalance {
 
   def parseClaimableBalance(o: JObject): ClaimableBalance = {
     val idString = (o \ "id").extract[String]
-    val decoded = ByteString.decodeHex(idString).toByteArray
-    val value = ClaimableBalanceId.decode.run(decoded).value
+    val value = ClaimableBalanceHashId(ByteString.decodeHex(idString.drop(8)))
     ClaimableBalance(
-      id = value._2,
+      id = value,
       amount = Amount.parseAmount(o),
       sponsor = KeyPair.fromAccountId((o \ "sponsor").extract[String]),
       claimants = (o \ "claimants").extract[List[Claimant]],

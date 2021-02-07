@@ -150,7 +150,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
           PathPaymentStrictReceiveOperation(IssuedAmount(1, chinchillaMaster), accnB.toAccountId, IssuedAmount(1, chinchillaA), Nil),
           PathPaymentStrictSendOperation(IssuedAmount(100, chinchillaMaster), accnB.toAccountId, IssuedAmount(1, chinchillaA), Nil),
           BumpSequenceOperation(masterAccount.sequenceNumber + 20),
-          SetOptionsOperation(signer = Some(Signer(SHA256Hash(ByteArrays.sha256(dachshundB.encode).toIndexedSeq), 3)), sourceAccount = Some(accnD))
+          SetOptionsOperation(signer = Some(Signer(SHA256Hash(dachshundB.encode.sha256().toByteArray), 3)), sourceAccount = Some(accnD))
         )
 
         // example of creating and submitting a payment transaction
@@ -674,7 +674,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
           operations = List(CreateAccountOperation(KeyPair.random.toAccountId, startingBalance = lumens(100))),
           timeBounds = TimeBounds.Unbounded,
           maxFee = NativeAmount(100))
-          .sign(dachshundB.encode)
+          .sign(dachshundB.encode.toByteArray)
         txnResult <- txn.submit()
       } yield txnResult must beLike[TransactionPostResponse] { case r =>
         r.isSuccess must beTrue
@@ -688,7 +688,8 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
       AbsolutelyBefore(instant),
       Unconditional
     )
-    val id = ClaimableBalanceHashId(ByteString.decodeHex("a20bec491b3901338a39b1430c4ca177176641698a267c1c92df5aaf8b9688ee"))
+    val id = ClaimableBalanceHashId(
+      ByteString.decodeHex("a20bec491b3901338a39b1430c4ca177176641698a267c1c92df5aaf8b9688ee"))
 
     "be creatable" >> {
       for {
@@ -754,6 +755,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
           timeBounds = TimeBounds.Unbounded,
           maxFee = NativeAmount(100)
         ).sign(accnA)
+        _ = println(txn.encodeXDR)
         txnResult <- txn.submit()
       } yield txnResult must beLike[TransactionPostResponse] { case r: TransactionApproved =>
         r.isSuccess must beTrue

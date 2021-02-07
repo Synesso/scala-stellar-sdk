@@ -1,7 +1,5 @@
 package stellar.sdk.model.ledger
 
-import cats.data.State
-import okio.ByteString
 import org.stellar.xdr.AccountEntryExtensionV1.AccountEntryExtensionV1Ext
 import org.stellar.xdr.AccountEntryExtensionV2.AccountEntryExtensionV2Ext
 import org.stellar.xdr.ClaimableBalanceEntry.ClaimableBalanceEntryExt
@@ -10,16 +8,15 @@ import org.stellar.xdr.LedgerEntryExtensionV1.LedgerEntryExtensionV1Ext
 import org.stellar.xdr.OfferEntry.OfferEntryExt
 import org.stellar.xdr.TrustLineEntry.TrustLineEntryExt
 import org.stellar.xdr.{AccountEntryExtensionV1, AccountEntryExtensionV2, DataValue, Int64, LedgerEntryExtensionV1, LedgerEntryType, SequenceNumber, SponsorshipDescriptor, String32, String64, Uint32, XdrString, AccountEntry => XAccountEntry, ClaimableBalanceEntry => XClaimableBalanceEntry, DataEntry => XDataEntry, LedgerEntry => XLedgerEntry, OfferEntry => XOfferEntry, TrustLineEntry => XTrustLineEntry}
+import stellar.sdk.PublicKeyOps
 import stellar.sdk.model._
 import stellar.sdk.model.op.{IssuerFlag, IssuerFlags}
-import stellar.sdk.model.xdr.{Decode, Encodable, Encode}
-import stellar.sdk.{KeyPair, PublicKeyOps}
 
 case class LedgerEntry(
   lastModifiedLedgerSeq: Int,
   data: LedgerEntryData,
   sponsorship: Option[AccountId]
-) extends Encodable {
+) {
   def xdr: XLedgerEntry = new XLedgerEntry.Builder()
     .data(data.xdr)
     .ext(new XLedgerEntry.LedgerEntryExt.Builder()
@@ -33,10 +30,9 @@ case class LedgerEntry(
       .build())
     .lastModifiedLedgerSeq(new Uint32(lastModifiedLedgerSeq))
     .build()
-  override def encode: LazyList[Byte] = Encode.int(lastModifiedLedgerSeq) ++ Encode.int(0) ++ data.encode
 }
 
-object LedgerEntry extends Decode {
+object LedgerEntry {
   def decodeXdr(xdr: XLedgerEntry): LedgerEntry = LedgerEntry(
     lastModifiedLedgerSeq = xdr.getLastModifiedLedgerSeq.getUint32,
     data = LedgerEntryData.decodeXdr(xdr.getData),
@@ -47,7 +43,7 @@ object LedgerEntry extends Decode {
   )
 }
 
-sealed trait LedgerEntryData extends Encodable {
+sealed trait LedgerEntryData {
   def xdr: XLedgerEntry.LedgerEntryData
 }
 
@@ -115,18 +111,6 @@ case class AccountEntry(
   signerSponsoringIds: List[AccountId]
 ) extends LedgerEntryData {
 
-  override def encode: LazyList[Byte] =
-    account.encode ++
-    Encode.long(balance) ++
-    Encode.long(seqNum) ++
-    Encode.int(numSubEntries) ++
-    Encode.opt(inflationDestination) ++
-    Encode.int(flags.map(_.i + 0).fold(0)(_ | _)) ++
-    Encode.string(homeDomain.getOrElse("")) ++
-    thresholds.encode ++
-    Encode.arr(signers) ++
-    Encode.opt(liabilities)
-
   override def xdr: XLedgerEntry.LedgerEntryData = {
 
     val extensionV1 = liabilities.map { lx =>
@@ -169,14 +153,15 @@ case class AccountEntry(
         .thresholds(thresholds.xdr)
         .build())
       .build()
-  }}
+  }
+}
 
-object AccountEntry extends Decode {
+object AccountEntry {
   def decodeXdr(xdr: XAccountEntry): AccountEntry = {
     // decode 2-level extension data
     val (liabilities, numSponsored, numSponsoring, signerSponsoringIds) = xdr.getExt.getDiscriminant.intValue() match {
       case 0 => (None, 0, 0, Nil)
-      case 1 => {
+      case 1 =>
         val lx = Some(Liabilities.decodeXdr(xdr.getExt.getV1.getLiabilities))
         val ext2 = xdr.getExt.getV1.getExt
         ext2.getDiscriminant.intValue() match {
@@ -188,7 +173,7 @@ object AccountEntry extends Decode {
             ext2.getV2.getSignerSponsoringIDs.map(_.getSponsorshipDescriptor).map(AccountId.decodeXdr).toList
           )
         }
-      }
+
     }
 
     AccountEntry(
@@ -242,16 +227,8 @@ object AccountEntry extends Decode {
   };
  */
 case class TrustLineEntry(account: PublicKeyOps, asset: NonNativeAsset, balance: Long, limit: Long,
-                          issuerAuthorized: Boolean, liabilities: Option[Liabilities])
+  issuerAuthorized: Boolean, liabilities: Option[Liabilities])
   extends LedgerEntryData {
-
-  override def encode: LazyList[Byte] =
-    account.encode ++
-    asset.encode ++
-    Encode.long(balance) ++
-    Encode.long(limit) ++
-    Encode.bool(issuerAuthorized) ++
-    Encode.opt(liabilities)
 
   override def xdr: XLedgerEntry.LedgerEntryData =
     new XLedgerEntry.LedgerEntryData.Builder()
@@ -278,7 +255,7 @@ case class TrustLineEntry(account: PublicKeyOps, asset: NonNativeAsset, balance:
 
 }
 
-object TrustLineEntry extends Decode {
+object TrustLineEntry {
   def decodeXdr(xdr: XTrustLineEntry): TrustLineEntry = TrustLineEntry(
     account = AccountId.decodeXdr(xdr.getAccountID).publicKey,
     asset = Asset.decodeXdr(xdr.getAsset).asInstanceOf[NonNativeAsset],
@@ -290,18 +267,6 @@ object TrustLineEntry extends Decode {
       case 1 => Some(Liabilities.decodeXdr(xdr.getExt.getV1.getLiabilities))
     }
   )
-
-  val decode: State[Seq[Byte], TrustLineEntry] = for {
-    account <- KeyPair.decode
-    asset <- Asset.decode.map(_.asInstanceOf[NonNativeAsset])
-    balance <- long
-    limit <- long
-    issuerAuthorized <- bool
-    liabilities <- switch[Option[Liabilities]](
-      State.pure(None),
-      Liabilities.decode.map(Some(_))
-    )
-  } yield TrustLineEntry(account, asset, balance, limit, issuerAuthorized, liabilities)
 }
 
 /*
@@ -333,15 +298,6 @@ object TrustLineEntry extends Decode {
 case class OfferEntry(account: PublicKeyOps, offerId: Long, selling: Amount, buying: Asset, price: Price)
   extends LedgerEntryData {
 
-  override def encode: LazyList[Byte] =
-    account.encode ++
-    Encode.long(offerId) ++
-    selling.asset.encode ++
-    buying.encode ++
-    Encode.long(selling.units) ++
-    price.encode ++
-    Encode.long(0)
-
   override def xdr: XLedgerEntry.LedgerEntryData =
     new XLedgerEntry.LedgerEntryData.Builder()
       .discriminant(LedgerEntryType.OFFER)
@@ -360,7 +316,7 @@ case class OfferEntry(account: PublicKeyOps, offerId: Long, selling: Amount, buy
       .build()
 }
 
-object OfferEntry extends Decode {
+object OfferEntry {
   def decodeXdr(xdr: XOfferEntry): OfferEntry = OfferEntry(
     account = AccountId.decodeXdr(xdr.getSellerID).publicKey,
     offerId = xdr.getOfferID.getInt64,
@@ -368,17 +324,6 @@ object OfferEntry extends Decode {
     buying = Asset.decodeXdr(xdr.getBuying),
     price = Price.decodeXdr(xdr.getPrice)
   )
-
-  val decode: State[Seq[Byte], OfferEntry] = for {
-    account <- KeyPair.decode
-    offerId <- long
-    selling <- Asset.decode
-    buying <- Asset.decode
-    units <- long
-    price <- Price.decode
-    _ <- int // flags
-    _ <- int // ext
-  } yield OfferEntry(account, offerId, Amount(units, selling), buying, price)
 }
 
 /*
@@ -400,12 +345,6 @@ object OfferEntry extends Decode {
 case class DataEntry(account: PublicKeyOps, name: String, value: Seq[Byte])
   extends LedgerEntryData {
 
-  override def encode: LazyList[Byte] =
-    account.encode ++
-    Encode.string(name) ++
-    Encode.padded(value) ++
-    Encode.int(0)
-
   override def xdr: XLedgerEntry.LedgerEntryData =
     new XLedgerEntry.LedgerEntryData.Builder()
       .discriminant(LedgerEntryType.DATA)
@@ -420,19 +359,12 @@ case class DataEntry(account: PublicKeyOps, name: String, value: Seq[Byte])
       .build()
 }
 
-object DataEntry extends Decode {
+object DataEntry {
   def decodeXdr(xdr: XDataEntry): DataEntry = DataEntry(
     account = AccountId.decodeXdr(xdr.getAccountID).publicKey,
     name = xdr.getDataName.getString64.toString,
     value = xdr.getDataValue.getDataValue
   )
-
-  val decode: State[Seq[Byte], DataEntry] = for {
-    account <- KeyPair.decode
-    name <- string
-    value <- padded()
-    _ <- int
-  } yield DataEntry(account, name, value)
 }
 
 /*
@@ -465,12 +397,6 @@ case class ClaimableBalanceEntry(
   amount: Amount
 ) extends LedgerEntryData {
 
-  override def encode: LazyList[Byte] =
-    Encode.int(0) ++ Encode.bytes(32, id.asInstanceOf[ClaimableBalanceHashId].hash.toByteArray) ++
-      Encode.arr(claimants) ++
-      amount.encode ++
-      Encode.int(0)
-
   override def xdr: XLedgerEntry.LedgerEntryData =
     new XLedgerEntry.LedgerEntryData.Builder()
       .discriminant(LedgerEntryType.CLAIMABLE_BALANCE)
@@ -486,18 +412,10 @@ case class ClaimableBalanceEntry(
       .build()
 }
 
-object ClaimableBalanceEntry extends Decode {
+object ClaimableBalanceEntry {
   def decodeXdr(xdr: XClaimableBalanceEntry): ClaimableBalanceEntry = ClaimableBalanceEntry(
     id = ClaimableBalanceId.decodeXdr(xdr.getBalanceID),
     claimants = xdr.getClaimants.map(Claimant.decodeXdr).toList,
     amount = Amount(xdr.getAmount.getInt64, Asset.decodeXdr(xdr.getAsset))
   )
-
-  val decode: State[Seq[Byte], ClaimableBalanceEntry] = for {
-    _ <- int
-    id <- bytes(32).map(_.toArray).map(new ByteString(_)).map(new ClaimableBalanceHashId(_))
-    claimants <- arr(Claimant.decode).map(_.toList)
-    amount <- Amount.decode
-    _ <- int
-  } yield ClaimableBalanceEntry(id, claimants, amount)
 }

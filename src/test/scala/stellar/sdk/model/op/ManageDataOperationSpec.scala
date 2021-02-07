@@ -44,13 +44,11 @@ class ManageDataOperationSpec extends Specification with ArbitraryInput with Dom
 
   "a write data operation" should {
     "serde via xdr string" >> prop { actual: WriteDataOperation =>
-      Operation.decodeXDR(base64(actual.encode)) must beEquivalentTo(actual)
+      Operation.decodeXdrString(actual.xdr.encode().base64()) must beEquivalentTo(actual)
     }
 
     "serde via xdr bytes" >> prop { actual: WriteDataOperation =>
-      val (remaining, decoded) = Operation.decode.run(actual.encode).value
-      decoded must beEquivalentTo(actual)
-      remaining must beEmpty
+      Operation.decodeXdr(actual.xdr) mustEqual actual
     }
 
     "parse from json" >> prop { op: Transacted[WriteDataOperation] =>
@@ -75,13 +73,11 @@ class ManageDataOperationSpec extends Specification with ArbitraryInput with Dom
 
   "a delete data operation" should {
     "serde via xdr string" >> prop { actual: DeleteDataOperation =>
-      Operation.decodeXDR(base64(actual.encode)) must beEquivalentTo(actual)
+      Operation.decodeXdrString(actual.xdr.encode().base64()) must beEquivalentTo(actual)
     }
 
     "serde via xdr bytes" >> prop { actual: DeleteDataOperation =>
-      val (remaining, decoded) = Operation.decode.run(actual.encode).value
-      decoded mustEqual actual
-      remaining must beEmpty
+      Operation.decodeXdr(actual.xdr) mustEqual actual
     }
 
     "parse from json" >> prop { op: Transacted[DeleteDataOperation] =>

@@ -4,10 +4,8 @@ import cats.data.State
 import org.apache.commons.codec.binary.Hex
 import org.specs2.matcher.{AnyMatchers, Matcher, MustExpectations, OptionMatchers, SequenceMatchersCreation}
 import stellar.sdk.model._
-import stellar.sdk.util.ByteArrays.base64
 import stellar.sdk.model.op._
 import stellar.sdk.model.result.TransactionHistory
-import stellar.sdk.model.xdr.Encodable
 
 trait DomainMatchersIT extends AnyMatchers with MustExpectations with SequenceMatchersCreation with OptionMatchers {
 
@@ -205,7 +203,7 @@ trait DomainMatchersIT extends AnyMatchers with MustExpectations with SequenceMa
   def beEquivalentTo(other: Transaction): Matcher[Transaction] = beLike {
     case txn =>
       txn.source must beEquivalentTo(other.source)
-      txn.memo must beEquivalentTo(other.memo)
+      txn.memo mustEqual other.memo
       txn.timeBounds mustEqual other.timeBounds
       txn.hash mustEqual other.hash
       forall(txn.operations.zip(other.operations)) {
@@ -224,27 +222,10 @@ trait DomainMatchersIT extends AnyMatchers with MustExpectations with SequenceMa
       }
   }
 
-  def beEquivalentTo(other: Memo): Matcher[Memo] = beLike[Memo] {
-    case memo =>
-      (memo, other) match {
-        case (MemoHash(a), MemoHash(b)) => base64(a) mustEqual base64(b)
-        case (MemoReturnHash(a), MemoReturnHash(b)) => a.toSeq mustEqual b.toSeq
-        case _ => memo mustEqual other
-      }
-  }
-
   def beEquivalentTo(other: TransactionHistory): Matcher[TransactionHistory] = beLike {
     case thr =>
-      other.memo must beEquivalentTo(thr.memo)
+      other.memo mustEqual thr.memo
       other.copy(memo = thr.memo) mustEqual thr
-  }
-
-  def serdeUsing[E <: Encodable](decoder: State[Seq[Byte], E]): Matcher[E] = beLike {
-    case expected: Encodable =>
-      val encoded = expected.encode
-      val (remaining, actual) = decoder.run(encoded).value
-      actual mustEqual expected
-      remaining must beEmpty
   }
 
 }

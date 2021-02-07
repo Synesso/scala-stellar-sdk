@@ -6,7 +6,6 @@ import org.json4s.{Formats, NoTypeHints}
 import org.scalacheck.Arbitrary
 import org.specs2.mutable.Specification
 import stellar.sdk.ArbitraryInput
-import stellar.sdk.model.ClaimantGenerators
 import stellar.sdk.util.ByteArrays
 
 class ClaimClaimableBalanceOperationSpec extends Specification with ArbitraryInput with JsonSnippets {
@@ -18,13 +17,11 @@ class ClaimClaimableBalanceOperationSpec extends Specification with ArbitraryInp
 
   "create claimable balance operation" should {
     "serde via xdr bytes" >> prop { actual: ClaimClaimableBalanceOperation =>
-      val (remaining, decoded) = Operation.decode.run(actual.encode).value
-      decoded mustEqual actual
-      remaining must beEmpty
+      Operation.decodeXdr(actual.xdr) mustEqual actual
     }
 
     "serde via xdr string" >> prop { actual: ClaimClaimableBalanceOperation =>
-      Operation.decodeXDR(ByteArrays.base64(actual.encode)) mustEqual actual
+      Operation.decodeXdrString(actual.xdr.encode().base64()) mustEqual actual
     }
 
     "parse from json" >> prop { op: Transacted[ClaimClaimableBalanceOperation] =>

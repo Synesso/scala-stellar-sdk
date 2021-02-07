@@ -1,5 +1,6 @@
 package stellar.sdk.model.response
 
+import okio.ByteString
 import org.json4s.DefaultFormats
 import org.json4s.JsonAST.JObject
 import stellar.sdk.model._
@@ -23,7 +24,7 @@ object FederationResponseDeserialiser extends ResponseParser[FederationResponse]
     memo = (o \ "memo_type").extractOpt[String] match {
       case Some("id") => MemoId((o \ "memo").extract[String].toLong)
       case Some("text") => MemoText((o \ "memo").extract[String])
-      case Some("hash") => MemoHash(trimmedByteArray(hexToBytes((o \ "memo").extract[String])))
+      case Some("hash") => MemoHash(ByteString.decodeHex((o \ "memo").extract[String]))
       case _ => NoMemo
     }
   )

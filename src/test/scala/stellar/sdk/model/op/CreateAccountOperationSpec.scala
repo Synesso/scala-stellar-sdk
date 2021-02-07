@@ -1,11 +1,10 @@
 package stellar.sdk.model.op
 
-import org.json4s.{Formats, NoTypeHints}
 import org.json4s.native.JsonMethods.parse
 import org.json4s.native.Serialization
+import org.json4s.{Formats, NoTypeHints}
 import org.scalacheck.Arbitrary
 import org.specs2.mutable.Specification
-import stellar.sdk.util.ByteArrays.base64
 import stellar.sdk.{ArbitraryInput, DomainMatchers}
 
 class CreateAccountOperationSpec extends Specification with ArbitraryInput with DomainMatchers with JsonSnippets {
@@ -15,13 +14,11 @@ class CreateAccountOperationSpec extends Specification with ArbitraryInput with 
 
   "create account operation" should {
     "serde via xdr string" >> prop { actual: CreateAccountOperation =>
-      Operation.decodeXDR(base64(actual.encode)) must beEquivalentTo(actual)
+      Operation.decodeXdrString(actual.xdr.encode().base64()) mustEqual actual
     }
 
     "serde via xdr bytes" >> prop { actual: CreateAccountOperation =>
-      val (remaining, decoded) = Operation.decode.run(actual.encode).value
-      decoded mustEqual actual
-      remaining must beEmpty
+      Operation.decodeXdr(actual.xdr) mustEqual actual
     }
 
     "be parsed from json " >> prop { op: Transacted[CreateAccountOperation] =>

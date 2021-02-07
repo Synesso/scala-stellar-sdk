@@ -1,21 +1,31 @@
 package stellar.sdk.model
 
-import cats.data.State
+import okio.ByteString
 import org.json4s.JsonAST.JValue
 import org.json4s.{DefaultFormats, Formats}
 import org.stellar.xdr.Asset.{AssetAlphaNum12, AssetAlphaNum4}
-import org.stellar.xdr.{AssetCode12, AssetCode4, AssetType, Asset => XAsset}
-import stellar.sdk.model.xdr.{Decode, Encodable, Encode}
+import org.stellar.xdr.{AllowTrustOp, AssetCode12, AssetCode4, AssetType, Asset => XAsset}
 import stellar.sdk.util.ByteArrays._
 import stellar.sdk.{KeyPair, PublicKeyOps}
 
-sealed trait Asset extends Encodable {
+sealed trait Asset {
   val code: String
   def canoncialString: String
   def xdr: XAsset
+  def encode: ByteString = xdr.encode()
 }
 
-object Asset extends Decode {
+object Asset {
+  def decodeCode(asset: AllowTrustOp.AllowTrustOpAsset): String = {
+    asset.getDiscriminant match {
+      case AssetType.ASSET_TYPE_CREDIT_ALPHANUM4 =>
+        paddedByteArrayToString(asset.getAssetCode4.getAssetCode4)
+      case AssetType.ASSET_TYPE_CREDIT_ALPHANUM12 =>
+        paddedByteArrayToString(asset.getAssetCode12.getAssetCode12)
+      case AssetType.ASSET_TYPE_NATIVE => "XLM"
+    }
+  }
+
   def decodeXdr(asset: XAsset): Asset = {
     asset.getDiscriminant match {
       case AssetType.ASSET_TYPE_NATIVE => NativeAsset
@@ -39,13 +49,7 @@ object Asset extends Decode {
     if (code.length <= 4) IssuedAsset4.of(code, issuer) else IssuedAsset12.of(code, issuer)
   }
 
-  val decode: State[Seq[Byte], Asset] = int.flatMap {
-    case 0 => State.pure(NativeAsset)
-    case 1 => IssuedAsset4.decode.map(x => x: Asset)
-    case 2 => IssuedAsset12.decode.map(x => x: Asset)
-  }
-
-  def parseAsset(prefix: String = "", obj: JValue) = {
+  def parseAsset(prefix: String = "", obj: JValue): Asset = {
 
     def assetCode = (obj \ s"${prefix}asset_code").extract[String]
 
@@ -68,7 +72,6 @@ object Asset extends Decode {
 
 case object NativeAsset extends Asset {
   val code: String = "XLM"
-  override def encode: LazyList[Byte] = Encode.int(0)
   def canoncialString: String = "native"
   override def xdr: XAsset = new XAsset.Builder().discriminant(AssetType.ASSET_TYPE_NATIVE).build()
 }
@@ -93,11 +96,6 @@ case class IssuedAsset4 private(code: String, issuer: PublicKeyOps) extends NonN
 
   override val typeString = "credit_alphanum4"
 
-  def encode: LazyList[Byte] = {
-    val codeBytes = paddedByteArray(code, 4)
-    Encode.int(1) ++ Encode.bytes(4, codeBytes) ++ issuer.encode
-  }
-
   override def xdr: XAsset = new XAsset.Builder()
     .discriminant(AssetType.ASSET_TYPE_CREDIT_ALPHANUM4)
     .alphaNum4(new AssetAlphaNum4.Builder()
@@ -107,14 +105,8 @@ case class IssuedAsset4 private(code: String, issuer: PublicKeyOps) extends NonN
     .build()
 }
 
-object IssuedAsset4 extends Decode {
+object IssuedAsset4 {
   def of(code: String, issuer: PublicKeyOps): IssuedAsset4 = IssuedAsset4(code, issuer.asPublicKey)
-
-  def decode: State[Seq[Byte], IssuedAsset4] = for {
-    bs <- bytes(4)
-    issuer <- KeyPair.decode
-    code = paddedByteArrayToString(bs.toArray)
-  } yield IssuedAsset4(code, issuer)
 }
 
 
@@ -128,11 +120,6 @@ case class IssuedAsset12 private (code: String, issuer: PublicKeyOps) extends No
 
   override val typeString = "credit_alphanum12"
 
-  def encode: LazyList[Byte] = {
-    val codeBytes = paddedByteArray(code, 12)
-    Encode.int(2) ++ Encode.bytes(12, codeBytes) ++ issuer.encode
-  }
-
   override def xdr: XAsset = new XAsset.Builder()
     .discriminant(AssetType.ASSET_TYPE_CREDIT_ALPHANUM12)
     .alphaNum12(new AssetAlphaNum12.Builder()
@@ -142,12 +129,6 @@ case class IssuedAsset12 private (code: String, issuer: PublicKeyOps) extends No
     .build()
 }
 
-object IssuedAsset12 extends Decode {
+object IssuedAsset12 {
   def of(code: String, keyPair: PublicKeyOps): IssuedAsset12 = IssuedAsset12(code, keyPair.asPublicKey)
-
-  def decode: State[Seq[Byte], IssuedAsset12] = for {
-    bs <- bytes(12)
-    issuer <- KeyPair.decode
-    code = paddedByteArrayToString(bs.toArray)
-  } yield IssuedAsset12(code, issuer)
 }

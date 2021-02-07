@@ -3,7 +3,6 @@ package stellar.sdk.model.op
 import org.scalacheck.Arbitrary
 import org.specs2.mutable.Specification
 import stellar.sdk.ArbitraryInput
-import stellar.sdk.util.ByteArrays
 
 class RevokeSponsorshipOperationSpec extends Specification with ArbitraryInput {
 
@@ -12,13 +11,11 @@ class RevokeSponsorshipOperationSpec extends Specification with ArbitraryInput {
 
   "revoke sponsorship operation" should {
     "serde via xdr bytes" >> prop { actual: RevokeSponsorshipOperation =>
-      val (remaining, decoded) = Operation.decode.run(actual.encode).value
-      decoded mustEqual actual
-      remaining must beEmpty
+      Operation.decodeXdr(actual.xdr) mustEqual actual
     }
 
     "serde via xdr string" >> prop { actual: RevokeSponsorshipOperation =>
-      Operation.decodeXDR(ByteArrays.base64(actual.encode)) mustEqual actual
+      Operation.decodeXdrString(actual.xdr.encode().base64()) mustEqual actual
     }
   }
 

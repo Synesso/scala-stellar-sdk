@@ -1,27 +1,24 @@
 package stellar.sdk.model.op
 
-import org.json4s.NoTypeHints
 import org.json4s.native.JsonMethods.parse
 import org.json4s.native.Serialization
+import org.json4s.{Formats, NoTypeHints}
 import org.scalacheck.Arbitrary
 import org.specs2.mutable.Specification
-import stellar.sdk.util.ByteArrays.base64
-import stellar.sdk.{ArbitraryInput, DomainMatchers, KeyPair}
+import stellar.sdk.{ArbitraryInput, DomainMatchers}
 
 class AllowTrustOperationSpec extends Specification with ArbitraryInput with DomainMatchers with JsonSnippets {
 
   implicit val arb: Arbitrary[Transacted[AllowTrustOperation]] = Arbitrary(genTransacted(genAllowTrustOperation))
-  implicit val formats = Serialization.formats(NoTypeHints) + TransactedOperationDeserializer
+  implicit val formats: Formats = Serialization.formats(NoTypeHints) + TransactedOperationDeserializer
 
   "allow trust operation" should {
     "serde via xdr string" >> prop { actual: AllowTrustOperation =>
-      Operation.decodeXDR(base64(actual.encode)) must beEquivalentTo(actual)
+      Operation.decodeXdrString(actual.xdr.encode().base64()) mustEqual actual
     }
 
     "serde via xdr bytes" >> prop { actual: AllowTrustOperation =>
-      val (remaining, decoded) = Operation.decode.run(actual.encode).value
-      decoded mustEqual actual
-      remaining must beEmpty
+      Operation.decodeXdr(actual.xdr) mustEqual actual
     }
 
     "parse from json" >> prop { op: Transacted[AllowTrustOperation] =>

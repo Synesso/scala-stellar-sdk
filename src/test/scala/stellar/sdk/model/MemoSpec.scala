@@ -1,5 +1,6 @@
 package stellar.sdk.model
 
+import okio.ByteString
 import org.scalacheck.Arbitrary._
 import org.scalacheck.Gen
 import org.specs2.mutable.Specification
@@ -25,62 +26,30 @@ class MemoSpec extends Specification with ArbitraryInput with DomainMatchers {
   }
 
   "a memo hash" should {
-    "not be constructable with > 32 bytes" >> {
-      MemoHash((1 to 33).map(_.toByte)) must throwAn[AssertionError]
+    "not be constructable with != 32 bytes" >> {
+      MemoHash((1 to 33).map(_.toByte).toArray) must throwAn[AssertionError]
     }
 
-    "pad the input bytes" >> prop { bs: Array[Byte] =>
-      MemoHash(bs.take(32).toIndexedSeq).bytes mustEqual paddedByteArray(bs.take(32), 32)
-    }
-
-    "provide padded hex value" >> prop { s: String =>
-      val hex = MemoHash(s.take(32).getBytes("UTF-8").toIndexedSeq).hex
-      new String(hex.toSeq.sliding(2, 2).toArray.map(_.unwrap).map(Integer.parseInt(_, 16).toByte), "UTF-8").trim mustEqual s.take(32)
-      hex.length mustEqual 64
-    }.setGen(Gen.identifier)
-
-    "provide trimmed hex value" >> prop { s: String =>
-      val hex = MemoHash(s.take(32).getBytes("UTF-8").toIndexedSeq).hexTrim
-      new String(hex.toSeq.sliding(2, 2).map(_.unwrap).map(Integer.parseInt(_, 16).toByte).toArray, "UTF-8") mustEqual s.take(32)
-    }.setGen(Gen.identifier)
-
-    "be created from a hash" >> prop { bs: Array[Byte] =>
-      val hex = bs.take(32).map("%02X".format(_)).mkString
+    "be created from a hash" >> prop { hash64: String =>
+      val hex = ByteString.decodeBase64(hash64).hex()
       MemoHash.from(hex) must beSuccessfulTry.like { case m: MemoHash =>
-        m.bs.toSeq mustEqual bs.take(32).toSeq
+        m.bs.hex() mustEqual hex
       }
       MemoHash.from(s"${hex}Z") must beFailedTry[MemoHash]
-      (MemoHash.from(bs.map("%02X".format(_)).mkString) must beFailedTry[MemoHash]).unless(bs.length <= 32)
-    }
+    }.setGen(genHash)
   }
 
   "a memo return hash" should {
     "not be constructable with > 32 bytes" >> {
-      MemoReturnHash((1 to 33).map(_.toByte)) must throwAn[AssertionError]
+      MemoReturnHash((1 to 33).map(_.toByte).toArray) must throwAn[AssertionError]
     }
 
-    "pad the input bytes" >> prop { bs: Array[Byte] =>
-      MemoReturnHash(bs.take(32).toIndexedSeq).bytes mustEqual paddedByteArray(bs.take(32), 32)
-    }
-
-    "provide padded hex value" >> prop { s: String =>
-      val hex = MemoReturnHash(s.take(32).getBytes("UTF-8").toIndexedSeq).hex
-      new String(hex.toSeq.sliding(2, 2).map(_.unwrap).map(Integer.parseInt(_, 16).toByte).toArray, "UTF-8").trim mustEqual s.take(32)
-      hex.length mustEqual 64
-    }.setGen(Gen.identifier)
-
-    "provide trimmed hex value" >> prop { s: String =>
-      val hex = MemoReturnHash(s.take(32).getBytes("UTF-8").toIndexedSeq).hexTrim
-      new String(hex.toSeq.sliding(2, 2).map(_.unwrap).map(Integer.parseInt(_, 16).toByte).toArray, "UTF-8") mustEqual s.take(32)
-    }.setGen(Gen.identifier)
-
-    "be created from a hash" >> prop { bs: Array[Byte] =>
-      val hex = bs.take(32).map("%02X".format(_)).mkString
+    "be created from a hash" >> prop { hash64: String =>
+      val hex = ByteString.decodeBase64(hash64).hex()
       MemoReturnHash.from(hex) must beSuccessfulTry.like { case m: MemoReturnHash =>
-        m.bs.toSeq mustEqual bs.take(32).toSeq
+        m.bs.hex() mustEqual hex
       }
       MemoReturnHash.from(s"${hex}Z") must beFailedTry[MemoReturnHash]
-      (MemoReturnHash.from(bs.map("%02X".format(_)).mkString) must beFailedTry[MemoReturnHash]).unless(bs.length <= 32)
-    }
+    }.setGen(genHash)
   }
 }

@@ -2,31 +2,19 @@ package stellar.sdk.model
 
 import java.time.{Instant, ZonedDateTime}
 
-import cats.data.State
 import org.json4s.JObject
 import org.stellar.xdr.{ClaimPredicateType, Int64, ClaimPredicate => XClaimPredicate}
 import stellar.sdk.model.ClaimPredicate.parseClaimPredicate
 import stellar.sdk.model.response.ResponseParser
-import stellar.sdk.model.xdr.{Decode, Encodable, Encode}
 
-sealed trait ClaimPredicate extends Encodable {
+sealed trait ClaimPredicate {
   def check(claimCreation: Instant, ledgerCloseTime: Instant): Boolean
   def xdr: XClaimPredicate
 }
 
-object ClaimPredicate extends Decode {
-
-  def decode: State[Seq[Byte], ClaimPredicate] = int.flatMap {
-    case 0 => State.pure(Unconditional)
-    case 1 => arr(decode).map { case Seq(left, right) => And(left, right) }
-    case 2 => arr(decode).map { case Seq(left, right) => Or(left, right) }
-    case 3 => decode.map(Not)
-    case 4 => long.map(Instant.ofEpochSecond).map(AbsolutelyBefore)
-    case 5 => long.map(SinceClaimCreation)
-  }
+object ClaimPredicate {
 
   case object Unconditional extends ClaimPredicate {
-    override def encode: LazyList[Byte] = Encode.int(0)
     override def check(claimCreation: Instant, instant: Instant): Boolean = true
     override val xdr: XClaimPredicate = new XClaimPredicate.Builder()
       .discriminant(ClaimPredicateType.CLAIM_PREDICATE_UNCONDITIONAL)
@@ -34,7 +22,6 @@ object ClaimPredicate extends Decode {
   }
 
   case class And(left: ClaimPredicate, right: ClaimPredicate) extends ClaimPredicate {
-    override def encode: LazyList[Byte] = Encode.int(1) ++ Encode.arr(List(left, right))
     override def check(claimCreation: Instant, instant: Instant): Boolean =
       left.check(claimCreation, instant) && right.check(claimCreation, instant)
     override def xdr: XClaimPredicate = new XClaimPredicate.Builder()
@@ -44,7 +31,6 @@ object ClaimPredicate extends Decode {
   }
 
   case class Or(left: ClaimPredicate, right: ClaimPredicate) extends ClaimPredicate {
-    override def encode: LazyList[Byte] = Encode.int(2) ++ Encode.arr(List(left, right))
     override def check(claimCreation: Instant, instant: Instant): Boolean =
       left.check(claimCreation, instant) || right.check(claimCreation, instant)
     override def xdr: XClaimPredicate = new XClaimPredicate.Builder()
@@ -54,7 +40,6 @@ object ClaimPredicate extends Decode {
   }
 
   case class Not(predicate: ClaimPredicate) extends ClaimPredicate {
-    override def encode: LazyList[Byte] = Encode.int(3) ++ predicate.encode
     override def check(claimCreation: Instant, instant: Instant): Boolean =
       !predicate.check(claimCreation, instant)
     override def xdr: XClaimPredicate = new XClaimPredicate.Builder()
@@ -65,9 +50,7 @@ object ClaimPredicate extends Decode {
 
   /** Will return true if ledger closeTime < instant */
   case class AbsolutelyBefore(instant: Instant) extends ClaimPredicate {
-    override def encode: LazyList[Byte] = Encode.int(4) ++ Encode.long(instant.getEpochSecond)
     override def check(claimCreation: Instant, instant: Instant): Boolean = !instant.isAfter(this.instant)
-
     override def xdr: XClaimPredicate = new XClaimPredicate.Builder()
       .discriminant(ClaimPredicateType.CLAIM_PREDICATE_BEFORE_ABSOLUTE_TIME)
       .absBefore(new Int64(instant.getEpochSecond))
@@ -77,7 +60,6 @@ object ClaimPredicate extends Decode {
   /** Seconds since closeTime of the ledger in which the ClaimableBalanceEntry was created */
   case class SinceClaimCreation(seconds: Long) extends ClaimPredicate {
     require(seconds >= 0, "Seconds must be non-negative")
-    override def encode: LazyList[Byte] = Encode.int(5) ++ Encode.long(seconds)
     override def check(claimCreation: Instant, instant: Instant): Boolean =
       instant.minusSeconds(seconds).isBefore(claimCreation)
 

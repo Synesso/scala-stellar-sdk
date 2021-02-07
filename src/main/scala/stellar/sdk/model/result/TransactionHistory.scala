@@ -3,10 +3,9 @@ package stellar.sdk.model.result
 import java.time.ZonedDateTime
 
 import okio.ByteString
-import org.json4s.{DefaultFormats, Formats}
 import org.json4s.JsonAST.JObject
+import org.json4s.{DefaultFormats, Formats}
 import stellar.sdk.model._
-import stellar.sdk.model.ledger.TransactionLedgerEntries.arr
 import stellar.sdk.model.ledger.{LedgerEntryChange, LedgerEntryChanges, TransactionLedgerEntries}
 import stellar.sdk.model.response.ResponseParser
 import stellar.sdk.util.ByteArrays.base64
@@ -23,11 +22,11 @@ case class TransactionHistory(hash: String, ledgerId: Long, createdAt: ZonedDate
                               resultMetaXDR: String, feeMetaXDR: String, validAfter: Option[ZonedDateTime],
                               validBefore: Option[ZonedDateTime], feeBump: Option[FeeBumpHistory]) {
 
-  lazy val result: TransactionResult = TransactionResult.decodeXDR(resultXDR)
+  lazy val result: TransactionResult = TransactionResult.decodeXdrString(resultXDR)
 
   def ledgerEntries: TransactionLedgerEntries = TransactionLedgerEntries.decodeXDR(resultMetaXDR)
   def feeLedgerEntries: Seq[LedgerEntryChange] = LedgerEntryChanges.decodeXDR(feeMetaXDR)
-  def transaction(network: Network): Transaction = Transaction.decodeXDR(envelopeXDR)(network)
+  def transaction(network: Network): Transaction = Transaction.decodeXdrString(envelopeXDR)(network)
 
   @deprecated("Replaced by `feeCharged`", "v0.7.2")
   val feePaid: NativeAmount = feeCharged
@@ -66,8 +65,8 @@ object TransactionHistoryDeserializer extends {
           (o \ "memo_bytes").extractOpt[String]
             .map(ByteString.decodeBase64).map(MemoText(_))
             .getOrElse(MemoText((o \ "memo").extractOpt[String].getOrElse("")))
-        case "hash" => MemoHash(base64((o \ "memo").extract[String]).toIndexedSeq)
-        case "return" => MemoReturnHash(base64((o \ "memo").extract[String]).toIndexedSeq)
+        case "hash" => MemoHash(ByteString.decodeBase64((o \ "memo").extract[String]))
+        case "return" => MemoReturnHash(ByteString.decodeBase64((o \ "memo").extract[String]))
       },
       signatures = inner.map(_._3).getOrElse(signatures),
       envelopeXDR = (o \ "envelope_xdr").extract[String],

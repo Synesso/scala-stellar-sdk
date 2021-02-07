@@ -2,10 +2,7 @@ package stellar.sdk.model
 
 import okhttp3.HttpUrl
 import okio.ByteString
-import stellar.sdk.util.{ByteArrays, DoNothingNetwork}
 import stellar.sdk.{KeyPair, PublicKey}
-
-import scala.Option
 
 /**
  * A request for a payment to be signed.
@@ -37,8 +34,8 @@ case class PaymentSigningRequest(
       case NoMemo => None
       case MemoId(id) => Some(id.toString -> "MEMO_ID")
       case MemoText(text) => Some(text.utf8() -> "MEMO_TEXT")
-      case MemoHash(xs) => Some(ByteArrays.base64(xs) -> "MEMO_HASH")
-      case MemoReturnHash(xs) => Some(ByteArrays.base64(xs) -> "MEMO_RETURN")
+      case MemoHash(xs) => Some(xs.base64() -> "MEMO_HASH")
+      case MemoReturnHash(xs) => Some(xs.base64() -> "MEMO_RETURN")
     }
 
     val params = Map(
@@ -89,8 +86,8 @@ object PaymentSigningRequest {
       memoType match {
         case "MEMO_ID" => MemoId(memoValue.toLong)
         case "MEMO_TEXT" => MemoText(memoValue)
-        case "MEMO_HASH" => MemoHash(ByteArrays.base64(memoValue))
-        case "MEMO_RETURN" => MemoReturnHash(ByteArrays.base64(memoValue))
+        case "MEMO_HASH" => MemoHash(ByteString.decodeBase64(memoValue))
+        case "MEMO_RETURN" => MemoReturnHash(ByteString.decodeBase64(memoValue))
       }
     }).getOrElse(NoMemo)
 

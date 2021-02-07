@@ -1,12 +1,7 @@
 package stellar.sdk.model.ledger
 
-import cats.data.State
 import okio.ByteString
-import org.stellar.xdr.LedgerEntryChangeType.LEDGER_ENTRY_CREATED
 import org.stellar.xdr.{LedgerEntryChangeType, LedgerEntry => XLedgerEntry, LedgerEntryChange => XLedgerEntryChange, LedgerEntryChanges => XLedgerEntryChanges}
-import stellar.sdk.model.ledger.TransactionLedgerEntries.arr
-import stellar.sdk.model.xdr.{Decode, Encodable, Encode}
-import stellar.sdk.util.ByteArrays
 
 sealed trait LedgerEntryChange {
   def xdr: XLedgerEntryChange
@@ -40,7 +35,7 @@ case class LedgerEntryState(entry: LedgerEntry) extends LedgerEntryChange {
     .build()
 }
 
-object LedgerEntryChange extends Decode {
+object LedgerEntryChange {
 
   def decodeXdr(xdr: XLedgerEntryChange): LedgerEntryChange =
     xdr.getDiscriminant match {
