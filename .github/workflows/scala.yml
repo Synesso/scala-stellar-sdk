@@ -3,6 +3,8 @@ name: Build
 on:
   push:
     branches-ignore: []
+  pull_request:
+    branches-ignore: []
 
 jobs:
   build:
