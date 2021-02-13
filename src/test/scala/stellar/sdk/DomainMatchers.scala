@@ -5,13 +5,10 @@ import org.apache.commons.codec.binary.Hex
 import org.specs2.matcher.{AnyMatchers, Matcher, MustExpectations, OptionMatchers, SequenceMatchersCreation}
 import stellar.sdk.auth.Challenge
 import stellar.sdk.model._
-import stellar.sdk.util.ByteArrays.base64
 import stellar.sdk.model.op._
 import stellar.sdk.model.result.TransactionHistory
-import stellar.sdk.model.xdr.Encodable
 
 import scala.math.Ordering.Implicits.seqOrdering
-import scala.util.Random
 
 trait DomainMatchers extends AnyMatchers with MustExpectations with SequenceMatchersCreation with OptionMatchers {
 
@@ -226,7 +223,7 @@ trait DomainMatchers extends AnyMatchers with MustExpectations with SequenceMatc
   def beEquivalentTo(other: Transaction): Matcher[Transaction] = beLike {
     case txn =>
       txn.source must beEquivalentTo(other.source)
-      txn.memo must beEquivalentTo(other.memo)
+      txn.memo mustEqual other.memo
       txn.timeBounds mustEqual other.timeBounds
       txn.hash mustEqual other.hash
       forall(txn.operations.zip(other.operations)) {
@@ -245,18 +242,9 @@ trait DomainMatchers extends AnyMatchers with MustExpectations with SequenceMatc
       }
   }
 
-  def beEquivalentTo(other: Memo): Matcher[Memo] = beLike[Memo] {
-    case memo =>
-      (memo, other) match {
-        case (MemoHash(a), MemoHash(b)) => base64(a) mustEqual base64(b)
-        case (MemoReturnHash(a), MemoReturnHash(b)) => a.toSeq mustEqual b.toSeq
-        case _ => memo mustEqual other
-      }
-  }
-
   def beEquivalentTo(other: TransactionHistory): Matcher[TransactionHistory] = beLike {
     case thr =>
-      other.memo must beEquivalentTo(thr.memo)
+      other.memo mustEqual thr.memo
       other.copy(memo = thr.memo) mustEqual thr
   }
 
@@ -264,13 +252,5 @@ trait DomainMatchers extends AnyMatchers with MustExpectations with SequenceMatc
     case challenge =>
       other.signedTransaction must beEquivalentTo(challenge.signedTransaction)
       other.networkPassphrase mustEqual challenge.networkPassphrase
-  }
-
-  def serdeUsing[E <: Encodable](decoder: State[Seq[Byte], E]): Matcher[E] = beLike {
-    case expected: Encodable =>
-      val encoded = expected.encode.toList
-      val (remaining, actual) = decoder.run(encoded).value
-      actual mustEqual expected
-      remaining must beEmpty
   }
 }

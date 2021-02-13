@@ -22,12 +22,6 @@ class AmountSpec extends Specification with ArbitraryInput {
         "100076310227.4749892"
       )
     }
-
-    "serde via xdr bytes" >> prop { expected: Amount =>
-      val (remaining, actual) = Amount.decode.run(expected.encode).value
-      actual mustEqual expected
-      remaining must beEmpty
-    }
   }
 
   "a number of units and a non-native asset" should {

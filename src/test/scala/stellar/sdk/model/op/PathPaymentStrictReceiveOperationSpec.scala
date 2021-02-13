@@ -15,13 +15,11 @@ class PathPaymentStrictReceiveOperationSpec extends Specification with Arbitrary
 
   "path payment operation" should {
     "serde via xdr string" >> prop { actual: PathPaymentStrictReceiveOperation =>
-      Operation.decodeXDR(base64(actual.encode)) must beEquivalentTo(actual)
+      Operation.decodeXdrString(actual.xdr.encode().base64()) must beEquivalentTo(actual)
     }
 
     "serde via xdr bytes" >> prop { actual: PathPaymentStrictReceiveOperation =>
-      val (remaining, decoded) = Operation.decode.run(actual.encode).value
-      decoded mustEqual actual
-      remaining must beEmpty
+      Operation.decodeXdr(actual.xdr) mustEqual actual
     }
 
     "parse from json" >> prop { op: Transacted[PathPaymentStrictReceiveOperation] =>

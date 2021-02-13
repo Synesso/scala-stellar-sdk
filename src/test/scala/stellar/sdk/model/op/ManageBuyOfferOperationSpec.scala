@@ -17,13 +17,11 @@ class ManageBuyOfferOperationSpec extends Specification with ArbitraryInput with
 
   "create sell offer operation" should {
     "serde via xdr string" >> prop { actual: CreateBuyOfferOperation =>
-      Operation.decodeXDR(base64(actual.encode)) must beEquivalentTo(actual)
+      Operation.decodeXdrString(actual.xdr.encode().base64()) must beEquivalentTo(actual)
     }
 
     "serde via xdr bytes" >> prop { actual: CreateBuyOfferOperation =>
-      val (remaining, decoded) = Operation.decode.run(actual.encode).value
-      decoded mustEqual actual
-      remaining must beEmpty
+      Operation.decodeXdr(actual.xdr) mustEqual actual
     }
 
     "be parsed from json" >> prop { op: Transacted[CreateBuyOfferOperation] =>
@@ -61,13 +59,11 @@ class ManageBuyOfferOperationSpec extends Specification with ArbitraryInput with
 
   "update sell offer operation" should {
     "serde via xdr string" >> prop { actual: UpdateBuyOfferOperation =>
-      Operation.decodeXDR(base64(actual.encode)) must beEquivalentTo(actual)
+      Operation.decodeXdrString(actual.xdr.encode().base64()) must beEquivalentTo(actual)
     }
 
     "serde via xdr bytes" >> prop { actual: UpdateBuyOfferOperation =>
-      val (remaining, decoded) = Operation.decode.run(actual.encode).value
-      decoded mustEqual actual
-      remaining must beEmpty
+      Operation.decodeXdr(actual.xdr) mustEqual actual
     }
 
     "be parsed from json" >> prop { op: Transacted[UpdateBuyOfferOperation] =>
@@ -105,13 +101,11 @@ class ManageBuyOfferOperationSpec extends Specification with ArbitraryInput with
 
   "delete sell offer operation" should {
     "serde via xdr string" >> prop { actual: DeleteBuyOfferOperation =>
-      Operation.decodeXDR(base64(actual.encode)) must beEquivalentTo(actual)
+      Operation.decodeXdrString(actual.xdr.encode().base64()) must beEquivalentTo(actual)
     }
 
     "serde via xdr bytes" >> prop { actual: DeleteBuyOfferOperation =>
-      val (remaining, decoded) = Operation.decode.run(actual.encode).value
-      decoded mustEqual actual
-      remaining must beEmpty
+      Operation.decodeXdr(actual.xdr) mustEqual actual
     }
 
     "be parsed from json" >> prop { op: Transacted[DeleteBuyOfferOperation] =>

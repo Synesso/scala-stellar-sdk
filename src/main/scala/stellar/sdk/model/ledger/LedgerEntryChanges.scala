@@ -1,41 +1,56 @@
 package stellar.sdk.model.ledger
 
-import cats.data.State
-import stellar.sdk.model.ledger.TransactionLedgerEntries.arr
-import stellar.sdk.model.xdr.{Decode, Encodable, Encode}
-import stellar.sdk.util.ByteArrays
+import okio.ByteString
+import org.stellar.xdr.{LedgerEntryChangeType, LedgerEntry => XLedgerEntry, LedgerEntryChange => XLedgerEntryChange, LedgerEntryChanges => XLedgerEntryChanges}
 
-sealed trait LedgerEntryChange extends Encodable
+sealed trait LedgerEntryChange {
+  def xdr: XLedgerEntryChange
+}
 
 case class LedgerEntryCreate(entry: LedgerEntry) extends LedgerEntryChange {
-  override def encode: LazyList[Byte] = Encode.int(0) ++ entry.encode ++ Encode.int(0)
+  override def xdr: XLedgerEntryChange = new XLedgerEntryChange.Builder()
+    .discriminant(LedgerEntryChangeType.LEDGER_ENTRY_CREATED)
+    .created(entry.xdr)
+    .build()
 }
 
 case class LedgerEntryUpdate(entry: LedgerEntry) extends LedgerEntryChange {
-  override def encode: LazyList[Byte] = Encode.int(1) ++ entry.encode ++ Encode.int(0)
+  override def xdr: XLedgerEntryChange = new XLedgerEntryChange.Builder()
+    .discriminant(LedgerEntryChangeType.LEDGER_ENTRY_UPDATED)
+    .updated(entry.xdr)
+    .build()
 }
 
 case class LedgerEntryDelete(entry: LedgerKey) extends LedgerEntryChange {
-  override def encode: LazyList[Byte] = Encode.int(2) ++ entry.encode
+  override def xdr: XLedgerEntryChange = new XLedgerEntryChange.Builder()
+    .discriminant(LedgerEntryChangeType.LEDGER_ENTRY_REMOVED)
+    .removed(entry.xdr)
+    .build()
 }
 
 case class LedgerEntryState(entry: LedgerEntry) extends LedgerEntryChange {
-  override def encode: LazyList[Byte] = Encode.int(3) ++ entry.encode ++ Encode.int(0)
+  override def xdr: XLedgerEntryChange = new XLedgerEntryChange.Builder()
+    .discriminant(LedgerEntryChangeType.LEDGER_ENTRY_STATE)
+    .state(entry.xdr)
+    .build()
 }
 
-object LedgerEntryChange extends Decode {
+object LedgerEntryChange {
 
-  val decode: State[Seq[Byte], LedgerEntryChange] = switch[LedgerEntryChange](
-    widen(LedgerEntry.decode.map(LedgerEntryCreate).flatMap(drop(int))),
-    widen(LedgerEntry.decode.map(LedgerEntryUpdate).flatMap(drop(int))),
-    widen(LedgerKey.decode.map(LedgerEntryDelete)),
-    widen(LedgerEntry.decode.map(LedgerEntryState).flatMap(drop(int)))
-  )
+  def decodeXdr(xdr: XLedgerEntryChange): LedgerEntryChange =
+    xdr.getDiscriminant match {
+      case LedgerEntryChangeType.LEDGER_ENTRY_CREATED => LedgerEntryCreate(LedgerEntry.decodeXdr(xdr.getCreated))
+      case LedgerEntryChangeType.LEDGER_ENTRY_UPDATED => LedgerEntryUpdate(LedgerEntry.decodeXdr(xdr.getUpdated))
+      case LedgerEntryChangeType.LEDGER_ENTRY_REMOVED => LedgerEntryDelete(LedgerKey.decodeXdr(xdr.getRemoved))
+      case LedgerEntryChangeType.LEDGER_ENTRY_STATE => LedgerEntryState(LedgerEntry.decodeXdr(xdr.getState))
+    }
 }
 
 object LedgerEntryChanges {
 
-  def decodeXDR(base64: String): Seq[LedgerEntryChange] =
-    arr(LedgerEntryChange.decode).run(ByteArrays.base64(base64).toIndexedSeq).value._2
+  def decodeXDR(base64: String): List[LedgerEntryChange] = {
+    XLedgerEntryChanges.decode(ByteString.decodeBase64(base64))
+      .getLedgerEntryChanges.toList.map(LedgerEntryChange.decodeXdr)
+  }
 
 }

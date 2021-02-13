@@ -31,7 +31,7 @@ case class TransactionApproved(hash: String, ledger: Long,
   override val isSuccess: Boolean = true
 
   // -- unroll nested XDR deserialised objects into this object for convenience
-  lazy val result: TransactionSuccess = TransactionResult.decodeXDR(resultXDR).asInstanceOf[TransactionSuccess]
+  lazy val result: TransactionSuccess = TransactionResult.decodeXdrString(resultXDR).asInstanceOf[TransactionSuccess]
   lazy val ledgerEntries: TransactionLedgerEntries = TransactionLedgerEntries.decodeXDR(resultMetaXDR)
 
   def feeCharged: NativeAmount = result.feeCharged
@@ -50,7 +50,9 @@ case class TransactionRejected(status: Int, detail: String,
   override val isSuccess: Boolean = false
 
   // -- unroll nested XDR deserialised object into this object for convenience
-  lazy val result: TransactionNotSuccessful = TransactionResult.decodeXDR(resultXDR).asInstanceOf[TransactionNotSuccessful]
+  lazy val result: TransactionNotSuccessful = {
+    TransactionResult.decodeXdrString(resultXDR).asInstanceOf[TransactionNotSuccessful]
+  }
 
   def feeCharged: NativeAmount = result.feeCharged
 }

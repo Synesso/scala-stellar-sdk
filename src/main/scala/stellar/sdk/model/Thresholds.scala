@@ -1,8 +1,6 @@
 package stellar.sdk.model
 
-import cats.data.State
-import stellar.sdk.model.xdr.{Decode, Encodable}
-import stellar.sdk.model.xdr.Encode._
+import org.stellar.xdr.{Thresholds => XThresholds}
 
 /**
   * The thresholds for operations on this account.
@@ -23,13 +21,13 @@ case class Thresholds(low: Int, med: Int, high: Int)
   *            Buy Offer, Manage Sell Offer, Create Passive Sell Offer, Change Trust, Inflation, and Manage Data operations.
   * @param high The weight required for a valid transaction including the Account Merge and Set Options operations.
   */
-case class LedgerThresholds(master: Int, low: Int, med: Int, high: Int) extends Encodable {
-  override def encode: LazyList[Byte] = bytes(4, Array[Byte](master.toByte, low.toByte, med.toByte, high.toByte))
+case class LedgerThresholds(master: Int, low: Int, med: Int, high: Int) {
+  def xdr: XThresholds = new XThresholds(Array(master, low, med, high).map(_.toByte))
 }
 
-object LedgerThresholds extends Decode {
-  val decode: State[Seq[Byte], LedgerThresholds] = bytes(4).map { bs =>
-    val Seq(master, low, med, high): Seq[Int] = bs.map(_ & 0xff)
+object LedgerThresholds {
+  def decodeXdr(xdr: XThresholds): LedgerThresholds = {
+    val Array(master, low, med, high) = xdr.getThresholds.map(_.toInt & 0xFF)
     LedgerThresholds(master, low, med, high)
   }
 }

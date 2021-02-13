@@ -5,16 +5,14 @@ import java.time.format.DateTimeFormatter
 
 import okio.ByteString
 import org.json4s.JsonAST
-import org.json4s.JsonAST.JObject
-import org.specs2.mutable.Specification
-import stellar.sdk.util.ByteArrays.{base64, bytesToHex}
-import stellar.sdk._
-import stellar.sdk.model.op.CreateAccountOperation
-import stellar.sdk.model.result._
 import org.json4s.JsonDSL._
-import org.json4s.native.{JsonMethods, Serialization}
+import org.specs2.mutable.Specification
+import stellar.sdk._
 import stellar.sdk.model.TimeBounds.Unbounded
 import stellar.sdk.model._
+import stellar.sdk.model.op.CreateAccountOperation
+import stellar.sdk.model.result._
+import stellar.sdk.util.ByteArrays.bytesToHex
 
 class TransactionResponseSpec extends Specification with ArbitraryInput with DomainMatchers {
 
@@ -44,15 +42,17 @@ class TransactionResponseSpec extends Specification with ArbitraryInput with Dom
               "4A0011ED6A9F6EB7E1C7D3EB5A050B033CD2C0F965DF8B0AEAD611B970440FD2A4C71B9F6F926CA3C5C7A3AA3CFB74FC0E"
             )
             signatures.map(_.hint.toIndexedSeq).map(bytesToHex(_)) mustEqual Seq("0C99B7D8")
-            bytesToHex(txn.hash) mustEqual "BA68C0112AFE25A2FEA9A6E7926A4AEF9FF12FB627EC840840541813AAA695DB"
+            feeBump must beNone
+            txn.hash.hex().toUpperCase() mustEqual "BA68C0112AFE25A2FEA9A6E7926A4AEF9FF12FB627EC840840541813AAA695DB"
         }
     }
 
     "provide access to the XDR Transaction Result" >> {
       TransactionApproved("", 1, "", "AAAAAAAAAGQAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAB////+wAAAAA=", "").result must
-        beLike { case TransactionSuccess(feeCharged, opResults) =>
+        beLike { case TransactionSuccess(feeCharged, opResults, hash) =>
           feeCharged.units mustEqual 100
           opResults mustEqual Seq(CreateAccountSuccess, PaymentNoDestination)
+          hash mustEqual ByteString.EMPTY
         }
     }
 
@@ -101,8 +101,8 @@ class TransactionResponseSpec extends Specification with ArbitraryInput with Dom
         case NoMemo => "none" -> None -> None
         case MemoId(id) => "id" -> Some("memo" -> java.lang.Long.toUnsignedString(id)) -> None
         case MemoText(t) => "text" -> Some("memo" -> new String(t.toByteArray)) -> Some("memo_bytes" -> t.base64())
-        case MemoHash(bs) => "hash" -> Some("memo" -> base64(bs)) -> None
-        case MemoReturnHash(bs) => "return" -> Some("memo" -> base64(bs)) -> None
+        case MemoHash(bs) => "hash" -> Some("memo" -> bs.base64()) -> None
+        case MemoReturnHash(bs) => "return" -> Some("memo" -> bs.base64()) -> None
       }
       val json = feeBump.foldLeft(memo.foldLeft(memoSecondary.foldLeft(
         ("hash" -> h.feeBump.map(_.hash).getOrElse(h.hash)) ~

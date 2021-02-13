@@ -202,13 +202,7 @@ class KeyPairSpec(implicit ee: ExecutionEnv) extends Specification
     }
 
     "serde via xdr bytes" >> prop { pk: PublicKey =>
-      val (remaining, decoded) = KeyPair.decode.run(pk.encode).value
-      decoded must beEquivalentTo(pk)
-      remaining must beEmpty
-    }
-
-    "serde via xdr string" >> prop { pk: PublicKey =>
-      KeyPair.decodeXDR(ByteArrays.base64(pk.encode)) must beEquivalentTo(pk)
+      KeyPair.decodeXdr(pk.xdr) mustEqual pk
     }
   }
 

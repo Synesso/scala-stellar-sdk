@@ -347,7 +347,7 @@ class DocExamples() {
     def `show how to create a transaction with operations`() = {
       // #transaction_createwithops_example
       val account = Account(sourceKey.toAccountId, nextSequenceNumber)
-      val txn = Transaction(account, Seq(
+      val txn = Transaction(account, List(
         CreateAccountOperation(aliceKey.toAccountId),
         CreateAccountOperation(bobKey.toAccountId),
         PaymentOperation(charlieKey.toAccountId, Amount.lumens(42))

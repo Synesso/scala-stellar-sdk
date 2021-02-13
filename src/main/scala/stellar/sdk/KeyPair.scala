@@ -3,13 +3,12 @@ package stellar.sdk
 import java.security.{MessageDigest, SignatureException}
 import java.util.Arrays
 
-import cats.data.State
 import net.i2p.crypto.eddsa._
 import net.i2p.crypto.eddsa.spec._
 import okio.ByteString
+import org.stellar.xdr.{DecoratedSignature, PublicKeyType, SignatureHint, Uint256, PublicKey => XPublicKey}
 import stellar.sdk.key.{EnglishWords, Mnemonic, WordList}
 import stellar.sdk.model.domain.DomainInfo
-import stellar.sdk.model.xdr.{Decode, Encodable, Encode}
 import stellar.sdk.model.{AccountId, Seed, StrKey}
 import stellar.sdk.util.ByteArrays
 
@@ -53,7 +52,7 @@ case class PublicKey(pk: EdDSAPublicKey) extends PublicKeyOps {
   override def toString: String = s"""PublicKey("$accountId")"""
 }
 
-sealed trait PublicKeyOps extends Encodable {
+sealed trait PublicKeyOps {
   val pk: EdDSAPublicKey
 
   /**
@@ -91,11 +90,16 @@ sealed trait PublicKeyOps extends Encodable {
     */
   def hint: Array[Byte] = pk.getAbyte.drop(pk.getAbyte.length - 4)
 
-  def encode: LazyList[Byte] = Encode.int(0) ++ Encode.bytes(32, pk.getAbyte)
+  def encode: LazyList[Byte] = LazyList.from(xdr.encode().toByteArray)
+
+  def xdr: XPublicKey = new XPublicKey.Builder()
+    .discriminant(PublicKeyType.PUBLIC_KEY_TYPE_ED25519)
+    .ed25519(new Uint256(pk.getAbyte))
+    .build()
 }
 
 //noinspection ReferenceMustBePrefixed
-object KeyPair extends Decode {
+object KeyPair {
 
   private val ed25519 = EdDSANamedCurveTable.getByName("ed25519")
 
@@ -252,24 +256,22 @@ object KeyPair extends Decode {
     KeyPair(pair.getPublic.asInstanceOf[EdDSAPublicKey], pair.getPrivate.asInstanceOf[EdDSAPrivateKey])
   }
 
-  val decode: State[Seq[Byte], PublicKey] = for {
-    _ <- int
-    bs <- bytes(32)
-  } yield KeyPair.fromPublicKey(bs.toArray[Byte])
-
-  def decodeXDR(base64: String): PublicKey = decode.run(ByteArrays.base64(base64).toIndexedSeq).value._2
+  def decodeXdr(pk: XPublicKey): PublicKey = fromPublicKey(pk.getEd25519.getUint256)
 
 }
 
-case class Signature(data: Array[Byte], hint: Array[Byte]) extends Encodable {
-  def encode: LazyList[Byte] = Encode.bytes(4, hint) ++ Encode.bytes(data)
+case class Signature(data: Array[Byte], hint: Array[Byte]) {
+  def xdr: DecoratedSignature = new DecoratedSignature.Builder()
+    .hint(new SignatureHint(hint))
+    .signature(new org.stellar.xdr.Signature(data))
+    .build()
 }
 
-object Signature extends Decode {
-  def decode: State[Seq[Byte], Signature] = for {
-    hint <- bytes(4).map(_.toArray)
-    data <- bytes.map(_.toArray)
-  } yield Signature(data, hint)
+object Signature {
+  def decodeXdr(xdr: DecoratedSignature): Signature = Signature(
+    data = xdr.getSignature.getSignature,
+    hint = xdr.getHint.getSignatureHint
+  )
 }
 
 case class InvalidAccountId(id: String, cause: Throwable) extends RuntimeException(id, cause)

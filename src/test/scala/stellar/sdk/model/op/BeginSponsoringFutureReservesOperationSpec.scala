@@ -18,13 +18,11 @@ class BeginSponsoringFutureReservesOperationSpec extends Specification with Arbi
 
   "begin sponsoring future reserves operation" should {
     "serde via xdr bytes" >> prop { actual: BeginSponsoringFutureReservesOperation =>
-      val (remaining, decoded) = Operation.decode.run(actual.encode).value
-      decoded mustEqual actual
-      remaining must beEmpty
+      Operation.decodeXdr(actual.xdr) mustEqual actual
     }
 
     "serde via xdr string" >> prop { actual: BeginSponsoringFutureReservesOperation =>
-      Operation.decodeXDR(ByteArrays.base64(actual.encode)) mustEqual actual
+      Operation.decodeXdrString(actual.xdr.encode().base64()) mustEqual actual
     }
 
     "parse from json" >> prop { op: Transacted[BeginSponsoringFutureReservesOperation] =>

@@ -53,4 +53,12 @@ class ByteArraysSpec extends Specification with ArbitraryInput {
     }
   }
 
+  "bytestrings" should {
+    import ByteArrays.Implicits._
+    "implicitly create from byte arrays" >> prop { bs: Array[Byte] =>
+      val byteString: ByteString = bs
+      byteString mustEqual new ByteString(bs)
+    }
+  }
+
 }

@@ -3,19 +3,15 @@ package stellar.sdk.model
 import java.math.{MathContext, RoundingMode}
 import java.util.Locale
 
-import cats.data.State
 import org.json4s.{DefaultFormats, Formats, JObject}
-import stellar.sdk.model.xdr.{Decode, Encodable, Encode}
 
 import scala.util.Try
 
-sealed trait Amount extends Encodable {
+sealed trait Amount {
   val units: Long
   val asset: Asset
 
   def toDisplayUnits: String = "%.7f".formatLocal(Locale.ROOT, BigDecimal(units) / Amount.toIntegralFactor)
-
-  def encode: LazyList[Byte] = asset.encode ++ Encode.long(units)
 }
 
 case class NativeAmount(units: Long) extends Amount {
@@ -27,7 +23,7 @@ case class IssuedAmount(units: Long, asset: NonNativeAsset) extends Amount {
   override def toString: String = s"$toDisplayUnits $asset"
 }
 
-object Amount extends Decode {
+object Amount {
   implicit val formats: Formats = DefaultFormats
   private val decimalPlaces = 7
   private val toIntegralFactor = BigDecimal(math.pow(10, decimalPlaces))
@@ -57,20 +53,15 @@ object Amount extends Decode {
     throw new IllegalArgumentException(s"Too many digits in fractional portion of $units. Limit is $decimalPlaces")
   )
 
-  def decode: State[Seq[Byte], Amount] = for {
-    asset <- Asset.decode
-    units <- long
-  } yield apply(units, asset)
+  def doubleFromString(o: JObject, key: String): Double = (o \ key).extract[String].toDouble
 
-  def doubleFromString(o: JObject, key: String) = (o \ key).extract[String].toDouble
-
-  def parseNativeAmount(o: JObject, key: String) = {
+  def parseNativeAmount(o: JObject, key: String): NativeAmount = {
     NativeAmount(Amount.toBaseUnits(doubleFromString(o, key)).get)
   }
 
-  def parseIssuedAmount(o: JObject, label: String) = parseAmount(o, label).asInstanceOf[IssuedAmount]
+  def parseIssuedAmount(o: JObject, label: String): IssuedAmount = parseAmount(o, label).asInstanceOf[IssuedAmount]
 
-  def parseAmount(o: JObject, label: String = "amount", assetPrefix: String = "") = {
+  def parseAmount(o: JObject, label: String = "amount", assetPrefix: String = ""): Amount = {
     val units = Amount.toBaseUnits(doubleFromString(o, label)).get
     Asset.parseAsset(assetPrefix, o) match {
       case nna: NonNativeAsset => IssuedAmount(units, nna)
@@ -80,5 +71,4 @@ object Amount extends Decode {
 }
 
 object IssuedAmount {
-  def decode: State[Seq[Byte], IssuedAmount] = Amount.decode.map(x => x.asInstanceOf[IssuedAmount])
 }

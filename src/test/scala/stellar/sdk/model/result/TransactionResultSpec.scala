@@ -1,11 +1,10 @@
 package stellar.sdk.model.result
 
-import org.scalacheck.Arbitrary
+import okio.ByteString
 import org.specs2.mutable.Specification
-import stellar.sdk.model.ledger.OfferEntry
-import stellar.sdk.model.{Amount, Asset, NativeAmount, Price}
-import stellar.sdk.model.result.TransactionResult._
-import stellar.sdk.{ArbitraryInput, DomainMatchers, KeyPair}
+import org.stellar.xdr.TransactionResultCode
+import stellar.sdk.model.NativeAmount
+import stellar.sdk.{ArbitraryInput, DomainMatchers}
 
 import scala.util.Try
 
@@ -13,20 +12,14 @@ class TransactionResultSpec extends Specification with ArbitraryInput with Domai
 
   "a transaction result" should {
     "serde via xdr bytes" >> prop { r: TransactionResult =>
-      r must serdeUsing(TransactionResult.decode)
-    }
-  }
-
-  "a transaction result code" should {
-    "not be constructed with an invalid id" >> {
-      Code(-12) must throwA[RuntimeException]
+      TransactionResult.decodeXdr(r.xdr) mustEqual r
     }
   }
 
   "An XDR transaction success" should {
     "be decodable" >> {
-      TransactionResult.decodeXDR("AAAAAAAAAGQAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAB////+wAAAAA=") mustEqual
-        TransactionSuccess(NativeAmount(100), Seq(CreateAccountSuccess, PaymentNoDestination))
+      TransactionResult.decodeXdrString("AAAAAAAAAGQAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAB////+wAAAAA=") mustEqual
+        TransactionSuccess(NativeAmount(100), Seq(CreateAccountSuccess, PaymentNoDestination), ByteString.EMPTY)
     }
   }
 
@@ -38,51 +31,51 @@ class TransactionResultSpec extends Specification with ArbitraryInput with Domai
 
   "An XDR transaction failure" should {
     "be decodable for failure due to bad operation" >> {
-      TransactionResult.decodeXDR("AAAAAAAAAGT/////AAAAAQAAAAAAAAAB/////AAAAAA=") mustEqual
+      TransactionResult.decodeXdrString("AAAAAAAAAGT/////AAAAAQAAAAAAAAAB/////AAAAAA=") mustEqual
         TransactionFailure(NativeAmount(100), Seq(PaymentSourceNotAuthorised))
     }
     "be decodable for txn too early" >> {
-      TransactionResult.decodeXDR("AAAAAAAAAGT////+AAAAAA==") mustEqual
-        TransactionNotAttempted(SubmittedTooEarly, NativeAmount(100))
+      TransactionResult.decodeXdrString("AAAAAAAAAGT////+AAAAAA==") mustEqual
+        TransactionNotAttempted(TransactionResultCode.txTOO_EARLY, NativeAmount(100), None)
     }
     "be decodable for txn too late" >> {
-      TransactionResult.decodeXDR("AAAAAAAAAGT////9AAAAAA==") mustEqual
-        TransactionNotAttempted(SubmittedTooLate, NativeAmount(100))
+      TransactionResult.decodeXdrString("AAAAAAAAAGT////9AAAAAA==") mustEqual
+        TransactionNotAttempted(TransactionResultCode.txTOO_LATE, NativeAmount(100), None)
     }
     "be decodable for bad auth" >> {
-      TransactionResult.decodeXDR("AAAAAAAAAGT////6AAAAAA==") mustEqual
-        TransactionNotAttempted(BadAuthorisation, NativeAmount(100))
+      TransactionResult.decodeXdrString("AAAAAAAAAGT////6AAAAAA==") mustEqual
+        TransactionNotAttempted(TransactionResultCode.txBAD_AUTH, NativeAmount(100), None)
     }
     "be decodable for missing operations" >> {
-      TransactionResult.decodeXDR("AAAAAAAAAGT////8AAAAAA==") mustEqual
-        TransactionNotAttempted(NoOperations, NativeAmount(100))
+      TransactionResult.decodeXdrString("AAAAAAAAAGT////8AAAAAA==") mustEqual
+        TransactionNotAttempted(TransactionResultCode.txMISSING_OPERATION, NativeAmount(100), None)
     }
     "be decodable for bad sequence numbers" >> {
-      TransactionResult.decodeXDR("AAAAAAAAAGT////7AAAAAA==") mustEqual
-        TransactionNotAttempted(BadSequenceNumber, NativeAmount(100))
+      TransactionResult.decodeXdrString("AAAAAAAAAGT////7AAAAAA==") mustEqual
+        TransactionNotAttempted(TransactionResultCode.txBAD_SEQ, NativeAmount(100), None)
     }
     "be decodable for insufficient balance" >> {
-      TransactionResult.decodeXDR("AAAAAAAAAGT////5AAAAAA==") mustEqual
-        TransactionNotAttempted(InsufficientBalance, NativeAmount(100))
+      TransactionResult.decodeXdrString("AAAAAAAAAGT////5AAAAAA==") mustEqual
+        TransactionNotAttempted(TransactionResultCode.txINSUFFICIENT_BALANCE, NativeAmount(100), None)
     }
     "be decodable for missing source account" >> {
-      TransactionResult.decodeXDR("AAAAAAAAAGT////4AAAAAA==") mustEqual
-        TransactionNotAttempted(SourceAccountNotFound, NativeAmount(100))
+      TransactionResult.decodeXdrString("AAAAAAAAAGT////4AAAAAA==") mustEqual
+        TransactionNotAttempted(TransactionResultCode.txNO_ACCOUNT, NativeAmount(100), None)
     }
     "be decodable for insufficient fee" >> {
-      TransactionResult.decodeXDR("AAAAAAAAAGT////3AAAAAA==") mustEqual
-        TransactionNotAttempted(InsufficientFee, NativeAmount(100))
+      TransactionResult.decodeXdrString("AAAAAAAAAGT////3AAAAAA==") mustEqual
+        TransactionNotAttempted(TransactionResultCode.txINSUFFICIENT_FEE, NativeAmount(100), None)
     }
     "be decodable for extraneous signatures" >> {
-      TransactionResult.decodeXDR("AAAAAAAAAGT////2AAAAAA==") mustEqual
-        TransactionNotAttempted(UnusedSignatures, NativeAmount(100))
+      TransactionResult.decodeXdrString("AAAAAAAAAGT////2AAAAAA==") mustEqual
+        TransactionNotAttempted(TransactionResultCode.txBAD_AUTH_EXTRA, NativeAmount(100), None)
     }
     "be decodable for other reasons" >> {
-      TransactionResult.decodeXDR("AAAAAAAAAGT////1AAAAAA==") mustEqual
-        TransactionNotAttempted(UnspecifiedInternalError, NativeAmount(100))
+      TransactionResult.decodeXdrString("AAAAAAAAAGT////1AAAAAA==") mustEqual
+        TransactionNotAttempted(TransactionResultCode.txINTERNAL_ERROR, NativeAmount(100), None)
     }
     "return failure when not decodable" >> {
-      Try(TransactionResult.decodeXDR("foo")) must beFailedTry[TransactionResult]
+      Try(TransactionResult.decodeXdrString("foo")) must beFailedTry[TransactionResult]
     }
   }
 

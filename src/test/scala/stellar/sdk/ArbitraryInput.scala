@@ -10,14 +10,14 @@ import okio.ByteString
 import org.apache.commons.codec.binary.Base64
 import org.scalacheck.{Arbitrary, Gen}
 import org.specs2.ScalaCheck
+import org.stellar.xdr.ManageOfferEffect.MANAGE_OFFER_DELETED
+import org.stellar.xdr.{ManageOfferEffect, TransactionResultCode}
 import stellar.sdk.key._
 import stellar.sdk.model._
 import stellar.sdk.model.ledger._
 import stellar.sdk.model.op._
 import stellar.sdk.model.response._
-import stellar.sdk.model.result.TransactionResult._
-import stellar.sdk.model.result.{PathPaymentResult, _}
-import stellar.sdk.util.ByteArrays.trimmedByteArray
+import stellar.sdk.model.result._
 import stellar.sdk.util.{ByteArrays, DoNothingNetwork}
 
 import scala.annotation.tailrec
@@ -131,9 +131,13 @@ trait ArbitraryInput extends ScalaCheck {
 
   implicit def arbManageDataResult: Arbitrary[ManageDataResult] = Arbitrary(genManageDataResult)
 
-  implicit def arbManageOfferResult: Arbitrary[ManageOfferResult] = Arbitrary(genManageOfferResult)
+  implicit def arbManageBuyOfferResult: Arbitrary[ManageBuyOfferResult] = Arbitrary(genManageBuyOfferResult)
 
-  implicit def arbPathPaymentResult: Arbitrary[PathPaymentResult] = Arbitrary(genPathPaymentResult)
+  implicit def arbManageSellOfferResult: Arbitrary[ManageSellOfferResult] = Arbitrary(genManageSellOfferResult)
+
+  implicit def arbPathPaymentReceiveResult: Arbitrary[PathPaymentReceiveResult] = Arbitrary(genPathPaymentReceiveResult)
+
+  implicit def arbPathPaymentSendResult: Arbitrary[PathPaymentSendResult] = Arbitrary(genPathPaymentSendResult)
 
   implicit def arbPaymentResult: Arbitrary[PaymentResult] = Arbitrary(genPaymentResult)
 
@@ -262,7 +266,7 @@ trait ArbitraryInput extends ScalaCheck {
   }
 
   def genCreateAccountOperation: Gen[CreateAccountOperation] = for {
-    destination <- genAccountId
+    destination <- genPublicKey.map(_.toAccountId)
     startingBalance <- genNativeAmount
     sourceAccount <- Gen.option(genPublicKey)
   } yield {
@@ -285,7 +289,7 @@ trait ArbitraryInput extends ScalaCheck {
   }
 
   def genDeleteDataOperation: Gen[DeleteDataOperation] = for {
-    name <- Gen.identifier
+    name <- Gen.identifier.map(_.take(64))
     sourceAccount <- Gen.option(genPublicKey)
   } yield {
     DeleteDataOperation(name, sourceAccount)
@@ -405,7 +409,7 @@ trait ArbitraryInput extends ScalaCheck {
     lowThreshold <- Gen.option(Gen.choose(0, 255))
     medThreshold <- Gen.option(Gen.choose(0, 255))
     highThreshold <- Gen.option(Gen.choose(0, 255))
-    homeDomain <- Gen.option(Gen.identifier)
+    homeDomain <- Gen.option(Gen.identifier.map(_.take(32)))
     signerWeight <- Gen.choose(0, 255)
     signer <- Gen.option(genSignerStrKey.map(Signer(_, signerWeight)))
     sourceAccount <- Gen.option(genPublicKey)
@@ -416,9 +420,8 @@ trait ArbitraryInput extends ScalaCheck {
 
   def genAccountIdStrKey: Gen[AccountId] = for {
     pk <- genPublicKey
-    subAccountId <- Gen.option(Gen.posNum[Long])
-  } yield AccountId(pk.publicKey.toIndexedSeq, subAccountId)
-    //genPublicKey.map(pk => AccountId(pk.publicKey.toIndexedSeq))
+  } yield AccountId(pk.publicKey.toList)
+
   def genSeedStrKey: Gen[Seed] = genKeyPair.map(kp => Seed(kp.sk.getAbyte.toIndexedSeq))
   def genPreAuthTxStrKey: Gen[PreAuthTx] = Gen.containerOfN[Array, Byte](32, Arbitrary.arbByte.arbitrary)
     .map(bs => PreAuthTx(bs.toIndexedSeq))
@@ -475,7 +478,7 @@ trait ArbitraryInput extends ScalaCheck {
   def genRevokeDataSponsorshipOperation: Gen[RevokeDataSponsorshipOperation] = for {
     key <- for {
       account <- genPublicKey
-      name <- Gen.identifier
+      name <- Gen.identifier.map(_.take(64))
     } yield DataKey(account, name)
     sourceAccount <- Gen.option(genPublicKey)
   } yield RevokeDataSponsorshipOperation(key, sourceAccount)
@@ -489,7 +492,7 @@ trait ArbitraryInput extends ScalaCheck {
   } yield RevokeOfferSponsorshipOperation(key, sourceAccount)
   
   def genRevokeSignerSponsorshipOperation: Gen[RevokeSignerSponsorshipOperation] = for {
-    accountId <- genAccountId
+    accountId <- genPublicKey.map(_.toAccountId)
     signerKey <- genSignerStrKey
     sourceAccount <- Gen.option(genPublicKey)
   } yield RevokeSignerSponsorshipOperation(accountId, signerKey, sourceAccount)
@@ -531,27 +534,20 @@ trait ArbitraryInput extends ScalaCheck {
 
   def genMemoNone: Gen[Memo] = Gen.oneOf(Seq(NoMemo))
 
-  def genMemoText: Gen[MemoText] = Gen.oneOf(
-    Gen.identifier.map(_.take(28)).map(MemoText.apply),
-    for {
+  def genMemoText: Gen[MemoText] = for {
       n <- Gen.chooseNum(1, 28)
-      bs <- Gen.containerOfN[Array, Byte](n, Gen.posNum[Byte])
-    } yield MemoText(new String(bs))
-  )
+      bs <- Gen.identifier.map(_.take(n).getBytes(UTF_8)).map(new ByteString(_))
+    } yield MemoText(bs)
 
   def genMemoId: Gen[MemoId] = Arbitrary.arbLong.arbitrary.map(MemoId.apply)
 
-  def genMemoHash: Gen[MemoHash] = for {
-    bs <- Gen.nonEmptyContainerOf[Array, Byte](Arbitrary.arbByte.arbitrary)
-  } yield {
-    MemoHash(trimmedByteArray(bs.take(32)))
-  }
+  def genMemoHash: Gen[MemoHash] = Gen.containerOfN[Array, Byte](32, Arbitrary.arbByte.arbitrary)
+    .map(new ByteString(_))
+    .map(MemoHash(_))
 
-  def genMemoReturnHash: Gen[MemoReturnHash] = for {
-    bs <- Gen.nonEmptyContainerOf[Array, Byte](Arbitrary.arbByte.arbitrary)
-  } yield {
-    MemoReturnHash(trimmedByteArray(bs.take(32)))
-  }
+  def genMemoReturnHash: Gen[MemoReturnHash] = Gen.containerOfN[Array, Byte](32, Arbitrary.arbByte.arbitrary)
+    .map(new ByteString(_))
+    .map(MemoReturnHash(_))
 
   def genMemo: Gen[Memo] = Gen.oneOf(genMemoNone, genMemoText, genMemoId, genMemoHash, genMemoReturnHash)
 
@@ -757,12 +753,30 @@ trait ArbitraryInput extends ScalaCheck {
   // === Operation Results ===
   def genOperationResult: Gen[OperationResult] = Gen.oneOf(
     genAccountMergeResult, genAllowTrustResult, genBumpSequenceResult, genChangeTrustResult,
-    genCreatePassiveSellOfferResult, genInflationResult, genManageDataResult, genManageOfferResult,
-    genPathPaymentResult, genPaymentResult, genSetOptionsResult, genOperationNotAttemptedResult
+    genCreatePassiveSellOfferResult, genInflationResult, genManageDataResult, genManageSellOfferResult,
+    genPathPaymentReceiveResult, genPaymentResult, genSetOptionsResult, genOperationNotAttemptedResult,
+    genBeginSponsoringFutureReservesResult, genClaimClaimableBalanceResult, genCreateAccountResult,
+    genCreateClaimableBalanceResult, genEndSponsoringFutureReservesResult, genManageBuyOfferResult,
+    genPathPaymentSendResult, genRevokeSponsorshipResult
+  )
+
+  def genBeginSponsoringFutureReservesResult: Gen[BeginSponsoringFutureReservesResult] = Gen.oneOf(
+    BeginSponsoringFutureReservesSuccess, BeginSponsoringFutureReservesAlreadySponsored,
+    BeginSponsoringFutureReservesMalformed, BeginSponsoringFutureReservesRecursive
+  )
+
+  def genEndSponsoringFutureReservesResult: Gen[EndSponsoringFutureReservesResult] = Gen.oneOf(
+    EndSponsoringFutureReservesSuccess, EndSponsoringFutureReservesNotSponsored
+  )
+
+  def genRevokeSponsorshipResult: Gen[RevokeSponsorshipResult] = Gen.oneOf(
+    RevokeSponsorshipSuccess, RevokeSponsorshipDoesNotExist, RevokeSponsorshipNotSponsor,
+    RevokeSponsorshipOnlyTransferable
   )
 
   def genOperationNotAttemptedResult: Gen[OperationResult] =
-    Gen.oneOf(BadAuthenticationResult, NoSourceAccountResult, OperationNotSupportedResult)
+    Gen.oneOf(BadAuthenticationResult, NoSourceAccountResult, OperationNotSupportedResult, TooManySubEntriesResult,
+      ExceededWorkLimitResult, TooManySponsoringResult)
 
   def genAccountMergeResult: Gen[AccountMergeResult] = Gen.oneOf(
     genNativeAmount.map(AccountMergeSuccess), Gen.const(AccountMergeMalformed), Gen.const(AccountMergeNoAccount),
@@ -800,11 +814,25 @@ trait ArbitraryInput extends ScalaCheck {
   )
 
   def genCreatePassiveSellOfferResult: Gen[CreatePassiveSellOfferResult] = Gen.oneOf(
-    CreatePassiveSellOfferSuccess, CreatePassiveSellOfferMalformed, CreatePassiveSellOfferSellNoTrust, CreatePassiveSellOfferBuyNoTrust,
-    CreatePassiveSellOfferSellNoAuth, CreatePassiveSellOfferBuyNoAuth, CreatePassiveSellOfferLineFull, CreatePassiveSellOfferUnderfunded,
-    CreatePassiveSellOfferCrossSelf, CreatePassiveSellOfferSellNoIssuer, CreatePassiveSellOfferBuyNoIssuer,
-    UpdatePassiveOfferIdNotFound, CreatePassiveSellOfferLowReserve
+    genCreatePassiveSellOfferSuccess,
+    Gen.const(CreatePassiveSellOfferMalformed),
+    Gen.const(CreatePassiveSellOfferSellNoTrust),
+    Gen.const(CreatePassiveSellOfferBuyNoTrust),
+    Gen.const(CreatePassiveSellOfferSellNoAuth),
+    Gen.const(CreatePassiveSellOfferBuyNoAuth),
+    Gen.const(CreatePassiveSellOfferLineFull),
+    Gen.const(CreatePassiveSellOfferUnderfunded),
+    Gen.const(CreatePassiveSellOfferCrossSelf),
+    Gen.const(CreatePassiveSellOfferSellNoIssuer),
+    Gen.const(CreatePassiveSellOfferBuyNoIssuer),
+    Gen.const(UpdatePassiveOfferIdNotFound),
+    Gen.const(CreatePassiveSellOfferLowReserve)
   )
+
+  def genCreatePassiveSellOfferSuccess: Gen[CreatePassiveSellOfferSuccess] = for {
+    offer <- genOfferEntry
+    claims <- Gen.listOf(genOfferClaim).map(_.take(20))
+  } yield CreatePassiveSellOfferSuccess(offer, claims)
 
   def genInflationResult: Gen[InflationResult] = Gen.oneOf(
     Gen.listOf(genInflationPayout).map(InflationSuccess), Gen.const(InflationNotDue)
@@ -827,41 +855,79 @@ trait ArbitraryInput extends ScalaCheck {
     price <- genPrice
   } yield OfferEntry(account, offerId, selling, buying, price)
 
-  def genManageOfferSuccess: Gen[ManageOfferSuccess] = for {
-    claims <- Gen.listOf(genOfferClaim)
-    entry <- Gen.option(genOfferEntry)
-  } yield ManageOfferSuccess(claims, entry)
+  def genManageBuyOfferSuccess: Gen[ManageBuyOfferSuccess] = for {
+    claims <- Gen.listOf(genOfferClaim).map(_.take(20))
+    entry <- genOfferEntry
+    effect <- Gen.oneOf(ManageOfferEffect.values())
+  } yield ManageBuyOfferSuccess(claims, Some(entry).filterNot(_ => effect == MANAGE_OFFER_DELETED), effect)
 
-  def genManageOfferResult: Gen[ManageOfferResult] = Gen.oneOf(
-    genManageOfferSuccess,
-    Gen.const(ManageOfferMalformed), Gen.const(ManageOfferBuyNoTrust), Gen.const(ManageOfferSellNoTrust),
-    Gen.const(ManageOfferBuyNoAuth), Gen.const(ManageOfferSellNoAuth),
-    Gen.const(ManageOfferBuyNoIssuer), Gen.const(ManageOfferSellNoIssuer),
-    Gen.const(ManageOfferLineFull), Gen.const(ManageOfferUnderfunded), Gen.const(ManageOfferCrossSelf),
-    Gen.const(ManageOfferLowReserve), Gen.const(UpdateOfferIdNotFound)
+  def genManageSellOfferSuccess: Gen[ManageSellOfferSuccess] = for {
+    claims <- Gen.listOf(genOfferClaim).map(_.take(20))
+    entry <- genOfferEntry
+    effect <- Gen.oneOf(ManageOfferEffect.values())
+  } yield ManageSellOfferSuccess(claims, Some(entry).filterNot(_ => effect == MANAGE_OFFER_DELETED), effect)
+
+  def genManageSellOfferResult: Gen[ManageSellOfferResult] = Gen.oneOf(
+    genManageSellOfferSuccess,
+    Gen.const(ManageSellOfferMalformed), Gen.const(ManageSellOfferBuyNoTrust), Gen.const(ManageSellOfferSellNoTrust),
+    Gen.const(ManageSellOfferBuyNoAuth), Gen.const(ManageSellOfferSellNoAuth),
+    Gen.const(ManageSellOfferBuyNoIssuer), Gen.const(ManageSellOfferSellNoIssuer),
+    Gen.const(ManageSellOfferLineFull), Gen.const(ManageSellOfferUnderfunded), Gen.const(ManageSellOfferCrossSelf),
+    Gen.const(ManageSellOfferLowReserve), Gen.const(UpdateSellOfferIdNotFound)
   )
 
-  def genPathPaymentResult: Gen[PathPaymentResult] = Gen.oneOf(
-    genPathPaymentSuccess,
-    Gen.const(PathPaymentMalformed),
-    Gen.const(PathPaymentUnderfunded),
-    Gen.const(PathPaymentSourceNoTrust),
-    Gen.const(PathPaymentSourceNotAuthorised),
-    Gen.const(PathPaymentNoDestination),
-    Gen.const(PathPaymentDestinationNoTrust),
-    Gen.const(PathPaymentDestinationNotAuthorised),
-    Gen.const(PathPaymentDestinationLineFull),
-    genAsset.map(PathPaymentNoIssuer),
-    Gen.const(PathPaymentTooFewOffers),
-    Gen.const(PathPaymentOfferCrossesSelf),
-    Gen.const(PathPaymentSendMaxExceeded)
+  def genManageBuyOfferResult: Gen[ManageBuyOfferResult] = Gen.oneOf(
+    genManageBuyOfferSuccess,
+    Gen.const(ManageBuyOfferMalformed), Gen.const(ManageBuyOfferBuyNoTrust), Gen.const(ManageBuyOfferBuyNoTrust),
+    Gen.const(ManageBuyOfferBuyNoAuth), Gen.const(ManageBuyOfferBuyNoAuth),
+    Gen.const(ManageBuyOfferBuyNoIssuer), Gen.const(ManageBuyOfferBuyNoIssuer),
+    Gen.const(ManageBuyOfferLineFull), Gen.const(ManageBuyOfferUnderfunded), Gen.const(ManageBuyOfferCrossSelf),
+    Gen.const(ManageBuyOfferLowReserve), Gen.const(UpdateBuyOfferIdNotFound)
   )
 
-  def genPathPaymentSuccess: Gen[PathPaymentSuccess] = for {
+  def genPathPaymentReceiveResult: Gen[PathPaymentReceiveResult] = Gen.oneOf(
+    genPathPaymentReceiveSuccess,
+    Gen.const(PathPaymentReceiveMalformed),
+    Gen.const(PathPaymentReceiveUnderfunded),
+    Gen.const(PathPaymentReceiveSourceNoTrust),
+    Gen.const(PathPaymentReceiveSourceNotAuthorised),
+    Gen.const(PathPaymentReceiveNoDestination),
+    Gen.const(PathPaymentReceiveDestinationNoTrust),
+    Gen.const(PathPaymentReceiveDestinationNotAuthorised),
+    Gen.const(PathPaymentReceiveDestinationLineFull),
+    genAsset.map(PathPaymentReceiveNoIssuer),
+    Gen.const(PathPaymentReceiveTooFewOffers),
+    Gen.const(PathPaymentReceiveOfferCrossesSelf),
+    Gen.const(PathPaymentReceiveSendMaxExceeded)
+  )
+
+  def genPathPaymentReceiveSuccess: Gen[PathPaymentReceiveSuccess] = for {
     claims <- Gen.listOf(genOfferClaim)
     destination <- genPublicKey
     amount <- genAmount
-  }  yield PathPaymentSuccess(claims, destination, amount)
+  }  yield PathPaymentReceiveSuccess(claims, destination, amount)
+
+  def genPathPaymentSendResult: Gen[PathPaymentSendResult] = Gen.oneOf(
+    genPathPaymentSendSuccess,
+    Gen.const(PathPaymentSendMalformed),
+    Gen.const(PathPaymentSendUnderfunded),
+    Gen.const(PathPaymentSendSourceNoTrust),
+    Gen.const(PathPaymentSendSourceNotAuthorised),
+    Gen.const(PathPaymentSendNoDestination),
+    Gen.const(PathPaymentSendDestinationNoTrust),
+    Gen.const(PathPaymentSendDestinationNotAuthorised),
+    Gen.const(PathPaymentSendDestinationLineFull),
+    genAsset.map(PathPaymentSendNoIssuer),
+    Gen.const(PathPaymentSendTooFewOffers),
+    Gen.const(PathPaymentSendOfferCrossesSelf),
+    Gen.const(PathPaymentSendDestMinNotMet)
+  )
+
+  def genPathPaymentSendSuccess: Gen[PathPaymentSendSuccess] = for {
+    claims <- Gen.listOf(genOfferClaim)
+    destination <- genPublicKey
+    amount <- genAmount
+  }  yield PathPaymentSendSuccess(claims, destination, amount)
 
   def genPaymentResult: Gen[PaymentResult] = Gen.oneOf(
     PaymentSuccess,
@@ -902,7 +968,8 @@ trait ArbitraryInput extends ScalaCheck {
   def genTransactionSuccess: Gen[TransactionSuccess] = for {
     fee <- genNativeAmount
     opResults <- Gen.nonEmptyListOf(genOperationResult)
-  } yield TransactionSuccess(fee, opResults)
+//    hash <- Gen.containerOfN[Array, Byte](32, Gen.posNum[Byte]).map(new ByteString(_))
+  } yield TransactionSuccess(fee, opResults, ByteString.EMPTY)
 
   def genTransactionNotSuccessful: Gen[TransactionNotSuccessful] =
     Gen.oneOf(genTransactionFailure, genTransactionNotAttempted)
@@ -913,10 +980,25 @@ trait ArbitraryInput extends ScalaCheck {
   } yield TransactionFailure(fee, opResults)
 
   def genTransactionNotAttempted: Gen[TransactionNotAttempted] = for {
-    reason <- Gen.oneOf(SubmittedTooEarly, SubmittedTooLate, NoOperations, BadSequenceNumber, BadAuthorisation,
-      InsufficientBalance, SourceAccountNotFound, InsufficientFee, UnusedSignatures, UnspecifiedInternalError)
+    reason <- Gen.oneOf(TransactionResultCode.values().toSet -- Set(TransactionResultCode.txSUCCESS, TransactionResultCode.txFAILED))
     fee <- genNativeAmount
-  } yield TransactionNotAttempted(reason, fee)
+    innerResult <- genFeeBumpedTransactionResult.map(tr => reason match {
+      case TransactionResultCode.txFEE_BUMP_INNER_SUCCESS | TransactionResultCode.txFEE_BUMP_INNER_FAILED => Some(tr)
+      case _ => None
+    })
+  } yield TransactionNotAttempted(reason, fee, innerResult)
+
+  def genFeeBumpedTransactionResult: Gen[FeeBumpedTransactionResult] = for {
+    fee <- genNativeAmount
+    result <- Gen.oneOf(TransactionResultCode.values().toSet --
+      Set(TransactionResultCode.txFEE_BUMP_INNER_FAILED) - TransactionResultCode.txFEE_BUMP_INNER_SUCCESS)
+    opResults <- result match {
+      case TransactionResultCode.txFAILED | TransactionResultCode.txSUCCESS =>
+        Gen.nonEmptyListOf(genOperationResult).map(_.take(20))
+      case _ => Gen.const(List.empty[OperationResult])
+    }
+    hash <- genHash.map(ByteString.decodeBase64)
+  } yield FeeBumpedTransactionResult(fee, result, opResults, hash)
 
   def genFeeStatsResponse: Gen[FeeStatsResponse] = for {
     lastLedger <- Gen.posNum[Long]

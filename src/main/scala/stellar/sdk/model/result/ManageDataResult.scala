@@ -1,41 +1,70 @@
 package stellar.sdk.model.result
 
-import cats.data.State
-import stellar.sdk.model.xdr.Decode
+import org.stellar.xdr.OperationResult.OperationResultTr
+import org.stellar.xdr.{ManageDataResultCode, OperationType, ManageDataResult => XManageDataResult}
 
-sealed abstract class ManageDataResult(val opResultCode: Int) extends ProcessedOperationResult(opCode = 10)
 
-object ManageDataResult extends Decode {
-  val decode: State[Seq[Byte], ManageDataResult] = int.map {
-    case 0 => ManageDataSuccess
-    case -1 => ManageDataNotSupportedYet
-    case -2 => DeleteDataNameNotFound
-    case -3 => AddDataLowReserve
-    case -4 => AddDataInvalidName
+sealed abstract class ManageDataResult extends ProcessedOperationResult {
+  def result: XManageDataResult
+  override def transactionResult: OperationResultTr = new OperationResultTr.Builder()
+    .discriminant(OperationType.MANAGE_DATA)
+    .manageDataResult(result)
+    .build()
+}
+
+object ManageDataResult {
+  def decodeXdr(xdr: XManageDataResult): ManageDataResult = xdr.getDiscriminant match {
+    case ManageDataResultCode.MANAGE_DATA_SUCCESS => ManageDataSuccess
+    case ManageDataResultCode.MANAGE_DATA_NOT_SUPPORTED_YET => ManageDataNotSupportedYet
+    case ManageDataResultCode.MANAGE_DATA_NAME_NOT_FOUND => DeleteDataNameNotFound
+    case ManageDataResultCode.MANAGE_DATA_LOW_RESERVE => AddDataLowReserve
+    case ManageDataResultCode.MANAGE_DATA_INVALID_NAME => AddDataInvalidName
   }
 }
 
 /**
-  * ManageData operation was successful.
-  */
-case object ManageDataSuccess extends ManageDataResult(0)
+ * ManageData operation was successful.
+ */
+case object ManageDataSuccess extends ManageDataResult {
+  override def result: XManageDataResult = new XManageDataResult.Builder()
+    .discriminant(ManageDataResultCode.MANAGE_DATA_SUCCESS)
+    .build()
+}
 
 /**
-  * ManageData operation failed because the network was not yet prepared to support this operation.
-  */
-case object ManageDataNotSupportedYet extends ManageDataResult(-1)
+ * ManageData operation failed because the network was not yet prepared to support this operation.
+ */
+case object ManageDataNotSupportedYet extends ManageDataResult {
+  override def result: XManageDataResult = new XManageDataResult.Builder()
+    .discriminant(ManageDataResultCode.MANAGE_DATA_NOT_SUPPORTED_YET)
+    .build()
+}
 
 /**
-  * ManageData operation failed because there was no data entry with the given name.
-  */
-case object DeleteDataNameNotFound extends ManageDataResult(-2)
+ * ManageData operation failed because there was no data entry with the given name.
+ */
+case object DeleteDataNameNotFound extends ManageDataResult {
+  override def result: XManageDataResult = new XManageDataResult.Builder()
+    .discriminant(ManageDataResultCode.MANAGE_DATA_NAME_NOT_FOUND)
+    .build()
+}
 
 /**
-  * ManageData operation failed because there was insufficient reserve to support the addition of a new data entry.
-  */
-case object AddDataLowReserve extends ManageDataResult(-3)
+ * ManageData operation failed because there was insufficient reserve to support the addition of a new data entry.
+ */
+case object AddDataLowReserve extends ManageDataResult {
+  override def result: XManageDataResult = new XManageDataResult.Builder()
+    .discriminant(ManageDataResultCode.MANAGE_DATA_LOW_RESERVE)
+    .build()
+}
 
 /**
-  * ManageData operation failed because the name was not a valid string.
-  */
-case object AddDataInvalidName extends ManageDataResult(-4)
+ * ManageData operation failed because the name was not a valid string.
+ */
+// TODO - all the failure scenarios need to stop masquerading as ProcessedOperationResult
+//  otherwise xdr.getTr.getDiscriminant is NPE
+case object AddDataInvalidName extends ManageDataResult {
+  override def result: XManageDataResult = new XManageDataResult.Builder()
+    .discriminant(ManageDataResultCode.MANAGE_DATA_INVALID_NAME)
+    .build()
+}

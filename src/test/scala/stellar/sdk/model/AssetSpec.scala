@@ -61,10 +61,8 @@ class AssetSpec extends Specification with ArbitraryInput {
   }
 
   "any asset" should {
-    "serde via xdr bytes" >> prop { expected: Asset =>
-      val (remaining, actual) = Asset.decode.run(expected.encode).value
-      actual mustEqual expected
-      remaining must beEmpty
+    "serde via xdr bytes" >> prop { asset: Asset =>
+      Asset.decodeXdr(asset.xdr) mustEqual asset
     }
   }
 }

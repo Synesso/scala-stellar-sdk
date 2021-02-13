@@ -15,13 +15,11 @@ class SetOptionsOperationSpec extends Specification with ArbitraryInput with Dom
 
   "set options operation" should {
     "serde via xdr string" >> prop { actual: SetOptionsOperation =>
-      Operation.decodeXDR(base64(actual.encode)) must beEquivalentTo(actual)
+      Operation.decodeXdrString(actual.xdr.encode().base64()) must beEquivalentTo(actual)
     }
 
     "serde via xdr bytes" >> prop { actual: SetOptionsOperation =>
-      val (remaining, decoded) = Operation.decode.run(actual.encode).value
-      decoded must beEquivalentTo(actual)
-      remaining must beEmpty
+      Operation.decodeXdr(actual.xdr) mustEqual actual
     }
 
     "parse from json" >> prop { op: Transacted[SetOptionsOperation] =>

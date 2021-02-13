@@ -1,17 +1,18 @@
 package stellar.sdk.model.ledger
 
-import cats.data.State
-import stellar.sdk.model.xdr.{Decode, Encodable}
-import stellar.sdk.model.xdr.Encode._
+import org.stellar.xdr.{Int64, Liabilities => XLiabilities}
 
-case class Liabilities(buying: Long, selling: Long) extends Encodable {
-  override def encode: LazyList[Byte] = long(buying) ++ long(selling) ++ int(0)
+case class Liabilities(buying: Long, selling: Long) {
+  def xdr: XLiabilities = new XLiabilities.Builder()
+    .buying(new Int64(buying))
+    .selling(new Int64(selling))
+    .build()
 }
 
-object Liabilities extends Decode {
-  val decode: State[Seq[Byte], Liabilities] = for {
-    buying <- long
-    selling <- long
-    _ <- int
-  } yield Liabilities(buying, selling)
+object Liabilities {
+
+  def decodeXdr(xdr: XLiabilities): Liabilities = Liabilities(
+    buying = xdr.getBuying.getInt64,
+    selling = xdr.getSelling.getInt64
+  )
 }

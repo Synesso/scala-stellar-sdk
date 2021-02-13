@@ -1,39 +1,44 @@
 package stellar.sdk.model
 
-import java.nio.charset.StandardCharsets.UTF_8
-
-import cats.data.State
 import okio.ByteString
+import org.stellar.xdr.{Hash, MemoType, Uint64, XdrString, Memo => XMemo}
 import stellar.sdk.util.ByteArrays._
-import stellar.sdk.model.xdr.{Decode, Encode}
 
 import scala.util.Try
 
 sealed trait Memo {
-  def encode: LazyList[Byte]
+  def xdr: XMemo
+  def encode: LazyList[Byte] = LazyList.from(xdr.encode().toByteArray)
 }
 
-object Memo extends Decode {
-  def decode: State[Seq[Byte], Memo] = switch(
-    State.pure(NoMemo),
-    string.map(MemoText(_)),
-    long.map(MemoId),
-    bytes.map(_.toIndexedSeq).map(MemoHash(_)),
-    bytes.map(_.toIndexedSeq).map(MemoReturnHash(_))
-  )
+object Memo {
+  def decodeXdr(xdr: XMemo): Memo = xdr.getDiscriminant match {
+    case MemoType.MEMO_NONE => NoMemo
+    case MemoType.MEMO_ID => MemoId(xdr.getId.getUint64)
+    case MemoType.MEMO_TEXT => MemoText(new ByteString(xdr.getText.getBytes))
+    case MemoType.MEMO_HASH => MemoHash(new ByteString(xdr.getHash.getHash))
+    case MemoType.MEMO_RETURN => MemoReturnHash(new ByteString(xdr.getRetHash.getHash))
+  }
 }
 
 case object NoMemo extends Memo {
-  override def encode: LazyList[Byte] = Encode.int(0)
+  override def xdr: XMemo =
+    new XMemo.Builder()
+      .discriminant(MemoType.MEMO_NONE)
+      .build()
 }
 
 case class MemoText(byteString: ByteString) extends Memo {
   val Length = 28
-  val bytes = byteString.toByteArray
+  val bytes: Array[Byte] = byteString.toByteArray
   val text: String = byteString.utf8()
   assert(byteString.size() <= Length, s"Text exceeded limit (${byteString.size()}/$Length bytes)")
 
-  override def encode: LazyList[Byte] = Encode.int(1) ++ Encode.string(text)
+  override def xdr: XMemo =
+    new XMemo.Builder()
+      .discriminant(MemoType.MEMO_TEXT)
+      .text(new XdrString(bytes))
+      .build()
 }
 
 object MemoText {
@@ -41,7 +46,11 @@ object MemoText {
 }
 
 case class MemoId(id: Long) extends Memo {
-  override def encode: LazyList[Byte] = Encode.int(2) ++ Encode.long(id)
+  override def xdr: XMemo =
+    new XMemo.Builder()
+      .discriminant(MemoType.MEMO_ID)
+      .id(new Uint64(id))
+      .build()
 
   def unsignedId: BigInt = BigInt(java.lang.Long.toUnsignedString(id))
 
@@ -50,30 +59,38 @@ case class MemoId(id: Long) extends Memo {
 
 sealed trait MemoWithHash extends Memo {
   val Length = 32
-  val bs: Seq[Byte]
-  val bytes: Array[Byte] = paddedByteArray(bs.toArray, Length)
+  val bs: ByteString
+  val bytes: Array[Byte] = bs.toByteArray
 
-  def hex: String = bytesToHex(bytes)
-
-  def hexTrim: String = bytesToHex(bs)
+  def hex: String = bs.hex()
 }
 
-case class MemoHash(bs: Seq[Byte]) extends MemoWithHash {
-  assert(bs.length <= Length, s"Hash exceeded limit (${bytes.length}/$Length bytes)")
+case class MemoHash(bs: ByteString) extends MemoWithHash {
+  assert(bs.size() == Length, s"Hash has incorrect length (${bs.size()}/$Length bytes)")
 
-  override def encode: LazyList[Byte] = Encode.int(3) ++ Encode.bytes(bs)
+  override def xdr: XMemo =
+    new XMemo.Builder()
+      .discriminant(MemoType.MEMO_HASH)
+      .hash(new Hash(bs.toByteArray))
+      .build()
 }
 
 object MemoHash {
-  def from(hex: String): Try[MemoHash] = Try(MemoHash(hexToBytes(hex)))
+  def from(hex: String): Try[MemoHash] = Try(MemoHash(ByteString.decodeHex(hex)))
+  def apply(bs: Array[Byte]): MemoHash = MemoHash(new ByteString(bs))
 }
 
-case class MemoReturnHash(bs: Seq[Byte]) extends MemoWithHash {
-  assert(bs.length <= Length, s"Hash exceeded limit (${bytes.length}/$Length bytes)")
+case class MemoReturnHash(bs: ByteString) extends MemoWithHash {
+  assert(bs.size() == Length, s"Hash has incorrect length (${bs.size()}/$Length bytes)")
 
-  override def encode: LazyList[Byte] = Encode.int(4) ++ Encode.bytes(bs)
+  override def xdr: XMemo =
+    new XMemo.Builder()
+      .discriminant(MemoType.MEMO_RETURN)
+      .retHash(new Hash(bs.toByteArray))
+      .build()
 }
 
 object MemoReturnHash {
-  def from(hex: String) = Try(MemoReturnHash(hexToBytes(hex)))
+  def from(hex: String) = Try(MemoReturnHash(ByteString.decodeHex(hex)))
+  def apply(bs: Array[Byte]): MemoReturnHash = MemoReturnHash(new ByteString(bs))
 }

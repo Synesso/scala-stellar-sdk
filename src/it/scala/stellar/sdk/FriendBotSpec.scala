@@ -45,7 +45,7 @@ class FriendBotSpec(implicit ee: ExecutionEnv) extends Specification {
         Transaction(account, maxFee = NativeAmount(100), timeBounds = TimeBounds.Unbounded)
         // #new_transaction_example
       }
-      Try(txn.encodeXDR) must beASuccessfulTry[String]
+      Try(txn.encodeXdrString) must beASuccessfulTry[String]
     }
   }
 

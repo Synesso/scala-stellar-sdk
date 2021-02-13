@@ -15,13 +15,11 @@ class CreatePassiveSellOfferOperationSpec extends Specification with ArbitraryIn
 
   "create passive offer operation" should {
     "serde via xdr string" >> prop { actual: CreatePassiveSellOfferOperation =>
-      Operation.decodeXDR(base64(actual.encode)) must beEquivalentTo(actual)
+      Operation.decodeXdrString(actual.xdr.encode().base64()) must beEquivalentTo(actual)
     }
 
     "serde via xdr bytes" >> prop { actual: CreatePassiveSellOfferOperation =>
-      val (remaining, decoded) = Operation.decode.run(actual.encode).value
-      decoded mustEqual actual
-      remaining must beEmpty
+      Operation.decodeXdr(actual.xdr) mustEqual actual
     }
 
     "parse from json" >> prop { op: Transacted[CreatePassiveSellOfferOperation] =>

@@ -46,9 +46,13 @@ lazy val root = project
     ),
     crossScalaVersions := Seq("2.12.10", "2.13.3"),
     Defaults.itSettings,
-    resolvers += Resolver.jcenterRepo,
+    resolvers ++= List(
+      Resolver.jcenterRepo,
+      "jitpack" at "https://jitpack.io"
+    ),
     libraryDependencies ++= List(
       "ch.qos.logback" % "logback-classic" % "1.2.3",
+      "com.github.synesso" % "stellar-xdr-jre" % "15.1.0.3",
       "com.softwaremill.retry" %% "retry" % "0.3.3",
       "com.squareup.okhttp3" % "okhttp" % okhttp,
       "com.squareup.okhttp3" % "logging-interceptor" % okhttp,
