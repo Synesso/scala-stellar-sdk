@@ -39,17 +39,8 @@ class TestNetworkJourney(implicit ee: ExecutionEnv) extends Specification with B
       val signedTransaction = Transaction(sender, List(payment), NoMemo, TimeBounds.Unbounded, NativeAmount(100))
         .sign(senderKey)
       val parsedV0Txn: SignedTransaction = SignedTransaction.decodeXdr(signedTransaction.xdr)
-
-      println(s"signedTransaction.xdr = ${signedTransaction.xdr.encode().base64()}")
-      println(s"parsedV0Txn.xdr = ${parsedV0Txn.xdr.encode().base64()}")
-
       val bumpedTxn = parsedV0Txn.bumpFee(NativeAmount(500), recipientKey)
-      println(s"bumpedTxn.xdr = ${bumpedTxn.xdr.encode().base64()}")
-
-
       val response = Await.result(bumpedTxn.submit(), 20.seconds)
-
-      println(s"response = $response")
       response.isSuccess must beTrue
     }
 */

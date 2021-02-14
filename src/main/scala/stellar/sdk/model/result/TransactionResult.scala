@@ -109,9 +109,7 @@ object TransactionResult {
       case TransactionResultCode.txSUCCESS =>
         TransactionSuccess(
           feeCharged = fee,
-//          operationResults = xdr.getResult.getInnerResultPair.getResult.getResult.getResults.map(OperationResult.decodeXdr).toList,
           operationResults = xdr.getResult.getResults.map(OperationResult.decodeXdr).toList,
-//          hash = new ByteString(xdr.getResult.getInnerResultPair.getTransactionHash.getHash)
           hash = ByteString.EMPTY
         )
 

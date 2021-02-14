@@ -61,16 +61,6 @@ case class AccountId(hash: Seq[Byte], subAccountId: Option[Long] = None) extends
     case _ => (12 << 3).toByte   // M
   }
 
-//  override def encodeToChars: Seq[Char] = subAccountId match {
-//    case None => super.encodeToChars
-//    case Some(id) => codec.encode((kind +: long(id) ++: hash ++: checksum).toArray).map(_.toChar).toIndexedSeq
-//  }
-
-//  override def checksum: Seq[Byte] = subAccountId match {
-//    case None => ByteArrays.checksum((kind +: hash).toArray).toIndexedSeq
-//    case Some(id) => ByteArrays.checksum((kind +: long(id) ++: hash).toArray).toIndexedSeq
-//  }
-
   val isMulitplexed: Boolean = subAccountId.isDefined
   def publicKey: PublicKey = KeyPair.fromPublicKey(hash)
 

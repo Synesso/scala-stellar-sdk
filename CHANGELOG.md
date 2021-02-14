@@ -4,6 +4,19 @@ As this project is pre 1.0, breaking changes may happen for minor version bumps.
 
 ## Next version
 
+## 0.19.0
+
+- A wide-ranging review of the SDK resulted in realignments to SDK/Network interactions and some data types. This has
+  resulted in minor breaking changes. These are:
+  - Many types that previously has `Seq[Byte]`, `LazyList[Byte]` or `Array[Byte]` as parameters now take
+    `okio.ByteString`. This is an efficient byte array wrapper that supports natural equality checking, fast encoding
+    and smart toString values. Migrate your code by constructing a ByteString from the existing array.
+  - [#388](https://github.com/Synesso/scala-stellar-sdk/issues/388) Fixes failure to deserialise ledger entries
+  - Domain model `decode` and `encode` has been replaced by `decodeXdr` and `xdr` methods, which take and return XDR
+    values. XDR values support an `encode()` method that returns a ByteString. For example, you might have previously
+    written `transaction.encode // LazyList[Byte]`. Migrate this with `transaction.xdr.encode() // ByteString`.
+  - `TransactionLedgerEntries`, which is part of a transaction response's metadata, has had its interface simplified.
+
 ## 0.18.0
 
 - [#219](https://github.com/Synesso/scala-stellar-sdk/issues/219) Implement Offers endpoint

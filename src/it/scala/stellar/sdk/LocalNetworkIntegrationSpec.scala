@@ -755,7 +755,6 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
           timeBounds = TimeBounds.Unbounded,
           maxFee = NativeAmount(100)
         ).sign(accnA)
-        _ = println(txn.encodeXDR)
         txnResult <- txn.submit()
       } yield txnResult must beLike[TransactionPostResponse] { case r: TransactionApproved =>
         r.isSuccess must beTrue

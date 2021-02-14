@@ -49,7 +49,6 @@ case class Transaction(
     .build()
 
   def hash: ByteString = signatureBase.sha256()
-//  def hash: ByteString = new ByteString(network.networkId ++ xdr.encode().toByteArray).sha256()
 
   def signatureBase: ByteString =
     new TransactionSignaturePayload.Builder()
