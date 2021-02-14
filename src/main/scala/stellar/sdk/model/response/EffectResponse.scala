@@ -45,6 +45,12 @@ case class EffectSignerUpdated(id: String, createdAt: ZonedDateTime, account: Pu
 
 case class EffectSignerRemoved(id: String, createdAt: ZonedDateTime, account: PublicKeyOps, publicKey: String) extends EffectResponse
 
+case class EffectSignerSponsorshipCreated(id: String, createdAt: ZonedDateTime, account: PublicKeyOps, signer: PublicKeyOps, newSponsor: PublicKeyOps) extends EffectResponse
+
+case class EffectSignerSponsorshipRemoved(id: String, createdAt: ZonedDateTime, account: PublicKeyOps, signer: PublicKeyOps, formerSponsor: PublicKeyOps) extends EffectResponse
+
+case class EffectSignerSponsorshipUpdated(id: String, createdAt: ZonedDateTime, account: PublicKeyOps, signer: PublicKeyOps, formerSponsor: PublicKeyOps, newSponsor: PublicKeyOps) extends EffectResponse
+
 case class EffectTrustLineCreated(id: String, createdAt: ZonedDateTime, account: PublicKeyOps, limit: IssuedAmount) extends EffectResponse {
   val asset: NonNativeAsset = limit.asset
 }
@@ -120,6 +126,19 @@ object EffectResponseDeserializer extends ResponseParser[EffectResponse]({ o: JO
     case "signer_created" => EffectSignerCreated(id, createdAt, account(), weight, (o \ "public_key").extract[String])
     case "signer_updated" => EffectSignerUpdated(id, createdAt, account(), weight, (o \ "public_key").extract[String])
     case "signer_removed" => EffectSignerRemoved(id, createdAt, account(), (o \ "public_key").extract[String])
+    case "signer_sponsorship_created" => EffectSignerSponsorshipCreated(id, createdAt, account(),
+      signer = account("signer"),
+      newSponsor = account("sponsor")
+    )
+    case "signer_sponsorship_removed" => EffectSignerSponsorshipRemoved(id, createdAt, account(),
+      signer = account("signer"),
+      formerSponsor = account("former_sponsor")
+    )
+    case "signer_sponsorship_updated" => EffectSignerSponsorshipUpdated(id, createdAt, account(),
+      signer = account("signer"),
+      formerSponsor = account("former_sponsor"),
+      newSponsor = account("new_sponsor")
+    )
     case "trustline_created" => EffectTrustLineCreated(id, createdAt, account(), amount(key = "limit").asInstanceOf[IssuedAmount])
     case "trustline_updated" => EffectTrustLineUpdated(id, createdAt, account(), amount(key = "limit").asInstanceOf[IssuedAmount])
     case "trustline_removed" => EffectTrustLineRemoved(id, createdAt, account(), asset().asInstanceOf[NonNativeAsset])

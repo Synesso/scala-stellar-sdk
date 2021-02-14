@@ -37,6 +37,27 @@ class SignerEffectResponseSpec extends Specification with ArbitraryInput with Js
     }.setGen1(Gen.identifier).setGen4(Gen.identifier)
   }
 
+  "a signer sponsorship created effect document" should {
+    "parse to a signer sponsorship created effect" >> prop { (id: String, created: ZonedDateTime, kp: KeyPair, signer: KeyPair, sponsor: KeyPair) =>
+      val json = doc(id, created, kp, "signer_sponsorship_created", 0, "signer" -> signer.accountId, "sponsor" -> sponsor.accountId)
+      parse(json).extract[EffectResponse] mustEqual EffectSignerSponsorshipCreated(id, created, kp.asPublicKey, signer.asPublicKey, sponsor.asPublicKey)
+    }.setGen1(Gen.identifier)
+  }
+
+  "a signer sponsorship removed effect document" should {
+    "parse to a signer sponsorship removed effect" >> prop { (id: String, created: ZonedDateTime, kp: KeyPair, signer: KeyPair, sponsor: KeyPair) =>
+      val json = doc(id, created, kp, "signer_sponsorship_removed", 0, "signer" -> signer.accountId, "former_sponsor" -> sponsor.accountId)
+      parse(json).extract[EffectResponse] mustEqual EffectSignerSponsorshipRemoved(id, created, kp.asPublicKey, signer.asPublicKey, sponsor.asPublicKey)
+    }.setGen1(Gen.identifier)
+  }
+
+  "a signer sponsorship updated effect document" should {
+    "parse to a signer sponsorship updated effect" >> prop { (id: String, created: ZonedDateTime, kp: KeyPair, signer: KeyPair, oldSponsor: KeyPair, newSponsor: KeyPair) =>
+      val json = doc(id, created, kp, "signer_sponsorship_updated", 0, "signer" -> signer.accountId, "former_sponsor" -> oldSponsor.accountId, "new_sponsor" -> newSponsor.accountId)
+      parse(json).extract[EffectResponse] mustEqual EffectSignerSponsorshipUpdated(id, created, kp.asPublicKey, signer.asPublicKey, oldSponsor.asPublicKey, newSponsor.asPublicKey)
+    }.setGen1(Gen.identifier)
+  }
+
   def doc(id: String, created: ZonedDateTime, kp: KeyPair, tpe: String, weight: Short, extra: (String, Any)*) =
     s"""
        |{
