@@ -65,4 +65,30 @@ class AssetSpec extends Specification with ArbitraryInput {
       Asset.decodeXdr(asset.xdr) mustEqual asset
     }
   }
+
+  "parsing issued asset from compact code" should {
+    "correctly parse valid asset" >> prop { asset: NonNativeAsset =>
+      Asset.parseIssuedAsset(s"${asset.code}:${asset.issuer.accountId}") mustEqual asset
+    }
+
+    "fail to parse stand alone issuer" >> {
+      Try(Asset.parseIssuedAsset(KeyPair.random.accountId)) must beAFailedTry[NonNativeAsset]
+    }
+
+    "fail to parse when asset code is 0 chars" >> {
+      Try(Asset.parseIssuedAsset(s":${KeyPair.random.accountId}")) must beAFailedTry[NonNativeAsset]
+    }
+
+    "fail to parse when asset code is 13 chars" >> {
+      Try(Asset.parseIssuedAsset(s"abc123abc1230:${KeyPair.random.accountId}")) must beAFailedTry[NonNativeAsset]
+    }
+
+    "fail to parse when issuer is too long" >> {
+      Try(Asset.parseIssuedAsset(s"doge:${KeyPair.random.accountId}F")) must beAFailedTry[NonNativeAsset]
+    }
+
+    "fail to parse when issuer is invalid" >> {
+      Try(Asset.parseIssuedAsset(s"doge:${KeyPair.random.secretSeed.mkString}")) must beAFailedTry[NonNativeAsset]
+    }
+  }
 }

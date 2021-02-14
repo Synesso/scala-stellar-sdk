@@ -6,6 +6,10 @@ As this project is pre 1.0, breaking changes may happen for minor version bumps.
 
 ## 0.19.1
 
+- Adds support for all remaining missing snapshot events.
+
+## 0.19.1
+
 - [#389](https://github.com/Synesso/scala-stellar-sdk/issues/389) Adds support for Signer Sponsorship state snapshot events.
 
 ## 0.19.0
