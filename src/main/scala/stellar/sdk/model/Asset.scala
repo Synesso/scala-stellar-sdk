@@ -49,6 +49,13 @@ object Asset {
     if (code.length <= 4) IssuedAsset4.of(code, issuer) else IssuedAsset12.of(code, issuer)
   }
 
+  private val IssuedAssetRegex = "([a-zA-Z0-9]{1,12}):(G[A-Z0-9]{55})".r
+  def parseIssuedAsset(code: String): NonNativeAsset =
+    code match {
+      case IssuedAssetRegex(code, issuer) => apply(code, KeyPair.fromAccountId(issuer))
+      case _ => throw AssetException(s"Cannot parse issued asset [code=$code]")
+    }
+
   def parseAsset(prefix: String = "", obj: JValue): Asset = {
 
     def assetCode = (obj \ s"${prefix}asset_code").extract[String]
@@ -64,7 +71,7 @@ object Asset {
           case "native" => NativeAsset
           case "credit_alphanum4" => IssuedAsset4(assetCode, assetIssuer)
           case "credit_alphanum12" => IssuedAsset12(assetCode, assetIssuer)
-          case t => throw new RuntimeException(s"Unrecognised asset type '$t'")
+          case t => throw AssetException(s"Unrecognised asset type '$t'")
         }
     }
   }
@@ -132,3 +139,6 @@ case class IssuedAsset12 private (code: String, issuer: PublicKeyOps) extends No
 object IssuedAsset12 {
   def of(code: String, keyPair: PublicKeyOps): IssuedAsset12 = IssuedAsset12(code, keyPair.asPublicKey)
 }
+
+case class AssetException(msg: String) extends RuntimeException(msg)
+
