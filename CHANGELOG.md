@@ -4,9 +4,10 @@ As this project is pre 1.0, breaking changes may happen for minor version bumps.
 
 ## Next version
 
-## 0.19.1
+## 0.19.2
 
-- Adds support for all remaining missing snapshot events.
+- Adds support for missing snapshot events, capturing those that are unrecognised into a catch all type so that streams can continue.
+    Match on `UnrecognisedEffect` in order to extract unknown values.
 
 ## 0.19.1
 

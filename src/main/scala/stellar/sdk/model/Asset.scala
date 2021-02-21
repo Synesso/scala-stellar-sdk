@@ -49,7 +49,7 @@ object Asset {
     if (code.length <= 4) IssuedAsset4.of(code, issuer) else IssuedAsset12.of(code, issuer)
   }
 
-  private val IssuedAssetRegex = "([a-zA-Z0-9]{1,12}):([A-Z0-9]{56})".r
+  private val IssuedAssetRegex = "([a-zA-Z0-9]{1,12}):(G[A-Z0-9]{55})".r
   def parseIssuedAsset(code: String): NonNativeAsset =
     code match {
       case IssuedAssetRegex(code, issuer) => apply(code, KeyPair.fromAccountId(issuer))
