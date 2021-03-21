@@ -4,6 +4,10 @@ As this project is pre 1.0, breaking changes may happen for minor version bumps.
 
 ## Next version
 
+- Auth challenge transactions can now specify separate web auth & home domains. The home domain is the FQDN that hosts
+    the relevant `stellar.toml` file for the authenticating service. The web auth domain is the FQDN of the
+    authenticating service itself. Implements SEP-0010 v3.1.
+
 ## 0.19.2
 
 - Adds support for missing snapshot events, capturing those that are unrecognised into a catch all type so that streams can continue.
