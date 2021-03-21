@@ -1,4 +1,4 @@
-ThisBuild / scalaVersion := "2.13.3"
+ThisBuild / scalaVersion := "2.13.5"
 
 val specs2 = "4.10.6"
 val okhttp = "4.9.1"
@@ -44,7 +44,7 @@ lazy val root = project
     developers := List(
       Developer("jem", "Jem Mawson", "jem.mawson@gmail.com", url = url("https://keybase.io/jem"))
     ),
-    crossScalaVersions := Seq("2.12.13", "2.13.3"),
+    crossScalaVersions := Seq("2.12.13", "2.13.5"),
     Defaults.itSettings,
     resolvers ++= List(
       Resolver.jcenterRepo,
@@ -61,7 +61,7 @@ lazy val root = project
       "commons-codec" % "commons-codec" % "1.15",
       "io.github.novacrypto" % "BIP39" % "2019.01.27",
       "net.i2p.crypto" % "eddsa" % "0.3.0",
-      "org.json4s" %% "json4s-native" % "3.6.10",
+      "org.json4s" %% "json4s-native" % "3.6.11",
       "org.scala-lang.modules" %% "scala-collection-compat" % "2.4.2",
       "tech.sparse" %%  "toml-scala" % "0.2.2",
 
