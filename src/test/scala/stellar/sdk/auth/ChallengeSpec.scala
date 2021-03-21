@@ -2,6 +2,7 @@ package stellar.sdk.auth
 
 import java.time.Instant
 
+import com.google.common.base.Charsets
 import monocle.macros.GenLens
 import org.specs2.mutable.Specification
 import stellar.sdk.model.op.{Operation, WriteDataOperation}
@@ -61,11 +62,32 @@ class ChallengeSpec extends Specification with DomainMatchers with ArbitraryInpu
       challenge.transaction.timeBounds.end mustEqual clock.instant().plusSeconds(180)
     }
 
-    "have a single manage data operation from the challenged account" >> {
+    "have a two manage data operations from the challenged account" >> {
       val (subject, _, clientKey, _, _) = fixtures
       val challenge = subject.challenge(clientKey.toAccountId, "test.com")
-      challenge.transaction.operations.size mustEqual 1
+      challenge.transaction.operations.size mustEqual 2
       challenge.transaction.operations.head must beLike[Operation] { case op: WriteDataOperation =>
+        op.name mustEqual "test.com auth"
+        op.sourceAccount must beSome(clientKey.asPublicKey)
+      }
+      challenge.transaction.operations(1) must beLike[Operation] { case op: WriteDataOperation =>
+        op.name mustEqual "web_auth_domain"
+        op.value mustEqual "test.com".getBytes(Charsets.UTF_8).toSeq
+        op.sourceAccount must beSome(clientKey.asPublicKey)
+      }
+    }
+
+    "allow distinct home and web-auth domains" >> {
+      val (subject, _, clientKey, _, _) = fixtures
+      val challenge = subject.challenge(clientKey.toAccountId, "red.com", "green.com")
+      challenge.transaction.operations.size mustEqual 2
+      challenge.transaction.operations.head must beLike[Operation] { case op: WriteDataOperation =>
+        op.name mustEqual "red.com auth"
+        op.sourceAccount must beSome(clientKey.asPublicKey)
+      }
+      challenge.transaction.operations(1) must beLike[Operation] { case op: WriteDataOperation =>
+        op.name mustEqual "web_auth_domain"
+        op.value mustEqual "green.com".getBytes(Charsets.UTF_8).toSeq
         op.sourceAccount must beSome(clientKey.asPublicKey)
       }
     }
@@ -185,7 +207,7 @@ class ChallengeSpec extends Specification with DomainMatchers with ArbitraryInpu
     }
 
     "fail when there are no signers" >> {
-      val (subject, _, clientKey, challenged, signers) = fixtures
+      val (subject, _, clientKey, challenged, _) = fixtures
       val challenge = subject.challenge(clientKey.toAccountId, "test.com")
       val answer = challenge.signedTransaction
       challenge.verify(answer, challenged, Low) mustEqual ChallengeThresholdNotMet(Low, None)
