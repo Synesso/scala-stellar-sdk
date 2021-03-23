@@ -56,7 +56,7 @@ lazy val root = project
       "com.softwaremill.retry" %% "retry" % "0.3.3",
       "com.squareup.okhttp3" % "okhttp" % okhttp,
       "com.squareup.okhttp3" % "logging-interceptor" % okhttp,
-      "com.typesafe.scala-logging" %% "scala-logging" % "3.9.2",
+      "com.typesafe.scala-logging" %% "scala-logging" % "3.9.3",
       "com.squareup.okio" % "okio" % "2.10.0",
       "commons-codec" % "commons-codec" % "1.15",
       "io.github.novacrypto" % "BIP39" % "2019.01.27",
