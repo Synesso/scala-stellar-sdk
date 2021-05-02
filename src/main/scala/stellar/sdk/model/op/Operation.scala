@@ -1,16 +1,13 @@
 package stellar.sdk.model.op
 
-import java.nio.charset.StandardCharsets.UTF_8
-
 import com.google.common.base.Charsets
 import okio.ByteString
 import org.json4s.JsonAST.{JArray, JObject}
 import org.json4s.{DefaultFormats, Formats}
-import org.stellar.xdr.AllowTrustOp.AllowTrustOpAsset
 import org.stellar.xdr.Operation.OperationBody
 import org.stellar.xdr.OperationType._
 import org.stellar.xdr.RevokeSponsorshipOp.RevokeSponsorshipOpSigner
-import org.stellar.xdr.{AllowTrustOp, AssetCode12, AssetCode4, AssetType, BeginSponsoringFutureReservesOp, BumpSequenceOp, ChangeTrustOp, ClaimClaimableBalanceOp, CreateAccountOp, CreateClaimableBalanceOp, CreatePassiveSellOfferOp, DataValue, Int64, ManageBuyOfferOp, ManageDataOp, ManageSellOfferOp, PathPaymentStrictReceiveOp, PathPaymentStrictSendOp, PaymentOp, RevokeSponsorshipOp, RevokeSponsorshipType, SequenceNumber, SetOptionsOp, String32, String64, Uint32, XdrString, Operation => XOperation}
+import org.stellar.xdr.{AllowTrustOp, AssetCode, AssetCode12, AssetCode4, AssetType, BeginSponsoringFutureReservesOp, BumpSequenceOp, ChangeTrustOp, ClaimClaimableBalanceOp, ClawbackClaimableBalanceOp, ClawbackOp, CreateAccountOp, CreateClaimableBalanceOp, CreatePassiveSellOfferOp, DataValue, Int64, ManageBuyOfferOp, ManageDataOp, ManageSellOfferOp, PathPaymentStrictReceiveOp, PathPaymentStrictSendOp, PaymentOp, RevokeSponsorshipOp, RevokeSponsorshipType, SequenceNumber, SetOptionsOp, SetTrustLineFlagsOp, String32, String64, TrustLineFlags, Uint32, XdrString, Operation => XOperation}
 import stellar.sdk._
 import stellar.sdk.model.Asset.parseAsset
 import stellar.sdk.model._
@@ -18,6 +15,8 @@ import stellar.sdk.model.ledger._
 import stellar.sdk.model.op.Operation.extractSource
 import stellar.sdk.model.response.ResponseParser
 import stellar.sdk.util.ByteArrays.{base64, paddedByteArray}
+
+import java.nio.charset.StandardCharsets.UTF_8
 
 /**
  * An Operation represents a change to the ledger. It is the action, as opposed to the effects resulting from that action.
@@ -733,8 +732,18 @@ case object AuthorizationImmutableFlag extends IssuerFlag {
   val s = "auth_immutable_flag"
 }
 
+case object AuthorizationClawbackEnabledFlag extends IssuerFlag {
+  val i = 0x8
+  val s = "auth_clawback_enabled_flag"
+}
+
 object IssuerFlags {
-  val all: Set[IssuerFlag] = Set(AuthorizationRequiredFlag, AuthorizationRevocableFlag, AuthorizationImmutableFlag)
+  val all: Set[IssuerFlag] = Set(
+    AuthorizationRequiredFlag,
+    AuthorizationRevocableFlag,
+    AuthorizationImmutableFlag,
+    AuthorizationClawbackEnabledFlag
+  )
 
   def apply(i: Int): Option[IssuerFlag] = all.find(_.i == i)
 
@@ -777,6 +786,7 @@ object ChangeTrustOperation {
 /**
  * Updates the “authorized” flag of an existing trust line. This is called by the issuer of the related asset.
  */
+@deprecated("Use SetTrustLineFlagsOperation instead", "v0.20.0")
 case class AllowTrustOperation(trustor: PublicKeyOps,
   assetCode: String,
   trustLineFlags: Set[TrustLineFlag],
@@ -788,7 +798,7 @@ case class AllowTrustOperation(trustor: PublicKeyOps,
 
   override def bodyXdr: OperationBody = {
     val asset = {
-      val builder = new AllowTrustOpAsset.Builder()
+      val builder = new AssetCode.Builder()
       if (assetCode.length <= 4) {
         builder
           .assetCode4(new AssetCode4(paddedByteArray(assetCode, 4)))
@@ -1209,6 +1219,61 @@ case class RevokeTrustLineSponsorshipOperation(
     .revokeSponsorshipOp(new RevokeSponsorshipOp.Builder()
       .discriminant(RevokeSponsorshipType.REVOKE_SPONSORSHIP_LEDGER_ENTRY)
       .ledgerKey(revokeTrustLineKey.xdr)
+      .build())
+    .build()
+}
+
+/**
+ * Claw back an asset from an account.
+ */
+case class ClawBackOperation(
+  from: AccountId,
+  amount: IssuedAmount,
+  sourceAccount: Option[PublicKeyOps] = None
+) extends Operation {
+  override def bodyXdr: OperationBody = new OperationBody.Builder()
+    .discriminant(CLAWBACK)
+    .clawbackOp(new ClawbackOp.Builder()
+      .amount(new Int64(amount.units))
+      .from(from.muxedXdr)
+      .asset(amount.asset.xdr)
+      .build())
+    .build()
+}
+
+
+/**
+ * Claw back a claimable balance by its id.
+ */
+case class ClawBackClaimableBalanceOperation(
+  id: ClaimableBalanceId,
+  sourceAccount: Option[PublicKeyOps] = None
+) extends Operation {
+  override def bodyXdr: OperationBody = new OperationBody.Builder()
+    .discriminant(CLAWBACK_CLAIMABLE_BALANCE)
+    .clawbackClaimableBalanceOp(new ClawbackClaimableBalanceOp.Builder()
+      .balanceID(id.xdr)
+      .build())
+    .build()
+}
+
+/**
+ * Set flags on the trustline for an account.
+ */
+case class SetTrustLineFlagsOperation(
+  asset: NonNativeAsset,
+  trustor: PublicKeyOps,
+  setFlags: Set[TrustLineFlags],
+  clearFlags: Set[TrustLineFlags],
+  sourceAccount: Option[PublicKeyOps] = None
+) extends Operation {
+  override def bodyXdr: OperationBody = new OperationBody.Builder()
+    .discriminant(SET_TRUST_LINE_FLAGS)
+    .setTrustLineFlagsOp(new SetTrustLineFlagsOp.Builder()
+      .asset(asset.xdr)
+      .trustor(trustor.toAccountId.xdr)
+      .setFlags(new Uint32(setFlags.map(_.getValue).sum))
+      .clearFlags(new Uint32(clearFlags.map(_.getValue).sum))
       .build())
     .build()
 }

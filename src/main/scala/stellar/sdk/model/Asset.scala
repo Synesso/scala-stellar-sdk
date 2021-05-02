@@ -4,7 +4,7 @@ import okio.ByteString
 import org.json4s.JsonAST.JValue
 import org.json4s.{DefaultFormats, Formats}
 import org.stellar.xdr.Asset.{AssetAlphaNum12, AssetAlphaNum4}
-import org.stellar.xdr.{AllowTrustOp, AssetCode12, AssetCode4, AssetType, Asset => XAsset}
+import org.stellar.xdr.{AllowTrustOp, AssetCode, AssetCode12, AssetCode4, AssetType, Asset => XAsset}
 import stellar.sdk.util.ByteArrays._
 import stellar.sdk.{KeyPair, PublicKeyOps}
 
@@ -16,7 +16,7 @@ sealed trait Asset {
 }
 
 object Asset {
-  def decodeCode(asset: AllowTrustOp.AllowTrustOpAsset): String = {
+  def decodeCode(asset: AssetCode): String = {
     asset.getDiscriminant match {
       case AssetType.ASSET_TYPE_CREDIT_ALPHANUM4 =>
         paddedByteArrayToString(asset.getAssetCode4.getAssetCode4)

@@ -2,8 +2,16 @@
 
 As this project is pre 1.0, breaking changes may happen for minor version bumps. A breaking change will get clearly notified in this log.
 
-## Next version
+## Next Version
 
+## 0.20.0
+
+- Updated for core protocol v17/CAP35:
+  - Added EffectTrustLineFlagsUpdated
+  - Added EffectClaimableBalanceClawedBack
+  - Added ClawBackOperation
+  - Added ClawBackClaimableBalanceOperation
+  - Added SetTrustLineFlagsOperation
 - Auth challenge transactions can now specify separate web auth & home domains. The home domain is the FQDN that hosts
     the relevant `stellar.toml` file for the authenticating service. The web auth domain is the FQDN of the
     authenticating service itself. Implements SEP-0010 v3.1.

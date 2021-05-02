@@ -2,13 +2,13 @@ package stellar.sdk
 
 import java.io.EOFException
 import java.time.{Instant, Period}
-
 import com.typesafe.scalalogging.LazyLogging
 import okhttp3.HttpUrl
 import okio.ByteString
 import org.json4s.JsonDSL._
 import org.specs2.concurrent.ExecutionEnv
 import org.specs2.mutable.Specification
+import org.stellar.xdr.TrustLineFlags
 import stellar.sdk.inet.HorizonEntityNotFound
 import stellar.sdk.model.Amount.lumens
 import stellar.sdk.model.ClaimPredicate.{AbsolutelyBefore, Or, Unconditional}
@@ -40,12 +40,14 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
   val accnC = KeyPair.fromPassphrase("account c")
   val accnD = KeyPair.fromPassphrase("account d")
   val accnE = KeyPair.fromPassphrase("account e")
+  val accnF = KeyPair.fromPassphrase("account f")
 
   logger.debug(s"Account A = ${accnA.accountId}")
   logger.debug(s"Account B = ${accnB.accountId}")
   logger.debug(s"Account C = ${accnC.accountId}")
   logger.debug(s"Account D = ${accnD.accountId}")
   logger.debug(s"Account E = ${accnE.accountId}")
+  logger.debug(s"Account F = ${accnF.accountId}")
 
   val accounts = Set(accnA, accnB, accnC, accnD)
 
@@ -101,6 +103,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
   private val chinchillaA = Asset("Chinchilla", accnA)
   private val chinchillaMaster = Asset("Chinchilla", masterAccountKey)
   private val dachshundB = Asset("Dachshund", accnB)
+  private val clawbackAsset = Asset("XYZ", accnF)
 
   // Transaction hashes. These will changed when setup operations change.
   private val txnHash2 = "e13447898b27dbf278d4411022e2e6d0aae78ef70670c7af7834a1f2a6d191d8"
@@ -116,6 +119,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
           CreateAccountOperation(accnB.toAccountId, lumens(1000)),
           CreateAccountOperation(accnC.toAccountId, lumens(1000)),
           CreateAccountOperation(accnD.toAccountId, lumens(1000)),
+          CreateAccountOperation(accnF.toAccountId, lumens(1000)),
           WriteDataOperation("life_universe_everything", "42", Some(accnB)),
           WriteDataOperation("brain the size of a planet", "and they ask me to open a door", Some(accnB)),
           WriteDataOperation("fenton", "FENTON!", Some(accnC)),
@@ -272,6 +276,8 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
     "list all assets" >> {
       val eventualResps = network.assets().map(_.toSeq)
       eventualResps must containTheSameElementsAs(Seq(
+        AssetResponse(aardvarkA, 0, 0, authRequired = true, authRevocable = true),
+        AssetResponse(beaverA, 0, 0, authRequired = true, authRevocable = true),
         AssetResponse(chinchillaA, 101, 1, authRequired = true, authRevocable = true),
         AssetResponse(chinchillaMaster, 101, 1, authRequired = false, authRevocable = false),
       )).awaitFor(10 seconds)
@@ -285,7 +291,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
 
     "filter assets by issuer" >> {
       val byIssuer = network.assets(issuer = Some(accnA)).map(_.take(10).toList)
-      byIssuer.map(_.size) must beEqualTo(1).awaitFor(10 seconds)
+      byIssuer.map(_.size) must beEqualTo(3).awaitFor(10 seconds)
       byIssuer.map(_.map(_.asset.issuer.accountId).distinct) must beEqualTo(Seq(accnA.accountId)).awaitFor(10 seconds)
     }
 
@@ -300,7 +306,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
   "effect endpoint" should {
     "parse all effects" >> {
       val effects = network.effects()
-      effects.map(_.size) must beEqualTo(240).awaitFor(10 seconds)
+      effects.map(_.size) must beEqualTo(246).awaitFor(10 seconds)
     }
 
     "filter effects by account" >> {
@@ -329,13 +335,16 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
         EffectAccountDebited(_, _, accn1, amount1),
         EffectAccountCredited(_, _, accn2, amount2),
         EffectAccountRemoved(_, _, accn3),
-        EffectTrustLineDeauthorized(_, created, accn4, IssuedAsset12(code, accn5))
+        EffectTrustLineDeauthorized(_, _, accn4, IssuedAsset12(code, accn5)),
+        EffectTrustLineFlagsUpdated(_, _, accn6, asset5, false, false, false)
         ) =>
           accn1 must beEquivalentTo(accnC)
           accn2 must beEquivalentTo(accnB)
           accn3 must beEquivalentTo(accnC)
           accn4 must beEquivalentTo(accnB)
           accn5 must beEquivalentTo(accnA)
+          accn6 must beEquivalentTo(accnB)
+          asset5 mustEqual aardvarkA
           amount1 mustEqual lumens(1000)
           amount2 mustEqual lumens(1000)
           code mustEqual "Aardvark"
@@ -458,7 +467,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
 
   "operation endpoint" should {
     "list all operations" >> {
-      network.operations().map(_.size) must beEqualTo(131).awaitFor(10.seconds)
+      network.operations().map(_.size) must beEqualTo(132).awaitFor(10.seconds)
     }
 
     "list operations by account" >> {
@@ -595,8 +604,8 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
       byAccount.map(_.head) must beLike[TransactionHistory] {
         case t =>
           t.account must beEquivalentTo(masterAccountKey)
-          t.feeCharged mustEqual NativeAmount(1700)
-          t.operationCount mustEqual 17
+          t.feeCharged mustEqual NativeAmount(1800)
+          t.operationCount mustEqual 18
           t.memo mustEqual NoMemo
           t.ledgerEntries must not(throwAn[EOFException])
           t.feeLedgerEntries must not(throwAn[EOFException])
@@ -875,6 +884,114 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
         a.reservesSponsored mustEqual 2
         a.sponsor must beSome(accnA.asPublicKey)
       }.awaitFor(5.seconds)
+    }
+  }
+
+  "Clawbacks" should {
+    "be used to revoke funds from an account" >> {
+      val setClawbackEnabled = for {
+        account <- network.account(masterAccountKey)
+        txn = Transaction(
+          source = account,
+          operations = List(
+            SetOptionsOperation(
+              setFlags = Some(Set(AuthorizationRevocableFlag, AuthorizationClawbackEnabledFlag)),
+              sourceAccount = Some(accnF)
+            ),
+            ChangeTrustOperation(IssuedAmount(99_999L, clawbackAsset), Some(accnA)),
+            PaymentOperation(accnA.toAccountId, IssuedAmount(50_000L, clawbackAsset), Some(accnF))
+          ),
+        timeBounds = TimeBounds.Unbounded,
+        maxFee = NativeAmount(1000)
+        ).sign(masterAccountKey, accnF, accnA)
+        txnResult <- txn.submit()
+      } yield txnResult
+      setClawbackEnabled must beLike[TransactionPostResponse] { case r: TransactionApproved =>
+        r.isSuccess must beTrue
+      }.awaitFor(60.seconds)
+      network.account(accnA).map(_.balances) must beLike[List[Balance]] { balances =>
+        balances must contain(Balance(IssuedAmount(50_000L, clawbackAsset), Some(99_999L), authorized = true, authorizedToMaintainLiabilities = true))
+      }.awaitFor(3.seconds)
+
+      val clawbackTheFunds = for {
+        account <- network.account(accnF)
+        txn = Transaction(
+          source = account,
+          operations = List(
+            ClawBackOperation(accnA.toAccountId, IssuedAmount(40_000L, clawbackAsset), Some(accnF))
+          ),
+        timeBounds = TimeBounds.Unbounded,
+        maxFee = NativeAmount(1000)
+        ).sign(accnF)
+        txnResult <- txn.submit()
+      } yield txnResult
+      clawbackTheFunds must beLike[TransactionPostResponse] { case r: TransactionApproved =>
+        r.isSuccess must beTrue
+      }.awaitFor(60.seconds)
+
+      network.account(accnA).map(_.balances) must beLike[List[Balance]] { balances =>
+        balances must contain(Balance(IssuedAmount(10_000L, clawbackAsset), Some(99_999L), authorized = true, authorizedToMaintainLiabilities = true))
+      }.awaitFor(3.seconds)
+    }
+
+    "be able to claw back claimable balances" >> {
+      Await.result(for {
+        account <- network.account(accnF)
+        txn = Transaction(
+          source = account,
+          operations = List(
+            CreateClaimableBalanceOperation(
+              amount = Amount(1000, clawbackAsset),
+              claimants = List(AccountIdClaimant(accnA, Unconditional))
+            )
+          ),
+          timeBounds = TimeBounds.Unbounded,
+          maxFee = NativeAmount(200)
+        ).sign(accnF)
+        txnResult <- txn.submit()
+      } yield txnResult must beLike[TransactionPostResponse] { case r: TransactionApproved =>
+        r.isSuccess must beTrue
+      }, 60.seconds)
+
+      val clawbackTheFunds = for {
+        balanceId <- network.claimsByClaimant(accnA).map(_.head.id)
+        account <- network.account(accnF)
+        txn = Transaction(
+          source = account,
+          operations = List(ClawBackClaimableBalanceOperation(balanceId)),
+          timeBounds = TimeBounds.Unbounded,
+          maxFee = NativeAmount(1000)
+        ).sign(accnF)
+        txnResult <- txn.submit()
+      } yield txnResult
+      clawbackTheFunds must beLike[TransactionPostResponse] { case r: TransactionApproved =>
+        r.isSuccess must beTrue
+      }.awaitFor(60.seconds)
+
+      network.claimsByAsset(dachshundB) must beEmpty[Seq[ClaimableBalance]].awaitFor(10.seconds)
+    }
+  }
+
+  "Trustline flags" should {
+    "be settable" >> {
+      (for {
+        account <- network.account(accnF)
+        txn = Transaction(
+          source = account,
+          operations = List(SetTrustLineFlagsOperation(
+            asset = clawbackAsset,
+            trustor = accnA,
+            setFlags = Set(TrustLineFlags.AUTHORIZED_FLAG),
+            clearFlags = Set.empty[TrustLineFlags]
+          )),
+          timeBounds = TimeBounds.Unbounded,
+          maxFee = NativeAmount(1000)
+        ).sign(accnF)
+        txnResult <- txn.submit()
+      } yield txnResult) must beLike[TransactionPostResponse] { case r: TransactionApproved =>
+        r.isSuccess must beTrue
+      }.awaitFor(60.seconds)
+
     }
   }
 }
