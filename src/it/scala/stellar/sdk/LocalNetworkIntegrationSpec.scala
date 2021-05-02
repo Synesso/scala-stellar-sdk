@@ -40,12 +40,14 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
   val accnC = KeyPair.fromPassphrase("account c")
   val accnD = KeyPair.fromPassphrase("account d")
   val accnE = KeyPair.fromPassphrase("account e")
+  val accnF = KeyPair.fromPassphrase("account f")
 
   logger.debug(s"Account A = ${accnA.accountId}")
   logger.debug(s"Account B = ${accnB.accountId}")
   logger.debug(s"Account C = ${accnC.accountId}")
   logger.debug(s"Account D = ${accnD.accountId}")
   logger.debug(s"Account E = ${accnE.accountId}")
+  logger.debug(s"Account F = ${accnF.accountId}")
 
   val accounts = Set(accnA, accnB, accnC, accnD)
 
@@ -880,6 +882,56 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
         a.reservesSponsored mustEqual 2
         a.sponsor must beSome(accnA.asPublicKey)
       }.awaitFor(5.seconds)
+    }
+  }
+
+  "Clawbacks" should {
+    "be used to revoke funds from an account" >> {
+      val asset = Asset("XYZ", accnF)
+      val setClawbackEnabled = for {
+        account <- network.account(masterAccountKey)
+        txn = Transaction(
+          source = account,
+          operations = List(
+            CreateAccountOperation(accnF.toAccountId, lumens(1000)),
+            SetOptionsOperation(
+              setFlags = Some(Set(AuthorizationRevocableFlag, AuthorizationClawbackEnabledFlag)),
+              sourceAccount = Some(accnF)
+            ),
+            ChangeTrustOperation(IssuedAmount(99_999L, asset), Some(accnA)),
+            PaymentOperation(accnA.toAccountId, IssuedAmount(50_000L, asset), Some(accnF))
+          ),
+        timeBounds = TimeBounds.Unbounded,
+        maxFee = NativeAmount(1000)
+        ).sign(masterAccountKey, accnF, accnA)
+        txnResult <- txn.submit()
+      } yield txnResult
+      setClawbackEnabled must beLike[TransactionPostResponse] { case r: TransactionApproved =>
+        r.isSuccess must beTrue
+      }.awaitFor(60.seconds)
+      network.account(accnA).map(_.balances) must beLike[List[Balance]] { balances =>
+        balances must contain(Balance(IssuedAmount(50_000L, asset), Some(99_999L), authorized = true, authorizedToMaintainLiabilities = true))
+      }.awaitFor(3.seconds)
+
+      val clawbackTheFunds = for {
+        account <- network.account(accnF)
+        txn = Transaction(
+          source = account,
+          operations = List(
+            ClawBackOperation(accnA.toAccountId, IssuedAmount(40_000L, asset), Some(accnF))
+          ),
+        timeBounds = TimeBounds.Unbounded,
+        maxFee = NativeAmount(1000)
+        ).sign(accnF)
+        txnResult <- txn.submit()
+      } yield txnResult
+      clawbackTheFunds must beLike[TransactionPostResponse] { case r: TransactionApproved =>
+        r.isSuccess must beTrue
+      }.awaitFor(60.seconds)
+
+      network.account(accnA).map(_.balances) must beLike[List[Balance]] { balances =>
+        balances must contain(Balance(IssuedAmount(10_000L, asset), Some(99_999L), authorized = true, authorizedToMaintainLiabilities = true))
+      }.awaitFor(3.seconds)
     }
   }
 }
