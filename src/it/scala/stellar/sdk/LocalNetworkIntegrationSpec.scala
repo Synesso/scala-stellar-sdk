@@ -118,6 +118,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
           CreateAccountOperation(accnB.toAccountId, lumens(1000)),
           CreateAccountOperation(accnC.toAccountId, lumens(1000)),
           CreateAccountOperation(accnD.toAccountId, lumens(1000)),
+          CreateAccountOperation(accnF.toAccountId, lumens(1000)),
           WriteDataOperation("life_universe_everything", "42", Some(accnB)),
           WriteDataOperation("brain the size of a planet", "and they ask me to open a door", Some(accnB)),
           WriteDataOperation("fenton", "FENTON!", Some(accnC)),
@@ -304,7 +305,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
   "effect endpoint" should {
     "parse all effects" >> {
       val effects = network.effects()
-      effects.map(_.size) must beEqualTo(243).awaitFor(10 seconds)
+      effects.map(_.size) must beEqualTo(246).awaitFor(10 seconds)
     }
 
     "filter effects by account" >> {
@@ -465,7 +466,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
 
   "operation endpoint" should {
     "list all operations" >> {
-      network.operations().map(_.size) must beEqualTo(131).awaitFor(10.seconds)
+      network.operations().map(_.size) must beEqualTo(132).awaitFor(10.seconds)
     }
 
     "list operations by account" >> {
@@ -602,8 +603,8 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
       byAccount.map(_.head) must beLike[TransactionHistory] {
         case t =>
           t.account must beEquivalentTo(masterAccountKey)
-          t.feeCharged mustEqual NativeAmount(1700)
-          t.operationCount mustEqual 17
+          t.feeCharged mustEqual NativeAmount(1800)
+          t.operationCount mustEqual 18
           t.memo mustEqual NoMemo
           t.ledgerEntries must not(throwAn[EOFException])
           t.feeLedgerEntries must not(throwAn[EOFException])
@@ -886,14 +887,14 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
   }
 
   "Clawbacks" should {
+    val asset = Asset("XYZ", accnF)
+
     "be used to revoke funds from an account" >> {
-      val asset = Asset("XYZ", accnF)
       val setClawbackEnabled = for {
         account <- network.account(masterAccountKey)
         txn = Transaction(
           source = account,
           operations = List(
-            CreateAccountOperation(accnF.toAccountId, lumens(1000)),
             SetOptionsOperation(
               setFlags = Some(Set(AuthorizationRevocableFlag, AuthorizationClawbackEnabledFlag)),
               sourceAccount = Some(accnF)
@@ -932,6 +933,43 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
       network.account(accnA).map(_.balances) must beLike[List[Balance]] { balances =>
         balances must contain(Balance(IssuedAmount(10_000L, asset), Some(99_999L), authorized = true, authorizedToMaintainLiabilities = true))
       }.awaitFor(3.seconds)
+    }
+
+    "be able to claw back claimable balances" >> {
+      Await.result(for {
+        account <- network.account(accnF)
+        txn = Transaction(
+          source = account,
+          operations = List(
+            CreateClaimableBalanceOperation(
+              amount = Amount(1000, asset),
+              claimants = List(AccountIdClaimant(accnA, Unconditional))
+            )
+          ),
+          timeBounds = TimeBounds.Unbounded,
+          maxFee = NativeAmount(200)
+        ).sign(accnF)
+        txnResult <- txn.submit()
+      } yield txnResult must beLike[TransactionPostResponse] { case r: TransactionApproved =>
+        r.isSuccess must beTrue
+      }, 60.seconds)
+
+      val clawbackTheFunds = for {
+        balanceId <- network.claimsByClaimant(accnA).map(_.head.id)
+        account <- network.account(accnF)
+        txn = Transaction(
+          source = account,
+          operations = List(ClawBackClaimableBalanceOperation(balanceId)),
+          timeBounds = TimeBounds.Unbounded,
+          maxFee = NativeAmount(1000)
+        ).sign(accnF)
+        txnResult <- txn.submit()
+      } yield txnResult
+      clawbackTheFunds must beLike[TransactionPostResponse] { case r: TransactionApproved =>
+        r.isSuccess must beTrue
+      }.awaitFor(60.seconds)
+
+      network.claimsByAsset(dachshundB) must beEmpty[Seq[ClaimableBalance]].awaitFor(10.seconds)
     }
   }
 }

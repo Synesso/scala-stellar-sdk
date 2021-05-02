@@ -8,7 +8,7 @@ import org.json4s.{DefaultFormats, Formats}
 import org.stellar.xdr.Operation.OperationBody
 import org.stellar.xdr.OperationType._
 import org.stellar.xdr.RevokeSponsorshipOp.RevokeSponsorshipOpSigner
-import org.stellar.xdr.{AccountFlags, AllowTrustOp, AssetCode, AssetCode12, AssetCode4, AssetType, BeginSponsoringFutureReservesOp, BumpSequenceOp, ChangeTrustOp, ClaimClaimableBalanceOp, ClawbackOp, CreateAccountOp, CreateClaimableBalanceOp, CreatePassiveSellOfferOp, DataValue, Int64, ManageBuyOfferOp, ManageDataOp, ManageSellOfferOp, PathPaymentStrictReceiveOp, PathPaymentStrictSendOp, PaymentOp, RevokeSponsorshipOp, RevokeSponsorshipType, SequenceNumber, SetOptionsOp, SetTrustLineFlagsOp, String32, String64, Uint32, XdrString, Operation => XOperation}
+import org.stellar.xdr.{AccountFlags, AllowTrustOp, AssetCode, AssetCode12, AssetCode4, AssetType, BeginSponsoringFutureReservesOp, BumpSequenceOp, ChangeTrustOp, ClaimClaimableBalanceOp, ClawbackClaimableBalanceOp, ClawbackOp, CreateAccountOp, CreateClaimableBalanceOp, CreatePassiveSellOfferOp, DataValue, Int64, ManageBuyOfferOp, ManageDataOp, ManageSellOfferOp, PathPaymentStrictReceiveOp, PathPaymentStrictSendOp, PaymentOp, RevokeSponsorshipOp, RevokeSponsorshipType, SequenceNumber, SetOptionsOp, SetTrustLineFlagsOp, String32, String64, Uint32, XdrString, Operation => XOperation}
 import stellar.sdk._
 import stellar.sdk.model.Asset.parseAsset
 import stellar.sdk.model._
@@ -1236,6 +1236,22 @@ case class ClawBackOperation(
       .amount(new Int64(amount.units))
       .from(from.muxedXdr)
       .asset(amount.asset.xdr)
+      .build())
+    .build()
+}
+
+
+/**
+ * Claw back a claimable balance by its id.
+ */
+case class ClawBackClaimableBalanceOperation(
+  id: ClaimableBalanceId,
+  sourceAccount: Option[PublicKeyOps] = None
+) extends Operation {
+  override def bodyXdr: OperationBody = new OperationBody.Builder()
+    .discriminant(CLAWBACK_CLAIMABLE_BALANCE)
+    .clawbackClaimableBalanceOp(new ClawbackClaimableBalanceOp.Builder()
+      .balanceID(id.xdr)
       .build())
     .build()
 }
