@@ -272,6 +272,8 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
     "list all assets" >> {
       val eventualResps = network.assets().map(_.toSeq)
       eventualResps must containTheSameElementsAs(Seq(
+        AssetResponse(aardvarkA, 0, 0, authRequired = true, authRevocable = true),
+        AssetResponse(beaverA, 0, 0, authRequired = true, authRevocable = true),
         AssetResponse(chinchillaA, 101, 1, authRequired = true, authRevocable = true),
         AssetResponse(chinchillaMaster, 101, 1, authRequired = false, authRevocable = false),
       )).awaitFor(10 seconds)
@@ -285,7 +287,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
 
     "filter assets by issuer" >> {
       val byIssuer = network.assets(issuer = Some(accnA)).map(_.take(10).toList)
-      byIssuer.map(_.size) must beEqualTo(1).awaitFor(10 seconds)
+      byIssuer.map(_.size) must beEqualTo(3).awaitFor(10 seconds)
       byIssuer.map(_.map(_.asset.issuer.accountId).distinct) must beEqualTo(Seq(accnA.accountId)).awaitFor(10 seconds)
     }
 
@@ -300,7 +302,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
   "effect endpoint" should {
     "parse all effects" >> {
       val effects = network.effects()
-      effects.map(_.size) must beEqualTo(240).awaitFor(10 seconds)
+      effects.map(_.size) must beEqualTo(243).awaitFor(10 seconds)
     }
 
     "filter effects by account" >> {
@@ -329,13 +331,16 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
         EffectAccountDebited(_, _, accn1, amount1),
         EffectAccountCredited(_, _, accn2, amount2),
         EffectAccountRemoved(_, _, accn3),
-        EffectTrustLineDeauthorized(_, created, accn4, IssuedAsset12(code, accn5))
+        EffectTrustLineDeauthorized(_, _, accn4, IssuedAsset12(code, accn5)),
+        EffectTrustLineFlagsUpdated(_, _, accn6, asset5, false, false, false)
         ) =>
           accn1 must beEquivalentTo(accnC)
           accn2 must beEquivalentTo(accnB)
           accn3 must beEquivalentTo(accnC)
           accn4 must beEquivalentTo(accnB)
           accn5 must beEquivalentTo(accnA)
+          accn6 must beEquivalentTo(accnB)
+          asset5 mustEqual aardvarkA
           amount1 mustEqual lumens(1000)
           amount2 mustEqual lumens(1000)
           code mustEqual "Aardvark"

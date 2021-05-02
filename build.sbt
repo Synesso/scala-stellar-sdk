@@ -52,7 +52,7 @@ lazy val root = project
     ),
     libraryDependencies ++= List(
       "ch.qos.logback" % "logback-classic" % "1.2.3",
-      "com.github.synesso" % "stellar-xdr-jre" % "15.1.0.3",
+      "com.github.synesso" % "stellar-xdr-jre" % "17.0.0",
       "com.softwaremill.retry" %% "retry" % "0.3.3",
       "com.squareup.okhttp3" % "okhttp" % okhttp,
       "com.squareup.okhttp3" % "logging-interceptor" % okhttp,

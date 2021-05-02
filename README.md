@@ -3,8 +3,8 @@
 ![Build](https://github.com/Synesso/scala-stellar-sdk/workflows/Build/badge.svg?branch=master)
 [![Coverage](https://img.shields.io/codecov/c/gh/Synesso/scala-stellar-sdk.svg)](https://codecov.io/gh/Synesso/scala-stellar-sdk)
 [![Issues](https://img.shields.io/github/issues/Synesso/scala-stellar-sdk.svg)](https://github.com/Synesso/scala-stellar-sdk/issues)
-![Supports Stellar Horizon v1.14.0](https://img.shields.io/badge/Horizon-v1.14.0-blue.svg)
-![Supports Stellar Core v15](https://img.shields.io/badge/Core-v15-blue.svg)
+![Supports Stellar Horizon v2.2.0](https://img.shields.io/badge/Horizon-v2.2.0-blue.svg)
+![Supports Stellar Core v17](https://img.shields.io/badge/Core-v17-blue.svg)
 [![Scala Steward badge](https://img.shields.io/badge/Scala_Steward-helping-brightgreen.svg?style=flat&logo=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAQCAMAAAARSr4IAAAAVFBMVEUAAACHjojlOy5NWlrKzcYRKjGFjIbp293YycuLa3pYY2LSqql4f3pCUFTgSjNodYRmcXUsPD/NTTbjRS+2jomhgnzNc223cGvZS0HaSD0XLjbaSjElhIr+AAAAAXRSTlMAQObYZgAAAHlJREFUCNdNyosOwyAIhWHAQS1Vt7a77/3fcxxdmv0xwmckutAR1nkm4ggbyEcg/wWmlGLDAA3oL50xi6fk5ffZ3E2E3QfZDCcCN2YtbEWZt+Drc6u6rlqv7Uk0LdKqqr5rk2UCRXOk0vmQKGfc94nOJyQjouF9H/wCc9gECEYfONoAAAAASUVORK5CYII=)](https://scala-steward.org)
 
 With the Stellar SDK for Scala, you can perform [Stellar](https://stellar.org/) operations from your Scala application. It provides the ability to access Stellar networks via any Horizon instance to build and submit transactions, query the state of the network and stream updates. You'll like this SDK, because it provides a more natural API for Scala developers than the official Java SDK.

@@ -1,16 +1,14 @@
 package stellar.sdk.model.op
 
 import java.nio.charset.StandardCharsets.UTF_8
-
 import com.google.common.base.Charsets
 import okio.ByteString
 import org.json4s.JsonAST.{JArray, JObject}
 import org.json4s.{DefaultFormats, Formats}
-import org.stellar.xdr.AllowTrustOp.AllowTrustOpAsset
 import org.stellar.xdr.Operation.OperationBody
 import org.stellar.xdr.OperationType._
 import org.stellar.xdr.RevokeSponsorshipOp.RevokeSponsorshipOpSigner
-import org.stellar.xdr.{AllowTrustOp, AssetCode12, AssetCode4, AssetType, BeginSponsoringFutureReservesOp, BumpSequenceOp, ChangeTrustOp, ClaimClaimableBalanceOp, CreateAccountOp, CreateClaimableBalanceOp, CreatePassiveSellOfferOp, DataValue, Int64, ManageBuyOfferOp, ManageDataOp, ManageSellOfferOp, PathPaymentStrictReceiveOp, PathPaymentStrictSendOp, PaymentOp, RevokeSponsorshipOp, RevokeSponsorshipType, SequenceNumber, SetOptionsOp, String32, String64, Uint32, XdrString, Operation => XOperation}
+import org.stellar.xdr.{AllowTrustOp, AssetCode, AssetCode12, AssetCode4, AssetType, BeginSponsoringFutureReservesOp, BumpSequenceOp, ChangeTrustOp, ClaimClaimableBalanceOp, CreateAccountOp, CreateClaimableBalanceOp, CreatePassiveSellOfferOp, DataValue, Int64, ManageBuyOfferOp, ManageDataOp, ManageSellOfferOp, PathPaymentStrictReceiveOp, PathPaymentStrictSendOp, PaymentOp, RevokeSponsorshipOp, RevokeSponsorshipType, SequenceNumber, SetOptionsOp, String32, String64, Uint32, XdrString, Operation => XOperation}
 import stellar.sdk._
 import stellar.sdk.model.Asset.parseAsset
 import stellar.sdk.model._
@@ -788,7 +786,7 @@ case class AllowTrustOperation(trustor: PublicKeyOps,
 
   override def bodyXdr: OperationBody = {
     val asset = {
-      val builder = new AllowTrustOpAsset.Builder()
+      val builder = new AssetCode.Builder()
       if (assetCode.length <= 4) {
         builder
           .assetCode4(new AssetCode4(paddedByteArray(assetCode, 4)))

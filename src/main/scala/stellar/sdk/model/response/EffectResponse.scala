@@ -1,13 +1,12 @@
 package stellar.sdk.model.response
 
-import java.time.ZonedDateTime
-
 import org.json4s.DefaultFormats
 import org.json4s.JsonAST.JObject
 import org.json4s.native.JsonMethods
-import org.json4s.native.JsonMethods._
 import stellar.sdk._
 import stellar.sdk.model._
+
+import java.time.ZonedDateTime
 
 sealed trait EffectResponse {
   val id: String
@@ -68,6 +67,8 @@ case class EffectTrustLineAuthorizedToMaintainLiabilities(id: String, createdAt:
 
 case class EffectTrustLineDeauthorized(id: String, createdAt: ZonedDateTime, trustor: PublicKeyOps, asset: NonNativeAsset) extends EffectResponse
 
+case class EffectTrustLineFlagsUpdated(id: String, createdAt: ZonedDateTime, trustor: PublicKey, asset: NonNativeAsset, authorized: Boolean, authorizedToMaintainLiabilities: Boolean, clawbackEnabled: Boolean) extends EffectResponse
+
 case class EffectTrustLineSponsorshipCreated(id: String, createdAt: ZonedDateTime, account: PublicKeyOps, asset: NonNativeAsset, sponsor: PublicKeyOps) extends EffectResponse
 
 case class EffectTrade(id: String, createdAt: ZonedDateTime, offerId: Long, buyer: PublicKeyOps, bought: Amount, seller: PublicKeyOps, sold: Amount) extends EffectResponse
@@ -105,6 +106,8 @@ object EffectResponseDeserializer extends ResponseParser[EffectResponse]({ o: JO
   }
 
   def weight = (o \ "weight").extract[Int].toShort
+
+  def maybeBool(key: String): Boolean = (o \ "key").extractOpt[Boolean].getOrElse(false)
 
   val id = (o \ "id").extract[String]
   val createdAt = ZonedDateTime.parse((o \ "created_at").extract[String])
@@ -165,6 +168,15 @@ object EffectResponseDeserializer extends ResponseParser[EffectResponse]({ o: JO
     case "trustline_authorized_to_maintain_liabilities" => EffectTrustLineAuthorizedToMaintainLiabilities(id, createdAt, account("trustor"), asset(issuerKey = "account").asInstanceOf[NonNativeAsset])
     case "trustline_created" => EffectTrustLineCreated(id, createdAt, account(), amount(key = "limit").asInstanceOf[IssuedAmount])
     case "trustline_deauthorized" => EffectTrustLineDeauthorized(id, createdAt, account("trustor"), asset(issuerKey = "account").asInstanceOf[NonNativeAsset])
+    case "trustline_flags_updated" => EffectTrustLineFlagsUpdated(
+      id = id,
+      createdAt = createdAt,
+      trustor = account("trustor"),
+      asset = asset().asInstanceOf[NonNativeAsset],
+      authorized = maybeBool("authorized_flag"),
+      authorizedToMaintainLiabilities = maybeBool("authorized_to_maintain_liabilites"),
+      clawbackEnabled = maybeBool("clawback_enabled_flag")
+    )
     case "trustline_removed" => EffectTrustLineRemoved(id, createdAt, account(), asset().asInstanceOf[NonNativeAsset])
     case "trustline_sponsorship_created" => EffectTrustLineSponsorshipCreated(id, createdAt, account(), issuedAsset(), account("sponsor"))
     case "trustline_sponsorship_removed" => UnrecognisedEffect(id, createdAt, JsonMethods.compact(JsonMethods.render(o)))
