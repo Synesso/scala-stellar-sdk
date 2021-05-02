@@ -170,7 +170,10 @@ object AccountEntry {
             lx,
             ext2.getV2.getNumSponsored.getUint32.toInt,
             ext2.getV2.getNumSponsoring.getUint32.toInt,
-            ext2.getV2.getSignerSponsoringIDs.map(_.getSponsorshipDescriptor).map(AccountId.decodeXdr).toList
+            ext2.getV2.getSignerSponsoringIDs
+              .map(_.getSponsorshipDescriptor)
+              .filter(_ != null)
+              .map(AccountId.decodeXdr).toList
           )
         }
 

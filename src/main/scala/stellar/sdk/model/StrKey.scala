@@ -1,12 +1,13 @@
 package stellar.sdk.model
 
 import java.nio.ByteBuffer
-
 import org.apache.commons.codec.binary.Base32
 import org.stellar.xdr.{AccountID, CryptoKeyType, MuxedAccount, PublicKeyType, SignerKey, SignerKeyType, Uint256, Uint64, PublicKey => XPublicKey}
 import stellar.sdk.model.StrKey.codec
 import stellar.sdk.util.ByteArrays
 import stellar.sdk.{KeyPair, PublicKey}
+
+import scala.util.Try
 
 
 /**

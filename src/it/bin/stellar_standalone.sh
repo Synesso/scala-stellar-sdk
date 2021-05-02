@@ -1,7 +1,7 @@
 #!/bin/bash
 
 CONTAINER=stellar/quickstart:latest
-PROTOCOL_VERSION=15
+PROTOCOL_VERSION=17
 
 function container_started {
     local state
