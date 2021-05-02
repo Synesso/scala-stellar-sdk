@@ -73,6 +73,8 @@ case class EffectTrustLineSponsorshipCreated(id: String, createdAt: ZonedDateTim
 
 case class EffectTrade(id: String, createdAt: ZonedDateTime, offerId: Long, buyer: PublicKeyOps, bought: Amount, seller: PublicKeyOps, sold: Amount) extends EffectResponse
 
+case class EffectClaimableBalanceClawedBack(id: String, createdAt: ZonedDateTime, balanceId: Long) extends EffectResponse
+
 case class UnrecognisedEffect(id: String, createdAt: ZonedDateTime, json: String) extends EffectResponse
 
 object EffectResponseDeserializer extends ResponseParser[EffectResponse]({ o: JObject =>
@@ -133,6 +135,7 @@ object EffectResponseDeserializer extends ResponseParser[EffectResponse]({ o: JO
       EffectAccountThresholdsUpdated(id, createdAt, account(), thresholds)
     case "claimable_balance_claimant_created" => UnrecognisedEffect(id, createdAt, JsonMethods.compact(JsonMethods.render(o)))
     case "claimable_balance_claimed" => UnrecognisedEffect(id, createdAt, JsonMethods.compact(JsonMethods.render(o)))
+    case "claimable_balance_clawed_back" => EffectClaimableBalanceClawedBack(id, createdAt, (o \ "balance_id").extract[Long])
     case "claimable_balance_created" => UnrecognisedEffect(id, createdAt, JsonMethods.compact(JsonMethods.render(o)))
     case "claimable_balance_sponsorship_created" => UnrecognisedEffect(id, createdAt, JsonMethods.compact(JsonMethods.render(o)))
     case "claimable_balance_sponsorship_removed" => UnrecognisedEffect(id, createdAt, JsonMethods.compact(JsonMethods.render(o)))
