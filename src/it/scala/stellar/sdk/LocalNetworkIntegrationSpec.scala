@@ -2,13 +2,13 @@ package stellar.sdk
 
 import java.io.EOFException
 import java.time.{Instant, Period}
-
 import com.typesafe.scalalogging.LazyLogging
 import okhttp3.HttpUrl
 import okio.ByteString
 import org.json4s.JsonDSL._
 import org.specs2.concurrent.ExecutionEnv
 import org.specs2.mutable.Specification
+import org.stellar.xdr.TrustLineFlags
 import stellar.sdk.inet.HorizonEntityNotFound
 import stellar.sdk.model.Amount.lumens
 import stellar.sdk.model.ClaimPredicate.{AbsolutelyBefore, Or, Unconditional}
@@ -103,6 +103,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
   private val chinchillaA = Asset("Chinchilla", accnA)
   private val chinchillaMaster = Asset("Chinchilla", masterAccountKey)
   private val dachshundB = Asset("Dachshund", accnB)
+  private val clawbackAsset = Asset("XYZ", accnF)
 
   // Transaction hashes. These will changed when setup operations change.
   private val txnHash2 = "e13447898b27dbf278d4411022e2e6d0aae78ef70670c7af7834a1f2a6d191d8"
@@ -887,8 +888,6 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
   }
 
   "Clawbacks" should {
-    val asset = Asset("XYZ", accnF)
-
     "be used to revoke funds from an account" >> {
       val setClawbackEnabled = for {
         account <- network.account(masterAccountKey)
@@ -899,8 +898,8 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
               setFlags = Some(Set(AuthorizationRevocableFlag, AuthorizationClawbackEnabledFlag)),
               sourceAccount = Some(accnF)
             ),
-            ChangeTrustOperation(IssuedAmount(99_999L, asset), Some(accnA)),
-            PaymentOperation(accnA.toAccountId, IssuedAmount(50_000L, asset), Some(accnF))
+            ChangeTrustOperation(IssuedAmount(99_999L, clawbackAsset), Some(accnA)),
+            PaymentOperation(accnA.toAccountId, IssuedAmount(50_000L, clawbackAsset), Some(accnF))
           ),
         timeBounds = TimeBounds.Unbounded,
         maxFee = NativeAmount(1000)
@@ -911,7 +910,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
         r.isSuccess must beTrue
       }.awaitFor(60.seconds)
       network.account(accnA).map(_.balances) must beLike[List[Balance]] { balances =>
-        balances must contain(Balance(IssuedAmount(50_000L, asset), Some(99_999L), authorized = true, authorizedToMaintainLiabilities = true))
+        balances must contain(Balance(IssuedAmount(50_000L, clawbackAsset), Some(99_999L), authorized = true, authorizedToMaintainLiabilities = true))
       }.awaitFor(3.seconds)
 
       val clawbackTheFunds = for {
@@ -919,7 +918,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
         txn = Transaction(
           source = account,
           operations = List(
-            ClawBackOperation(accnA.toAccountId, IssuedAmount(40_000L, asset), Some(accnF))
+            ClawBackOperation(accnA.toAccountId, IssuedAmount(40_000L, clawbackAsset), Some(accnF))
           ),
         timeBounds = TimeBounds.Unbounded,
         maxFee = NativeAmount(1000)
@@ -931,7 +930,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
       }.awaitFor(60.seconds)
 
       network.account(accnA).map(_.balances) must beLike[List[Balance]] { balances =>
-        balances must contain(Balance(IssuedAmount(10_000L, asset), Some(99_999L), authorized = true, authorizedToMaintainLiabilities = true))
+        balances must contain(Balance(IssuedAmount(10_000L, clawbackAsset), Some(99_999L), authorized = true, authorizedToMaintainLiabilities = true))
       }.awaitFor(3.seconds)
     }
 
@@ -942,7 +941,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
           source = account,
           operations = List(
             CreateClaimableBalanceOperation(
-              amount = Amount(1000, asset),
+              amount = Amount(1000, clawbackAsset),
               claimants = List(AccountIdClaimant(accnA, Unconditional))
             )
           ),
@@ -970,6 +969,29 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
       }.awaitFor(60.seconds)
 
       network.claimsByAsset(dachshundB) must beEmpty[Seq[ClaimableBalance]].awaitFor(10.seconds)
+    }
+  }
+
+  "Trustline flags" should {
+    "be settable" >> {
+      (for {
+        account <- network.account(accnF)
+        txn = Transaction(
+          source = account,
+          operations = List(SetTrustLineFlagsOperation(
+            asset = clawbackAsset,
+            trustor = accnA,
+            setFlags = Set(TrustLineFlags.AUTHORIZED_FLAG),
+            clearFlags = Set.empty[TrustLineFlags]
+          )),
+          timeBounds = TimeBounds.Unbounded,
+          maxFee = NativeAmount(1000)
+        ).sign(accnF)
+        txnResult <- txn.submit()
+      } yield txnResult) must beLike[TransactionPostResponse] { case r: TransactionApproved =>
+        r.isSuccess must beTrue
+      }.awaitFor(60.seconds)
+
     }
   }
 }

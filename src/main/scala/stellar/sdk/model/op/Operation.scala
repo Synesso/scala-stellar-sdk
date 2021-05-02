@@ -1,6 +1,5 @@
 package stellar.sdk.model.op
 
-import java.nio.charset.StandardCharsets.UTF_8
 import com.google.common.base.Charsets
 import okio.ByteString
 import org.json4s.JsonAST.{JArray, JObject}
@@ -8,7 +7,7 @@ import org.json4s.{DefaultFormats, Formats}
 import org.stellar.xdr.Operation.OperationBody
 import org.stellar.xdr.OperationType._
 import org.stellar.xdr.RevokeSponsorshipOp.RevokeSponsorshipOpSigner
-import org.stellar.xdr.{AccountFlags, AllowTrustOp, AssetCode, AssetCode12, AssetCode4, AssetType, BeginSponsoringFutureReservesOp, BumpSequenceOp, ChangeTrustOp, ClaimClaimableBalanceOp, ClawbackClaimableBalanceOp, ClawbackOp, CreateAccountOp, CreateClaimableBalanceOp, CreatePassiveSellOfferOp, DataValue, Int64, ManageBuyOfferOp, ManageDataOp, ManageSellOfferOp, PathPaymentStrictReceiveOp, PathPaymentStrictSendOp, PaymentOp, RevokeSponsorshipOp, RevokeSponsorshipType, SequenceNumber, SetOptionsOp, SetTrustLineFlagsOp, String32, String64, Uint32, XdrString, Operation => XOperation}
+import org.stellar.xdr.{AllowTrustOp, AssetCode, AssetCode12, AssetCode4, AssetType, BeginSponsoringFutureReservesOp, BumpSequenceOp, ChangeTrustOp, ClaimClaimableBalanceOp, ClawbackClaimableBalanceOp, ClawbackOp, CreateAccountOp, CreateClaimableBalanceOp, CreatePassiveSellOfferOp, DataValue, Int64, ManageBuyOfferOp, ManageDataOp, ManageSellOfferOp, PathPaymentStrictReceiveOp, PathPaymentStrictSendOp, PaymentOp, RevokeSponsorshipOp, RevokeSponsorshipType, SequenceNumber, SetOptionsOp, SetTrustLineFlagsOp, String32, String64, TrustLineFlags, Uint32, XdrString, Operation => XOperation}
 import stellar.sdk._
 import stellar.sdk.model.Asset.parseAsset
 import stellar.sdk.model._
@@ -16,6 +15,8 @@ import stellar.sdk.model.ledger._
 import stellar.sdk.model.op.Operation.extractSource
 import stellar.sdk.model.response.ResponseParser
 import stellar.sdk.util.ByteArrays.{base64, paddedByteArray}
+
+import java.nio.charset.StandardCharsets.UTF_8
 
 /**
  * An Operation represents a change to the ledger. It is the action, as opposed to the effects resulting from that action.
@@ -1258,12 +1259,12 @@ case class ClawBackClaimableBalanceOperation(
 
 /**
  * Set flags on the trustline for an account.
- *
+ */
 case class SetTrustLineFlagsOperation(
   asset: NonNativeAsset,
   trustor: PublicKeyOps,
-//  setFlags: Set[]
-
+  setFlags: Set[TrustLineFlags],
+  clearFlags: Set[TrustLineFlags],
   sourceAccount: Option[PublicKeyOps] = None
 ) extends Operation {
   override def bodyXdr: OperationBody = new OperationBody.Builder()
@@ -1271,14 +1272,8 @@ case class SetTrustLineFlagsOperation(
     .setTrustLineFlagsOp(new SetTrustLineFlagsOp.Builder()
       .asset(asset.xdr)
       .trustor(trustor.toAccountId.xdr)
-      .setFlags(AccountFlags.AUTH_CLAWBACK_ENABLED_FLAG)
-      .clearFlags()
-      .discriminant(RevokeSponsorshipType.REVOKE_SPONSORSHIP_SIGNER)
-      .signer(new RevokeSponsorshipOpSigner.Builder()
-        .accountID(accountId.xdr)
-        .signerKey(signerKey.signerXdr)
-        .build())
+      .setFlags(new Uint32(setFlags.map(_.getValue).sum))
+      .clearFlags(new Uint32(clearFlags.map(_.getValue).sum))
       .build())
     .build()
 }
-*/
