@@ -24,6 +24,7 @@ import stellar.sdk.util.ByteArrays
 import scala.annotation.tailrec
 import scala.concurrent.duration._
 import scala.concurrent.{Await, Future}
+import scala.language.postfixOps
 import scala.sys.process._
 
 class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specification with DomainMatchersIT with LazyLogging {
@@ -276,10 +277,10 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
     "list all assets" >> {
       val eventualResps = network.assets().map(_.toSeq)
       eventualResps must containTheSameElementsAs(Seq(
-        AssetResponse(aardvarkA, 0, 0, authRequired = true, authRevocable = true),
-        AssetResponse(beaverA, 0, 0, authRequired = true, authRevocable = true),
-        AssetResponse(chinchillaA, 101, 1, authRequired = true, authRevocable = true),
-        AssetResponse(chinchillaMaster, 101, 1, authRequired = false, authRevocable = false),
+        AssetResponse(aardvarkA, AssetBalances(0, 0, 555), 0, authRequired = true, authRevocable = true),
+        AssetResponse(beaverA, AssetBalances(0, 0, 0), 0, authRequired = true, authRevocable = true),
+        AssetResponse(chinchillaA, AssetBalances(101, 0, 0), 1, authRequired = true, authRevocable = true),
+        AssetResponse(chinchillaMaster, AssetBalances(101, 0, 0), 1, authRequired = false, authRevocable = false),
       )).awaitFor(10 seconds)
     }
 
