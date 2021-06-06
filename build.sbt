@@ -1,6 +1,6 @@
 ThisBuild / scalaVersion := "2.13.6"
 
-val specs2 = "4.10.6"
+val specs2 = "4.12.0"
 val okhttp = "4.9.1"
 
 lazy val root = project
@@ -44,7 +44,7 @@ lazy val root = project
     developers := List(
       Developer("jem", "Jem Mawson", "jem.mawson@gmail.com", url = url("https://keybase.io/jem"))
     ),
-    crossScalaVersions := Seq("2.12.13", "2.13.6"),
+    crossScalaVersions := Seq("2.12.14", "2.13.5"),
     Defaults.itSettings,
     resolvers ++= List(
       Resolver.jcenterRepo,
@@ -61,14 +61,14 @@ lazy val root = project
       "commons-codec" % "commons-codec" % "1.15",
       "io.github.novacrypto" % "BIP39" % "2019.01.27",
       "net.i2p.crypto" % "eddsa" % "0.3.0",
-      "org.json4s" %% "json4s-native" % "3.6.11",
-      "org.scala-lang.modules" %% "scala-collection-compat" % "2.4.3",
+      "org.json4s" %% "json4s-native" % "4.0.0",
+      "org.scala-lang.modules" %% "scala-collection-compat" % "2.4.4",
       "tech.sparse" %%  "toml-scala" % "0.2.2",
 
       "com.github.julien-truffaut" %% "monocle-core"  % "2.0.5" % "test",
       "com.github.julien-truffaut" %% "monocle-macro" % "2.0.5" % "test",
       "com.squareup.okhttp3" % "mockwebserver" % okhttp % "test",
-      "org.typelevel" %% "cats-effect" % "2.4.1",
+      "org.typelevel" %% "cats-effect" % "2.5.1",
       "org.specs2" %% "specs2-core" % specs2 % "test,it",
       "org.specs2" %% "specs2-mock" % specs2 % "test",
       "org.specs2" %% "specs2-scalacheck" % specs2 % "test"
