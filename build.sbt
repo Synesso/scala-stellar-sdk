@@ -44,7 +44,7 @@ lazy val root = project
     developers := List(
       Developer("jem", "Jem Mawson", "jem.mawson@gmail.com", url = url("https://keybase.io/jem"))
     ),
-    crossScalaVersions := Seq("2.12.14", "2.13.5"),
+    crossScalaVersions := Seq("2.12.14", "2.13.6"),
     Defaults.itSettings,
     resolvers ++= List(
       Resolver.jcenterRepo,
