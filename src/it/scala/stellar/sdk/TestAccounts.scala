@@ -1,10 +1,10 @@
 package stellar.sdk
 
-import cats.effect.IO
-import cats.effect.concurrent.Ref
+import cats.effect.{IO, Ref}
+import cats.effect.unsafe.implicits.{global => catsGlobal}
 import com.typesafe.scalalogging.LazyLogging
-import stellar.sdk.model.{AccountId, Amount, NativeAmount, NoMemo, SignedTransaction, TimeBounds, Transaction}
 import stellar.sdk.model.op.{AccountMergeOperation, CreateAccountOperation}
+import stellar.sdk.model._
 
 import scala.concurrent.Await
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -14,9 +14,11 @@ import scala.util.{Failure, Success}
 class TestAccounts(quantity: Int = 20) extends LazyLogging {
   require(quantity > 0 && quantity <= 20, "Quantity must be positive and no more than 20. (20 is a temporary limit)")
 
-  implicit val network = TestNetwork
+  implicit val network: TestNetwork.type = TestNetwork
 
-  private val unused: Ref[IO, List[KeyPair]] = Ref[IO].of(List.fill(quantity) { KeyPair.random } ).unsafeRunSync()
+  private val unused: Ref[IO, List[KeyPair]] = Ref[IO].of(List.fill(quantity) {
+    KeyPair.random
+  }).unsafeRunSync()
   private val borrowed: Ref[IO, List[KeyPair]] = Ref[IO].of(List.empty[KeyPair]).unsafeRunSync()
   private val friendBot: Ref[IO, Option[AccountId]] = Ref[IO].of(Option.empty[AccountId]).unsafeRunSync()
 
@@ -27,29 +29,25 @@ class TestAccounts(quantity: Int = 20) extends LazyLogging {
     logger.debug(s"Opening $quantity accounts")
     try {
       unused.get.map {
-        _ match {
-          case h +: t =>
-            val friendBotResponse = network.fund(h)
-            friendBotResponse.foreach { r => friendBot.set(Some(r.transaction.transaction.source.id)).unsafeRunSync() }
-            val createOps = t.map(kp => CreateAccountOperation(
-              destinationAccount = kp.toAccountId,
-              startingBalance = NativeAmount(10_000_0000000L / quantity)
-            ))
-            createOps.map(_.toString).foreach(s => logger.debug(s))
-            val response = for {
-              _ <- friendBotResponse
-              sourceAccount <- network.account(h)
-              txn = Transaction(sourceAccount, createOps, NoMemo, TimeBounds.Unbounded, maxFee = Amount.lumens(1))
-              response <- txn.sign(h).submit()
-            } yield response
-            response.onComplete {
-              _ match {
-                case Success(r) => logger.debug(r.toString)
-                case Failure(t) => logger.error("Failed to open accounts", t)
-              }
-            }
-            Await.ready(response, 30.seconds)
-        }
+        case h +: t =>
+          val friendBotResponse = network.fund(h)
+          friendBotResponse.foreach { r => friendBot.set(Some(r.transaction.transaction.source.id)).unsafeRunSync() }
+          val createOps = t.map(kp => CreateAccountOperation(
+            destinationAccount = kp.toAccountId,
+            startingBalance = NativeAmount(10_000_0000000L / quantity)
+          ))
+          createOps.map(_.toString).foreach(s => logger.debug(s))
+          val response = for {
+            _ <- friendBotResponse
+            sourceAccount <- network.account(h)
+            txn = Transaction(sourceAccount, createOps, NoMemo, TimeBounds.Unbounded, maxFee = Amount.lumens(1))
+            response <- txn.sign(h).submit()
+          } yield response
+          response.onComplete {
+            case Success(r) => logger.debug(r.toString)
+            case Failure(t) => logger.error("Failed to open accounts", t)
+          }
+          Await.ready(response, 30.seconds)
       }.unsafeRunSync()
     } catch {
       case t: Throwable => logger.error("Failed to open accounts", t.printStackTrace())
@@ -76,10 +74,8 @@ class TestAccounts(quantity: Int = 20) extends LazyLogging {
         response <- signedTxn.submit()
       } yield response
       response.onComplete {
-        _ match {
-          case Success(r) => logger.debug(r.toString)
-          case Failure(t) => logger.error("Failed to close accounts", t.printStackTrace())
-        }
+        case Success(r) => logger.debug(r.toString)
+        case Failure(t) => logger.error("Failed to close accounts", t.printStackTrace())
       }
       Await.result(response, 1.minute)
     } catch {
