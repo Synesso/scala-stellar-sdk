@@ -21,7 +21,7 @@ lazy val root = project
     apidocRootPackage := "stellar.sdk"
   )
   .enablePlugins(ParadoxMaterialThemePlugin).settings(
-  paradoxMaterialTheme in Compile ~= {
+  Compile / paradoxMaterialTheme ~= {
     _
       .withRepository(url("https://github.com/synesso/scala-stellar-sdk").toURI)
       .withSocial(uri("https://github.com/synesso"), uri("https://keybase.io/jem"))
@@ -68,12 +68,12 @@ lazy val root = project
       "com.github.julien-truffaut" %% "monocle-core"  % "2.0.5" % "test",
       "com.github.julien-truffaut" %% "monocle-macro" % "2.0.5" % "test",
       "com.squareup.okhttp3" % "mockwebserver" % okhttp % "test",
-      "org.typelevel" %% "cats-effect" % "2.5.1",
+      "org.typelevel" %% "cats-effect" % "3.0.0",
       "org.specs2" %% "specs2-core" % specs2 % "test,it",
       "org.specs2" %% "specs2-mock" % specs2 % "test",
       "org.specs2" %% "specs2-scalacheck" % specs2 % "test"
     ),
-    coverageMinimum := 95,
+    coverageMinimumStmtTotal := 95,
     coverageFailOnMinimum := true,
     coverageExcludedPackages := "\\*DocExamples.scala",
   )
