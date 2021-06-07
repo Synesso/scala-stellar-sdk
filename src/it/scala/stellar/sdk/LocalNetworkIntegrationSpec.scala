@@ -1,7 +1,5 @@
 package stellar.sdk
 
-import java.io.EOFException
-import java.time.{Instant, Period}
 import com.typesafe.scalalogging.LazyLogging
 import okhttp3.HttpUrl
 import okio.ByteString
@@ -21,6 +19,8 @@ import stellar.sdk.model.result.TransactionHistory
 import stellar.sdk.model.{ClaimableBalance, _}
 import stellar.sdk.util.ByteArrays
 
+import java.io.EOFException
+import java.time.{Instant, Period}
 import scala.annotation.tailrec
 import scala.concurrent.duration._
 import scala.concurrent.{Await, Future}
@@ -700,6 +700,15 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
     )
     val id = ClaimableBalanceHashId(
       ByteString.decodeHex("a20bec491b3901338a39b1430c4ca177176641698a267c1c92df5aaf8b9688ee"))
+    val createOperation = CreateClaimableBalanceOperation(
+      amount = Amount(5000, dachshundB),
+      claimants = List(
+        AccountIdClaimant(accnA.asPublicKey, predicate),
+        AccountIdClaimant(accnC.asPublicKey, Unconditional)
+      ),
+      sourceAccount = Some(accnB.asPublicKey)
+    )
+    val claimOperation = ClaimClaimableBalanceOperation(id, Some(accnA.asPublicKey))
 
     "be creatable" >> {
       for {
@@ -707,14 +716,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
         txn = Transaction(
           source = account,
           operations = List(
-            CreateClaimableBalanceOperation(
-              amount = Amount(5000, dachshundB),
-              claimants = List(
-                AccountIdClaimant(accnA, predicate),
-                AccountIdClaimant(accnC, Unconditional)
-              ),
-              sourceAccount = Some(accnB)
-            ),
+            createOperation,
             ChangeTrustOperation(IssuedAmount(100000000, dachshundB), Some(accnA)),
           ),
           timeBounds = TimeBounds.Unbounded,
@@ -758,10 +760,10 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
     "be claimable" >> {
       for {
         account <- network.account(accnA)
-        id <- network.claimsByClaimant(accnA).map(_.head.id)
+        _ <- network.claimsByClaimant(accnA).map(_.head.id)
         txn = Transaction(
           source = account,
-          operations = List(ClaimClaimableBalanceOperation(id)),
+          operations = List(claimOperation),
           timeBounds = TimeBounds.Unbounded,
           maxFee = NativeAmount(100)
         ).sign(accnA)
@@ -769,6 +771,11 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
       } yield txnResult must beLike[TransactionPostResponse] { case r: TransactionApproved =>
         r.isSuccess must beTrue
       }
+    }
+
+    "be used to filter operations" >> {
+      network.operationsByClaim(id).map(_.toList.map(_.operation)) must
+        beEqualTo(List(createOperation, claimOperation)).awaitFor(10.seconds)
     }
   }
 
