@@ -5,8 +5,8 @@ As this project is pre 1.0, breaking changes may happen for minor version bumps.
 ## Next Version
 
 - Updated `AssetResponse` to include more detailed information about balances for the specified asset.
-- Added the ability to list operations arising from a claimable balance.
-
+- Added the ability to list operations associated with a claimable balance.
+- Added the ability to list transactions associated with a claimable balance.
 
 ## 0.20.0
 

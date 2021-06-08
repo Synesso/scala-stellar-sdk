@@ -388,6 +388,20 @@ trait Network extends LazyLogging {
   }
 
   /**
+   * Fetch a stream of transactions, filtered by claimable balance id.
+   * @param cursor optional record id to start results from (defaults to `0`)
+   * @param order  optional order to sort results by (defaults to `Asc`)
+   * @see [[https://developers.stellar.org/api/resources/claimablebalances/transactions/ endpoint doc]]
+   */
+  def transactionsByClaim(
+    id: ClaimableBalanceId,
+    cursor: HorizonCursor = Record(0),
+    order: HorizonOrder = Asc
+  )(implicit ex: ExecutionContext): Future[LazyList[TransactionHistory]] =
+    horizon.getStream[TransactionHistory](s"claimable_balances/${id.encodeString}/transactions",
+      TransactionHistoryDeserializer, cursor, order)
+
+  /**
     * Fetch a stream of transactions for a given ledger.
     * @param cursor optional record id to start results from (defaults to `0`)
     * @param order  optional order to sort results by (defaults to `Asc`)

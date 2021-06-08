@@ -777,6 +777,10 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
       network.operationsByClaim(id).map(_.toList.map(_.operation)) must
         beEqualTo(List(createOperation, claimOperation)).awaitFor(10.seconds)
     }
+
+    "be used to filter transactions" >> {
+      network.transactionsByClaim(id).map(_.toList.size) must beEqualTo(2).awaitFor(10.seconds)
+    }
   }
 
   "creating accounts with no starting balance" should {
