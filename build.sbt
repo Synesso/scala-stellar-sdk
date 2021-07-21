@@ -62,7 +62,7 @@ lazy val root = project
       "io.github.novacrypto" % "BIP39" % "2019.01.27",
       "net.i2p.crypto" % "eddsa" % "0.3.0",
       "org.json4s" %% "json4s-native" % "4.0.1",
-      "org.scala-lang.modules" %% "scala-collection-compat" % "2.4.4",
+      "org.scala-lang.modules" %% "scala-collection-compat" % "2.5.0",
       "tech.sparse" %%  "toml-scala" % "0.2.2",
 
       "com.github.julien-truffaut" %% "monocle-core"  % "2.0.5" % "test",
