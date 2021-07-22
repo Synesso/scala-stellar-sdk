@@ -1,11 +1,10 @@
 package stellar.sdk.model.op
 
-import org.json4s.{Formats, NoTypeHints}
 import org.json4s.native.JsonMethods.parse
 import org.json4s.native.Serialization
+import org.json4s.{Formats, NoTypeHints}
 import org.scalacheck.Arbitrary
 import org.specs2.mutable.Specification
-import stellar.sdk.util.ByteArrays.base64
 import stellar.sdk.{ArbitraryInput, DomainMatchers}
 
 class PathPaymentStrictSendOperationSpec extends Specification with ArbitraryInput with DomainMatchers with JsonSnippets {
@@ -35,25 +34,20 @@ class PathPaymentStrictSendOperationSpec extends Specification with ArbitraryInp
            |  },
            |  "id": "${op.id}",
            |  "paging_token": "10157597659137",
-           |  "source_account": "${op.operation.sourceAccount.get.accountId}",
+           |  ${accountId(op.operation.sourceAccount.get, "source_account")}
            |  "type":"path_payment_strict_send",
            |  "type_i":13,
            |  "created_at": "${formatter.format(op.createdAt)}",
            |  "transaction_hash": "${op.txnHash}",
            |  ${amountDocPortion(op.operation.sendAmount, assetPrefix = "source_")}
            |  ${amountDocPortion(op.operation.destinationMin, "destination_min")}
-           |  "from":"${op.operation.sourceAccount.get.accountId}",
-           |  "to":"${op.operation.destinationAccount.publicKey.accountId}",
+           |  ${accountId(op.operation.sourceAccount.get, "from")}
+           |  ${accountId(op.operation.destinationAccount, "to")}
            |  "path":[${if (op.operation.path.isEmpty) "" else op.operation.path.map(asset(_)).mkString("{", "},{", "}")}]
            |}
          """.stripMargin
 
-      parse(doc).extract[Transacted[Operation]] mustEqual removeDestinationSubAccountId(op)
+      parse(doc).extract[Transacted[Operation]] mustEqual op
     }.setGen(genTransacted(genPathPaymentStrictSendOperation.suchThat(_.sourceAccount.nonEmpty)))
-  }
-
-  // Because sub accounts are not yet supported in Horizon JSON.
-  private def removeDestinationSubAccountId(op: Transacted[PathPaymentStrictSendOperation]): Transacted[PathPaymentStrictSendOperation] = {
-    op.copy(operation = op.operation.copy(destinationAccount = op.operation.destinationAccount.copy(subAccountId = None)))
   }
 }

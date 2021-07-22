@@ -74,13 +74,13 @@ class TransactionSigningRequestSpec(implicit ee: ExecutionEnv) extends Specifica
       hasValidSignature must beLikeA[SignatureValidation] { case ValidSignature(domain, publicKey) =>
         domain mustEqual server.getHostName
         publicKey.accountId mustEqual requestSigner.accountId
-      }.await
+      }.await(0, 30.seconds)
     }
 
     "fail signature validation if there is no signature" >> {
       val signingRequest: TransactionSigningRequest = sampleOne(genTransactionSigningRequest).copy(signature = None)
       val hasValidSignature = signingRequest.validateSignature()
-      hasValidSignature must beEqualTo(NoSignaturePresent).await
+      hasValidSignature must beEqualTo(NoSignaturePresent).await(0, 30.seconds)
     }
 
     "fail signature validation if the host doesn't exist" >> {

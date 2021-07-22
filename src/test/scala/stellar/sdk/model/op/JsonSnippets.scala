@@ -1,9 +1,9 @@
 package stellar.sdk.model.op
 
+import stellar.sdk.model.{AccountId, Amount, Asset, NonNativeAsset}
+
 import java.time.format.DateTimeFormatter
 import java.util.Locale
-
-import stellar.sdk.model.{Amount, Asset, NonNativeAsset}
 
 trait JsonSnippets {
   val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")
@@ -41,5 +41,11 @@ trait JsonSnippets {
     }],"""
     case v => s""""$key":$v,"""
   }.getOrElse("")
+
+  def accountId(accountId: AccountId, prefix: String): String =
+    s"""
+       |"$prefix": "${accountId.publicKey.accountId}",
+       |${accountId.subAccountId.map(id => s""""${prefix}_muxed_id": "${id}",""").getOrElse("")}
+       |""".stripMargin.trim
 
 }

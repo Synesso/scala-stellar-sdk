@@ -64,7 +64,7 @@ class TestAccounts(quantity: Int = 20) extends LazyLogging {
       val ops = for {
         friendBotAccountId <- friendBot.get.map(_.get)
         allKps <- unused.get.flatMap(kps => borrowed.get.map(_ ++ kps))
-        allOps = allKps.map { kp => AccountMergeOperation(friendBotAccountId, Some(kp)) }
+        allOps = allKps.map { kp => AccountMergeOperation(friendBotAccountId, Some(kp.toAccountId)) }
       } yield allKps.zip(allOps).toMap
       val opsMap = ops.unsafeRunSync()
       val response = for {

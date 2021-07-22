@@ -1,10 +1,7 @@
 package stellar.sdk.model.response
 
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
-
 import okio.ByteString
-import org.json4s.JsonAST
+import org.json4s.JsonAST.JObject
 import org.json4s.JsonDSL._
 import org.specs2.mutable.Specification
 import stellar.sdk._
@@ -13,6 +10,9 @@ import stellar.sdk.model._
 import stellar.sdk.model.op.CreateAccountOperation
 import stellar.sdk.model.result._
 import stellar.sdk.util.ByteArrays.bytesToHex
+
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 
 class TransactionResponseSpec extends Specification with ArbitraryInput with DomainMatchers {
 
@@ -86,7 +86,15 @@ class TransactionResponseSpec extends Specification with ArbitraryInput with Dom
   "a transaction history" should {
     "deserialise from JSON" >> prop { h: TransactionHistory =>
 
-      val feeBump: Option[JsonAST.JObject] = h.feeBump.map { bump =>
+      def accountId(accnId: AccountId, prefix: String): Option[JObject] =
+        accnId.subAccountId.map(id =>
+          (prefix -> accnId.publicKey.accountId) ~ (s"${prefix}_muxed_id" -> s"$id")
+        ).orElse(Some(prefix -> accnId.publicKey.accountId))
+
+      val sourceAccount: Option[JObject] = accountId(h.account, "source_account")
+      val feeAccount: Option[JObject] = accountId(h.account, "fee_account")
+
+      val feeBump: Option[JObject] = h.feeBump.map { bump =>
         ("fee_bump_transaction" -> (
           ("hash" -> bump.hash) ~
             ("signatures" -> bump.signatures))) ~
@@ -94,39 +102,46 @@ class TransactionResponseSpec extends Specification with ArbitraryInput with Dom
             ("max_fee" -> h.maxFee.units) ~
               ("hash" -> h.hash) ~
               ("signatures" -> h.signatures)
-          ))
+            ))
       }
 
-      val ((memoType, memo), memoSecondary) = h.memo match {
+      val ((memoType: String, memo: Option[(String, String)]), memoSecondary: Option[(String, String)]) = h.memo match {
         case NoMemo => "none" -> None -> None
         case MemoId(id) => "id" -> Some("memo" -> java.lang.Long.toUnsignedString(id)) -> None
         case MemoText(t) => "text" -> Some("memo" -> new String(t.toByteArray)) -> Some("memo_bytes" -> t.base64())
         case MemoHash(bs) => "hash" -> Some("memo" -> bs.base64()) -> None
         case MemoReturnHash(bs) => "return" -> Some("memo" -> bs.base64()) -> None
       }
-      val json = feeBump.foldLeft(memo.foldLeft(memoSecondary.foldLeft(
-        ("hash" -> h.feeBump.map(_.hash).getOrElse(h.hash)) ~
-          ("ledger" -> h.ledgerId) ~
-          ("created_at" -> formatter.format(h.createdAt)) ~
-          ("fee_account" -> h.account.accountId) ~
-          ("source_account" -> h.account.accountId) ~
-          ("source_account_sequence" -> h.sequence) ~
-          ("max_fee" -> h.feeBump.map(_.maxFee).getOrElse(h.maxFee).units) ~
-          ("fee_charged" -> h.feeCharged.units) ~
-          ("fee_account" -> h.account.accountId) ~
-          ("operation_count" -> h.operationCount) ~
-          ("signatures" -> h.feeBump.map(_.signatures).getOrElse(h.signatures)) ~
-          ("memo_type" -> memoType) ~
-          ("envelope_xdr" -> h.envelopeXDR) ~
-          ("result_xdr" -> h.resultXDR) ~
-          ("result_meta_xdr" -> h.resultMetaXDR) ~
-          ("fee_meta_xdr" -> h.feeMetaXDR) ~
-          ("valid_after" -> h.validAfter.map(formatter.format)) ~
-          ("valid_before" -> h.validBefore.map(formatter.format))
-      ) {
-        case (js, part) => js ~ part
-      }) { case (js, part) => js ~ part
-      }) { case (js, part) => js ~ part }
+
+      val base = ("hash" -> h.feeBump.map(_.hash).getOrElse(h.hash)) ~
+        ("ledger" -> h.ledgerId) ~
+        ("created_at" -> formatter.format(h.createdAt)) ~
+        ("source_account_sequence" -> h.sequence) ~
+        ("max_fee" -> h.feeBump.map(_.maxFee).getOrElse(h.maxFee).units) ~
+        ("fee_charged" -> h.feeCharged.units) ~
+        ("operation_count" -> h.operationCount) ~
+        ("signatures" -> h.feeBump.map(_.signatures).getOrElse(h.signatures)) ~
+        ("memo_type" -> memoType) ~
+        ("envelope_xdr" -> h.envelopeXDR) ~
+        ("result_xdr" -> h.resultXDR) ~
+        ("result_meta_xdr" -> h.resultMetaXDR) ~
+        ("fee_meta_xdr" -> h.feeMetaXDR) ~
+        ("valid_after" -> h.validAfter.map(formatter.format)) ~
+        ("valid_before" -> h.validBefore.map(formatter.format))
+
+      val combineObj: (JObject, JObject) => JObject = (js, part) => js ~ part
+      val combineStr: (JObject, (String, String)) => JObject = (js, part) => js ~ part
+
+      val json: JObject =
+        feeAccount.foldLeft(
+          sourceAccount.foldLeft(
+            feeBump.foldLeft(
+              memo.foldLeft(
+                memoSecondary.foldLeft(base)(combineStr)
+              )(combineStr)
+            )(combineObj)
+          )(combineObj)
+        )(combineObj)
 
       implicit val fmt = org.json4s.DefaultFormats + TransactionHistoryDeserializer
       json.extract[TransactionHistory] must beEquivalentTo(h)

@@ -35,7 +35,7 @@ class SetOptionsOperationSpec extends Specification with ArbitraryInput with Dom
            |  },
            |  "id": "${op.id}",
            |  "paging_token": "10157597659137",
-           |  "source_account": "${op.operation.sourceAccount.get.accountId}",
+           |  ${accountId(op.operation.sourceAccount.get, "source_account")}
            |  "created_at": "${formatter.format(op.createdAt)}",
            |  "transaction_hash": "${op.txnHash}",
            |  ${opt("inflation_dest", op.operation.inflationDestination.map(_.accountId))}

@@ -40,12 +40,12 @@ class AuthChallenger(
         WriteDataOperation(
           name = s"$homeDomain auth",
           value = generateDataKey,
-          sourceAccount = Some(accountId.publicKey)
+          sourceAccount = Some(accountId)
         ),
         WriteDataOperation(
           name = "web_auth_domain",
           value = webAuthDomain.getBytes(Charsets.UTF_8),
-          sourceAccount = Some(accountId.publicKey)
+          sourceAccount = Some(accountId)
         )
       ),
       timeBounds = TimeBounds.timeout(timeout, clock),

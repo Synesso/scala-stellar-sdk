@@ -34,13 +34,13 @@ class CreateAccountOperationSpec extends Specification with ArbitraryInput with 
            |  },
            |  "id": "${op.id}",
            |  "paging_token": "10157597659137",
-           |  "source_account": "${op.operation.sourceAccount.get.accountId}",
+           |  ${accountId(op.operation.sourceAccount.get, "source_account")}
            |  "type": "create_account",
            |  "type_i": 0,
            |  "created_at": "${formatter.format(op.createdAt)}",
            |  "transaction_hash": "${op.txnHash}",
            |  "starting_balance": "${amountString(op.operation.startingBalance)}",
-           |  "funder": "${op.operation.sourceAccount.get.accountId}",
+           |  ${accountId(op.operation.sourceAccount.get, "funder")}
            |  "account": "${op.operation.destinationAccount.publicKey.accountId}"
            |}
          """.stripMargin

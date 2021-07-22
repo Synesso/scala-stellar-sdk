@@ -75,7 +75,7 @@ case class Challenge(
 
   private def checkSignedByClient(answer: SignedTransaction): Option[ChallengeResult] = {
     // FIXME - deal with 0 or multi operations. Deal with no source account.
-    if (answer.verify(transaction.operations.head.sourceAccount.get)) None
+    if (answer.verify(transaction.operations.head.sourceAccount.get.publicKey)) None
     else Some(ChallengeNotSignedByClient)
   }
 

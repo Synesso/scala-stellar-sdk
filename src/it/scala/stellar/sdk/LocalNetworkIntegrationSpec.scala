@@ -69,7 +69,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
         case Nil =>
         case xs =>
           logger.debug(s"Transacting ${xs.size} operation(s)")
-          val opAccountIds = xs.flatMap(_.sourceAccount).map(_.accountId).toSet
+          val opAccountIds = xs.flatMap(_.sourceAccount).map(_.publicKey.accountId).toSet
           val signatories = accounts.filter(a => opAccountIds.contains(a.accountId))
           val signedTransaction = xs.foldLeft(model.Transaction(masterAccount,
             timeBounds = Unbounded,
@@ -121,41 +121,41 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
           CreateAccountOperation(accnC.toAccountId, lumens(1000)),
           CreateAccountOperation(accnD.toAccountId, lumens(1000)),
           CreateAccountOperation(accnF.toAccountId, lumens(1000)),
-          WriteDataOperation("life_universe_everything", "42", Some(accnB)),
-          WriteDataOperation("brain the size of a planet", "and they ask me to open a door", Some(accnB)),
-          WriteDataOperation("fenton", "FENTON!", Some(accnC)),
-          DeleteDataOperation("fenton", Some(accnC)),
-          SetOptionsOperation(setFlags = Some(Set(AuthorizationRequiredFlag, AuthorizationRevocableFlag)), sourceAccount = Some(accnA)),
-          ChangeTrustOperation(IssuedAmount(100000000, aardvarkA), Some(accnB)),
-          ChangeTrustOperation(IssuedAmount(100000000, beaverA), Some(accnB)),
-          ChangeTrustOperation(IssuedAmount(100000000, chinchillaA), Some(accnB)),
-          ChangeTrustOperation(IssuedAmount(100000000, chinchillaA), Some(accnD)),
-          ChangeTrustOperation(IssuedAmount(100000000, chinchillaMaster), Some(accnA)),
-          AllowTrustOperation(accnB, "Aardvark", trustLineFlags = Set(TrustLineAuthorized), Some(accnA)),
-          AllowTrustOperation(accnB, "Chinchilla", trustLineFlags = Set(TrustLineAuthorized), Some(accnA)),
-          PaymentOperation(accnB.toAccountId, IssuedAmount(555, aardvarkA), Some(accnA))
+          WriteDataOperation("life_universe_everything", "42", Some(accnB.toAccountId)),
+          WriteDataOperation("brain the size of a planet", "and they ask me to open a door", Some(accnB.toAccountId)),
+          WriteDataOperation("fenton", "FENTON!", Some(accnC.toAccountId)),
+          DeleteDataOperation("fenton", Some(accnC.toAccountId)),
+          SetOptionsOperation(setFlags = Some(Set(AuthorizationRequiredFlag, AuthorizationRevocableFlag)), sourceAccount = Some(accnA.toAccountId)),
+          ChangeTrustOperation(IssuedAmount(100000000, aardvarkA), Some(accnB.toAccountId)),
+          ChangeTrustOperation(IssuedAmount(100000000, beaverA), Some(accnB.toAccountId)),
+          ChangeTrustOperation(IssuedAmount(100000000, chinchillaA), Some(accnB.toAccountId)),
+          ChangeTrustOperation(IssuedAmount(100000000, chinchillaA), Some(accnD.toAccountId)),
+          ChangeTrustOperation(IssuedAmount(100000000, chinchillaMaster), Some(accnA.toAccountId)),
+          AllowTrustOperation(accnB, "Aardvark", trustLineFlags = Set(TrustLineAuthorized), Some(accnA.toAccountId)),
+          AllowTrustOperation(accnB, "Chinchilla", trustLineFlags = Set(TrustLineAuthorized), Some(accnA.toAccountId)),
+          PaymentOperation(accnB.toAccountId, IssuedAmount(555, aardvarkA), Some(accnA.toAccountId))
         )
 
         // force a transaction boundary between CreateAccount and AccountMerge
         transact(
-          AccountMergeOperation(AccountId(accnB.publicKey), Some(accnC)),
-          CreateSellOfferOperation(lumens(3), aardvarkA, Price(3, 100), Some(accnB)),
-          CreateSellOfferOperation(lumens(5), chinchillaA, Price(5, 100), Some(accnB)),
-          CreateBuyOfferOperation(dachshundB, Amount(3, aardvarkA), Price(5, 3), Some(accnB)),
-          CreatePassiveSellOfferOperation(IssuedAmount(10, beaverA), NativeAsset, Price(1, 3), Some(accnA)),
-          AllowTrustOperation(accnB, "Aardvark", trustLineFlags = Set(), Some(accnA))
+          AccountMergeOperation(AccountId(accnB.publicKey), Some(accnC.toAccountId)),
+          CreateSellOfferOperation(lumens(3), aardvarkA, Price(3, 100), Some(accnB.toAccountId)),
+          CreateSellOfferOperation(lumens(5), chinchillaA, Price(5, 100), Some(accnB.toAccountId)),
+          CreateBuyOfferOperation(dachshundB, Amount(3, aardvarkA), Price(5, 3), Some(accnB.toAccountId)),
+          CreatePassiveSellOfferOperation(IssuedAmount(10, beaverA), NativeAsset, Price(1, 3), Some(accnA.toAccountId)),
+          AllowTrustOperation(accnB, "Aardvark", trustLineFlags = Set(), Some(accnA.toAccountId))
         )
 
         // force a transaction boundary between Create*Offer and Update/DeleteOffer
         transact(
-          UpdateSellOfferOperation(2, lumens(5), chinchillaA, Price(1, 5), Some(accnB)),
-          DeleteSellOfferOperation(4, beaverA, NativeAsset, Price(1, 3), Some(accnA)),
-          CreateSellOfferOperation(IssuedAmount(800000000, chinchillaA), NativeAsset, Price(80, 4), Some(accnA)),
-          CreateSellOfferOperation(IssuedAmount(10000000, chinchillaA), chinchillaMaster, Price(1, 1), Some(accnA)),
+          UpdateSellOfferOperation(2, lumens(5), chinchillaA, Price(1, 5), Some(accnB.toAccountId)),
+          DeleteSellOfferOperation(4, beaverA, NativeAsset, Price(1, 3), Some(accnA.toAccountId)),
+          CreateSellOfferOperation(IssuedAmount(800000000, chinchillaA), NativeAsset, Price(80, 4), Some(accnA.toAccountId)),
+          CreateSellOfferOperation(IssuedAmount(10000000, chinchillaA), chinchillaMaster, Price(1, 1), Some(accnA.toAccountId)),
           PathPaymentStrictReceiveOperation(IssuedAmount(1, chinchillaMaster), accnB.toAccountId, IssuedAmount(1, chinchillaA), Nil),
           PathPaymentStrictSendOperation(IssuedAmount(100, chinchillaMaster), accnB.toAccountId, IssuedAmount(1, chinchillaA), Nil),
           BumpSequenceOperation(masterAccount.sequenceNumber + 20),
-          SetOptionsOperation(signer = Some(Signer(SHA256Hash(dachshundB.encode.sha256().toByteArray), 3)), sourceAccount = Some(accnD))
+          SetOptionsOperation(signer = Some(Signer(SHA256Hash(dachshundB.encode.sha256().toByteArray), 3)), sourceAccount = Some(accnD.toAccountId))
         )
 
         // example of creating and submitting a payment transaction
@@ -315,7 +315,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
       byAccount.map(_.size) must beEqualTo(10).awaitFor(10 seconds)
       byAccount.map(_.head) must beLike[EffectResponse] {
         case EffectAccountCreated(_, _, account, startingBalance) =>
-          account.accountId mustEqual accnA.accountId
+          account mustEqual accnA.toAccountId
           startingBalance mustEqual lumens(1000)
       }.awaitFor(10.seconds)
     }
@@ -324,7 +324,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
       val byLedger = network.effectsByLedger(0).map(_.toList)
       byLedger.map(_.head) must beLike[EffectResponse] {
         case EffectAccountCreated(_, _, account, startingBalance) =>
-          account.accountId mustEqual accnA.accountId
+          account mustEqual accnA.toAccountId
           startingBalance mustEqual lumens(1000)
       }.awaitFor(10.seconds)
     }
@@ -339,9 +339,9 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
         EffectTrustLineDeauthorized(_, _, accn4, IssuedAsset12(code, accn5)),
         EffectTrustLineFlagsUpdated(_, _, accn6, asset5, false, false, false)
         ) =>
-          accn1 must beEquivalentTo(accnC)
-          accn2 must beEquivalentTo(accnB)
-          accn3 must beEquivalentTo(accnC)
+          accn1.publicKey must beEquivalentTo(accnC)
+          accn2.publicKey must beEquivalentTo(accnB)
+          accn3.publicKey must beEquivalentTo(accnC)
           accn4 must beEquivalentTo(accnB)
           accn5 must beEquivalentTo(accnA)
           accn6 must beEquivalentTo(accnB)
@@ -354,16 +354,16 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
 
     "filter effects by operation" >> {
       (for {
-        operationId <- network.operations().map(_.find(_.operation == AccountMergeOperation(AccountId(accnB.publicKey), Some(accnC))).get.id)
+        operationId <- network.operations().map(_.find(_.operation == AccountMergeOperation(AccountId(accnB.publicKey), Some(accnC.toAccountId))).get.id)
         byOperation <- network.effectsByOperation(operationId).map(_.toSeq)
       } yield byOperation) must beLike[Seq[EffectResponse]] {
         case Seq(
         EffectAccountDebited(_, _, accn1, amount1),
         EffectAccountCredited(_, _, accn2, amount2),
         EffectAccountRemoved(_, _, accn3)) =>
-          accn1 must beEquivalentTo(accnC)
-          accn2 must beEquivalentTo(accnB)
-          accn3 must beEquivalentTo(accnC)
+          accn1.publicKey must beEquivalentTo(accnC)
+          accn2.publicKey must beEquivalentTo(accnB)
+          accn3.publicKey must beEquivalentTo(accnC)
           amount1 mustEqual lumens(1000)
           amount2 mustEqual lumens(1000)
       }.awaitFor(10.seconds)
@@ -474,7 +474,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
     "list operations by account" >> {
       network.operationsByAccount(accnB).map(_.drop(1).head) must beLike[Transacted[Operation]] {
         case op =>
-          op.operation must beEquivalentTo(WriteDataOperation("life_universe_everything", "42", Some(accnB)))
+          op.operation must beEquivalentTo(WriteDataOperation("life_universe_everything", "42", Some(accnB.toAccountId)))
       }.awaitFor(10.seconds)
     }
 
@@ -488,7 +488,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
             case PaymentOperation(dest, amount, source) =>
               dest must beEquivalentTo(accnA.toAccountId)
               amount mustEqual NativeAmount(100)
-              source must beSome[PublicKeyOps](masterAccountKey.asPublicKey)
+              source must beSome[AccountId](masterAccountKey.toAccountId)
           }
       }.awaitFor(10.seconds)
 
@@ -499,7 +499,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
             op.operation must beLike[Operation] {
               case AccountMergeOperation(dest, source) =>
                 new ByteString(dest.hash.toArray) mustEqual new ByteString(accnB.publicKey)
-                source.map(_.asPublicKey) must beSome(accnC.asPublicKey)
+                source.map(_.publicKey) must beSome(accnC.asPublicKey)
             }
         }.awaitFor(10.seconds)
       }
@@ -520,7 +520,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
           op.operation must beLike[Operation] {
             case DeleteSellOfferOperation(4, selling, NativeAsset, Price(1, 3), source) =>
               selling mustEqual beaverA
-              source.map(_.asPublicKey) must beSome(accnA.asPublicKey)
+              source.map(_.publicKey) must beSome(accnA.asPublicKey)
           }
       }.awaitFor(10.seconds)
     }
@@ -541,8 +541,8 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
     "filter payments by account" >> {
       network.paymentsByAccount(accnA) must beLike[Seq[Transacted[PayOperation]]] {
         case a +: b +: oneHundredPayments =>
-          a.operation must beEquivalentTo(CreateAccountOperation(accnA.toAccountId, lumens(1000), Some(masterAccountKey)))
-          b.operation must beEquivalentTo(PaymentOperation(accnB.toAccountId, IssuedAmount(555, aardvarkA), Some(accnA)))
+          a.operation must beEquivalentTo(CreateAccountOperation(accnA.toAccountId, lumens(1000), Some(masterAccountKey.toAccountId)))
+          b.operation must beEquivalentTo(PaymentOperation(accnB.toAccountId, IssuedAmount(555, aardvarkA), Some(accnA.toAccountId)))
           oneHundredPayments must haveSize(100)
       }.awaitFor(10.seconds)
     }
@@ -604,7 +604,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
       byAccount.map(_.isEmpty) must beFalse.awaitFor(10 seconds)
       byAccount.map(_.head) must beLike[TransactionHistory] {
         case t =>
-          t.account must beEquivalentTo(masterAccountKey)
+          t.account must beEquivalentTo(masterAccountKey.toAccountId)
           t.feeCharged mustEqual NativeAmount(1800)
           t.operationCount mustEqual 18
           t.memo mustEqual NoMemo
@@ -619,7 +619,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
         operation <- network.transactionsByLedger(ledgerId)
       } yield operation) must beLike[Seq[TransactionHistory]] {
         case Seq(t) =>
-          t.account must beEquivalentTo(masterAccountKey)
+          t.account must beEquivalentTo(masterAccountKey.toAccountId)
           t.feeCharged mustEqual NativeAmount(10000)
           t.operationCount mustEqual 100
           t.memo mustEqual NoMemo
@@ -706,9 +706,9 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
         AccountIdClaimant(accnA.asPublicKey, predicate),
         AccountIdClaimant(accnC.asPublicKey, Unconditional)
       ),
-      sourceAccount = Some(accnB.asPublicKey)
+      sourceAccount = Some(accnB.toAccountId)
     )
-    val claimOperation = ClaimClaimableBalanceOperation(id, Some(accnA.asPublicKey))
+    val claimOperation = ClaimClaimableBalanceOperation(id, Some(accnA.toAccountId))
 
     "be creatable" >> {
       for {
@@ -717,7 +717,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
           source = account,
           operations = List(
             createOperation,
-            ChangeTrustOperation(IssuedAmount(100000000, dachshundB), Some(accnA)),
+            ChangeTrustOperation(IssuedAmount(100000000, dachshundB), Some(accnA.toAccountId)),
           ),
           timeBounds = TimeBounds.Unbounded,
           maxFee = NativeAmount(200)
@@ -874,7 +874,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
           operations = List(
             BeginSponsoringFutureReservesOperation(sponsoredAccount.toAccountId),
             CreateAccountOperation(sponsoredAccount.toAccountId, startingBalance = Amount.lumens(0)),
-            EndSponsoringFutureReservesOperation(sourceAccount = Some(sponsoredAccount))
+            EndSponsoringFutureReservesOperation(sourceAccount = Some(sponsoredAccount.toAccountId))
           ),
           timeBounds = TimeBounds.Unbounded,
           maxFee = NativeAmount(300)
@@ -908,10 +908,10 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
           operations = List(
             SetOptionsOperation(
               setFlags = Some(Set(AuthorizationRevocableFlag, AuthorizationClawbackEnabledFlag)),
-              sourceAccount = Some(accnF)
+              sourceAccount = Some(accnF.toAccountId)
             ),
-            ChangeTrustOperation(IssuedAmount(99_999L, clawbackAsset), Some(accnA)),
-            PaymentOperation(accnA.toAccountId, IssuedAmount(50_000L, clawbackAsset), Some(accnF))
+            ChangeTrustOperation(IssuedAmount(99_999L, clawbackAsset), Some(accnA.toAccountId)),
+            PaymentOperation(accnA.toAccountId, IssuedAmount(50_000L, clawbackAsset), Some(accnF.toAccountId))
           ),
         timeBounds = TimeBounds.Unbounded,
         maxFee = NativeAmount(1000)
@@ -930,7 +930,7 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
         txn = Transaction(
           source = account,
           operations = List(
-            ClawBackOperation(accnA.toAccountId, IssuedAmount(40_000L, clawbackAsset), Some(accnF))
+            ClawBackOperation(accnA.toAccountId, IssuedAmount(40_000L, clawbackAsset), Some(accnF.toAccountId))
           ),
         timeBounds = TimeBounds.Unbounded,
         maxFee = NativeAmount(1000)

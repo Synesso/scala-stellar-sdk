@@ -6,8 +6,8 @@ import org.json4s.native.JsonMethods.parse
 import org.json4s.native.Serialization
 import org.scalacheck.{Arbitrary, Gen}
 import org.specs2.mutable.Specification
-import stellar.sdk.util.ByteArrays.base64
-import stellar.sdk.{ArbitraryInput, DomainMatchers, PublicKey}
+import stellar.sdk.model.AccountId
+import stellar.sdk.{ArbitraryInput, DomainMatchers}
 
 class ManageDataOperationSpec extends Specification with ArbitraryInput with DomainMatchers with JsonSnippets {
 
@@ -32,7 +32,7 @@ class ManageDataOperationSpec extends Specification with ArbitraryInput with Dom
       |  },
       |  "id": "${op.id}",
       |  "paging_token": "10157597659137",
-      |  "source_account": "${op.operation.sourceAccount.get.accountId}",
+      |  ${accountId(op.operation.sourceAccount.get, "source_account")}
       |  "type": "manage_data",
       |  "type_i": 1,
       |  "created_at": "${formatter.format(op.createdAt)}",
@@ -55,7 +55,7 @@ class ManageDataOperationSpec extends Specification with ArbitraryInput with Dom
       parse(doc(op)).extract[Transacted[ManageDataOperation]] must beEquivalentTo(op)
     }.setGen(genTransacted(genWriteDataOperation.suchThat(_.sourceAccount.nonEmpty)))
 
-    "encode a string payload as UTF-8 in base64" >> prop { (s: String, source: PublicKey) =>
+    "encode a string payload as UTF-8 in base64" >> prop { (s: String, source: AccountId) =>
       val value = new String(s.take(64).getBytes("UTF-8").take(60), "UTF-8")
       WriteDataOperation("name", value).value.toSeq mustEqual value.getBytes("UTF-8").toSeq
       WriteDataOperation("name", value, None).value.toSeq mustEqual value.getBytes("UTF-8").toSeq

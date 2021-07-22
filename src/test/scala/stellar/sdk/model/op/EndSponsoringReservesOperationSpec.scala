@@ -29,11 +29,12 @@ class EndSponsoringReservesOperationSpec extends Specification with ArbitraryInp
       val doc =
         s"""{
            |  "id": "${op.id}",
-           |  "source_account": "${op.operation.sourceAccount.get.accountId}",
+           |  ${accountId(op.operation.sourceAccount.get, "source_account")}
            |  "type": "end_sponsoring_future_reserves",
            |  "type_i": 17,
            |  "created_at": "${formatter.format(op.createdAt)}",
            |  "transaction_hash": "${op.txnHash}",
+           |  ${accountId(op.operation.sourceAccount.get, "begin_sponsor") /* TODO - what field is this? */}
            |  "sponsored_id": "IGNORED"
            |}""".stripMargin
 

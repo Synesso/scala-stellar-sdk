@@ -29,7 +29,7 @@ class BeginSponsoringFutureReservesOperationSpec extends Specification with Arbi
       val doc =
         s"""{
            |  "id": "${op.id}",
-           |  "source_account": "${op.operation.sourceAccount.get.accountId}",
+           |  ${accountId(op.operation.sourceAccount.get, "source_account")}
            |  "type": "begin_sponsoring_future_reserves",
            |  "type_i": 16,
            |  "created_at": "${formatter.format(op.createdAt)}",

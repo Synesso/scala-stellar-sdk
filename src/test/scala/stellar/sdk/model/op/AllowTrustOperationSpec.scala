@@ -34,16 +34,16 @@ class AllowTrustOperationSpec extends Specification with ArbitraryInput with Dom
            |  },
            |  "id": "${op.id}",
            |  "paging_token": "10157597659137",
-           |  "source_account": "${op.operation.sourceAccount.get.accountId}",
+           |  ${accountId(op.operation.sourceAccount.get, "source_account")}
            |  "type": "allow_trust",
            |  "type_i": 7,
            |  "created_at": "${formatter.format(op.createdAt)}",
            |  "transaction_hash": "${op.txnHash}",
            |  "asset_type": "${if (op.operation.assetCode.length <= 4) "credit_alphanum4" else "credit_alphanum12"}",
            |  "asset_code": "${op.operation.assetCode}",
-           |  "asset_issuer": "${op.operation.sourceAccount.get.accountId}"
+           |  "asset_issuer": "${op.operation.sourceAccount.get.publicKey.accountId}"
            |  "trustor": "${op.operation.trustor.accountId}",
-           |  "trustee": "${op.operation.sourceAccount.get.accountId}",
+           |  ${accountId(op.operation.sourceAccount.get, "trustee")}
            |  "authorize": ${op.operation.trustLineFlags.contains(TrustLineAuthorized)}
            |  "authorize_to_maintain_liabilities": ${op.operation.trustLineFlags.contains(TrustLineCanMaintainLiabilities)}
            |}

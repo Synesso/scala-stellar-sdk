@@ -8,6 +8,11 @@ As this project is pre 1.0, breaking changes may happen for minor version bumps.
 - Added the ability to list operations associated with a claimable balance.
 - Added the ability to list transactions associated with a claimable balance.
 
+### Breaking
+
+- Many instances of `PublicKey` fields on response classes have been upgraded to `AccountId`s to reflect Horizon's 
+  improved support for multiplexed addresses. Changes are present in Operation, Transaction and Effect classes.
+
 ## 0.20.0
 
 - Updated for core protocol v17/CAP35:

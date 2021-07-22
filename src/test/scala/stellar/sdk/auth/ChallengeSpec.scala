@@ -68,12 +68,12 @@ class ChallengeSpec extends Specification with DomainMatchers with ArbitraryInpu
       challenge.transaction.operations.size mustEqual 2
       challenge.transaction.operations.head must beLike[Operation] { case op: WriteDataOperation =>
         op.name mustEqual "test.com auth"
-        op.sourceAccount must beSome(clientKey.asPublicKey)
+        op.sourceAccount must beSome(clientKey.asPublicKey.toAccountId)
       }
       challenge.transaction.operations(1) must beLike[Operation] { case op: WriteDataOperation =>
         op.name mustEqual "web_auth_domain"
         op.value mustEqual "test.com".getBytes(Charsets.UTF_8).toSeq
-        op.sourceAccount must beSome(clientKey.asPublicKey)
+        op.sourceAccount must beSome(clientKey.asPublicKey.toAccountId)
       }
     }
 
@@ -83,12 +83,12 @@ class ChallengeSpec extends Specification with DomainMatchers with ArbitraryInpu
       challenge.transaction.operations.size mustEqual 2
       challenge.transaction.operations.head must beLike[Operation] { case op: WriteDataOperation =>
         op.name mustEqual "red.com auth"
-        op.sourceAccount must beSome(clientKey.asPublicKey)
+        op.sourceAccount must beSome(clientKey.asPublicKey.toAccountId)
       }
       challenge.transaction.operations(1) must beLike[Operation] { case op: WriteDataOperation =>
         op.name mustEqual "web_auth_domain"
         op.value mustEqual "green.com".getBytes(Charsets.UTF_8).toSeq
-        op.sourceAccount must beSome(clientKey.asPublicKey)
+        op.sourceAccount must beSome(clientKey.asPublicKey.toAccountId)
       }
     }
 
