@@ -1,31 +1,45 @@
 package stellar.sdk.model.result
 
-import java.time.ZonedDateTime
-
 import okio.ByteString
 import org.json4s.JsonAST.JObject
 import org.json4s.{DefaultFormats, Formats}
+import stellar.sdk.Network
 import stellar.sdk.model._
 import stellar.sdk.model.ledger.{LedgerEntryChange, LedgerEntryChanges, TransactionLedgerEntries}
 import stellar.sdk.model.response.ResponseParser
-import stellar.sdk.util.ByteArrays.base64
-import stellar.sdk.{KeyPair, Network, PublicKey}
 
+import java.time.ZonedDateTime
 import scala.util.Try
 
 /**
-  * A transaction that has been included in the ledger sometime in the past.
-  */
-case class TransactionHistory(hash: String, ledgerId: Long, createdAt: ZonedDateTime, account: PublicKey,
-                              sequence: Long, maxFee: NativeAmount, feeCharged: NativeAmount, operationCount: Int,
-                              memo: Memo, signatures: Seq[String], envelopeXDR: String, resultXDR: String,
-                              resultMetaXDR: String, feeMetaXDR: String, validAfter: Option[ZonedDateTime],
-                              validBefore: Option[ZonedDateTime], feeBump: Option[FeeBumpHistory]) {
+ * A transaction that has been included in the ledger sometime in the past.
+ */
+case class TransactionHistory(
+  hash: String,
+  ledgerId: Long,
+  createdAt: ZonedDateTime,
+  account: AccountId,
+  sequence: Long,
+  maxFee: NativeAmount,
+  feeCharged: NativeAmount,
+  operationCount: Int,
+  memo: Memo,
+  signatures: Seq[String],
+  envelopeXDR: String,
+  resultXDR: String,
+  resultMetaXDR: String,
+  feeMetaXDR: String,
+  validAfter: Option[ZonedDateTime],
+  validBefore: Option[ZonedDateTime],
+  feeBump: Option[FeeBumpHistory]
+) {
 
   lazy val result: TransactionResult = TransactionResult.decodeXdrString(resultXDR)
 
   def ledgerEntries: TransactionLedgerEntries = TransactionLedgerEntries.decodeXDR(resultMetaXDR)
+
   def feeLedgerEntries: Seq[LedgerEntryChange] = LedgerEntryChanges.decodeXDR(feeMetaXDR)
+
   def transaction(network: Network): Transaction = Transaction.decodeXdrString(envelopeXDR)(network)
 
   @deprecated("Replaced by `feeCharged`", "v0.7.2")
@@ -48,12 +62,11 @@ object TransactionHistoryDeserializer extends {
       maxFee <- (o \ "inner_transaction" \ "max_fee").extractOpt[Int].map(NativeAmount(_))
       signatures <- (o \ "inner_transaction" \ "signatures").extractOpt[List[String]]
     } yield (hash, maxFee, signatures)
-
     TransactionHistory(
       hash = inner.map(_._1).getOrElse(hash),
       ledgerId = (o \ "ledger").extract[Long],
       createdAt = ZonedDateTime.parse((o \ "created_at").extract[String]),
-      account = KeyPair.fromAccountId((o \ "source_account").extract[String]),
+      account = AccountId.parse(o, "source_account"),
       sequence = (o \ "source_account_sequence").extract[String].toLong,
       maxFee = inner.map(_._2).getOrElse(maxFee),
       feeCharged = NativeAmount((o \ "fee_charged").extract[String].toInt),

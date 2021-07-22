@@ -37,7 +37,7 @@ class ManageBuyOfferOperationSpec extends Specification with ArbitraryInput with
            |  },
            |  "id":"${op.id}",
            |  "paging_token":"109521666052097",
-           |  "source_account":"${op.operation.sourceAccount.get.accountId}",
+           |  ${accountId(op.operation.sourceAccount.get, "source_account")}
            |  "type":"manage_buy_offer",
            |  "type_i":12,
            |  "created_at":"${formatter.format(op.createdAt)}",
@@ -79,7 +79,7 @@ class ManageBuyOfferOperationSpec extends Specification with ArbitraryInput with
            |  },
            |  "id":"${op.id}",
            |  "paging_token":"109521666052097",
-           |  "source_account":"${op.operation.sourceAccount.get.accountId}",
+           |  ${accountId(op.operation.sourceAccount.get, "source_account")}
            |  "type":"manage_buy_offer",
            |  "type_i":12,
            |  "created_at":"${formatter.format(op.createdAt)}",
@@ -121,7 +121,7 @@ class ManageBuyOfferOperationSpec extends Specification with ArbitraryInput with
            |  },
            |  "id":"${op.id}",
            |  "paging_token":"109521666052097",
-           |  "source_account":"${op.operation.sourceAccount.get.accountId}",
+           |  ${accountId(op.operation.sourceAccount.get, "source_account")}
            |  "type":"manage_buy_offer",
            |  "type_i":12,
            |  "created_at":"${formatter.format(op.createdAt)}",

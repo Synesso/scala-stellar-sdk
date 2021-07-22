@@ -1,8 +1,5 @@
 package stellar.sdk.model.response
 
-import java.time.ZonedDateTime
-import java.util.Locale
-
 import org.json4s.NoTypeHints
 import org.json4s.native.JsonMethods.parse
 import org.json4s.native.Serialization
@@ -10,7 +7,9 @@ import org.scalacheck.Gen
 import org.specs2.mutable.Specification
 import stellar.sdk._
 import stellar.sdk.model.op.JsonSnippets
-import stellar.sdk.model.{Amount, NonNativeAsset}
+import stellar.sdk.model.{AccountId, Amount, NonNativeAsset}
+
+import java.time.ZonedDateTime
 
 class TradeEffectResponseSpec extends Specification with ArbitraryInput with JsonSnippets {
 
@@ -18,21 +17,23 @@ class TradeEffectResponseSpec extends Specification with ArbitraryInput with Jso
 
   "a trade effect document" should {
     "parse to a trade effect" >> prop {
-      (id: String, created: ZonedDateTime, offerId: Long, buyer: KeyPair, bought: Amount, seller: KeyPair, sold: Amount) =>
+      (id: String, created: ZonedDateTime, offerId: Long, buyer: AccountId, bought: Amount, seller: AccountId, sold: Amount) =>
         val json = doc(id, created, offerId, buyer, bought, seller, sold)
         parse(json).extract[EffectResponse] mustEqual EffectTrade(id, created, offerId, buyer, bought, seller, sold)
     }.setGen1(Gen.identifier).setGen3(Gen.posNum[Long])
   }
 
-  def doc(id: String, created: ZonedDateTime, offerId: Long, buyer: PublicKeyOps, bought: Amount, seller: PublicKeyOps, sold: Amount) = {
+  def doc(id: String, created: ZonedDateTime, offerId: Long, buyer: AccountId, bought: Amount, seller: AccountId, sold: Amount) = {
     s""" {
         "id": "$id",
         "paging_token": "31161168848490497-2",
-        "account": "${buyer.accountId}",
+        "account": "${buyer.publicKey.accountId}",
+        ${buyer.subAccountId.map(id => s""""account_muxed_id": "$id",""").getOrElse("")}
         "type": "trade",
         "type_i": 33,
         "created_at": "${formatter.format(created)}",
-        "seller": "${seller.accountId}",
+        "seller": "${seller.publicKey.accountId}",
+        ${seller.subAccountId.map(id => s""""seller_muxed_id": "$id",""").getOrElse("")}
         "offer_id": $offerId,
         ${amountDocPortion(sold, sold = true)},
         ${amountDocPortion(bought, sold = false)}

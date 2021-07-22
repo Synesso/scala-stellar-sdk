@@ -34,23 +34,18 @@ class PaymentOperationSpec extends Specification with ArbitraryInput with Domain
            |  },
            |  "id": "${op.id}",
            |  "paging_token": "10157597659137",
-           |  "source_account": "${op.operation.sourceAccount.get.accountId}",
+           |  ${accountId(op.operation.sourceAccount.get, "source_account")}
+           |  ${accountId(op.operation.sourceAccount.get, "from")}
+           |  ${accountId(op.operation.destinationAccount, "to")}
            |  "type": "payment",
            |  "type_i": 1,
            |  "created_at": "${formatter.format(op.createdAt)}",
            |  "transaction_hash": "${op.txnHash}",
-           |  ${amountDocPortion(op.operation.amount)},
-           |  "from": "${op.operation.sourceAccount.get.accountId}",
-           |  "to": "${op.operation.destinationAccount.publicKey.accountId}",
+           |  ${amountDocPortion(op.operation.amount)}
            |}
          """.stripMargin
 
-      parse(doc).extract[Transacted[PaymentOperation]] mustEqual removeDestinationSubAccountId(op)
+      parse(doc).extract[Transacted[PaymentOperation]] mustEqual op
     }.setGen(genTransacted(genPaymentOperation.suchThat(_.sourceAccount.nonEmpty)))
-  }
-
-  // Because sub accounts are not yet supported in Horizon JSON.
-  private def removeDestinationSubAccountId(op: Transacted[PaymentOperation]): Transacted[PaymentOperation] = {
-    op.copy(operation = op.operation.copy(destinationAccount = op.operation.destinationAccount.copy(subAccountId = None)))
   }
 }

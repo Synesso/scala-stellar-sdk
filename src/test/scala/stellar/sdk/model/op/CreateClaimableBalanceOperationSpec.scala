@@ -49,12 +49,12 @@ class CreateClaimableBalanceOperationSpec extends Specification with ArbitraryIn
            |  "id": "${op.id}",
            |  "paging_token": "42949677057",
            |  "transaction_successful": true,
-           |  "source_account": "${op.operation.sourceAccount.get.accountId}",
+           |  ${accountId(op.operation.sourceAccount.get, "source_account")}
            |  "type": "create_claimable_balance",
            |  "type_i": 14,
            |  "created_at": "${formatter.format(op.createdAt)}",
            |  "transaction_hash": "${op.txnHash}",
-           |  "sponsor": "${op.operation.sourceAccount.get.accountId}",
+           |  "sponsor": "${op.operation.sourceAccount.get.publicKey.accountId}",
            |  "asset": "${op.operation.amount.asset.canoncialString}",
            |  "amount": "${op.operation.amount.toDisplayUnits}",
            |  "claimants": [${op.operation.claimants.map(ClaimantGenerators.json).mkString(",")}]

@@ -33,6 +33,8 @@ trait ArbitraryInput extends ScalaCheck {
 
   implicit def arbAccount: Arbitrary[Account] = Arbitrary(genAccount)
 
+  implicit def arbAccountId: Arbitrary[AccountId] = Arbitrary(genAccountId)
+
   implicit def arbAmount: Arbitrary[Amount] = Arbitrary(genAmount)
 
   implicit def arbNativeAmount: Arbitrary[NativeAmount] = Arbitrary(genNativeAmount)
@@ -244,7 +246,7 @@ trait ArbitraryInput extends ScalaCheck {
 
   def genAccountMergeOperation: Gen[AccountMergeOperation] = for {
     destination <- genPublicKey.map(_.publicKey).map(AccountId(_))
-    sourceAccount <- Gen.option(genPublicKey)
+    sourceAccount <- Gen.option(genAccountId)
   } yield {
     AccountMergeOperation(destination, sourceAccount)
   }
@@ -253,14 +255,14 @@ trait ArbitraryInput extends ScalaCheck {
     trustor <- genPublicKey
     assetCode <- Gen.identifier.map(_.take(12))
     authorise <- Gen.choose(0, 3).map(TrustLineFlags.from)
-    sourceAccount <- Gen.option(genPublicKey)
+    sourceAccount <- Gen.option(genAccountId)
   } yield {
     AllowTrustOperation(trustor, assetCode, authorise, sourceAccount)
   }
 
   def genChangeTrustOperation: Gen[ChangeTrustOperation] = for {
     limit <- genIssuedAmount
-    sourceAccount <- Gen.option(genPublicKey)
+    sourceAccount <- Gen.option(genAccountId)
   } yield {
     ChangeTrustOperation(limit, sourceAccount)
   }
@@ -268,7 +270,7 @@ trait ArbitraryInput extends ScalaCheck {
   def genCreateAccountOperation: Gen[CreateAccountOperation] = for {
     destination <- genPublicKey.map(_.toAccountId)
     startingBalance <- genNativeAmount
-    sourceAccount <- Gen.option(genPublicKey)
+    sourceAccount <- Gen.option(genAccountId)
   } yield {
     CreateAccountOperation(destination, startingBalance, sourceAccount)
   }
@@ -277,20 +279,20 @@ trait ArbitraryInput extends ScalaCheck {
     selling <- genAmount
     buying <- genAsset
     price <- genPrice
-    sourceAccount <- Gen.option(genPublicKey)
+    sourceAccount <- Gen.option(genAccountId)
   } yield {
     CreatePassiveSellOfferOperation(selling, buying, price, sourceAccount)
   }
 
   def genInflationOperation: Gen[InflationOperation] = for {
-    sourceAccount <- Gen.option(genPublicKey)
+    sourceAccount <- Gen.option(genAccountId)
   } yield {
     InflationOperation(sourceAccount)
   }
 
   def genDeleteDataOperation: Gen[DeleteDataOperation] = for {
     name <- Gen.identifier.map(_.take(64))
-    sourceAccount <- Gen.option(genPublicKey)
+    sourceAccount <- Gen.option(genAccountId)
   } yield {
     DeleteDataOperation(name, sourceAccount)
   }
@@ -300,7 +302,7 @@ trait ArbitraryInput extends ScalaCheck {
     valueLen <- Gen.choose(1, 64)
     name <- Gen.listOfN(nameLen, Gen.alphaNumChar).map(_.mkString)
     value <- Gen.listOfN(valueLen, Arbitrary.arbByte.arbitrary).map(_.toIndexedSeq)
-    sourceAccount <- Gen.option(genPublicKey)
+    sourceAccount <- Gen.option(genAccountId)
   } yield {
     WriteDataOperation(name, value, sourceAccount)
   }
@@ -311,7 +313,7 @@ trait ArbitraryInput extends ScalaCheck {
     selling <- genAmount
     buying <- genAsset
     price <- genPrice
-    sourceAccount <- Gen.option(genPublicKey)
+    sourceAccount <- Gen.option(genAccountId)
   } yield {
     CreateSellOfferOperation(selling, buying, price, sourceAccount)
   }
@@ -321,7 +323,7 @@ trait ArbitraryInput extends ScalaCheck {
     selling <- genAsset
     buying <- genAsset
     price <- genPrice
-    sourceAccount <- Gen.option(genPublicKey)
+    sourceAccount <- Gen.option(genAccountId)
   } yield {
     DeleteSellOfferOperation(id, selling, buying, price, sourceAccount)
   }
@@ -331,7 +333,7 @@ trait ArbitraryInput extends ScalaCheck {
     selling <- genAmount
     buying <- genAsset
     price <- genPrice
-    sourceAccount <- Gen.option(genPublicKey)
+    sourceAccount <- Gen.option(genAccountId)
   } yield {
     UpdateSellOfferOperation(id, selling, buying, price, sourceAccount)
   }
@@ -343,7 +345,7 @@ trait ArbitraryInput extends ScalaCheck {
     selling <- genAsset
     buying <- genAmount
     price <- genPrice
-    sourceAccount <- Gen.option(genPublicKey)
+    sourceAccount <- Gen.option(genAccountId)
   } yield {
     CreateBuyOfferOperation(selling, buying, price, sourceAccount)
   }
@@ -353,7 +355,7 @@ trait ArbitraryInput extends ScalaCheck {
     selling <- genAsset
     buying <- genAsset
     price <- genPrice
-    sourceAccount <- Gen.option(genPublicKey)
+    sourceAccount <- Gen.option(genAccountId)
   } yield {
     DeleteBuyOfferOperation(id, selling, buying, price, sourceAccount)
   }
@@ -363,7 +365,7 @@ trait ArbitraryInput extends ScalaCheck {
     selling <- genAsset
     buying <- genAmount
     price <- genPrice
-    sourceAccount <- Gen.option(genPublicKey)
+    sourceAccount <- Gen.option(genAccountId)
   } yield {
     UpdateBuyOfferOperation(id, selling, buying, price, sourceAccount)
   }
@@ -376,7 +378,7 @@ trait ArbitraryInput extends ScalaCheck {
     destAccount <- genAccountId
     destAmount <- genAmount
     path <- Gen.listOf(genAsset)
-    sourceAccount <- Gen.option(genPublicKey)
+    sourceAccount <- Gen.option(genAccountId)
   } yield {
     PathPaymentStrictReceiveOperation(sendMax, destAccount, destAmount, path, sourceAccount)
   }
@@ -386,7 +388,7 @@ trait ArbitraryInput extends ScalaCheck {
     destAccount <- genAccountId
     destinationMin <- genAmount
     path <- Gen.listOf(genAsset)
-    sourceAccount <- Gen.option(genPublicKey)
+    sourceAccount <- Gen.option(genAccountId)
   } yield {
     PathPaymentStrictSendOperation(sendAmount, destAccount, destinationMin, path, sourceAccount)
   }
@@ -394,7 +396,7 @@ trait ArbitraryInput extends ScalaCheck {
   def genPaymentOperation: Gen[PaymentOperation] = for {
     destAccount <- genAccountId
     amount <- genAmount
-    sourceAccount <- Gen.option(genPublicKey)
+    sourceAccount <- Gen.option(genAccountId)
   } yield {
     PaymentOperation(destAccount, amount, sourceAccount)
   }
@@ -412,7 +414,7 @@ trait ArbitraryInput extends ScalaCheck {
     homeDomain <- Gen.option(Gen.identifier.map(_.take(32)))
     signerWeight <- Gen.choose(0, 255)
     signer <- Gen.option(genSignerStrKey.map(Signer(_, signerWeight)))
-    sourceAccount <- Gen.option(genPublicKey)
+    sourceAccount <- Gen.option(genAccountId)
   } yield {
     SetOptionsOperation(inflationDestination, clearFlags, setFlags, masterKeyWeight, lowThreshold, medThreshold,
       highThreshold, homeDomain, signer, sourceAccount)
@@ -434,27 +436,27 @@ trait ArbitraryInput extends ScalaCheck {
 
   def genBumpSequenceOperation: Gen[BumpSequenceOperation] = for {
     sequence <- Gen.posNum[Long]
-    sourceAccount <- Gen.option(genPublicKey)
+    sourceAccount <- Gen.option(genAccountId)
   } yield BumpSequenceOperation(sequence, sourceAccount)
 
   def genCreateClaimableBalanceOperation: Gen[CreateClaimableBalanceOperation] = for {
     amount <- genAmount
     claimants <- Gen.nonEmptyListOf(ClaimantGenerators.genClaimant).map(_.take(10))
-    sourceAccount <- Gen.option(genPublicKey)
+    sourceAccount <- Gen.option(genAccountId)
   } yield CreateClaimableBalanceOperation(amount, claimants, sourceAccount)
 
   def genClaimClaimableBalanceOperation: Gen[ClaimClaimableBalanceOperation] = for {
     id <- ClaimableBalanceIds.genClaimableBalanceId
-    sourceAccount <- Gen.option(genPublicKey)
+    sourceAccount <- Gen.option(genAccountId)
   } yield ClaimClaimableBalanceOperation(id, sourceAccount)
 
   def genBeginSponsoringFutureReservesOperation: Gen[BeginSponsoringFutureReservesOperation] = for {
     sponsored <- genPublicKey.map(_.publicKey).map(AccountId(_))
-    sourceAccount <- Gen.option(genPublicKey)
+    sourceAccount <- Gen.option(genAccountId)
   } yield BeginSponsoringFutureReservesOperation(sponsored, sourceAccount)
 
   def genEndSponsoringFutureReservesOperation: Gen[EndSponsoringFutureReservesOperation] =
-    Gen.option(genPublicKey).map(EndSponsoringFutureReservesOperation.apply)
+    Gen.option(genAccountId).map(EndSponsoringFutureReservesOperation.apply)
 
   def genRevokeSponsorshipOperation: Gen[RevokeSponsorshipOperation] = Gen.oneOf(
     genRevokeAccountSponsorshipOperation,
@@ -467,12 +469,12 @@ trait ArbitraryInput extends ScalaCheck {
 
   def genRevokeAccountSponsorshipOperation: Gen[RevokeAccountSponsorshipOperation] = for {
     key <- genPublicKey.map(AccountKey.apply)
-    sourceAccount <- Gen.option(genPublicKey)
+    sourceAccount <- Gen.option(genAccountId)
   } yield RevokeAccountSponsorshipOperation(key, sourceAccount)
   
   def genRevokeClaimableBalanceSponsorshipOperation: Gen[RevokeClaimableBalanceSponsorshipOperation] = for {
     key <- ClaimableBalanceIds.genClaimableBalanceId.map(ClaimableBalanceKey.apply)
-    sourceAccount <- Gen.option(genPublicKey)
+    sourceAccount <- Gen.option(genAccountId)
   } yield RevokeClaimableBalanceSponsorshipOperation(key, sourceAccount)
   
   def genRevokeDataSponsorshipOperation: Gen[RevokeDataSponsorshipOperation] = for {
@@ -480,7 +482,7 @@ trait ArbitraryInput extends ScalaCheck {
       account <- genPublicKey
       name <- Gen.identifier.map(_.take(64))
     } yield DataKey(account, name)
-    sourceAccount <- Gen.option(genPublicKey)
+    sourceAccount <- Gen.option(genAccountId)
   } yield RevokeDataSponsorshipOperation(key, sourceAccount)
   
   def genRevokeOfferSponsorshipOperation: Gen[RevokeOfferSponsorshipOperation] = for {
@@ -488,13 +490,13 @@ trait ArbitraryInput extends ScalaCheck {
       pk <- genPublicKey
       offerId <- Gen.posNum[Long]
     } yield OfferKey(pk, offerId)
-    sourceAccount <- Gen.option(genPublicKey)
+    sourceAccount <- Gen.option(genAccountId)
   } yield RevokeOfferSponsorshipOperation(key, sourceAccount)
   
   def genRevokeSignerSponsorshipOperation: Gen[RevokeSignerSponsorshipOperation] = for {
     accountId <- genPublicKey.map(_.toAccountId)
     signerKey <- genSignerStrKey
-    sourceAccount <- Gen.option(genPublicKey)
+    sourceAccount <- Gen.option(genAccountId)
   } yield RevokeSignerSponsorshipOperation(accountId, signerKey, sourceAccount)
   
   def genRevokeTrustLineSponsorshipOperation: Gen[RevokeTrustLineSponsorshipOperation] = for {
@@ -502,7 +504,7 @@ trait ArbitraryInput extends ScalaCheck {
       pk <- genPublicKey
       asset <- genNonNativeAsset
     } yield TrustLineKey(pk, asset)
-    sourceAccount <- Gen.option(genPublicKey)
+    sourceAccount <- Gen.option(genAccountId)
   } yield RevokeTrustLineSponsorshipOperation(key, sourceAccount)
   
   def genOperation: Gen[Operation] = {
@@ -725,7 +727,7 @@ trait ArbitraryInput extends ScalaCheck {
     hash <- genHash
     ledger <- Gen.posNum[Long]
     createdAt <- genZonedDateTime
-    account <- genPublicKey
+    account <- genAccountId
     sequence <- Gen.posNum[Long]
     maxFee <- Gen.posNum[Int].map(NativeAmount(_))
     feeCharged <- Gen.posNum[Int].map(NativeAmount(_))

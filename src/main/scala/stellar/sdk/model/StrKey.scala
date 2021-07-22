@@ -1,13 +1,14 @@
 package stellar.sdk.model
 
-import java.nio.ByteBuffer
 import org.apache.commons.codec.binary.Base32
+import org.json4s.Formats
+import org.json4s.JsonAST.JObject
 import org.stellar.xdr.{AccountID, CryptoKeyType, MuxedAccount, PublicKeyType, SignerKey, SignerKeyType, Uint256, Uint64, PublicKey => XPublicKey}
 import stellar.sdk.model.StrKey.codec
 import stellar.sdk.util.ByteArrays
 import stellar.sdk.{KeyPair, PublicKey}
 
-import scala.util.Try
+import java.nio.ByteBuffer
 
 
 /**
@@ -77,6 +78,14 @@ object SignerStrKey {
 }
 
 object AccountId {
+
+  /** Extract an account id from JSON */
+  def parse(o: JObject, baseKeyName: String)(implicit formats: Formats): AccountId = {
+    val pk = KeyPair.fromAccountId((o \ baseKeyName).extract[String])
+    val multiplexedId = (o \ s"${baseKeyName}_muxed_id").extractOpt[String].map(_.toLong)
+    AccountId(pk.publicKey, multiplexedId)
+  }
+
   def decodeXdr(accountId: AccountID): AccountId =
     AccountId(KeyPair.fromPublicKey(accountId.getAccountID.getEd25519.getUint256).publicKey)
 

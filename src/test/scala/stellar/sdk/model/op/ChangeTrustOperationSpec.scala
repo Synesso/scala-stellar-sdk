@@ -34,14 +34,14 @@ class ChangeTrustOperationSpec extends Specification with ArbitraryInput with Do
            |  },
            |  "id": "${op.id}",
            |  "paging_token": "10157597659137",
-           |  "source_account": "${op.operation.sourceAccount.get.accountId}",
+           |  ${accountId(op.operation.sourceAccount.get, "source_account")}
            |  "type": "change_trust",
            |  "type_i": 6,
            |  "created_at": "${formatter.format(op.createdAt)}",
            |  "transaction_hash": "${op.txnHash}",
            |  ${amountDocPortion(op.operation.limit, "limit")},
            |  "trustee": "${op.operation.limit.asset.issuer.accountId}",
-           |  "trustor": "${op.operation.sourceAccount.get.accountId}",
+           |  ${accountId(op.operation.sourceAccount.get, "trustor")}
            |}
          """.stripMargin
 

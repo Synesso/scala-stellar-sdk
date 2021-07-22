@@ -47,13 +47,13 @@ class ClaimClaimableBalanceOperationSpec extends Specification with ArbitraryInp
            |  },
            |  "id": "${op.id}",
            |  "transaction_successful": true,
-           |  "source_account": "${op.operation.sourceAccount.get.accountId}",
+           |  ${accountId(op.operation.sourceAccount.get, "source_account")}
            |  "type": "claim_claimable_balance",
            |  "type_i": 15,
            |  "created_at": "${formatter.format(op.createdAt)}",
            |  "transaction_hash": "${op.txnHash}",
            |  "balance_id": "${op.operation.id.encodeString}",
-           |  "claimant": "${op.operation.sourceAccount.get.accountId}"
+           |  ${accountId(op.operation.sourceAccount.get, "claimant")}
            |}
          """.stripMargin
 

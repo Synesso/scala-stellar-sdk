@@ -36,7 +36,7 @@ class ManageSellOfferOperationSpec extends Specification with ArbitraryInput wit
            |  },
            |  "id":"${op.id}",
            |  "paging_token":"109521666052097",
-           |  "source_account":"${op.operation.sourceAccount.get.accountId}",
+           |  ${accountId(op.operation.sourceAccount.get, "source_account")}
            |  "type":"manage_sell_offer",
            |  "type_i":3,
            |  "created_at":"${formatter.format(op.createdAt)}",
@@ -78,7 +78,7 @@ class ManageSellOfferOperationSpec extends Specification with ArbitraryInput wit
            |  },
            |  "id":"${op.id}",
            |  "paging_token":"109521666052097",
-           |  "source_account":"${op.operation.sourceAccount.get.accountId}",
+           |  ${accountId(op.operation.sourceAccount.get, "source_account")}
            |  "type":"manage_sell_offer",
            |  "type_i":3,
            |  "created_at":"${formatter.format(op.createdAt)}",
@@ -120,7 +120,7 @@ class ManageSellOfferOperationSpec extends Specification with ArbitraryInput wit
            |  },
            |  "id":"${op.id}",
            |  "paging_token":"109521666052097",
-           |  "source_account":"${op.operation.sourceAccount.get.accountId}",
+           |  ${accountId(op.operation.sourceAccount.get, "source_account")}
            |  "type":"manage_sell_offer",
            |  "type_i":3,
            |  "created_at":"${formatter.format(op.createdAt)}",
@@ -153,7 +153,7 @@ class ManageSellOfferOperationSpec extends Specification with ArbitraryInput wit
            |  },
            |  "id":"${op.id}",
            |  "paging_token":"109521666052097",
-           |  "source_account":"${op.operation.sourceAccount.get.accountId}",
+           |  ${accountId(op.operation.sourceAccount.get, "source_account")}
            |  "type":"manage_sell_offer",
            |  "type_i":3,
            |  "created_at":"${formatter.format(op.createdAt)}",

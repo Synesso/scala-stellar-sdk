@@ -7,7 +7,7 @@ import org.json4s.{DefaultFormats, Formats}
 import org.stellar.xdr.Operation.OperationBody
 import org.stellar.xdr.OperationType._
 import org.stellar.xdr.RevokeSponsorshipOp.RevokeSponsorshipOpSigner
-import org.stellar.xdr.{AllowTrustOp, AssetCode, AssetCode12, AssetCode4, AssetType, BeginSponsoringFutureReservesOp, BumpSequenceOp, ChangeTrustOp, ClaimClaimableBalanceOp, ClawbackClaimableBalanceOp, ClawbackOp, CreateAccountOp, CreateClaimableBalanceOp, CreatePassiveSellOfferOp, DataValue, Int64, ManageBuyOfferOp, ManageDataOp, ManageSellOfferOp, PathPaymentStrictReceiveOp, PathPaymentStrictSendOp, PaymentOp, RevokeSponsorshipOp, RevokeSponsorshipType, SequenceNumber, SetOptionsOp, SetTrustLineFlagsOp, String32, String64, TrustLineFlags, Uint32, XdrString, Operation => XOperation}
+import org.stellar.xdr.{AllowTrustOp, AssetCode, AssetCode12, AssetCode4, AssetType, BeginSponsoringFutureReservesOp, BumpSequenceOp, ChangeTrustOp, ClaimClaimableBalanceOp, ClawbackClaimableBalanceOp, ClawbackOp, CreateAccountOp, CreateClaimableBalanceOp, CreatePassiveSellOfferOp, CryptoKeyType, DataValue, Int64, ManageBuyOfferOp, ManageDataOp, ManageSellOfferOp, PathPaymentStrictReceiveOp, PathPaymentStrictSendOp, PaymentOp, RevokeSponsorshipOp, RevokeSponsorshipType, SequenceNumber, SetOptionsOp, SetTrustLineFlagsOp, String32, String64, TrustLineFlags, Uint32, XdrString, Operation => XOperation}
 import stellar.sdk._
 import stellar.sdk.model.Asset.parseAsset
 import stellar.sdk.model._
@@ -22,12 +22,12 @@ import java.nio.charset.StandardCharsets.UTF_8
  * An Operation represents a change to the ledger. It is the action, as opposed to the effects resulting from that action.
  */
 sealed trait Operation {
-  val sourceAccount: Option[PublicKeyOps]
+  val sourceAccount: Option[AccountId]
 
   def accountRequiringMemo: Option[AccountId] = None
 
   def xdr: XOperation = new XOperation.Builder()
-    .sourceAccount(sourceAccount.map(_.toAccountId.muxedXdr).orNull)
+    .sourceAccount(sourceAccount.map(_.muxedXdr).orNull)
     .body(bodyXdr)
     .build()
 
@@ -80,8 +80,15 @@ object Operation {
 
     }
 
-  def extractSource(xdr: XOperation): Option[PublicKey] =
-    Option(xdr.getSourceAccount).map(_.getEd25519).map(_.getUint256).map(KeyPair.fromPublicKey)
+  def extractSource(xdr: XOperation): Option[AccountId] =
+    Option(xdr.getSourceAccount).map(source => source.getDiscriminant match {
+      case CryptoKeyType.KEY_TYPE_ED25519 => KeyPair.fromPublicKey(source.getEd25519.getUint256).toAccountId
+      case CryptoKeyType.KEY_TYPE_MUXED_ED25519 => AccountId(
+        hash = KeyPair.fromPublicKey(source.getMed25519.getEd25519.getUint256).publicKey,
+        subAccountId = Some(source.getMed25519.getId.getUint64)
+      )
+      case _ => throw new IllegalStateException(s"Incorrect crypto key type for operation source: ${source.getDiscriminant}")
+    })
 }
 
 object OperationDeserializer extends ResponseParser[Operation]({ o: JObject =>
@@ -89,9 +96,9 @@ object OperationDeserializer extends ResponseParser[Operation]({ o: JObject =>
 
   def publicKey(accountKey: String = "account") = KeyPair.fromAccountId((o \ accountKey).extract[String])
 
-  def accountId(accountKey: String = "account") = AccountId(publicKey(accountKey).publicKey)
+  def accountId(accountKey: String = "account") = AccountId.parse(o, accountKey)
 
-  def sourceAccount: Option[PublicKey] = Some(publicKey("source_account"))
+  def sourceAccount: Option[AccountId] = Some(accountId("source_account"))
 
   def nonNativeAsset = parseAsset("", o).asInstanceOf[NonNativeAsset]
 
@@ -247,7 +254,7 @@ sealed trait PayOperation extends Operation
 case class CreateAccountOperation(
   destinationAccount: AccountId,
   startingBalance: NativeAmount = Amount.lumens(1),
-  sourceAccount: Option[PublicKeyOps] = None
+  sourceAccount: Option[AccountId] = None
 ) extends PayOperation {
 
   override def bodyXdr: OperationBody = new OperationBody.Builder()
@@ -282,7 +289,7 @@ object CreateAccountOperation {
 case class PaymentOperation(
   destinationAccount: AccountId,
   amount: Amount,
-  sourceAccount: Option[PublicKeyOps] = None
+  sourceAccount: Option[AccountId] = None
 ) extends PayOperation {
 
   override def accountRequiringMemo: Option[AccountId] = Some(destinationAccount)
@@ -326,7 +333,7 @@ case class PathPaymentStrictReceiveOperation(sendMax: Amount,
   destinationAccount: AccountId,
   destinationAmount: Amount,
   path: Seq[Asset] = Nil,
-  sourceAccount: Option[PublicKeyOps] = None) extends PayOperation {
+  sourceAccount: Option[AccountId] = None) extends PayOperation {
 
   override def accountRequiringMemo: Option[AccountId] = Some(destinationAccount)
 
@@ -370,11 +377,13 @@ object PathPaymentStrictReceiveOperation {
  * @param sourceAccount      the account effecting this operation, if different from the owning account of the transaction
  * @see [[https://www.stellar.org/developers/learn/concepts/list-of-operations.html#path-payment-strict-send endpoint doc]]
  */
-case class PathPaymentStrictSendOperation(sendAmount: Amount,
+case class PathPaymentStrictSendOperation(
+  sendAmount: Amount,
   destinationAccount: AccountId,
   destinationMin: Amount,
   path: Seq[Asset] = Nil,
-  sourceAccount: Option[PublicKeyOps] = None) extends PayOperation {
+  sourceAccount: Option[AccountId] = None
+) extends PayOperation {
 
   override def accountRequiringMemo: Option[AccountId] = Some(destinationAccount)
 
@@ -433,7 +442,7 @@ object ManageSellOfferOperation {
  * Creates a sell offer in the Stellar network.
  */
 case class CreateSellOfferOperation(selling: Amount, buying: Asset, price: Price,
-  sourceAccount: Option[PublicKeyOps] = None) extends ManageSellOfferOperation {
+  sourceAccount: Option[AccountId] = None) extends ManageSellOfferOperation {
 
   override def bodyXdr: OperationBody = new OperationBody.Builder()
     .discriminant(MANAGE_SELL_OFFER)
@@ -459,7 +468,7 @@ case class CreateSellOfferOperation(selling: Amount, buying: Asset, price: Price
  */
 case class DeleteSellOfferOperation(override val offerId: Long,
   selling: Asset, buying: Asset, price: Price,
-  sourceAccount: Option[PublicKeyOps] = None) extends ManageSellOfferOperation {
+  sourceAccount: Option[AccountId] = None) extends ManageSellOfferOperation {
 
   override def bodyXdr: OperationBody = new OperationBody.Builder()
     .discriminant(MANAGE_SELL_OFFER)
@@ -485,7 +494,8 @@ case class DeleteSellOfferOperation(override val offerId: Long,
  */
 case class UpdateSellOfferOperation(override val offerId: Long,
   selling: Amount, buying: Asset, price: Price,
-  sourceAccount: Option[PublicKeyOps] = None) extends ManageSellOfferOperation {
+  sourceAccount: Option[AccountId] = None
+) extends ManageSellOfferOperation {
 
   override def bodyXdr: OperationBody = new OperationBody.Builder()
     .discriminant(MANAGE_SELL_OFFER)
@@ -528,7 +538,7 @@ object ManageBuyOfferOperation {
  * Creates a buy offer in the Stellar network.
  */
 case class CreateBuyOfferOperation(selling: Asset, buying: Amount, price: Price,
-  sourceAccount: Option[PublicKeyOps] = None) extends ManageBuyOfferOperation {
+  sourceAccount: Option[AccountId] = None) extends ManageBuyOfferOperation {
 
   override def bodyXdr: OperationBody = new OperationBody.Builder()
     .discriminant(MANAGE_BUY_OFFER)
@@ -554,7 +564,7 @@ case class CreateBuyOfferOperation(selling: Asset, buying: Amount, price: Price,
  */
 case class DeleteBuyOfferOperation(override val offerId: Long,
   selling: Asset, buying: Asset, price: Price,
-  sourceAccount: Option[PublicKeyOps] = None) extends ManageBuyOfferOperation {
+  sourceAccount: Option[AccountId] = None) extends ManageBuyOfferOperation {
 
   override def bodyXdr: OperationBody = new OperationBody.Builder()
     .discriminant(MANAGE_BUY_OFFER)
@@ -580,7 +590,7 @@ case class DeleteBuyOfferOperation(override val offerId: Long,
  */
 case class UpdateBuyOfferOperation(override val offerId: Long,
   selling: Asset, buying: Amount, price: Price,
-  sourceAccount: Option[PublicKeyOps] = None) extends ManageBuyOfferOperation {
+  sourceAccount: Option[AccountId] = None) extends ManageBuyOfferOperation {
 
   override def bodyXdr: OperationBody = new OperationBody.Builder()
     .discriminant(MANAGE_BUY_OFFER)
@@ -604,7 +614,7 @@ case class UpdateBuyOfferOperation(override val offerId: Long,
  * @see [[https://www.stellar.org/developers/horizon/reference/resources/operation.html#create-passive-offer endpoint doc]]
  */
 case class CreatePassiveSellOfferOperation(selling: Amount, buying: Asset, price: Price,
-  sourceAccount: Option[PublicKeyOps] = None) extends Operation {
+  sourceAccount: Option[AccountId] = None) extends Operation {
 
   override def bodyXdr: OperationBody = new OperationBody.Builder()
     .discriminant(CREATE_PASSIVE_SELL_OFFER)
@@ -654,7 +664,7 @@ case class SetOptionsOperation(inflationDestination: Option[PublicKeyOps] = None
   highThreshold: Option[Int] = None,
   homeDomain: Option[String] = None,
   signer: Option[Signer] = None,
-  sourceAccount: Option[PublicKeyOps] = None) extends Operation {
+  sourceAccount: Option[AccountId] = None) extends Operation {
 
   override def bodyXdr: OperationBody = new OperationBody.Builder()
     .discriminant(SET_OPTIONS)
@@ -761,7 +771,7 @@ object IssuerFlags {
  */
 case class ChangeTrustOperation(
   limit: IssuedAmount,
-  sourceAccount: Option[PublicKeyOps] = None
+  sourceAccount: Option[AccountId] = None
 ) extends Operation {
 
   override def bodyXdr: OperationBody = new OperationBody.Builder()
@@ -790,7 +800,7 @@ object ChangeTrustOperation {
 case class AllowTrustOperation(trustor: PublicKeyOps,
   assetCode: String,
   trustLineFlags: Set[TrustLineFlag],
-  sourceAccount: Option[PublicKeyOps] = None) extends Operation {
+  sourceAccount: Option[AccountId] = None) extends Operation {
 
   def authorize: Boolean = trustLineFlags.contains(TrustLineAuthorized)
 
@@ -840,7 +850,7 @@ object AllowTrustOperation {
  * @param sourceAccount the account to be merged, if different from the owning account of the transaction
  * @see [[https://www.stellar.org/developers/horizon/reference/resources/operation.html#account-merge endpoint doc]]
  */
-case class AccountMergeOperation(destination: AccountId, sourceAccount: Option[PublicKeyOps] = None) extends PayOperation {
+case class AccountMergeOperation(destination: AccountId, sourceAccount: Option[AccountId] = None) extends PayOperation {
   override def accountRequiringMemo: Option[AccountId] = Some(destination)
 
   override def bodyXdr: OperationBody = new OperationBody.Builder()
@@ -864,16 +874,14 @@ object AccountMergeOperation {
  * @param sourceAccount the account effecting this operation, if different from the owning account of the transaction
  * @see [[https://www.stellar.org/developers/horizon/reference/resources/operation.html#inflation endpoint doc]]
  */
-case class InflationOperation(sourceAccount: Option[PublicKeyOps] = None) extends Operation {
+case class InflationOperation(sourceAccount: Option[AccountId] = None) extends Operation {
   override def bodyXdr: OperationBody = new OperationBody.Builder()
     .discriminant(INFLATION)
     .build()
 }
 
 object InflationOperation {
-  def decode(op: XOperation): InflationOperation = InflationOperation(
-    sourceAccount = Option(op.getSourceAccount).map(_.getEd25519).map(_.getUint256).map(KeyPair.fromPublicKey)
-  )
+  def decode(op: XOperation): InflationOperation = InflationOperation(extractSource(op))
 }
 
 sealed trait ManageDataOperation extends Operation {
@@ -898,7 +906,7 @@ object ManageDataOperation {
  * @param sourceAccount the account effecting this operation, if different from the owning account of the transaction
  * @see [[https://www.stellar.org/developers/horizon/reference/resources/operation.html#manage-data endpoint doc]]
  */
-case class DeleteDataOperation(name: String, sourceAccount: Option[PublicKeyOps] = None) extends ManageDataOperation {
+case class DeleteDataOperation(name: String, sourceAccount: Option[AccountId] = None) extends ManageDataOperation {
 
   override def bodyXdr: OperationBody = new OperationBody.Builder()
     .discriminant(MANAGE_DATA)
@@ -914,7 +922,7 @@ case class DeleteDataOperation(name: String, sourceAccount: Option[PublicKeyOps]
  * @param sourceAccount the account effecting this operation, if different from the owning account of the transaction
  * @see [[https://www.stellar.org/developers/horizon/reference/resources/operation.html#manage-data endpoint doc]]
  */
-case class WriteDataOperation(name: String, value: Seq[Byte], sourceAccount: Option[PublicKeyOps] = None) extends ManageDataOperation {
+case class WriteDataOperation(name: String, value: Seq[Byte], sourceAccount: Option[AccountId] = None) extends ManageDataOperation {
 
   require(name.getBytes(UTF_8).length <= 64, s"name cannot be greater than 64 bytes, was ${name.length}")
   require(value.length <= 64 && value.nonEmpty, s"value must be non-empty and cannot be greater than 64 bytes, was ${value.length}")
@@ -932,7 +940,7 @@ object WriteDataOperation {
   def apply(name: String, value: String): WriteDataOperation =
     WriteDataOperation(name, value.getBytes(UTF_8).toIndexedSeq)
 
-  def apply(name: String, value: String, sourceAccount: Option[PublicKeyOps]): WriteDataOperation =
+  def apply(name: String, value: String, sourceAccount: Option[AccountId]): WriteDataOperation =
     WriteDataOperation(name, value.getBytes(UTF_8).toIndexedSeq, sourceAccount)
 }
 
@@ -945,7 +953,7 @@ object WriteDataOperation {
  * @see [[https://www.stellar.org/developers/horizon/reference/resources/operation.html#bump-sequence endpoint doc]]
  */
 case class BumpSequenceOperation(bumpTo: Long,
-  sourceAccount: Option[PublicKeyOps] = None) extends Operation {
+  sourceAccount: Option[AccountId] = None) extends Operation {
 
   override def bodyXdr: OperationBody = new OperationBody.Builder()
     .discriminant(BUMP_SEQUENCE)
@@ -976,7 +984,7 @@ object BumpSequenceOperation {
 case class CreateClaimableBalanceOperation(
   amount: Amount,
   claimants: List[Claimant],
-  sourceAccount: Option[PublicKeyOps] = None
+  sourceAccount: Option[AccountId] = None
 ) extends Operation {
   require(claimants.nonEmpty && claimants.size <= 10)
 
@@ -1009,7 +1017,7 @@ object CreateClaimableBalanceOperation {
  */
 case class ClaimClaimableBalanceOperation(
   id: ClaimableBalanceId,
-  sourceAccount: Option[PublicKeyOps] = None
+  sourceAccount: Option[AccountId] = None
 ) extends Operation {
   override def bodyXdr: OperationBody = new OperationBody.Builder()
     .discriminant(CLAIM_CLAIMABLE_BALANCE)
@@ -1037,7 +1045,7 @@ object ClaimClaimableBalanceOperation {
  */
 case class BeginSponsoringFutureReservesOperation(
   sponsored: AccountId,
-  sourceAccount: Option[PublicKeyOps] = None
+  sourceAccount: Option[AccountId] = None
 ) extends Operation {
   override def bodyXdr: OperationBody = new OperationBody.Builder()
     .discriminant(BEGIN_SPONSORING_FUTURE_RESERVES)
@@ -1061,7 +1069,7 @@ object BeginSponsoringFutureReservesOperation {
  * End sponsoring all reserves from the source account.
  */
 case class EndSponsoringFutureReservesOperation(
-  sourceAccount: Option[PublicKeyOps] = None
+  sourceAccount: Option[AccountId] = None
 ) extends Operation {
   override def bodyXdr: OperationBody = new OperationBody.Builder()
     .discriminant(END_SPONSORING_FUTURE_RESERVES)
@@ -1112,7 +1120,7 @@ object RevokeSponsorshipOperation {
  */
 case class RevokeAccountSponsorshipOperation(
   revokeAccountKey: AccountKey,
-  sourceAccount: Option[PublicKeyOps] = None
+  sourceAccount: Option[AccountId] = None
 ) extends RevokeSponsorshipOperation {
   override def bodyXdr: OperationBody = new OperationBody.Builder()
     .discriminant(REVOKE_SPONSORSHIP)
@@ -1131,7 +1139,7 @@ case class RevokeAccountSponsorshipOperation(
  */
 case class RevokeClaimableBalanceSponsorshipOperation(
   revokeClaimableBalanceKey: ClaimableBalanceKey,
-  sourceAccount: Option[PublicKeyOps] = None
+  sourceAccount: Option[AccountId] = None
 ) extends RevokeSponsorshipOperation {
   override def bodyXdr: OperationBody = new OperationBody.Builder()
     .discriminant(REVOKE_SPONSORSHIP)
@@ -1150,7 +1158,7 @@ case class RevokeClaimableBalanceSponsorshipOperation(
  */
 case class RevokeDataSponsorshipOperation(
   revokeDataKey: DataKey,
-  sourceAccount: Option[PublicKeyOps] = None
+  sourceAccount: Option[AccountId] = None
 ) extends RevokeSponsorshipOperation {
   override def bodyXdr: OperationBody = new OperationBody.Builder()
     .discriminant(REVOKE_SPONSORSHIP)
@@ -1169,7 +1177,7 @@ case class RevokeDataSponsorshipOperation(
  */
 case class RevokeOfferSponsorshipOperation(
   revokeOfferKey: OfferKey,
-  sourceAccount: Option[PublicKeyOps] = None
+  sourceAccount: Option[AccountId] = None
 ) extends RevokeSponsorshipOperation {
   override def bodyXdr: OperationBody = new OperationBody.Builder()
     .discriminant(REVOKE_SPONSORSHIP)
@@ -1190,7 +1198,7 @@ case class RevokeOfferSponsorshipOperation(
 case class RevokeSignerSponsorshipOperation(
   accountId: AccountId,
   signerKey: SignerStrKey,
-  sourceAccount: Option[PublicKeyOps] = None
+  sourceAccount: Option[AccountId] = None
 ) extends RevokeSponsorshipOperation {
   override def bodyXdr: OperationBody = new OperationBody.Builder()
     .discriminant(REVOKE_SPONSORSHIP)
@@ -1212,7 +1220,7 @@ case class RevokeSignerSponsorshipOperation(
  */
 case class RevokeTrustLineSponsorshipOperation(
   revokeTrustLineKey: TrustLineKey,
-  sourceAccount: Option[PublicKeyOps] = None
+  sourceAccount: Option[AccountId] = None
 ) extends RevokeSponsorshipOperation {
   override def bodyXdr: OperationBody = new OperationBody.Builder()
     .discriminant(REVOKE_SPONSORSHIP)
@@ -1229,7 +1237,7 @@ case class RevokeTrustLineSponsorshipOperation(
 case class ClawBackOperation(
   from: AccountId,
   amount: IssuedAmount,
-  sourceAccount: Option[PublicKeyOps] = None
+  sourceAccount: Option[AccountId] = None
 ) extends Operation {
   override def bodyXdr: OperationBody = new OperationBody.Builder()
     .discriminant(CLAWBACK)
@@ -1247,7 +1255,7 @@ case class ClawBackOperation(
  */
 case class ClawBackClaimableBalanceOperation(
   id: ClaimableBalanceId,
-  sourceAccount: Option[PublicKeyOps] = None
+  sourceAccount: Option[AccountId] = None
 ) extends Operation {
   override def bodyXdr: OperationBody = new OperationBody.Builder()
     .discriminant(CLAWBACK_CLAIMABLE_BALANCE)
@@ -1265,7 +1273,7 @@ case class SetTrustLineFlagsOperation(
   trustor: PublicKeyOps,
   setFlags: Set[TrustLineFlags],
   clearFlags: Set[TrustLineFlags],
-  sourceAccount: Option[PublicKeyOps] = None
+  sourceAccount: Option[AccountId] = None
 ) extends Operation {
   override def bodyXdr: OperationBody = new OperationBody.Builder()
     .discriminant(SET_TRUST_LINE_FLAGS)

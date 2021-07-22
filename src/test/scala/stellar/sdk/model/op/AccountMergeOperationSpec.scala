@@ -35,13 +35,13 @@ class AccountMergeOperationSpec extends Specification with ArbitraryInput with D
            |  },
            |  "id": "${op.id}",
            |  "paging_token": "10157597659137",
-           |  "source_account":"${op.operation.sourceAccount.get.accountId}",
+           |  ${accountId(op.operation.sourceAccount.get, "source_account")}
            |  "type_i": 8,
            |  "type": "account_merge"
            |  "created_at": "${formatter.format(op.createdAt)}",
            |  "transaction_hash": "${op.txnHash}",
-           |  "account": "${op.operation.sourceAccount.get.accountId}",
-           |  "into": "${KeyPair.fromPublicKey(op.operation.destination.hash).accountId}",
+           |  ${accountId(op.operation.sourceAccount.get, "account")}
+           |  ${accountId(op.operation.destination, "into")}
            |}
          """.stripMargin
 
