@@ -577,6 +577,15 @@ class LocalNetworkIntegrationSpec(implicit ee: ExecutionEnv) extends Specificati
   }
 
   "trades endpoint" should {
+    "list all trades in ascending order" >> {
+      network.trades(order = Asc).map(_.toList.map(it => it.baseAmount -> it.counterAmount)) must beEqualTo(
+        List(
+          IssuedAmount(1, chinchillaA) -> IssuedAmount(1, chinchillaMaster),
+          IssuedAmount(100, chinchillaA) -> IssuedAmount(100, chinchillaMaster),
+        )
+      ).awaitFor(10.seconds)
+    }
+
     "filter trades by orderbook" >> {
       network.tradesByOrderBook(
         base = chinchillaA,
