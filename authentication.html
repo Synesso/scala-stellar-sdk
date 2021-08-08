@@ -149,7 +149,7 @@ synesso/scala-stellar-sdk
 <ul style="display: none">
 <li class="md-nav__item md-version" id="project.version">
 <label class="md-nav__link" for="__version">
-<i class="md-icon" title="Version">label_outline</i> 0.21.0
+<i class="md-icon" title="Version">label_outline</i> 0.21.1
 </label>
 </li>
 </ul>
@@ -162,10 +162,10 @@ synesso/scala-stellar-sdk
 <h1><a href="#authentication" name="authentication" class="anchor"><span class="anchor-link"></span></a>Authentication</h1>
 <p>In <a href="https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0010.md#preamble">SEP-0010</a> Stellar defines a mechanism for using the cryptographic properties of transactions in order to present and fulfil an authentication challenge.</p>
 <p>The server constructs a challenge with an . The challenge can be serialised to and deserialised from JSON.</p>
-<pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/synesso/scala-stellar-sdk/tree/v0.21.0/src/test/scala/stellar/sdk/auth/ChallengeSpec.scala#L105-L106" target="_blank" title="Go to snippet source">source</a><code class="language-scala">val challenge = authChallenger.challenge(clientKey.toAccountId, &quot;test.com&quot;)
+<pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/synesso/scala-stellar-sdk/tree/v0.21.1/src/test/scala/stellar/sdk/auth/ChallengeSpec.scala#L105-L106" target="_blank" title="Go to snippet source">source</a><code class="language-scala">val challenge = authChallenger.challenge(clientKey.toAccountId, &quot;test.com&quot;)
 Challenge(challenge.toJson) must beEquivalentTo(challenge)</code></pre>
 <p>The client can meet the challenge by signing the presented transaction. The server can then </p>
-<pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/synesso/scala-stellar-sdk/tree/v0.21.0/src/test/scala/stellar/sdk/auth/ChallengeSpec.scala#L141-L147" target="_blank" title="Go to snippet source">source</a><code class="language-scala">val challenge = authChallenger.challenge(
+<pre class="prettyprint"><button class="snippet-button copy-snippet" title="Copy snippet to clipboard">copy</button><a class="snippet-button go-to-source" href="https://github.com/synesso/scala-stellar-sdk/tree/v0.21.1/src/test/scala/stellar/sdk/auth/ChallengeSpec.scala#L141-L147" target="_blank" title="Go to snippet source">source</a><code class="language-scala">val challenge = authChallenger.challenge(
   accountId = clientKey.toAccountId,
   homeDomain = &quot;test.com&quot;,
   timeout = 15.minutes
@@ -175,13 +175,13 @@ challenge.verify(answer) mustEqual ChallengeSuccess</code></pre>
 <p>It is important that the client validate the properties of the challenge transaction before signing and returning. For example, the transaction should have a sequence number of zero to prevent it from being submittable to the network. See the <a href="https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0010.md#abstract">SEP-0010 specification</a> for up-to-date requirements.</p>
 </div>
 <div>
-<a href="https://github.com/synesso/scala-stellar-sdk/tree/v0.21.0/src/main/paradox/authentication.md" title="Edit this page" class="md-source-file md-edit">
+<a href="https://github.com/synesso/scala-stellar-sdk/tree/v0.21.1/src/main/paradox/authentication.md" title="Edit this page" class="md-source-file md-edit">
 Edit this page
 </a>
 </div>
 <div class="print-only">
 <span class="md-source-file md-version">
-0.21.0
+0.21.1
 </span>
 </div>
 </article>
