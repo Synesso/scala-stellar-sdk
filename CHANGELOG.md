@@ -4,6 +4,10 @@ As this project is pre 1.0, breaking changes may happen for minor version bumps.
 
 ## Next Version
 
+## 0.21.1
+
+- Fix [#476](https://github.com/Synesso/scala-stellar-sdk/issues/476): Reinstate cursor for horizon queries 
+
 ## 0.21.0
 
 - Updated `AssetResponse` to include more detailed information about balances for the specified asset.
