@@ -79,9 +79,7 @@ class OkHorizon(base: HttpUrl) extends HorizonAccess with LazyLogging {
                                       order: HorizonOrder, params: Map[String, String])
                                      (implicit ec: ExecutionContext, m: Manifest[T]): Future[LazyList[T]] = {
 
-    // TODO (jem) - Cursor is temporarily removed because Horizon 1.0.0 cannot parse it.
-//    Future(getStreamInternal(path, de, Some(cursor), Some(order), params))
-    Future(getStreamInternal(path, de, None, Some(order), params))
+    Future(getStreamInternal(path, de, Some(cursor), Some(order), params))
   }
 
   override def getSeq[T: ClassTag](path: String, de: CustomSerializer[T], params: Map[String, String])
@@ -96,7 +94,7 @@ class OkHorizon(base: HttpUrl) extends HorizonAccess with LazyLogging {
     implicit val formats: Formats = DefaultFormats + RawPageDeserializer + de
 
     val fullParams: Map[String, String] = params ++ Seq(
-      cursor.map("cursor" -> _.paramValue),
+      cursor.filterNot(_.paramValue == "0").map("cursor" -> _.paramValue),
       order.map("order" -> _.paramValue),
       Some("limit" -> "200")
     ).flatten.toMap
