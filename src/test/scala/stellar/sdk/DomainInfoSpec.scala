@@ -56,7 +56,7 @@ class DomainInfoSpec(implicit ee: ExecutionEnv) extends Specification with Domai
     "find signer key" >> {
       val kp = KeyPair.random
       roundTripDomainInfo(s"""SIGNER_KEY="${kp.accountId}"""")
-        .map(_.signerKey) must beSome(kp.asPublicKey)
+        .map(_.signingKey) must beSome(kp.asPublicKey)
         .awaitFor(5.seconds)
     }
 
@@ -77,7 +77,7 @@ class DomainInfoSpec(implicit ee: ExecutionEnv) extends Specification with Domai
     "handle malformed signer key" >> {
       val kp = KeyPair.random
       roundTripDomainInfo(s"""SIGNER_KEY="${kp.accountId.drop(2)}"""")
-        .map(_.signerKey) must throwA[RestException]
+        .map(_.signingKey) must throwA[RestException]
         .awaitFor(5.seconds)
     }
 

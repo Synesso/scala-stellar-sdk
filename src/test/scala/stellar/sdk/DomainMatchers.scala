@@ -250,7 +250,7 @@ trait DomainMatchers extends AnyMatchers with MustExpectations with SequenceMatc
 
   def beEquivalentTo(other: Challenge): Matcher[Challenge] = beLike {
     case challenge =>
-      other.signedTransaction must beEquivalentTo(challenge.signedTransaction)
+      other.challengeTransaction must beEquivalentTo(challenge.challengeTransaction)
       other.networkPassphrase mustEqual challenge.networkPassphrase
   }
 }

@@ -1,9 +1,9 @@
 package stellar.sdk.auth
 
 import java.time.Instant
-
 import com.google.common.base.Charsets
 import monocle.macros.GenLens
+import org.specs2.concurrent.ExecutionEnv
 import org.specs2.mutable.Specification
 import stellar.sdk.model.op.{Operation, WriteDataOperation}
 import stellar.sdk.model.response.AccountResponse
@@ -18,7 +18,7 @@ import scala.concurrent.duration._
  *
  * @see https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0010.md
  */
-class ChallengeSpec extends Specification with DomainMatchers with ArbitraryInput {
+class ChallengeSpec(implicit ee: ExecutionEnv) extends Specification with DomainMatchers with ArbitraryInput {
 
   private val serverKey = KeyPair.random
 
@@ -95,8 +95,8 @@ class ChallengeSpec extends Specification with DomainMatchers with ArbitraryInpu
     "be signed by the provided server key" >> {
       val (subject, _, clientKey, _, _) = fixtures
       val challenge = subject.challenge(clientKey.toAccountId, "test.com")
-      challenge.signedTransaction.signatures.size mustEqual 1
-      challenge.signedTransaction.verify(serverKey) must beTrue
+      challenge.challengeTransaction.signatures.size mustEqual 1
+      challenge.challengeTransaction.verify(serverKey) must beTrue
     }
 
     "json serialise and deserialise" >> prop { clientKey: KeyPair =>
@@ -143,7 +143,7 @@ class ChallengeSpec extends Specification with DomainMatchers with ArbitraryInpu
         homeDomain = "test.com",
         timeout = 15.minutes
       )
-      val answer = challenge.signedTransaction.sign(clientKey)
+      val answer = challenge.challengeTransaction.sign(clientKey)
       challenge.verify(answer) mustEqual ChallengeSuccess
       // #auth_challenge_success_example
     }
@@ -151,14 +151,14 @@ class ChallengeSpec extends Specification with DomainMatchers with ArbitraryInpu
     "fail if the source account does not match that of the challenge" >> {
       val (subject, _, clientKey, _, _) = fixtures
       val challenge = subject.challenge(clientKey.toAccountId, "test.com")
-      val answer = challenge.copy(signedTransaction = challenge.signedTransaction.sign(KeyPair.random)).signedTransaction
+      val answer = challenge.copy(challengeTransaction = challenge.challengeTransaction.sign(KeyPair.random)).challengeTransaction
       challenge.verify(answer) mustEqual ChallengeNotSignedByClient
     }
 
     "fail if the signed transaction does not contain the signatures of the challenge" >> {
       val (subject, _, clientKey, _, _) = fixtures
       val challenge = subject.challenge(clientKey.toAccountId, "test.com")
-      val answer = challenge.signedTransaction.copy(signatures = Nil).sign(clientKey)
+      val answer = challenge.challengeTransaction.copy(signatures = Nil).sign(clientKey)
       challenge.verify(answer) must beEqualTo(
         ChallengeMalformed("Response did not contain the challenge signatures")
       )
@@ -168,16 +168,16 @@ class ChallengeSpec extends Specification with DomainMatchers with ArbitraryInpu
       val (subject, clock, clientKey, _, _) = fixtures
       val challenge = subject.challenge(clientKey.toAccountId, "test.com")
         .copy(clock = clock)
-      val answer = challenge.signedTransaction.sign(clientKey)
+      val answer = challenge.challengeTransaction.sign(clientKey)
       clock.advance(16.minutes)
       challenge.verify(answer) mustEqual ChallengeExpired
     }
 
     "fail if the transaction sequence is not zero" >> {
-      val seqNumberLens = GenLens[Challenge](_.signedTransaction.transaction.source.sequenceNumber)
+      val seqNumberLens = GenLens[Challenge](_.challengeTransaction.transaction.source.sequenceNumber)
       val (subject, _, clientKey, _, _) = fixtures
       val challenge = subject.challenge(clientKey.toAccountId, "test.com")
-      val answer = seqNumberLens.modify(_ => 1L)(challenge).signedTransaction.sign(clientKey)
+      val answer = seqNumberLens.modify(_ => 1L)(challenge).challengeTransaction.sign(clientKey)
       challenge.verify(answer) must beEqualTo(
         ChallengeMalformed("Transaction did not have a sequenceNumber of zero")
       )
@@ -188,28 +188,28 @@ class ChallengeSpec extends Specification with DomainMatchers with ArbitraryInpu
     "succeed when valid for the account" >> {
       val (subject, _, clientKey, challenged, signers) = fixtures
       val challenge = subject.challenge(clientKey.toAccountId, "test.com")
-      val answer = signers.foldLeft(challenge.signedTransaction)(_ sign _)
+      val answer = signers.foldLeft(challenge.challengeTransaction)(_ sign _)
       challenge.verify(answer, challenged, Low) mustEqual ChallengeSuccess
     }
 
     "fail when desired threshold not met" >> {
       val (subject, _, clientKey, challenged, signers) = fixtures
       val challenge = subject.challenge(clientKey.toAccountId, "test.com")
-      val answer = signers.tail.foldLeft(challenge.signedTransaction)(_ sign _)
+      val answer = signers.tail.foldLeft(challenge.challengeTransaction)(_ sign _)
       challenge.verify(answer, challenged, High) mustEqual ChallengeThresholdNotMet(High, Some(Medium))
     }
 
     "fail when no threshold met" >> {
       val (subject, _, clientKey, challenged, signers) = fixtures
       val challenge = subject.challenge(clientKey.toAccountId, "test.com")
-      val answer = challenge.signedTransaction.sign(signers.head)
+      val answer = challenge.challengeTransaction.sign(signers.head)
       challenge.verify(answer, challenged, Low) mustEqual ChallengeThresholdNotMet(Low, None)
     }
 
     "fail when there are no signers" >> {
       val (subject, _, clientKey, challenged, _) = fixtures
       val challenge = subject.challenge(clientKey.toAccountId, "test.com")
-      val answer = challenge.signedTransaction
+      val answer = challenge.challengeTransaction
       challenge.verify(answer, challenged, Low) mustEqual ChallengeThresholdNotMet(Low, None)
     }
   }

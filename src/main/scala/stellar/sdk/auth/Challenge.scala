@@ -13,12 +13,12 @@ import stellar.sdk.{Network, PublicNetwork, Signature}
 
 /**
  * An authentication challenge as specified in SEP-0010
- * @param signedTransaction a specially formed transaction that forms the basis of the challenge.
+ * @param challengeTransaction a specially formed transaction that forms the basis of the challenge.
  * @param networkPassphrase the passphrase of the network that the transaction is (and should continue to be) signed for.
  * @param clock             the clock to used to detect timebound expiry.
  */
 case class Challenge(
-  signedTransaction: SignedTransaction,
+  challengeTransaction: SignedTransaction,
   networkPassphrase: String,
   clock: Clock = Clock.systemUTC()
 ) {
@@ -30,10 +30,13 @@ case class Challenge(
    * @param answer     the transaction that may have been signed by the challenged account.
    * @param network    the network that the transaction is signed for.
    */
-  def verify(answer: SignedTransaction)(implicit network: Network): ChallengeResult =
+  def verify(
+    answer: SignedTransaction,
+
+  )(implicit network: Network): ChallengeResult =
     checkSequenceNumber(answer)
       .orElse(checkExpiry(transaction))
-      .orElse(checkSameSignatures(signedTransaction, answer))
+      .orElse(checkSameSignatures(challengeTransaction, answer))
       .orElse(checkSignedByClient(answer))
       .getOrElse(ChallengeSuccess)
 
@@ -53,13 +56,17 @@ case class Challenge(
   )(implicit network: Network): ChallengeResult =
     checkSequenceNumber(answer)
       .orElse(checkExpiry(transaction))
-      .orElse(checkSameSignatures(signedTransaction, answer))
+      .orElse(checkSameSignatures(challengeTransaction, answer))
       .orElse(checkSignaturesMatchThreshold(answer, challenged, threshold))
       .getOrElse(ChallengeSuccess)
 
   private def checkSequenceNumber(answer: SignedTransaction): Option[ChallengeResult] =
     if (answer.transaction.source.sequenceNumber == 0) None
     else Some(ChallengeMalformed("Transaction did not have a sequenceNumber of zero"))
+
+  private def checkExpiry(transaction: Transaction): Option[ChallengeResult] =
+    if (transaction.timeBounds.includes(clock.instant())) None
+    else Some(ChallengeExpired)
 
   private def checkSameSignatures(original: SignedTransaction, answer: SignedTransaction): Option[ChallengeResult] = {
     val challengeSigs = byteStrings(original.signatures.toSet)
@@ -69,12 +76,8 @@ case class Challenge(
     else None
   }
 
-  private def checkExpiry(transaction: Transaction): Option[ChallengeResult] =
-    if (transaction.timeBounds.includes(clock.instant())) None
-    else Some(ChallengeExpired)
-
   private def checkSignedByClient(answer: SignedTransaction): Option[ChallengeResult] = {
-    // FIXME - deal with 0 or multi operations. Deal with no source account.
+    // Does not deal with 0 or multi operations. Does not deal with no source account.
     if (answer.verify(transaction.operations.head.sourceAccount.get.publicKey)) None
     else Some(ChallengeNotSignedByClient)
   }
@@ -107,15 +110,15 @@ case class Challenge(
   /**
    * The inner, raw transaction.
    */
-  def transaction = signedTransaction.transaction
+  def transaction = challengeTransaction.transaction
 
   /**
    * Encode this challenge as JSON.
    */
   def toJson: String = {
     compact(render(
-      ("transaction" -> signedTransaction.encodeXDR) ~
-        ("network_passphrase" -> signedTransaction.transaction.network.passphrase)
+      ("transaction" -> challengeTransaction.encodeXDR) ~
+        ("network_passphrase" -> challengeTransaction.transaction.network.passphrase)
     ))
   }
 }
@@ -133,7 +136,7 @@ object Challenge {
       .map(p => new DoNothingNetwork(p))
         .getOrElse(PublicNetwork)
     Challenge(
-      signedTransaction = SignedTransaction.decodeXDR((o \ "transaction").extract[String]),
+      challengeTransaction = SignedTransaction.decodeXDR((o \ "transaction").extract[String]),
       networkPassphrase = network.passphrase
     )
   }
