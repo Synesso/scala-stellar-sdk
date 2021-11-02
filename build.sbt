@@ -1,4 +1,4 @@
-ThisBuild / scalaVersion := "2.13.6"
+ThisBuild / scalaVersion := "2.13.7"
 
 val specs2 = "4.12.4-js-ec"
 val okhttp = "4.9.1"
@@ -44,7 +44,7 @@ lazy val root = project
     developers := List(
       Developer("jem", "Jem Mawson", "jem.mawson@gmail.com", url = url("https://keybase.io/jem"))
     ),
-    crossScalaVersions := Seq("2.12.14", "2.13.6"),
+    crossScalaVersions := Seq("2.12.14", "2.13.7"),
     Defaults.itSettings,
     resolvers ++= List(
       Resolver.jcenterRepo,
