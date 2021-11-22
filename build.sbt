@@ -1,7 +1,7 @@
 ThisBuild / scalaVersion := "2.13.6"
 
 val specs2 = "4.12.4-js-ec"
-val okhttp = "4.9.1"
+val okhttp = "4.9.3"
 
 lazy val root = project
   .in(file("."))
