@@ -51,7 +51,7 @@ lazy val root = project
       "jitpack" at "https://jitpack.io"
     ),
     libraryDependencies ++= List(
-      "ch.qos.logback" % "logback-classic" % "1.2.5",
+      "ch.qos.logback" % "logback-classic" % "1.2.9",
       "com.github.synesso" % "stellar-xdr-jre" % "17.0.0",
       "com.softwaremill.retry" %% "retry" % "0.3.3",
       "com.squareup.okhttp3" % "okhttp" % okhttp,
